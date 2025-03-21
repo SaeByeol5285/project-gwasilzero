@@ -5,13 +5,11 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.project.gwasil_zero.model.GwasilZero;
 
 
 @Mapper
 public interface GwasilZeroMapper {
 
-	List<GwasilZero> selectBoardList(HashMap<String, Object> map);
 
 
 }

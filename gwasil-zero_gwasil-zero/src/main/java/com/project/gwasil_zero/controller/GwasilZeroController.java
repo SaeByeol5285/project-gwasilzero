@@ -28,14 +28,4 @@ public class GwasilZeroController {
 	}
 
 
-	// 게시글 목록
-	@RequestMapping(value = "/project/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	@ResponseBody
-	public String boardList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-
-		resultMap = gwasilZeroService.getBoardList(map);
-		return new Gson().toJson(resultMap);
-	}
-
 }

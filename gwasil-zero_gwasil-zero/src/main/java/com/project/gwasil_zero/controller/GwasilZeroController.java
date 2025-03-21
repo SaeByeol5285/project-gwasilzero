@@ -36,6 +36,9 @@ public class GwasilZeroController {
 
 		resultMap = gwasilZeroService.getBoardList(map);
 		return new Gson().toJson(resultMap);
+	
 	}
+	
+	
 
 }

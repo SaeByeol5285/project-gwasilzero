@@ -2,8 +2,6 @@ package com.project.gwasil_zero.controller;
 
 import java.util.HashMap;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,32 +11,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
-import com.project.gwasil_zero.dao.GwasilZeroService;
+import com.project.gwasil_zero.dao.MemberService;
 
 @Controller
-public class GwasilZeroController {
-	@Autowired
-	GwasilZeroService gwasilZeroService;
+public class MemberController {
 	
-	// 게시글 목록
-	@RequestMapping("/project/list.do")
-	public String boardList(Model model) throws Exception {
+	@Autowired // 두번째로 만들자
+	MemberService memberService;
+	
+	@RequestMapping("/member/login.do") 
+	public String login(Model model) throws Exception{
 
-		return "/sample";
-	}
-
-
-	// 게시글 목록
-	@RequestMapping(value = "/project/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+        return "/member/member-login"; 
+    }
+	
+	@RequestMapping(value = "/member/login.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String boardList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+	public String login(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+//		System.out.println(map); 
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-
-		resultMap = gwasilZeroService.getBoardList(map);
+		
+		resultMap = memberService.memberLogin(map);
 		return new Gson().toJson(resultMap);
-	
 	}
-	
-	
 
 }

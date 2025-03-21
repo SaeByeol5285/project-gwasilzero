@@ -1,0 +1,56 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+.sidebar {
+    width: 300px;
+    padding: 10px;
+    background: #b0c4de;
+    padding: 20px;
+    height: 900px;
+}
+.sidebar h2 {
+    text-align: center;
+}
+.sidebar button {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: none;
+    background: #f7f7f7;
+    cursor: pointer;
+}
+.sidebar button.active {
+    background: yellow;
+}
+.logout {
+    margin-top: 20px;
+    width: 100%;
+    background: white;
+    border: 1px solid black;
+}
+.content {
+    display: flex;
+    padding: 20px;
+    background: #f0f0f0;
+}
+.header {
+    background: #a0a0c0;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+.box {
+    background: #d3d3d3;
+    padding: 20px;
+    margin: 10px 0;
+    height: 200px;
+}
+.more {
+    text-align: right;
+    font-size: small;
+    color: blue;
+    cursor: pointer;
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+											
+<mapper namespace="com.project.gwasil_zero.mapper.GwasilZeroMapper">
+										<!--이부분 꼭 수정하자-->
+	<select id="getMember" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Member">
+		SELECT *
+		FROM MEMBER
+		WHERE USERID = #{userId} 
+						<!--AND PASSWORD = #{pwd}-->
+	</select>
+</mapper>

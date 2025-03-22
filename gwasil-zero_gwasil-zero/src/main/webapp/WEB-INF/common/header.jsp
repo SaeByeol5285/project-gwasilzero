@@ -7,88 +7,69 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <link rel="stylesheet" href="/css/header.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@800&display=swap" rel="stylesheet">
         <title>header.jsp</title>
-        <link rel="stylesheet" href="/css/header.css">
         <style>
         </style>
-
     </head>
 
     <body>
-        <div id="header">
-            <header>
-                <!-- 로고 -->
-                <a href="/common/main.do" class="logo">
-                    <img src="../../img/logo1.png" alt="과실제로 로고" class="logo">
+        <div id="app" class="menu-font">
+            <nav class="main-nav" >
+                <a href="/" class="logo">
+                    <img src="/img/logo1.png" alt="로고 이미지">
                 </a>
-
-                <!-- 네비게이션 메뉴 -->
-                <nav>
-                    <ul>
-                        <li class="dropdown">
-                            <a class="link" class="bold" href="#">회사 소개</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">비빔밥</a></li>
-                                <li><a href="#">김치찌개</a></li>
-                                <li><a href="#">불고기</a></li>
+                <ul class="main-menu">
+                    <li class="menu-item" v-for="(item, index) in menuItems" :key="index">
+                        <a href="#">{{ item }}</a>
+                        <div class="mega-dropdown" v-if="sections[index] && sections[index].length">
+                            <ul>
+                                <li v-for="(sub, i) in sections[index]" :key="i">
+                                    <a href="#">{{ sub }}</a>
+                                </li>
                             </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a class="link" href="#">상품 소개</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">짜장면</a></li>
-                                <li><a href="#">짬뽕</a></li>
-                                <li><a href="#">마파두부</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a class="link" href="#">구성원</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">피자</a></li>
-                                <li><a href="#">파스타</a></li>
-                                <li><a href="#">스테이크</a></li>
-                            </ul>
-                        </li>
-                        <li><a class="link" href="#">게시판</a></li>
-                        <li><a class="link" href="#">통합 자료실</a></li>
-                    </ul>
-                </nav>
-
-                <!-- 검색 바 -->
-                <div class="search-bar">
-                    <input type="text" placeholder="상품을 검색하세요..." v-model="keyword">
-                    <button @click="fnSearch">검색</button>
-                </div>
-
-                <!-- 로그인 버튼 -->
-                <div class="login-btn">
-                    <a href="/member/login.do"><button>로그인</button></a>
-                </div>
-            </header>
+                        </div>
+                    </li>
+                    <li class="menu-item" v-if="sessionStatus === 'A'">
+                        <a href="#">관리자 페이지</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </body>
 
     </html>
     <script>
-        const header = Vue.createApp({
+        const app = Vue.createApp({
             data() {
                 return {
-                    isOpen: false,
-                };
-            },
-            methods: {
-                toggleMenu() {
-                    this.isOpen = !this.isOpen;
-                },
+                    // sessionStatus: 'A', // 실제 사용 시 서버로부터 받은 값으로 대체
+                    menuItems: [
+                        '회사 소개',
+                        '상품 소개',
+                        '구성원',
+                        '게시판',
+                        '통합 자료실',
+                        '로그인 / 가입',
+                    ],
+                    sections: [
+                        [],
+                        ['패키지 소개', '물품 소개'],
+                        ['소속 변호사', '개인 변호사'],
+                        [],
+                        ['공지사항', 'Q & A', '사건 종류 가이드'],
+                        ['로그인', '회원가입'],
+                        []
+                    ]
+                }
             },
             mounted() {
-                var self = this;
-                self.fnGetList();
             }
         });
         app.mount('#app');
     </script>
+
     ​

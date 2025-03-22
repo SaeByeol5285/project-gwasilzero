@@ -10,40 +10,42 @@
         <link rel="stylesheet" href="/css/header.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
         <title>header.jsp</title>
         <style>
         </style>
     </head>
 
     <body>
-        <div id="app" class="menu-font">
-            <nav class="main-nav" >
-                <a href="/" class="logo">
-                    <img src="/img/logo1.png" alt="로고 이미지">
-                </a>
-                <ul class="main-menu">
-                    <li class="menu-item" v-for="(item, index) in menuItems" :key="index">
-                        <a href="#">{{ item }}</a>
-                        <div class="mega-dropdown" v-if="sections[index] && sections[index].length">
-                            <ul>
-                                <li v-for="(sub, i) in sections[index]" :key="i">
-                                    <a href="#">{{ sub }}</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="menu-item" v-if="sessionStatus === 'A'">
-                        <a href="#">관리자 페이지</a>
-                    </li>
-                </ul>
-            </nav>
+        <div id="header">
+            <header>
+                <nav class="main-nav">
+                    <a href="/" class="logo">
+                        <img src="/img/logo1.png" alt="로고 이미지">
+                    </a>
+                    <ul class="main-menu">
+                        <li class="menu-item" v-for="(item, index) in menuItems" :key="index">
+                            <a href="#" class="menu-font">{{ item }}</a>
+                            <div class="dropdown" v-if="sections[index] && sections[index].length" class="light-font">
+                                <ul>
+                                    <li v-for="(sub, i) in sections[index]" :key="i">
+                                        <a href="#">{{ sub }}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="menu-item" v-if="sessionStatus == 'A'">
+                            <a href="#">관리자 페이지</a>
+                        </li>
+                    </ul>
+                </nav>
+            </header>
         </div>
     </body>
 
     </html>
     <script>
-        const app = Vue.createApp({
+        const header = Vue.createApp({
             data() {
                 return {
                     // sessionStatus: 'A', // 실제 사용 시 서버로부터 받은 값으로 대체
@@ -53,7 +55,7 @@
                         '구성원',
                         '게시판',
                         '통합 자료실',
-                        '로그인 / 가입',
+                        '로그인',
                     ],
                     sections: [
                         [],
@@ -69,7 +71,7 @@
             mounted() {
             }
         });
-        app.mount('#app');
+        header.mount('#header');
     </script>
 
     ​

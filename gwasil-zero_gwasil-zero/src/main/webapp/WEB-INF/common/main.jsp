@@ -11,10 +11,11 @@
 <style>
 </style>
 <body>
+	<jsp:include page="../common/header.jsp" />
 	<div id="app">
-        <jsp:include page="../common/header.jsp" />
-
+		본문
 	</div>
+	<jsp:include page="../common/footer.jsp" />
 </body>
 </html>
 <script>
@@ -47,7 +48,6 @@
         },
         mounted() {
             var self = this;
-			self.fnGetList();
         }
     });
     app.mount('#app');

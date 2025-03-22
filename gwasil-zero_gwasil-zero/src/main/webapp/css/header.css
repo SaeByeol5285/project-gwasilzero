@@ -1,133 +1,135 @@
-
-.menu-font {
-  font-family: "Noto Sans KR", sans-serif;
-  font-weight: 700;
-  font-style: normal;
+* {
+	font-family: "Noto Sans KR", sans-serif;
 }
 
+.menu-font {
+	font-weight: 700;
+}
+
+.light-font {
+	font-weight: 600;
+}
 
 
 .main-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 40px;
-  height: 100px;
-  position: relative;
-  background-color: white;
-  border-bottom: 3px solid #FF5722;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 40px;
+	height: 100px;
+	position: relative;
+	background-color: white;
+	border-bottom: 3px solid #FF5722;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
-  display: block;
-  width: 140px;
+	display: block;
+	width: 10%;
 }
+
 .logo img {
-  width: 100%;
-  height: auto;
+	width: 100%;
+	height: auto;
 }
 
 .main-menu {
-  list-style: none;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  gap: 40px; /* ✅ 메뉴 간 간격 추가 */
-  margin: 0;
-  padding: 0;
-  font-size: 40px;
+	list-style: none;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	gap: 80px;
+	margin: 0;
+	padding: 0;
 
 }
 
 .menu-item {
-  position: relative;
-  padding: 20px 15px;
-  font-weight: bold;
-  font-size: 16px;
+	position: relative;
+	padding: 20px 15px;
+	font-size: 20px;
 }
 
-.menu-item:first-child {
-  border-left: none; /* 첫 번째 메뉴에는 구분선 제거 */
+.menu-item>a {
+	text-decoration: none;
+	color: black;
+	transition: color 0.3s;
 }
 
-.menu-item > a {
-  text-decoration: none;
-  color: black;
-  transition: color 0.3s;
+.menu-item:hover>a {
+	color: #FF5722;
 }
 
-.menu-item:hover > a {
-  color: #FF5722;
+.dropdown {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	background-color: rgba(255, 87, 34, 0.9);
+	padding: 20px;
+	min-width: 150px;
+	display: none;
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+	z-index: 1000;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(10px);
+	transition: all 0.3s ease;
 }
 
-.mega-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: rgba(255, 87, 34, 0.95);
-  padding: 20px;
-  min-width: 200px;
-  display: none;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(10px);
-  transition: all 0.3s ease;
+.menu-item:hover .dropdown {
+	display: block;
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0);
 }
 
-.menu-item:hover .mega-dropdown {
-  display: block;
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
+.dropdown ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
 }
 
-.mega-dropdown ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.dropdown ul li {
+	margin: 8px 0;
+	text-align: left;
 }
 
-.mega-dropdown ul li {
-  margin: 8px 0;
-  text-align: left;
+.dropdown ul li a {
+	color: white;
+	text-decoration: none;
+	font-size: 17px;
 }
 
-.mega-dropdown ul li a {
-  color: white;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.mega-dropdown ul li a:hover {
-  text-decoration: underline;
-  color: black;
+.dropdown ul li a:hover {
+	color: black;
+	font-weight: 700;
 }
 
 @media screen and (max-width: 768px) {
-  .main-menu {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0;
-  }
-  .menu-item {
-    width: 100%;
-    border-left: none;
-    border-top: 1px solid #ddd;
-  }
-  .menu-item:first-child {
-    border-top: none;
-  }
-  .mega-dropdown {
-    position: static;
-    display: block;
-    background-color: rgba(255, 87, 34, 0.9);
-    width: 100%;
-    padding: 15px;
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: none !important;
-  }
+	.main-menu {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0;
+	}
+
+	.menu-item {
+		width: 100%;
+		border-left: none;
+		border-top: 1px solid #ddd;
+	}
+
+	.menu-item:first-child {
+		border-top: none;
+	}
+
+	.dropdown {
+		position: static;
+		display: block;
+		background-color: rgba(255, 87, 34, 0.9);
+		width: 100%;
+		padding: 15px;
+		opacity: 1 !important;
+		visibility: visible !important;
+		transform: none !important;
+	}
 }

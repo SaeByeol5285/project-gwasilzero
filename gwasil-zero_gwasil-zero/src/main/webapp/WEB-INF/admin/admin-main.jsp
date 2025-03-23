@@ -117,17 +117,11 @@
             };
         },
         methods: {
-            fnAdminCheck: function(){
-				var self = this;
-				if (!"admin".equals(sessionId) || !"A".equals(sessionStatus)) {
-                    alert("접근 권한이 없습니다. 로그인 페이지로 이동합니다.");
-                    location.href = "/member/login.do"      
-                }
-            }    
+            
         },
         mounted() {
             var self = this;
-            self.fnAdminCheck();
+            
         }
     });
     app.mount('#app');

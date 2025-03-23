@@ -4,11 +4,11 @@ import java.util.HashMap;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.project.gwasil_zero.model.Member;
+import com.project.gwasil_zero.model.User;
 
 @Mapper
 public interface MemberMapper {
 	
-	Member getMember(HashMap<String, Object> map);
+	User getMember(HashMap<String, Object> map);
 
 }

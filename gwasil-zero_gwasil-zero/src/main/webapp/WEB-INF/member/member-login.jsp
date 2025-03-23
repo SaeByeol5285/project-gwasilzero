@@ -67,9 +67,6 @@
         </div>
         <button @click="fnLogin" class="btn">로그인</button><br><br><br>
         <button @click="fnSearchPwd(userId)" class="btn">비밀번호 찾기</button>
-        <a :href="location">
-            <img src="../../img/kakao_login_large_narrow.png">
-        </a>
     </div>
 </body>
 </html>
@@ -95,15 +92,16 @@
 					type : "POST", 
 					data : nparmap,
 					success : function(data) { 
-						console.log(data);
-						if(data.result == "success"){
-							alert(data.member.userName + "님 환영합니다!");
-							// location.href = "/board/list.do";
-                            location.href = "/admin/main.do";
-						} else {
-							alert("아이디/패스워드 확인하세요.");
-							return;
-						}
+                        console.log(data.member.userStatus);
+                        if (data.result == "success") {
+                            if (data.member.userStatus == "A") {
+                                alert(data.member.userName + "님 환영합니다!");
+                                location.href = "/admin/main.do";
+                            } else {
+                                alert("접근 권한이 없습니다. 로그인 페이지로 이동합니다.");
+                                location.href = "/member/login.do" 
+                            }
+                        }    
 					}
 				});
             },

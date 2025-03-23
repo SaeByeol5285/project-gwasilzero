@@ -2,12 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 											
-<mapper namespace="com.project.gwasil_zero.mapper.GwasilZeroMapper">
+<mapper namespace="com.project.gwasil_zero.mapper.MemberMapper">
 										<!--이부분 꼭 수정하자-->
-	<select id="getMember" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Member">
+	<select id="getMember" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
 		SELECT *
-		FROM MEMBER
-		WHERE USERID = #{userId} 
-						<!--AND PASSWORD = #{pwd}-->
+		FROM TBL_USER
+		WHERE USER_ID = #{userId} AND USER_PASSWORD = #{pwd}
 	</select>
 </mapper>

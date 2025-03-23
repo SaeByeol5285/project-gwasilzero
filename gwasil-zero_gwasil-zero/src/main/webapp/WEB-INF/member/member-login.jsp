@@ -75,8 +75,7 @@
         data() {
             return {
                 userId : "",
-				pwd : "",
-                location : "${location}"
+				pwd : ""            
             };
         },
         methods: {

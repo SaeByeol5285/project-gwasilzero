@@ -19,4 +19,6 @@ public class JoinContorller {
 
 		return "/join/user-select";
 	}
+	
+	
 }

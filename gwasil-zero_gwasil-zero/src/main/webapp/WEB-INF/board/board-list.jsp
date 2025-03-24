@@ -13,19 +13,11 @@
 <style>
 </style>
 <body>
+	<jsp:include page="../common/header.jsp"/>
 	<div id="app">
-		<div> 제목 : <input v-model="title"> </div>
-		<div style="width: 500px; height: 300px;">
-			<div id="editor"><textarea v-model="contents" style="width:500px; height:300px"></textarea></div>
-		</div>
-		<div><input type="file" id="file1" name="file1" accept=".jpg,.png,.mp4,.mov,.avi" multiple></div>
-		<div>
-		       <button @click="fnPixelizer" :disabled="isLoading">
-		           {{ isLoading ? '처리 중...' : '모자이크 처리 및 등록' }}
-		       </button>
-		       <div v-if="statusMessage">{{ statusMessage }}</div>
-		   </div>
+		
 	</div>
+	<jsp:include page="../common/footer.jsp"/>
 </body>
 </html>
 <script>
@@ -33,51 +25,42 @@
         data() {
             return {
 				list : [],
-				title : "",
-				contents : "",
-				isLoading: false,
-				statusMessage: ""
+				checked : false,
+				keyword : "",
+				searchOption : "all",  //변호사랑 사건으로 구분
+				pageSize: 5,
+				page: 1,  //현재페이지
+				index : 0  //하단에 보여줄 숫자
             };
         },
         methods: {
-			fnPixelizer : function(){
+			fnBoardList : function(){
 				var self = this;
-				var form = new FormData();
-				//form.append( "file1",  $("#file1")[0].files[0] );
-				for(let i = 0; i <  $("#file1")[0].files.length; i++){
-					form.append( "file1",  $("#file1")[0].files[i]);
-					console.log($("#file1")[0].files.length);
-				}
-				form.append("title", self.title);
-				form.append("contents", self.contents);
-				self.isLoading = true;
-				self.statusMessage = "업로드 및 모자이크 처리 중입니다... 잠시만 기다려주세요";
-				self.upload(form);  
-			},
-			// 파일 업로드
-			upload : function(form){
-				var self = this;
+				var nparmap = {
+					keyword : self.keyword, 
+					searchOption : self.searchOption,
+					pageSize : self.pageSize, 
+					page : (self.page - 1) * self.pageSize
+				};
 				$.ajax({
-					url : "/board/fileUpload.dox"
-					, type : "POST"
-					, processData : false
-					, contentType : false
-					, data : form
-					, success: function(response) {
-						self.statusMessage = "모자이크 처리가 완료되었습니다!";
-						self.isLoading = false;
-					},
-					error: function(err) {
-						self.statusMessage = "업로드 실패.";
-						self.isLoading = false;
+					url:"/board/list.dox",
+					dataType:"json",	
+					type : "POST", 
+					data : nparmap,
+					success : function(data) { 
+						console.log(data);
+						self.list = data.list;
+						self.index = Math.ceil(data.count / self.pageSize); 
 					}
-           
 				});
+				
 			},
+			
 			
         },
 		mounted() {
 			var self = this;
+			self.fnBoardList();
 		}  
     });
     app.mount('#app');

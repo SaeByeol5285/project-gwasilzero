@@ -20,5 +20,15 @@ public interface UserMapper {
 
 	List<Lawyer> selectLawyer(HashMap<String, Object> map);
 
+	int insertUser(HashMap<String, Object> map);
+
+	User CheckUser(HashMap<String, Object> map);
+
+	void selectUserId(HashMap<String, Object> map);
+
+	void selectUserPwd(HashMap<String, Object> map);
+	
+
+
 	
 }

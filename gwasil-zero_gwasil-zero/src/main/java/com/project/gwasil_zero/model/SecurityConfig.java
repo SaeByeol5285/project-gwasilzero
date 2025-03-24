@@ -39,4 +39,6 @@ public class SecurityConfig {
         firewall.setAllowUrlEncodedDoubleSlash(true); // // 허용
         return firewall;
     }
+    
+    
 }

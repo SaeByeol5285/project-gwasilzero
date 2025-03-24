@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project.gwasil_zero.mapper.PackageMapper">
+	<select id = "selectPackageList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Package">
+		SELECT * 
+		FROM package
+	</select>	
+	
+	<insert id="insertPayment" parameterType="hashmap">
+	    INSERT INTO PAY(ORDER_ID, PACKAGE_NAME, PAY_TIME, USER_ID, PRICE)
+	    VALUES (#{orderId}, #{packageName}, sysdate, 'test', #{packagePrice})
+	</insert>
+	
+</mapper>

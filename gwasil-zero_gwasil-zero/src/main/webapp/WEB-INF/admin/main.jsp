@@ -32,11 +32,26 @@
             };
         },
         methods: {
+            fnNewMemList(){
+				var self = this;
+				var nparmap = {
+					
+				};
+				$.ajax({
+					url:"/newMemList.dox",
+					dataType:"json",	
+					type : "POST", 
+					data : nparmap,
+					success : function(data) { 
+						console.log(data);
+					}
+				});
+            },
             
         },
         mounted() {
             var self = this;
-            
+            self.fnNewMemList();
         }
     });
     mainApp.mount('#mainApp');

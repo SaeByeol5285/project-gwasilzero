@@ -83,6 +83,7 @@
 	</style>
 </head>
 <body>
+	<jsp:include page="../common/header.jsp" />
 	<div id="app">
 		<h2>패키지 구매</h2>
 
@@ -112,6 +113,7 @@
 			</template>
 		</div>
 	</div>
+	<jsp:include page="../common/footer.jsp" />
 </body>
 <script>
 	const userCode = "imp38661450"; // 식별코드

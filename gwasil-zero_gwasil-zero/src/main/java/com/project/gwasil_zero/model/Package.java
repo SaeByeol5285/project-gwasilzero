@@ -10,5 +10,4 @@ public class Package {
 	private String packageInfo;
 	private String packageStatus;
 
-
 }

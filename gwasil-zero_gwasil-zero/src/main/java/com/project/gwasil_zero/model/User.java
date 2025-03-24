@@ -11,5 +11,5 @@ public class User {
 	private String userPhone;
 	private String userId;
 	private int reportCnt;
-
+	private String cdate;
 }

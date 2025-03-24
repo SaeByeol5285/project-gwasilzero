@@ -76,5 +76,25 @@ public class AdminController {
  		resultMap = adminService.getNewMemList(map);
  		return new Gson().toJson(resultMap);
  	}
+ 	
+ 	// 변호사 승인 대기 목록
+  	@RequestMapping(value = "/lawPassList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+  	@ResponseBody
+  	public String lawPassList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+  		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+  		
+  		resultMap = adminService.getLawPassList(map);
+  		return new Gson().toJson(resultMap);
+  	}
+  	
+//  	// 게시글 신고 목록 = 추후 작업
+//   	@RequestMapping(value = "/repoList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+//   	@ResponseBody
+//   	public String repoList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+//   		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+//   		
+//   		resultMap = adminService.getRepoList(map);
+//   		return new Gson().toJson(resultMap);
+//   	}
 		
 }

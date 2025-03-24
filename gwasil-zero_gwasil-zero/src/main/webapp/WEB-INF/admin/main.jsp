@@ -27,16 +27,28 @@
                             <th>등급</th>
                             <th>가입일자</th>
                         </tr>
-                        <tr v-for="item in list">
-                            <td>{{item.userName}}</td>
-                            <td>{{item.userId}}</td>
-                            <td>{{item.userStatus}}</td>
-                            <td>{{item.cdate}}</td>
+                        <tr v-for="uItem in uList">
+                            <td>{{uItem.userName}}</td>
+                            <td>{{uItem.userId}}</td>
+                            <td>{{uItem.userStatus}}</td>
+                            <td>{{uItem.cdate}}</td>
                         </tr>
                     </table>
                 </div>
                 <div>
                     <h3>변호사 승인 대기 목록</h3>
+                    <table>
+                        <tr>
+                            <th>이름</th>
+                            <th>아이디</th>
+                            <th>승인여부</th>
+                        </tr>
+                        <tr v-for="lawItem in lawList">
+                            <td>{{lawItem.lawyerName}}</td>
+                            <td>{{lawItem.lawyerId}}</td>
+                            <td>{{lawItem.lawyerPass}}</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>
@@ -47,7 +59,9 @@
     const mainApp = Vue.createApp({
         data() {
             return {
-                list : []
+                uList : [],
+                lawList : [],
+                repoList : []
             };
         },
         methods: {
@@ -63,15 +77,49 @@
 					data : nparmap,
 					success : function(data) { 
 						console.log(data);
-                        self.list = data.list;
+                        self.uList = data.uList;
 					}
 				});
             },
+            fnLawPassList(){
+                var self = this;
+				var nparmap = {
+					
+				};
+				$.ajax({
+					url:"/lawPassList.dox",
+					dataType:"json",	
+					type : "POST", 
+					data : nparmap,
+					success : function(data) { 
+						console.log(data);
+                        self.lawList = data.lawList;
+					}
+				});
+            },
+            // fnRepoList(){
+            //     var self = this;
+			// 	var nparmap = {
+					
+			// 	};
+			// 	$.ajax({
+			// 		url:"/repoList.dox",
+			// 		dataType:"json",	
+			// 		type : "POST", 
+			// 		data : nparmap,
+			// 		success : function(data) { 
+			// 			console.log(data);
+                        
+			// 		}
+			// 	});
+            // }   ==> 추후 작업
             
         },
         mounted() {
             var self = this;
             self.fnNewMemList();
+            self.fnLawPassList();
+            // self.fnRepoList();
         }
     });
     mainApp.mount('#mainApp');

@@ -10,7 +10,12 @@
 			FROM TBL_USER
 			ORDER BY CDATE DESC
 		)
-		WHERE ROWNUM &lt;= 10
+		WHERE ROWNUM &lt;= 5
+	</select>	
+	<select id="selectLawPassList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+		SELECT *
+		FROM LAWYER
+		WHERE LAWYER_PASS = 'N' AND ROWNUM &lt;= 5
 	</select>	
 	
 </mapper>

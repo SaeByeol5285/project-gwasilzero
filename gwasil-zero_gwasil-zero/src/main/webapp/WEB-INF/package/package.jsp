@@ -127,7 +127,7 @@
 			fnGetList() {
 				let self = this;
 				$.ajax({
-					url: "/project/package.dox",
+					url: "/package/package.dox",
 					dataType: "json",
 					type: "POST",
 					data: {},
@@ -151,7 +151,7 @@
 
 
 				const popup = window.open(
-					"/project/pay.do?name=" + encodeURIComponent(item.packageName)
+					"/project/packagePay.do?name=" + encodeURIComponent(item.packageName)
 					+ "&price=" + item.packagePrice
 					+ "&orderId=" + new Date().getTime(),
 					"결제창",

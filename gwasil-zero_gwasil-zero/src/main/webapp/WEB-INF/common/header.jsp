@@ -12,52 +12,60 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
         <title>header.jsp</title>
-        <style>
-        </style>
     </head>
 
     <body>
         <div id="header">
             <header>
+                <!-- 상단 로그인 / 고객센터 라인 -->
                 <div class="header-line">
+                    <a href="#">고객만족센터</a>
                     <a href="#">로그인 / 회원가입</a>
                 </div>
-                <a href="/" class="logo">
-                    <img src="/img/logo1.png" alt="로고 이미지">
-                </a>
-                <nav class="main-nav">
-                    <ul class="main-menu">
-                        <li class="menu-item" v-for="(item, index) in menuItems" :key="index">
-                            <a href="#" class="menu-font">{{ item }}</a>
-                            <div class="dropdown" v-if="sections[index] && sections[index].length" class="light-font">
-                                <ul>
-                                    <li v-for="(sub, i) in sections[index]" :key="i">
-                                        <a href="#">{{ sub }}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="menu-item" v-if="sessionStatus == 'A'">
-                            <a href="#" class="menu-font">관리자 페이지</a>
-                        </li>
-                    </ul>
+
+                <!-- 네비게이션 바 -->
+                <nav class="main-nav-wrapper">
+                    <div class="main-nav">
+                        <!-- 로고 -->
+                        <a href="/" class="logo">
+                            <img src="/img/logo1.png" alt="로고 이미지">
+                        </a>
+
+                        <!-- 메뉴 -->
+                        <ul class="main-menu">
+                            <li class="menu-item" v-for="(item, index) in menuItems" :key="index">
+                                <a :href="item.url" class="menu-font">{{ item.name }}</a>
+                                <div class="dropdown" v-if="sections[index] && sections[index].length">
+                                    <ul>
+                                        <li v-for="(sub, i) in sections[index]" :key="i">
+                                            <a href="#">{{ sub }}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="menu-item" v-if="sessionStatus == 'A'">
+                                <a href="#" class="menu-font">관리자 페이지</a>
+                            </li>
+                        </ul>
+                    </div>
                 </nav>
             </header>
         </div>
     </body>
 
     </html>
+
     <script>
         const header = Vue.createApp({
             data() {
                 return {
-                    // sessionStatus: 'A',
+                    sessionStatus: 'A',
                     menuItems: [
-                        '회사 소개',
-                        '상품 소개',
-                        '구성원',
-                        '게시판',
-                        '통합 자료실',
+                        { name: '회사 소개', url: '/common/introduce.do' },
+                        { name: '상품 소개', url: '' },
+                        { name: '구성원', url: '' },
+                        { name: '게시판', url: '' },
+                        { name: '통합 자료실', url: '' }
                     ],
                     sections: [
                         [],
@@ -68,10 +76,7 @@
                     ]
                 }
             },
-            mounted() {
-            }
+            mounted() { }
         });
         header.mount('#header');
     </script>
-
-    ​

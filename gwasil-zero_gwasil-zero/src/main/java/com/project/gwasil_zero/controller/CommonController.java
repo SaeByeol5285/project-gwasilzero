@@ -17,5 +17,13 @@ public class CommonController {
 
 		return "/common/main";
 	}
+	
+	@RequestMapping("/common/introduce.do")
+	public String intro(Model model) throws Exception {
+		
+		return "/introduceCo/introduceCo";
+	}
+	
+	
 
 }

@@ -18,7 +18,26 @@
                     <div>관리자페이지</div>
                     <div>Admin님</div>
                 </div>
-                <h2>관리자 메인</h2>
+                <div>
+                    <h3>최근 가입 회원</h3>
+                    <table>
+                        <tr>
+                            <th>이름</th>
+                            <th>아이디</th>
+                            <th>등급</th>
+                            <th>가입일자</th>
+                        </tr>
+                        <tr v-for="item in list">
+                            <td>{{item.userName}}</td>
+                            <td>{{item.userId}}</td>
+                            <td>{{item.userStatus}}</td>
+                            <td>{{item.cdate}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <h3>변호사 승인 대기 목록</h3>
+                </div>
             </div>
         </div>
     </div>  
@@ -28,7 +47,7 @@
     const mainApp = Vue.createApp({
         data() {
             return {
-                
+                list : []
             };
         },
         methods: {
@@ -44,6 +63,7 @@
 					data : nparmap,
 					success : function(data) { 
 						console.log(data);
+                        self.list = data.list;
 					}
 				});
             },

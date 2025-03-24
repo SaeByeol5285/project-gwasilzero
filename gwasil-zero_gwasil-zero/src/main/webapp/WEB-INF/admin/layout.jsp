@@ -11,49 +11,27 @@
 	<link rel="stylesheet" href="../css/admin-style.css">
 </head>
 <body>
-    <div id="app">
+    <div class="layout">
+        <!-- 사이드바 -->
         <div class="sidebar">
-            <button @click="fnPageMove('main')" :class="{ active: currentPage === 'main' }">
-                관리자 메인</button>
-            <button @click="fnPageMove('user')" :class="{ active: currentPage === 'user' }">
-                회원 관리</button>
-            <button @click="fnPageMove('lawyer')" :class="{ active: currentPage === 'lawyer' }">
-                변호사 관리</button>
-            <button @click="fnPageMove('board')" :class="{ active: currentPage === 'board' }">
-                게시글 관리</button>
-            <button @click="fnPageMove('chart')" :class="{ active: currentPage === 'chart' }">
-                통계</button>
-            <button @click="fnLogout">Logout</button>
+            <button onclick="fnPageMove('main')" class="${currentPage == 'main' ? 'active' : ''}">관리자 메인</button>
+            <button onclick="fnPageMove('user')" class="${currentPage == 'user' ? 'active' : ''}">회원 관리</button>
+            <button onclick="fnPageMove('lawyer')" class="${currentPage == 'lawyer' ? 'active' : ''}">변호사 관리</button>
+            <button onclick="fnPageMove('board')" class="${currentPage == 'board' ? 'active' : ''}">게시글 관리</button>
+            <button onclick="fnPageMove('chart')" class="${currentPage == 'chart' ? 'active' : ''}">통계</button>
+    
+            <button onclick="fnLogOut()" class="logout">Logout</button>
         </div>
-        <div class="content">
-            <div class="header">관리자 페이지</div>
-        </div>
+        <!-- 오른쪽 content는 각 JSP에서 직접 작성 -->
     </div>
 </body>
 </html>
 <script>
-    const app = Vue.createApp({
-        data() {
-            return {
-                currentPage: "${currentPage}",
-                sessionStatus : "${sessionStatus}"
-            };
-        },
-        methods: {
-            fnPageMove(page) {
-                location.href = "/admin/" + page + ".do?page=" + page;
-            },
-            fnLogout() {
-                location.href = "/logout";
-            }
-        },
-        mounted() {
-            let self = this;
-            if (self.sessionStatus !== 'A') {
-                alert("접근 권한이 없습니다.");
-                window.location.href = "/member/login.do";
-            }
-        }
-    });
-    app.mount('#app');
+    function fnPageMove(page) {
+        location.href = "/admin/" + page + ".do?page=" + page;
+    }
+
+    function fnLogOut() {
+        location.href = "/logout";
+    }
 </script>

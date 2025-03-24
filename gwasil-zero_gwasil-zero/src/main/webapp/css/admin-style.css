@@ -8,6 +8,10 @@ body {
     padding: 0;
     display: flex;
 }
+.layout {
+    display: flex;
+    height: 100vh;
+}
 .sidebar {
     width: 300px;
     padding: 10px;

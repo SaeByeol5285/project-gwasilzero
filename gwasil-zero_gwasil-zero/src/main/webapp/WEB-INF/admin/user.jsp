@@ -9,10 +9,17 @@
 	<title>admin main</title>
 </head>
 <body>
-    <jsp:include page="layout.jsp" />
     <div id="userApp">
-        <h2>회원관리 페이지</h2>
-
+        <div class="layout">
+            <jsp:include page="layout.jsp" />
+            <div class="content">
+                <div class="header">
+                    <div>관리자페이지</div>
+                    <div>Admin님</div>
+                </div>
+                <h2>회원관리</h2>
+            </div>
+        </div>
     </div>  
 </body>
 </html>
@@ -31,5 +38,5 @@
             
         }
     });
-    app.mount('#userApp');
+    userApp.mount('#userApp');
 </script>

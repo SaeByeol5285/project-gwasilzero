@@ -12,7 +12,7 @@ public class User {
 	private String userId;
 	private int reportCnt;
 	private String cdate;
-	
+
 	public String getUserStatus() {
 		return userStatus;
 	}
@@ -31,5 +31,4 @@ public class User {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-
 }

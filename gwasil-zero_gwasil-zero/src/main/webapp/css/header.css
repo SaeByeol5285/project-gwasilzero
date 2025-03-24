@@ -1,0 +1,165 @@
+/* =============================
+   기본 스타일
+============================= */
+.menu-font {
+	font-weight: 700;
+  }
+  
+  .light-font {
+	font-weight: 600;
+  }
+  
+  /* =============================
+	 상단 로그인/회원가입 라인
+  ============================= */
+  .header-line {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 10px 40px;
+	text-align: right;
+	font-size: 14px;
+	background-color: #fff;
+	border-bottom: 1px solid #f1f1f1;
+  }
+  
+  .header-line a {
+	margin-left: 20px;
+	text-decoration: none;
+	color: #FF5722;
+	font-weight: 600;
+  }
+  
+  /* =============================
+	 네비게이션 영역
+  ============================= */
+  .main-nav-wrapper {
+	background-color: white;
+	border-bottom: 2px solid #FF5722;
+  }
+  
+  .main-nav {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 40px;
+  
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 80px;
+  }
+  
+  .logo {
+	display: block;
+	width: 120px;
+  }
+  
+  .logo img {
+	width: 100%;
+	height: auto;
+  }
+  
+  /* =============================
+	 메뉴
+  ============================= */
+  .main-menu {
+	list-style: none;
+	display: flex;
+	gap: 100px;
+	margin: 0;
+	padding: 0;
+	align-items: center;
+  }
+  
+  .menu-item {
+	position: relative;
+	font-size: 20px;
+  }
+  
+  .menu-item > a {
+	text-decoration: none;
+	color: black;
+	transition: color 0.3s;
+  }
+  
+  .menu-item:hover > a {
+	color: #FF5722;
+  }
+  
+  /* =============================
+	 드롭다운
+  ============================= */
+  .dropdown {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	background-color: rgba(255, 87, 34, 0.9);
+	padding: 20px;
+	min-width: 150px;
+	display: none;
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+	z-index: 1000;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(10px);
+	transition: all 0.3s ease;
+  }
+  
+  .menu-item:hover .dropdown {
+	display: block;
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0);
+  }
+  
+  .dropdown ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+  }
+  
+  .dropdown ul li {
+	margin: 8px 0;
+	text-align: left;
+  }
+  
+  .dropdown ul li a {
+	color: white;
+	text-decoration: none;
+	font-size: 17px;
+  }
+  
+  .dropdown ul li a:hover {
+	color: black;
+	font-weight: 700;
+  }
+  
+  /* =============================
+	 반응형 대응
+  ============================= */
+  @media screen and (max-width: 768px) {
+	.main-menu {
+	  flex-direction: column;
+	  align-items: flex-start;
+	  gap: 0;
+	}
+  
+	.menu-item {
+	  width: 100%;
+	  border-top: 1px solid #ddd;
+	}
+  
+	.menu-item:first-child {
+	  border-top: none;
+	}
+  
+	.dropdown {
+	  position: static;
+	  display: block;
+	  width: 100%;
+	  padding: 15px;
+	  opacity: 1 !important;
+	  visibility: visible !important;
+	  transform: none !important;
+	}
+  }
+  

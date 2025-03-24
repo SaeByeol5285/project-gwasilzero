@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project.gwasil_zero.mapper.ProfileMapper">
+	<select id = "selectInnerList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+		SELECT * 
+		FROM LAWYER
+		WHERE LAWYER_STATUS = 'I'
+		ORDER BY LAWYER_NAME
+		OFFSET #{page} ROW  FETCH NEXT 4 ROWS ONLY
+	</select>	
+	
+	<select id="selectInnerCnt" parameterType="hashmap" resultType="int">
+		SELECT COUNT(*)  
+		FROM LAWYER
+		WHERE LAWYER_STATUS = 'I'
+	</select>
+</mapper>
+
+
+
+

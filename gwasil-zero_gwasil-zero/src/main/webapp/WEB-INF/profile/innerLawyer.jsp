@@ -1,0 +1,94 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="/js/page-change.js"></script>
+	<title>소속 변호사</title>
+    <link rel="stylesheet" href="../css/profile.css">
+</head>
+<body>
+	<div id="app">
+		<div class="title-area">
+            <h2>소속 변호사</h2>
+            <a href="#">개인 변호사 &gt;</a>
+        </div>
+        <div class="lawyer-list">
+            <div v-for="item in list" href="javascript:;" @click="fnView(item.lawyerId)" class="lawyer-card">
+            <div class="profile-pic">프로필 사진</div>
+            <div class="lawyer-name">{{item.lawyerName}}</div>
+            <div class="intro">소개 : {{item.lawyerInfo}}</div>
+        </div>
+        
+        <div class="search-area">
+            <label>변호사 찾기</label>
+            <input type="text" placeholder="이름 또는 키워드 입력">
+            <button>찾기</button>
+        </div>
+        
+        <div class="pagination">
+            <a v-if="page != 1" href="javascript:;" @click="fnPageMove('prev')" >&lt;</a>
+            <a href="javascript:;" v-for="num in index" @click="fnPage(num)">
+                {{num}}
+            </a>
+            <a v-if="page != index" href="javascript:;" @click="fnPageMove('next')">&gt;</a>
+        </div>
+	</div>
+</body>
+</html>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+				list : [],
+				index : 0,
+                page : 1 
+            };
+        },
+        methods: {
+            fnGetList(){
+				var self = this;
+				var nparmap = {
+					page : (self.page-1) * 4
+				};
+				$.ajax({
+					url:"/profile/innerList.dox",
+					dataType:"json",	
+					type : "POST", 
+					data : nparmap,
+					success : function(data) { 
+						console.log(data);
+						self.list = data.list;
+						self.index = Math.ceil(data.count / 4);
+					}
+				});
+            },
+			fnPage: function(num){
+                let self = this;
+                self.page = num;
+                self.fnGetList();
+            },
+            fnPageMove: function(direction){
+                let self = this;
+                if(direction == "next"){
+                    self.page++;
+                } else {
+                    self.page--;
+                }
+                self.fnGetList();
+            },
+			fnView: function(lawyerId){
+				pageChange("/profile/view.do", {lawyerId : lawyerId});
+			}
+        },
+        mounted() {
+            var self = this;
+			self.fnGetList();
+        }
+    });
+    app.mount('#app');
+</script>
+​

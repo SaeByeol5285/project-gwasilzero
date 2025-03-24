@@ -29,7 +29,7 @@
 </html>
 <script>
     function fnPageMove(page) {
-        location.href = "/admin/" + page + ".do?page=" + page;
+        location.href = "/product/" + page + ".do?page=" + page;
     }
 
     function fnLogOut() {

@@ -99,7 +99,7 @@
             fnGetList(){
 				let self = this;
 				$.ajax({
-					url:"/admin/product.dox",
+					url:"/product/product.dox",
 					dataType:"json",	
 					type : "POST", 
 					data : {},

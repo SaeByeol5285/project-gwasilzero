@@ -6,13 +6,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.project.gwasil_zero.mapper.AdminMapper;
+import com.project.gwasil_zero.mapper.ProductMapper;
 
 @Service
-public class AdminService {
+public class ProductService {
 	
 	@Autowired
-	AdminMapper adminMapper;
+	ProductMapper adminMapper;
 
 	public HashMap<String, Object> getpackageList(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub

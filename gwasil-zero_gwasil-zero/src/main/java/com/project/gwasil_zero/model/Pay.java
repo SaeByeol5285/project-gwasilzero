@@ -11,5 +11,5 @@ public class Pay {
 	private String userId;
 	private String lawyerId;
 	private String payStatus;
-
+	private String packagePrice;
 }

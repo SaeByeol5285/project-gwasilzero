@@ -11,36 +11,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
-import com.project.gwasil_zero.dao.AdminService;
+import com.project.gwasil_zero.dao.ProductService;
 
 @Controller
-public class AdminController {
+public class ProductController {
 	
 	@Autowired
-	AdminService adminService;
+	ProductService adminService;
 	
-	@RequestMapping("/admin/main.do") 
-    public String adminMain(@RequestParam(value = "page", required = false) String page, Model model) {
-		if (page == null || page.isEmpty()) {
-	        page = "main";
-	    }
-		
-		model.addAttribute("currentPage", page);
-        return "/admin/main"; 
-    }
 	
-	@RequestMapping("/admin/product.do") 
+	@RequestMapping("/product/product.do") 
 	public String adminProduct(@RequestParam(value = "page", required = false) String page, Model model) {
 		if (page == null || page.isEmpty()) {
 	        page = "main";
 	    }
 		
 		model.addAttribute("currentPage", page);
-        return "/admin/product"; 
+        return "/product/product"; 
     }
 	
 	// 패키지 목록 (PackageController)
-	@RequestMapping(value = "/admin/product.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/product/product.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String packageList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();

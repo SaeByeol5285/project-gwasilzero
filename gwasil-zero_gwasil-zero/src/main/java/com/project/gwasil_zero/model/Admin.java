@@ -1,4 +1,4 @@
-package com.example.gwasil_zero.model;
+package com.project.gwasil_zero.model;
 
 import lombok.Data;
 

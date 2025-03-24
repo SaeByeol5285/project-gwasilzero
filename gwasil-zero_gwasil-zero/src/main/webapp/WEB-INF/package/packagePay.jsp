@@ -9,37 +9,71 @@
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
     <title>결제창</title>
     <style>
+        :root {
+            --main-color: #ff5c00; /* 코랄 톤: 밝고 부드러운 주황 */
+            --gray-bg: #f8f8f8;
+            --text-dark: #333;
+            --text-subtle: #666;
+        }
+
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Noto Sans KR', sans-serif;
             text-align: center;
             padding-top: 60px;
-            background-color: #f4f4f4;
+            background-color: var(--gray-bg);
+            color: var(--text-dark);
         }
+
+        h2 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: var(--text-dark);
+        }
+
         .info {
             font-size: 18px;
             margin: 10px 0;
+            color: var(--text-subtle); /* 회색으로 눈 편하게 */
         }
+
+        .info strong {
+            color: var(--text-dark); /* 강조는 그냥 검정 계열로 */
+        }
+
         .pay-btn {
-            margin-top: 30px;
-            padding: 10px 20px;
+            margin-top: 40px;
+            padding: 12px 28px;
             font-size: 16px;
+            font-weight: 500;
             border: none;
             border-radius: 8px;
-            background-color: #007bff;
+            background-color: var(--main-color);
             color: white;
             cursor: pointer;
+            transition: background-color 0.2s ease;
         }
+
         .pay-btn:hover {
-            background-color: #0056b3;
+            background-color: #e76a3c; /* hover용 조금 더 진한 코랄 */
+        }
+
+    
+        /* 반응형 약간만 고려 */
+        @media (max-width: 480px) {
+            .pay-btn {
+                width: 80%;
+            }
         }
     </style>
+    
 </head>
 <body>
     <div id="app">
         <h2>결제 정보를 확인해주세요.</h2>
-        <div class="info">🧾 주문번호: <strong>{{ orderId }}</strong></div>
-        <div class="info">📦 패키지명: <strong>{{ packageName }}</strong></div>
-        <div class="info">💰 금액: <strong>{{ price.toLocaleString() }} 원</strong></div>
+        <div class="info">🧾 주문번호 : <strong>{{ orderId }}</strong></div>
+        <div class="info">📦 패키지명 : <strong>{{ packageName }}</strong></div>
+        <div class="info">💰 금액 : <strong>{{ price.toLocaleString() }} 원</strong></div>
 
         <button class="pay-btn" @click="payNow">결제하기</button>
     </div>
@@ -93,7 +127,7 @@
                         success: function(data) {
                             console.log("결제 내역 저장 완료:", data);
                             window.close();
-                            location.href = "/project/package.do";
+                            location.href = "/package/package.do";
                         },
                         error: function(err) {
                             console.error("결제 내역 저장 실패", err);

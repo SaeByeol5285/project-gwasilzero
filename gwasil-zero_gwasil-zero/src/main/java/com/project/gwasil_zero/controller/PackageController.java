@@ -21,22 +21,22 @@ public class PackageController {
 	PackageService packageService;
 	
 	// 패키지 구매
-	@RequestMapping("/project/package.do")
+	@RequestMapping("/package/package.do")
 	public String packageList(Model model) throws Exception {
 
-		return "/package";
+		return "/package/package";
 	}
 	
 	// 결제 창
-	@RequestMapping("/project/pay.do")
+	@RequestMapping("/package/packagePay.do")
 	public String pay(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 		request.setAttribute("map", map);
 
-		return "/packagePay";
+		return "/package/packagePay";
 	}
 
 	
-	@RequestMapping(value = "/project/package.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/package/package.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String packageList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();

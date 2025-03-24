@@ -89,10 +89,12 @@
                 <a @click="fnJoin">회원가입</a>
                 <a @click="searchUser">아이디/비밀번호 찾기</a>
             </div>
-            <div class="social-login">
+            <!-- <div>
                 <a :href="location">
                     <img src="../img/naver_login.png">
                 </a>
+            </div> -->
+            <div>
                 <a :href="location">
                     <img src="../img/kakao_login.png">
                 </a>
@@ -105,7 +107,6 @@
         const app = Vue.createApp({
             data() {
                 return {
-
                     id: "",
                     pwd: "",
                     location: "${location}"
@@ -127,7 +128,6 @@
                             console.log(data);
                             if (data.result == "success") {
                                 alert("로그인 성공");
-                                location.href = "/main.do";
                             } else {
                                 alert("오류발생");
                             }
@@ -143,8 +143,7 @@
             },
             mounted() {
                 var self = this;
-                const queryParams = new URLSearchParams(window.location.search);
-                self.code = queryParams.get('code') || '';
+                console.log(this.location);
             }
         });
         app.mount('#app');

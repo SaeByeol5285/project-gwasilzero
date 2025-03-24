@@ -33,18 +33,17 @@ public class UserController {
 	@Value("${client_id}")
 	private String client_id;
 
-	@Value("${redirect_uri}")
-	private String redirect_uri;
+    @Value("${redirect_uri}")
+    private String redirect_uri;
 	
-
-	@RequestMapping("/user/login.do")
-	public String login(Model model) throws Exception {
-		String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + client_id
-				+ "&redirect_uri=" + redirect_uri;
-		model.addAttribute("location", location);
-
-		return "/user/user-login";
-	}
+    // 로그인
+    @RequestMapping("/user/login.do") 
+    public String login(Model model) throws Exception{
+		String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+client_id+"&redirect_uri="+redirect_uri;
+        model.addAttribute("location", location);
+		
+        return "/user/user-login"; 
+    }
 
 	// 회원가입
 	@RequestMapping("/user/add.do")
@@ -124,48 +123,48 @@ public class UserController {
 	@ResponseBody
 	public String kakao(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-
+		
 		String tokenUrl = "https://kauth.kakao.com/oauth/token";
 
-		RestTemplate restTemplate = new RestTemplate();
-		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("grant_type", "authorization_code");
-		params.add("client_id", client_id);
-		params.add("redirect_uri", redirect_uri);
-		params.add("code", (String) map.get("code"));
+        RestTemplate restTemplate = new RestTemplate();
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", client_id);
+        params.add("redirect_uri", redirect_uri);
+        params.add("code", (String)map.get("code"));
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
-		ResponseEntity<Map> response = restTemplate.postForEntity(tokenUrl, request, Map.class);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+        ResponseEntity<Map> response = restTemplate.postForEntity(tokenUrl, request, Map.class);
 
-		Map<String, Object> responseBody = response.getBody();
-//		        return (String) responseBody.get("access_token");
-
-		System.out.println((String) responseBody.get("access_token"));
-		resultMap = (HashMap<String, Object>) getUserInfo((String) responseBody.get("access_token"));
-		System.out.println(resultMap);
+        Map<String, Object> responseBody = response.getBody();
+//        return (String) responseBody.get("access_token");
+        
+        System.out.println((String) responseBody.get("access_token"));
+        resultMap = (HashMap<String, Object>) getUserInfo((String) responseBody.get("access_token"));
+        System.out.println(resultMap);
 		return new Gson().toJson(resultMap);
 	}
-
+	
 	private Map<String, Object> getUserInfo(String accessToken) {
-		String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
+	    String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
 
-		RestTemplate restTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-		headers.setBearerAuth(accessToken);
-		HttpEntity<String> entity = new HttpEntity<>(headers);
+	    RestTemplate restTemplate = new RestTemplate();
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.setBearerAuth(accessToken);
+	    HttpEntity<String> entity = new HttpEntity<>(headers);
 
-		ResponseEntity<String> response = restTemplate.exchange(userInfoUrl, HttpMethod.GET, entity, String.class);
+	    ResponseEntity<String> response = restTemplate.exchange(userInfoUrl, HttpMethod.GET, entity, String.class);
 
-		try {
-			ObjectMapper objectMapper = new ObjectMapper();
-			return objectMapper.readValue(response.getBody(), Map.class);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null; // 예외 발생 시 null 반환
-		}
+	    try {
+	        ObjectMapper objectMapper = new ObjectMapper();
+	        return objectMapper.readValue(response.getBody(), Map.class);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null; // 예외 발생 시 null 반환
+	    }
 	}
 	
 }

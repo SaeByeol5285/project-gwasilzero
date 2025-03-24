@@ -121,9 +121,6 @@
 				비밀번호 확인 : <input v-model="user.pwd2" type="password" placeholder="비밀번호 확인">
 			</div>
 			<div>
-				이메일 : <input v-model="user.email" placeholder="이메일 입력">
-			</div>
-			<div>
 				핸드폰 번호 : <input v-model="user.phone" placeholder="번호 입력">
 				<button @click="fnSmsAuth">인증요청</button>
 			</div>
@@ -150,7 +147,6 @@
 						userId: "",
 						pwd: "",
 						pwd2: "",
-						email: "",
 						phoneNum: ""
 					},
 					authNum: "",

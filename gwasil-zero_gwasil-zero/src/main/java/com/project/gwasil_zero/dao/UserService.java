@@ -47,16 +47,7 @@ public class UserService {
 		return resultMap;
 	}
 
-	public HashMap<String, Object> addUser(HashMap<String, Object> map) {
-		// TODO Auto-generated method stub
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		String hashPwd = passwordEncoder.encode((String)map.get("pwd"));
-		map.put("pwd", hashPwd);
-		int num = userMapper.insertUser(map);
-		resultMap.put("result", "success");
-		
-		return resultMap;
-	}
+	
 
 	public HashMap<String, Object> searchUser(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub

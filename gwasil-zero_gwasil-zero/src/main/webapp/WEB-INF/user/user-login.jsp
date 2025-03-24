@@ -7,6 +7,10 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <link rel="stylesheet" href="/css/main.css">
+		<link rel="stylesheet" href="/css/common.css">
+		<script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
         <title>sample.jsp</title>
     </head>
 
@@ -72,6 +76,8 @@
     </style>
 
     <body>
+        <jsp:include page="../common/header.jsp" />
+        <link rel="stylesheet" href="/css/common.css">
         <div id="app">
             <h1>로그인</h1>
             <div>
@@ -100,6 +106,7 @@
                 </a>
             </div>
         </div>
+        <jsp:include page="../common/footer.jsp" />
     </body>
 
     </html>
@@ -128,6 +135,7 @@
                             console.log(data);
                             if (data.result == "success") {
                                 alert("로그인 성공");
+                                location.href="/common/main.do"
                             } else {
                                 alert("오류발생");
                             }
@@ -135,7 +143,7 @@
                     });
                 },
                 fnJoin() {
-                    location.href = "/user/add.do";
+                    location.href = "/join/select.do";
                 },
                 searchUser() {
                     location.href = "/user/search.do"; // 아이디/비밀번호 찾기 페이지

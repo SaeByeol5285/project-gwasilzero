@@ -25,10 +25,7 @@
 		FROM LAWYER
 		WHERE lawyer_id = #{id}
 	</select>
-	<insert id="insertUser" parameterType="hashmap">
-		INSERT INTO TBL_USER(USER_NAME,USER_PASSWORD,USER_PHONE,USER_ID)
-		VALUES (#{userName}, #{pwd}, #{phone}, #{userId})
-	</insert>
+	
 	<select id = "CheckUser" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
 		SELECT *
 		FROM TBL_USER

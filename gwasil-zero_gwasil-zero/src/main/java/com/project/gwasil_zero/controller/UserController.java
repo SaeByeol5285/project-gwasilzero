@@ -33,43 +33,37 @@ public class UserController {
 	@Value("${client_id}")
 	private String client_id;
 
-    @Value("${redirect_uri}")
-    private String redirect_uri;
-	
-    // 로그인
-    @RequestMapping("/user/login.do") 
-    public String login(Model model) throws Exception{
-		String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+client_id+"&redirect_uri="+redirect_uri;
-        model.addAttribute("location", location);
-		
-        return "/user/user-login"; 
-    }
+	@Value("${redirect_uri}")
+	private String redirect_uri;
 
-	// 회원가입
-	@RequestMapping("/user/add.do")
-	public String join(Model model) throws Exception {
+	// 로그인
+	@RequestMapping("/user/login.do")
+	public String login(Model model) throws Exception {
+		String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + client_id
+				+ "&redirect_uri=" + redirect_uri;
+		model.addAttribute("location", location);
 
-		return "/user/user-add";
+		return "/user/user-login";
 	}
-	
+
 	// 아이디 비밀번호 찾기
-		@RequestMapping("/user/search.do")
-		public String search(Model model) throws Exception {
+	@RequestMapping("/user/search.do")
+	public String search(Model model) throws Exception {
 
-			return "/user/user-search";
-		}
-		
-		@RequestMapping("/searchId.do")
-		public String id(Model model) throws Exception {
+		return "/user/user-search";
+	}
 
-			return "/id";
-		}
-		
-		@RequestMapping("/searchPwd.do")
-		public String pwd(Model model) throws Exception {
+	@RequestMapping("/searchId.do")
+	public String id(Model model) throws Exception {
 
-			return "/pwd";
-		}
+		return "/id";
+	}
+
+	@RequestMapping("/searchPwd.do")
+	public String pwd(Model model) throws Exception {
+
+		return "/pwd";
+	}
 
 	// 로그인
 	@RequestMapping(value = "/user/user-login.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -81,33 +75,24 @@ public class UserController {
 		return new Gson().toJson(resultMap);
 	}
 
-	// 회원가입
-	@RequestMapping(value = "/user/user-add.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	@ResponseBody
-	public String join(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-
-		resultMap = userService.addUser(map);
-		return new Gson().toJson(resultMap);
-	}
 	// 아이디 찾기
 	@RequestMapping(value = "/user/user-search.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String findId(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-	    HashMap<String, Object> resultMap = new HashMap<>();
-	    resultMap = userService.selectUserId(map);
-	    return new Gson().toJson(resultMap);
+		HashMap<String, Object> resultMap = new HashMap<>();
+		resultMap = userService.selectUserId(map);
+		return new Gson().toJson(resultMap);
 	}
 
 	// 비밀번호 찾기
 	@RequestMapping(value = "/user/user-search-pwd.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String findPwd(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-	    HashMap<String, Object> resultMap = new HashMap<>();
-	    resultMap = userService.selectUserPwd(map);
-	    return new Gson().toJson(resultMap);
+		HashMap<String, Object> resultMap = new HashMap<>();
+		resultMap = userService.selectUserPwd(map);
+		return new Gson().toJson(resultMap);
 	}
-	
+
 	// 중복체크
 	@RequestMapping(value = "/user/check.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
@@ -123,49 +108,48 @@ public class UserController {
 	@ResponseBody
 	public String kakao(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
+
 		String tokenUrl = "https://kauth.kakao.com/oauth/token";
 
-        RestTemplate restTemplate = new RestTemplate();
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", client_id);
-        params.add("redirect_uri", redirect_uri);
-        params.add("code", (String)map.get("code"));
+		RestTemplate restTemplate = new RestTemplate();
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("grant_type", "authorization_code");
+		params.add("client_id", client_id);
+		params.add("redirect_uri", redirect_uri);
+		params.add("code", (String) map.get("code"));
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
-        ResponseEntity<Map> response = restTemplate.postForEntity(tokenUrl, request, Map.class);
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+		ResponseEntity<Map> response = restTemplate.postForEntity(tokenUrl, request, Map.class);
 
-        Map<String, Object> responseBody = response.getBody();
+		Map<String, Object> responseBody = response.getBody();
 //        return (String) responseBody.get("access_token");
-        
-        System.out.println((String) responseBody.get("access_token"));
-        resultMap = (HashMap<String, Object>) getUserInfo((String) responseBody.get("access_token"));
-        System.out.println(resultMap);
+
+		System.out.println((String) responseBody.get("access_token"));
+		resultMap = (HashMap<String, Object>) getUserInfo((String) responseBody.get("access_token"));
+		System.out.println(resultMap);
 		return new Gson().toJson(resultMap);
 	}
-	
+
 	private Map<String, Object> getUserInfo(String accessToken) {
-	    String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
+		String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
 
-	    RestTemplate restTemplate = new RestTemplate();
-	    HttpHeaders headers = new HttpHeaders();
-	    headers.setBearerAuth(accessToken);
-	    HttpEntity<String> entity = new HttpEntity<>(headers);
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setBearerAuth(accessToken);
+		HttpEntity<String> entity = new HttpEntity<>(headers);
 
-	    ResponseEntity<String> response = restTemplate.exchange(userInfoUrl, HttpMethod.GET, entity, String.class);
+		ResponseEntity<String> response = restTemplate.exchange(userInfoUrl, HttpMethod.GET, entity, String.class);
 
-	    try {
-	        ObjectMapper objectMapper = new ObjectMapper();
-	        return objectMapper.readValue(response.getBody(), Map.class);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return null; // 예외 발생 시 null 반환
-	    }
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			return objectMapper.readValue(response.getBody(), Map.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null; // 예외 발생 시 null 반환
+		}
 	}
-	
+
 }
-	

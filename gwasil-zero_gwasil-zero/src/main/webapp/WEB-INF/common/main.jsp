@@ -107,10 +107,30 @@
 				};
 			},
 			methods: {
-
+				fnKaKao() {
+                    var self = this;
+                    var nparmap = {
+                        code: self.code
+                    };
+                    $.ajax({
+                        url: "/kakao.dox",
+                        dataType: "json",
+                        type: "POST",
+                        data: nparmap,
+                        success: function (data) {
+                            console.log(data);
+                        }
+                    });
+                }
 			},
 			mounted() {
 				var self = this;
+				const queryParams = new URLSearchParams(window.location.search);
+                self.code = queryParams.get('code') || '';
+                console.log(self.code);
+                if (self.code != "") {
+                    self.fnKaKao();
+                }
 				const swiper = new Swiper('.mySwiper', {
 					slidesPerView: 3,
 					spaceBetween: 30,
@@ -128,7 +148,8 @@
 						prevEl: '.swiper-button-prev',
 					},
 				});
-			}
+			},
+			
 		});
 		app.mount('#app');
 	</script>

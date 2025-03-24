@@ -8,6 +8,10 @@ body {
     padding: 0;
     display: flex;
 }
+.layout {
+    display: flex;
+    height: 100vh;
+}
 .sidebar {
     width: 300px;
     padding: 10px;
@@ -55,7 +59,7 @@ body {
     background: #d3d3d3;
     padding: 20px;
     margin: 10px 0;
-    height: 200px;
+
 }
 .more {
     text-align: right;

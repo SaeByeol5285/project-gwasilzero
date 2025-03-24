@@ -9,8 +9,8 @@
 	</select>	
 	
 	<insert id="insertPayment" parameterType="hashmap">
-	    INSERT INTO PAY(ORDER_ID, PACKAGE_NAME, PAY_TIME, USER_ID)
-	    VALUES (#{orderId}, #{packageName}, sysdate, 'test')
+	    INSERT INTO PAY(ORDER_ID, PACKAGE_NAME, PAY_TIME, USER_ID, PRICE)
+	    VALUES (#{orderId}, #{packageName}, sysdate, 'test', #{packagePrice})
 	</insert>
 	
 </mapper>

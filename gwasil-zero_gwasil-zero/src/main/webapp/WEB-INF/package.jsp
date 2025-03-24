@@ -94,7 +94,7 @@
 					<div class="package-title">{{ item.packageName }}</div>
 					<div class="package-info">{{ item.packageInfo }}</div>
 					<div class="package-price">₩{{ item.packagePrice.toLocaleString() }}</div>
-					<a href="javascript:;" @click="fnBuy" class="buy-btn">구매하기</a>
+					<a href="javascript:;" @click="fnBuy(item)" class="buy-btn">구매하기</a>
 				</div>
 			</template>
 		</div>
@@ -107,7 +107,7 @@
 					<div class="package-title">{{ item.packageName }}</div>
 					<div class="package-info">{{ item.packageInfo }}</div>
 					<div class="package-price">₩{{ item.packagePrice.toLocaleString() }}</div>
-					<a href="javascript:;"  @click="fnBuy" class="buy-btn">구매하기</a>
+					<a href="javascript:;" @click="fnBuy(item)" class="buy-btn">구매하기</a>
 				</div>
 			</template>
 		</div>
@@ -142,44 +142,23 @@
 				});
 			},
 
-			fnBuy() {
-                let self = this;
-                IMP.request_pay({
-				    pg: "kakaopay", // PG Provider
-				    pay_method: "card",
-				    merchant_uid: "merchant_" + new Date().getTime(), // 주문 아이디(ORDER_ID)
-				    name: self.list[0].packageName,
-				    amount: self.list[0].packagePrice,
-				    buyer_tel: "010-0000-0000",
-				  }	, function (rsp) { // callback
-			   	      if (rsp.success) {
-						alert("결제되었습니다!");
-                        self.fnSave(rsp.merchant_uid);
-			   	      } else {
-			   	        // 결제 실패 시
-						alert("실패");
-			   	      }
-		   	  	});
-            },
-            
-            fnSave(merchant_uid) {
-                let self = this;
-                var nparmap = {
-					orderId : self.merchant_uid,
-					packageName : self.name,
-					// userId : self.userId
-                    packagePrice : self.amount,
-                 };
-                $.ajax({
-                    url:"/payment.dox",
-                    dataType:"json",	
-                    type : "POST", 
-                    data : nparmap,
-                    success : function(data) { 
-                        console.log(data);
-                    }
-                });
-            }
+			fnBuy(item) {
+
+				var popupW = 500;
+				var popupH = 500;
+				var left = Math.ceil((window.screen.width - popupW)/2);
+				var top = Math.ceil((window.screen.height - popupH)/2);
+
+
+				const popup = window.open(
+					"/project/pay.do?name=" + encodeURIComponent(item.packageName)
+					+ "&price=" + item.packagePrice
+					+ "&orderId=" + new Date().getTime(),
+					"결제창",
+					`width=` + popupW + `,height=` + popupH + `,left=` + left + `,top=` + top
+				);
+			}
+
 		},
 		mounted() {
 			this.fnGetList();

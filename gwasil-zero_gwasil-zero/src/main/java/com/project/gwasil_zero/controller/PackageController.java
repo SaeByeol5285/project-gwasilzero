@@ -13,16 +13,28 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.gson.Gson;
 import com.project.gwasil_zero.dao.PackageService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 public class PackageController {
 	@Autowired
 	PackageService packageService;
 	
+	// 패키지 구매
 	@RequestMapping("/project/package.do")
 	public String packageList(Model model) throws Exception {
 
 		return "/package";
 	}
+	
+	// 결제 창
+	@RequestMapping("/project/pay.do")
+	public String pay(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		request.setAttribute("map", map);
+
+		return "/packagePay";
+	}
+
 	
 	@RequestMapping(value = "/project/package.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody

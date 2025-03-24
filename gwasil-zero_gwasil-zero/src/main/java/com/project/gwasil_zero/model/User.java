@@ -12,4 +12,5 @@ public class User {
 	private String userId;
 	private int reportCnt;
 	private String cdate;
+  
 }

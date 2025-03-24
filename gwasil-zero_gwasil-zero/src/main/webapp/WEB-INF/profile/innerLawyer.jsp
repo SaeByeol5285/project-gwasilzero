@@ -22,13 +22,15 @@
             <div class="lawyer-name">{{item.lawyerName}}</div>
             <div class="intro">소개 : {{item.lawyerInfo}}</div>
         </div>
-        
-        <div class="search-area">
-            <label>변호사 찾기</label>
-            <input type="text" placeholder="이름 또는 키워드 입력">
-            <button>찾기</button>
+        <div class="search-bar">
+            <select v-model="searchOption" class="select-box">
+                <option value="all">::전체::</option>
+                <option value="name">이름</option>
+                <option value="txt">키워드</option>
+            </select>
+            <input v-model="keyword" @keyup.enter="fnGetList" placeholder="검색어" class="input-box">
+            <button @click="fnGetList" class="btn">검색</button>
         </div>
-        
         <div class="pagination">
             <a v-if="page != 1" href="javascript:;" @click="fnPageMove('prev')" >&lt;</a>
             <a href="javascript:;" v-for="num in index" @click="fnPage(num)">
@@ -44,6 +46,8 @@
         data() {
             return {
 				list : [],
+				keyword : "",
+				searchOption : "all",
 				index : 0,
                 page : 1 
             };
@@ -52,6 +56,8 @@
             fnGetList(){
 				var self = this;
 				var nparmap = {
+					keyword : self.keyword,
+					searchOption : self.searchOption,
 					page : (self.page-1) * 4
 				};
 				$.ajax({

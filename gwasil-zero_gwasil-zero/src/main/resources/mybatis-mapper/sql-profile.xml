@@ -6,7 +6,18 @@
 	<select id = "selectInnerList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
 		SELECT * 
 		FROM LAWYER
-		WHERE LAWYER_STATUS = 'I'
+		WHERE 1=1 
+			AND LAWYER_STATUS = 'I'
+		<if test="searchOption != null and searchOption == 'all'">
+			AND (LAWYER_NAME LIKE '%' || #{keyword} || '%'
+					OR LAWYER_INFO LIKE '%' || #{keyword} || '%')
+		</if>
+		<if test="searchOption != null and searchOption == 'name'">
+			AND LAWYER_NAME LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="searchOption != null and searchOption == 'txt'">
+			AND LAWYER_INFO LIKE '%' || #{keyword} || '%'
+		</if>
 		ORDER BY LAWYER_NAME
 		OFFSET #{page} ROW  FETCH NEXT 4 ROWS ONLY
 	</select>	
@@ -14,7 +25,18 @@
 	<select id="selectInnerCnt" parameterType="hashmap" resultType="int">
 		SELECT COUNT(*)  
 		FROM LAWYER
-		WHERE LAWYER_STATUS = 'I'
+		WHERE 1=1 
+			AND LAWYER_STATUS = 'I'
+		<if test="searchOption != null and searchOption == 'all'">
+			AND (LAWYER_NAME LIKE '%' || #{keyword} || '%'
+					OR LAWYER_INFO LIKE '%' || #{keyword} || '%')
+		</if>
+		<if test="searchOption != null and searchOption == 'name'">
+			AND LAWYER_NAME LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="searchOption != null and searchOption == 'txt'">
+			AND LAWYER_INFO LIKE '%' || #{keyword} || '%'
+		</if>
 	</select>
 </mapper>
 

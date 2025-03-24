@@ -1,0 +1,52 @@
+.main-container {
+    max-width: 1200px;
+    /* or 1000~1280px 정도도 좋아 */
+    margin: 0 auto;
+    /* 가운데 정렬 */
+    padding: 40px 20px;
+    /* 양쪽 여백 */
+}
+
+.swiper-slide {
+    text-align: center;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.swiper-slide img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.question-board {
+    padding: 40px;
+    background: #f8f8f8;
+}
+
+.question-list {
+    list-style: none;
+    padding: 0;
+}
+
+.question-list li {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.ask-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #ff5c00;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}

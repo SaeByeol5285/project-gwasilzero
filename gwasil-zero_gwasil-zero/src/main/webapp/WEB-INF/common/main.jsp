@@ -1,55 +1,121 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-	<title>main.jsp</title>
-</head>
-<style>
-</style>
-<body>
-	<jsp:include page="../common/header.jsp" />
-	<div id="app">
-		본문
-	</div>
-	<jsp:include page="../common/footer.jsp" />
-</body>
-</html>
-<script>
-    const app = Vue.createApp({
-        data() {
-            return {
-				list : []
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+	<!DOCTYPE html>
+	<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<script src="https://code.jquery.com/jquery-3.7.1.js"
+			integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+		<link rel="stylesheet" href="/css/main.css">
+		<script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css"/>
+
+		<title>main.jsp</title>
+	</head>
+	<style>
+	</style>
+
+	<body>
+		<jsp:include page="../common/header.jsp" />
+		<div id="app">
+			<div class="main-container">
+				<div class="swiper mySwiper">
+					<div class="swiper-wrapper">
+						<div class="swiper-slide">
+							<img src="../../img/65c09ad0057892157e091fd4-original-1707121361363.jpg" alt="변호사3" />
+							<p><strong>김묘연</strong></p>
+							<p>유턴 사고 전문 변호사</p>
+						</div>
+						<div class="swiper-slide">
+							<img src="../../img/6743ddaac975c372bdf11b55-original-1732500907700.jpg" alt="변호사3" />
+							<p><strong>한보라</strong></p>
+							<p>좌회전 사고 전문 변호사</p>
+						</div>
+						<div class="swiper-slide">
+							<img src="../../img/662b42288c5ed98ed456f0ed-original-1714111016988.jpg" alt="변호사3" />
+							<p><strong>정다미</strong></p>
+							<p>음주운전 사고 전문 변호사</p>
+						</div>
+						<div class="swiper-slide">
+							<img src="../../img/63e0b8862df2010046cbcb4a-original-1675671686593.jpg" alt="변호사1" />
+							<p><strong>홍길동</strong></p>
+							<p>차대차 전문 변호사</p>
+						</div>
+						<div class="swiper-slide">
+							<img src="../../img/66432819ad4f841ac7c5d8a7-original-1715677210341.jpg" alt="변호사2" />
+							<p><strong>김영희</strong></p>
+							<p>무단횡단 전문 변호사</p>
+						</div>
+						<div class="swiper-slide">
+							<img src="../../img/676a1679502ca3b171b5cb6d-original-1735005818097.JPG" alt="변호사3" />
+							<p><strong>이철수</strong></p>
+							<p>우회전 사고 전문 변호사</p>
+						</div>
+					</div>
+	
+					<div class="swiper-button-next"></div>
+					<div class="swiper-button-prev"></div>
+					<div class="swiper-pagination"></div>
+				</div>
+	
+				<section class="question-board">
+					<h2>최근 질문</h2>
+					<ul class="question-list">
+						<li>
+							<h3>[형사] 블랙박스 영상에 잡힌 사고, 과실이 있을까요?</h3>
+							<p>2025.03.23</p>
+						</li>
+						<li>
+							<h3>[민사] 차량 파손 보상을 받으려면 어떻게 해야 하나요?</h3>
+							<p>2025.03.22</p>
+						</li>
+						<li>
+							<h3>[가사] 이혼 후 양육권에 대해 궁금합니다</h3>
+							<p>2025.03.21</p>
+						</li>
+					</ul>
+					<button class="ask-btn">질문하러 가기</button>
+				</section>
+			</div>
+		</div>
+		<jsp:include page="../common/footer.jsp" />
+	</body>
+
+	</html>
+	<script>
+
+		const app = Vue.createApp({
+			data() {
+				return {
+					list: []
+
+				};
+			},
+			methods: {
 				
-            };
-        },
-        methods: {
-            fnGetList(){
+			},
+			mounted() {
 				var self = this;
-				var nparmap = {};
-				$.ajax({
-					url:"/project/list.dox",
-					dataType:"json",	
-					type : "POST", 
-					data : nparmap,
-					success : function(data) { 
-						console.log(data);
-						if(data.result == "success"){
-							self.list = data.list;
-						} else {
-							alert("오류발생");
-						}
-					}
+				const swiper = new Swiper('.mySwiper', {
+					slidesPerView: 3,
+					spaceBetween: 30,
+					loop: true,
+					autoplay: {
+                        delay: 2000, // 3초마다 자동으로 전환
+                        disableOnInteraction: false, // 사용자가 슬라이드를 조작해도 자동 전환 유지
+                    },
+					pagination: {
+						el: '.swiper-pagination',
+						clickable: true,
+					},
+					navigation: {
+						nextEl: '.swiper-button-next',
+						prevEl: '.swiper-button-prev',
+					},
 				});
-            }
-        },
-        mounted() {
-            var self = this;
-        }
-    });
-    app.mount('#app');
-</script>
-​
+			}
+		});
+		app.mount('#app');
+	</script>
+	​

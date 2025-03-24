@@ -19,10 +19,13 @@
     <body>
         <div id="header">
             <header>
+                <div class="header-line">
+                    <a href="#">로그인 / 회원가입</a>
+                </div>
+                <a href="/" class="logo">
+                    <img src="/img/logo1.png" alt="로고 이미지">
+                </a>
                 <nav class="main-nav">
-                    <a href="/" class="logo">
-                        <img src="/img/logo1.png" alt="로고 이미지">
-                    </a>
                     <ul class="main-menu">
                         <li class="menu-item" v-for="(item, index) in menuItems" :key="index">
                             <a href="#" class="menu-font">{{ item }}</a>
@@ -35,7 +38,7 @@
                             </div>
                         </li>
                         <li class="menu-item" v-if="sessionStatus == 'A'">
-                            <a href="#">관리자 페이지</a>
+                            <a href="#" class="menu-font">관리자 페이지</a>
                         </li>
                     </ul>
                 </nav>
@@ -48,23 +51,20 @@
         const header = Vue.createApp({
             data() {
                 return {
-                    // sessionStatus: 'A', // 실제 사용 시 서버로부터 받은 값으로 대체
+                    // sessionStatus: 'A',
                     menuItems: [
                         '회사 소개',
                         '상품 소개',
                         '구성원',
                         '게시판',
                         '통합 자료실',
-                        '로그인',
                     ],
                     sections: [
                         [],
                         ['패키지 소개', '물품 소개'],
                         ['소속 변호사', '개인 변호사'],
                         [],
-                        ['공지사항', 'Q & A', '사건 종류 가이드'],
-                        ['로그인', '회원가입'],
-                        []
+                        ['공지사항', 'Q & A', '사건 종류 가이드']
                     ]
                 }
             },

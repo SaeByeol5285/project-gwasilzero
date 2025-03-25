@@ -6,6 +6,7 @@
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- alert/confirm 창 수정용 -->
 	<title>admin product</title>
 	<style>
 		table {
@@ -44,7 +45,7 @@
 <body>
     <div id="mainApp">
         <div class="layout">
-            <jsp:include page="layout.jsp" />
+            <jsp:include page="../admin/layout.jsp" />
     
             <div class="content">
                 <div class="header">
@@ -67,7 +68,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="(item, index) in list" :key="index">
-                                <td><input type="checkbox" :value="item.packageNo" /></td>
+                                <td><input type="checkbox" :value="item.packageName" v-model="selectList"/></td>
                                 <td>{{ item.packageName }}</td>
                                 <td>{{ item.packageInfo }}</td>
                                 <td>{{ item.packagePrice.toLocaleString() }}원</td>
@@ -78,8 +79,8 @@
 
                     <!-- 버튼 영역 -->
                     <div class="btn-area">
-                        <button class="btn">선택 삭제</button>
-                        <button class="btn">신규 등록</button>
+                        <button class="btn" @click="fnDelete">선택 삭제</button>
+                        <button class="btn" @click="fnAdd">신규 등록</button>
                     </div>
                 </div>
             </div>
@@ -92,14 +93,15 @@
     const mainApp = Vue.createApp({
         data() {
             return {
-				list : []
+				list : [],
+                selectList : []
             };
         },
         methods: {
             fnGetList(){
 				let self = this;
 				$.ajax({
-					url:"/product/product.dox",
+					url:"/admin/product.dox",
 					dataType:"json",	
 					type : "POST", 
 					data : {},
@@ -108,10 +110,66 @@
 						if(data.result == "success"){
 							self.list = data.list;
 						} else {
-							alert("오류발생");
+							alert("리스트를 불러오지 못했어요.");
 						}
 					}
 				});
+            },
+
+            fnDelete() {
+                var self = this;
+
+                // 선택 항목 없을 때 안내
+                if (self.selectList.length === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '상품 선택 필요',
+                        text: '삭제할 상품을 선택해주세요.',
+                        confirmButtonText: '확인'
+                    });
+                    return;
+                }
+
+                // 삭제 확인
+                Swal.fire({
+                    title: '정말로 삭제하시겠습니까?',
+                    text: '선택한 상품은 삭제 후 복구할 수 없습니다.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#aaa',
+                    confirmButtonText: '삭제',
+                    cancelButtonText: '취소'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // 삭제 요청
+                        var nparmap = {
+                            selectList: JSON.stringify(self.selectList)
+                        };
+
+                        $.ajax({
+                            url: "/admin/product/remove.dox",
+                            dataType: "json",
+                            type: "POST",
+                            data: nparmap,
+                            success: function (data) {
+                                if (data.result === "success") {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '삭제 완료',
+                                        text: '상품이 성공적으로 삭제되었습니다.',
+                                        confirmButtonText: '확인'
+                                    });
+                                    self.fnGetList();
+                                }
+                            }
+                        });
+                    }
+                });
+            },
+
+            fnAdd() {
+                location.href = "/admin/product/add.do";
             }
         },
         mounted() {

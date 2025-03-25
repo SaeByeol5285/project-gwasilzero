@@ -2,10 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 	
-<mapper namespace="com.project.gwasil_zero.mapper.AdminMapper">
+<mapper namespace="com.project.gwasil_zero.mapper.ProductMapper">
 	<select id = "selectPackageList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Package">
 		SELECT * 
 		FROM package
 	</select>	
 	
+	<delete id = "deleteProductList" parameterType="hashmap" >
+		DELETE FROM PACKAGE WHERE PACKAGE_NAME IN 
+       <foreach collection="list" item="item" open="(" separator="," close=")">
+           #{item}
+       </foreach>
+    </delete>
+    
+    <insert id="insertProduct" parameterType="hashmap">
+		INSERT INTO PACKAGE(PACKAGE_NAME, PACKAGE_PRICE, PACKAGE_INFO, PACKAGE_STATUS)
+		VALUES(#{packageName}, #{packagePrice}, #{packageInfo}, #{packageStatus})
+	</insert>
+    
 </mapper>

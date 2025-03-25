@@ -1,6 +1,7 @@
 package com.project.gwasil_zero.controller;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.project.gwasil_zero.dao.ProductService;
 
@@ -17,10 +20,10 @@ import com.project.gwasil_zero.dao.ProductService;
 public class ProductController {
 	
 	@Autowired
-	ProductService adminService;
+	ProductService productService;
 	
 	
-	@RequestMapping("/product/product.do") 
+	@RequestMapping("/admin/product.do") 
 	public String adminProduct(@RequestParam(value = "page", required = false) String page, Model model) {
 		if (page == null || page.isEmpty()) {
 	        page = "main";
@@ -30,13 +33,49 @@ public class ProductController {
         return "/product/product"; 
     }
 	
+	@RequestMapping("/admin/product/add.do") 
+    public String add(Model model) throws Exception{
+		
+        return "/product/product-add"; 
+    }
+	
+	
+	
+	
 	// 패키지 목록 (PackageController)
-	@RequestMapping(value = "/product/product.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/admin/product.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String packageList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
-		resultMap = adminService.getpackageList(map);
+		resultMap = productService.getpackageList(map);
 		return new Gson().toJson(resultMap);
 	}
+	
+	// 상품 일괄 삭제
+	@RequestMapping(value = "/admin/product/remove.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String selectRemove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			
+		String json = map.get("selectList").toString(); 
+		ObjectMapper mapper = new ObjectMapper();
+		List<Object> list = mapper.readValue(json, new TypeReference<List<Object>>(){});
+		map.put("list", list);
+			
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+		resultMap = productService.deleteAll(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 상품 추가
+	@RequestMapping(value = "/admin/product/add.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String ProductAdd(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+		resultMap = productService.addProduct(map);
+		return new Gson().toJson(resultMap);
+	}
+	
 }

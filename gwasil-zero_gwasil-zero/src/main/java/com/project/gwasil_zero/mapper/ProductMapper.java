@@ -10,4 +10,8 @@ public interface ProductMapper {
 
 	List<Package> selectPackageList(HashMap<String, Object> map);
 
+	void deleteProductList(HashMap<String, Object> map);
+
+	void insertProduct(HashMap<String, Object> map);
+
 }

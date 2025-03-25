@@ -7,7 +7,10 @@
 	<script src="https://code.jquery.com/jquery-3.7.1.js"
 	            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<<<<<<< HEAD
 	<script src="/js/page-change.js"></script>
+=======
+>>>>>>> 8cee9faa2554f27d0a78f67cbf4f2d5e3ad16d88
 	<title>board-list</title>
 	
 </head>
@@ -61,13 +64,14 @@
 	}
 
 	.category-btn {
-		border: 1px solid #ccc;
+		border: 1px solid var(--main-color); /* 기존 #ccc → 주황색 변수 */
 		border-radius: 999px;
-		padding: 8px 18px; /* 버튼 내부 여백 조금 더 넉넉하게 */
+		padding: 8px 18px;
 		background-color: white;
 		cursor: pointer;
 		font-size: 14px;
 		transition: all 0.2s ease;
+		color: gray;
 	}
 
 	.category-btn:hover {
@@ -79,6 +83,61 @@
 		color: white;
 		border-color: #FF5722;
 	}
+
+	.search-bar {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 10px;
+			margin: 20px auto;
+			width: 66%;
+			flex-wrap: wrap;
+		}
+
+		.search-select {
+			padding: 8px 12px;
+			font-size: 14px;
+			border: 1px solid #ccc;
+			border-radius: 6px;
+		}
+
+		.search-input {
+			flex: 1;
+			min-width: 200px;
+			padding: 8px 12px;
+			border: 1px solid #ccc;
+			border-radius: 6px;
+			font-size: 14px;
+		}
+
+		.btn {
+			padding: 8px 16px;
+			border-radius: 6px;
+			cursor: pointer;
+			font-size: 14px;
+			font-weight: 500;
+			border: none;
+		}
+
+		.btn-primary {
+			background-color: var(--main-color);
+			color: #fff;
+		}
+
+		.btn-outline {
+			background-color: #fff;
+			color: var(--main-color);
+			border: 1px solid var(--main-color);
+		}
+
+		.btn-primary:hover {
+			background-color: #e55300;
+		}
+
+		.btn-outline:hover {
+			background-color: #fff3e0;
+		}
+
 
 </style>
 <body>
@@ -94,15 +153,15 @@
 		    {{ cat.label }}
 		  </button>
 		</div>
-		<div>
-			<select v-model="searchOption">
+		<div class="search-bar">
+			<select v-model="searchOption" class="search-select">
 				<option value="all">:: 전체 ::</option>
 				<option value="title">제목</option>
 				<option value="name">변호사</option>
 			</select>
-				<input v-model="keyword" @keyup.enter="fnBoardList" placeholder="검색어">
-				<button @click="fnBoardList">검색</button>
-				<button @click="goToAddPage">글 작성</button>
+			<input v-model="keyword" @keyup.enter="fnBoardList" class="search-input" placeholder="검색어를 입력하세요">
+			<button @click="fnBoardList" class="btn btn-primary">검색</button>
+			<button @click="goToAddPage" class="btn btn-outline">글 작성</button>
 		</div>
 		
 		<div class="card-container">
@@ -143,7 +202,8 @@
 		      color: page === n ? '#fff' : '#000',
 		      border: '1px solid #ccc',
 		      borderRadius: '4px',
-		      padding: '4px 8px'
+		      padding: '4px 8px',
+			  cursor : 'pointer'
 		    }"
 		  >
 		    {{ n }}
@@ -231,7 +291,7 @@
 			     }
 			 },
 			 goToAddPage: function () {
-			   window.location.href = "/board/add.do";
+				location.href = "/board/add.do";
 			 }
 			,
 			fnBoardView : function(boardNo){

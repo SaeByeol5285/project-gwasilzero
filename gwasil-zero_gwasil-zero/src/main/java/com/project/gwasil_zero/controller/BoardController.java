@@ -41,13 +41,34 @@ public class BoardController {
         return "/board/board-list";
     }
 
-	
+	 @RequestMapping("/board/view.do") 
+	   public String boardView(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+			System.out.println(map);
+			request.setAttribute("map", map);
+			return "/board/board-view";
+	   }
 	
 	@RequestMapping(value = "/board/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String board_list(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap = boardService.getBoardList(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/board/commentAdd.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String commentAdd(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = boardService.commentAdd(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/board/view.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String boardView(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = boardService.getBoard(map);
 		return new Gson().toJson(resultMap);
 	}
 	

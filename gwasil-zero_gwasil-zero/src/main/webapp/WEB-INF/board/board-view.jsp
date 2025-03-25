@@ -1,0 +1,246 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="/js/page-change.js"></script>
+	<title>게시글 상세보기</title>
+	<style>
+	    .view-container {
+	        width: 65%;
+	        margin: 40px auto;
+	        padding: 30px;
+	        border: 1px solid #ddd;
+	        border-radius: 10px;
+	        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+	        background-color: #fff;
+	        font-family: 'Arial', sans-serif;
+	    }
+	    .view-title {
+	        font-size: 28px;
+	        font-weight: bold;
+	        margin-bottom: 16px;
+	    }
+	    .view-meta {
+	        display: flex;
+	        justify-content: space-between;
+	        flex-wrap: wrap;
+	        font-size: 14px;
+	        color: #666;
+	        margin-bottom: 20px;
+	    }
+	    .view-meta small {
+	        font-size: 13px;
+	        color: #888;
+	    }
+	    .view-content {
+	        font-size: 16px;
+	        line-height: 1.6;
+	        white-space: pre-line;
+	        margin-bottom: 30px;
+	    }
+	    .media-section {
+	        display: flex;
+	        flex-wrap: wrap;
+	        gap: 20px;
+	        margin-bottom: 30px;
+	    }
+	    .media-section img {
+	        width: 250px;
+	        height: auto;
+	        border-radius: 8px;
+	        border: 1px solid #ccc;
+	    }
+	    .media-section video {
+	        width: 100%;
+	        max-width: 480px;
+	        border-radius: 8px;
+	        border: 1px solid #ccc;
+	    }
+		
+		.comment-wrapper {
+		    max-width: 70%;
+		    margin: 40px auto 0 auto;
+		    padding: 20px;
+		    border-top: 1px solid #eee;
+		}
+
+		.comment-wrapper h4 {
+		    margin-bottom: 12px;
+		    font-size: 18px;
+		}
+
+		.comment-wrapper textarea {
+		    width: 100%;
+		    padding: 10px;
+		    font-size: 14px;
+		    border-radius: 6px;
+		    border: 1px solid #ccc;
+		    margin-bottom: 10px;
+		    resize: vertical;
+		}
+
+		.comment-wrapper button {
+		    padding: 6px 12px;
+		    font-size: 14px;
+		    background-color: #007bff;
+		    color: white;
+		    border: none;
+		    border-radius: 4px;
+		    cursor: pointer;
+		}
+
+		.comment-wrapper button:hover {
+		    background-color: #0056b3;
+		}
+
+		.comment-list {
+		    margin-top: 20px;
+		}
+
+		.comment-item {
+		    margin-bottom: 12px;
+		    padding: 10px;
+		    border: 1px solid #ddd;
+		    border-radius: 6px;
+		    background-color: #f9f9f9;
+		}
+
+		.comment-meta {
+		    font-size: 13px;
+		    color: #666;
+		    margin-bottom: 4px;
+		}
+
+		.comment-text {
+		    font-size: 14px;
+		}
+		
+	</style>
+</head>
+<body>
+	<div id="app">
+	    <div class="view-container" v-if="board.boardNo">
+	        <div class="view-title">{{ board.boardTitle }}</div>
+	        
+	        <div class="view-meta">
+	            <div>
+	                작성자: {{ board.userId }} | 담당 변호사: {{ board.lawyerName }} | 등록일: {{ board.cdate }}
+	            </div>
+	            <small>조회수: {{ board.cnt }} | 상태: {{ board.boardStatus }}</small>
+	        </div>
+
+	        <div class="view-content">
+	            {{ board.contents }}
+	        </div>
+
+	        <div class="media-section" v-if="images.length > 0">
+	            <h4>첨부 이미지</h4>
+	            <div v-for="img in images" :key="img.fileName">
+	                <img :src="img.filePath.replace('../', '/')" alt="첨부 이미지">
+	            </div>
+	        </div>
+
+	        <div class="media-section" v-if="videos.length > 0">
+	            <h4>첨부 영상</h4>
+	            <div v-for="vid in videos" :key="vid.fileName">
+	                <video controls>
+	                    <source :src="vid.filePath.replace('../', '/')" type="video/mp4">
+	                    브라우저가 video 태그를 지원하지 않습니다.
+	                </video>
+	            </div>
+	        </div>
+	    </div>
+		
+		<div class="comment-wrapper">
+		  <h4>댓글</h4>
+
+		  <!-- 입력창 -->
+		  <textarea v-model="newComment" placeholder="댓글을 입력하세요" rows="3"></textarea>
+		  <button @click="submitComment">등록</button>
+
+		  <!-- 목록 -->
+		  <div class="comment-list" v-if="comments.length > 0">
+		    <div class="comment-item" v-for="(cmt, index) in comments" :key="index">
+		      <div class="comment-meta">{{ cmt.lawyerName }} | {{ cmt.cdate }}</div>
+		      <div class="comment-text">{{ cmt.contents }}</div>
+		    </div>
+		  </div>
+		</div>
+		
+	</div>
+</body>
+</html>
+
+<script>
+	const app = Vue.createApp({
+	    data() {
+	        return {
+	            board: {},
+	            boardNo: "${map.boardNo}",
+	            images: [],
+	            videos: [],
+				comments:[],
+				newComment: "",
+				lawyer_id:"lawyer_2"
+	        };
+	    },
+	    methods: {
+	        fnGetBoard() {
+	            const self = this;
+	            $.ajax({
+	                url: "/board/view.dox",
+	                type: "POST",
+	                data: { boardNo: self.boardNo },
+	                dataType: "json",
+	                success: function (data) {
+	                    console.log(data);
+	                    self.board = data.board;
+						self.comments = data.comment || [];
+	                    // 파일 분류
+	                    self.images = [];
+	                    self.videos = [];
+	                    data.boardFile.forEach(file => {
+	                        const lower = file.fileName.toLowerCase();
+	                        if (lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.png') || lower.endsWith('.gif')) {
+	                            self.images.push(file);
+	                        } else if (lower.endsWith('.mp4') || lower.endsWith('.mov') || lower.endsWith('.avi')) {
+	                            self.videos.push(file);
+	                        }
+	                    });
+	                }
+	            });
+	        },
+			submitComment() {
+			       const self = this;
+			       if (!self.newComment.trim()) {
+			           alert("댓글을 입력해주세요");
+			           return;
+			       }
+
+			       $.ajax({
+			           url: "/board/commentAdd.dox",
+			           type: "POST",
+			           data: {
+			               boardNo: self.boardNo,
+			               contents: self.newComment,
+						   lawyerId: self.lawyer_id
+			           },
+			           success: function () {
+			               self.newComment = "";
+			               self.fnGetBoard(); // 댓글 다시 불러오기
+			           }
+			       });
+			   }
+	    },
+	    mounted() {
+	        this.fnGetBoard();
+	    }
+	});
+	app.mount("#app");
+</script>
+
+​

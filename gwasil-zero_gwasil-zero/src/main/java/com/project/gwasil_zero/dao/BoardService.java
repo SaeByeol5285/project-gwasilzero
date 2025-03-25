@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.gwasil_zero.mapper.BoardMapper;
 import com.project.gwasil_zero.model.Board;
+import com.project.gwasil_zero.model.BoardCmt;
 import com.project.gwasil_zero.model.BoardFile;
 @Service
 public class BoardService {
@@ -71,6 +72,41 @@ public class BoardService {
 			resultMap.put("count", count);
 			
 			System.out.println(count);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result","failed");
+		}
+		
+		return resultMap;
+	}
+	
+	
+	public HashMap<String, Object> getBoard(HashMap<String, Object> map) {
+	
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			Board board = boardMapper.selectBoard(map);
+			List<BoardFile> bf = boardMapper.selectBoardFiles(map);
+			List<BoardCmt> bc = boardMapper.selectBoardCmttList(map);
+			System.out.println(map);
+			resultMap.put("result","success");
+			resultMap.put("board", board);			
+			resultMap.put("boardFile", bf);
+			resultMap.put("comment", bc);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result","failed");
+		}
+		
+		return resultMap;
+	}
+	public HashMap<String, Object> commentAdd(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			boardMapper.insertBoardCmt(map);
+			System.out.println(map);
+			resultMap.put("result","success");
+			
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 			resultMap.put("result","failed");

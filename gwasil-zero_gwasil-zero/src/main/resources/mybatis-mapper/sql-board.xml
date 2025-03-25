@@ -87,4 +87,20 @@
    	     #{fileRealName, jdbcType=VARCHAR}
     	)
 	</insert>
+	
+	<select id="selectBoard" parameterType="hashmap"  resultType="com.project.gwasil_zero.model.Board">
+		select b.*, lawyer_name  from board b inner join lawyer l on l.lawyer_id = b.lawyer_id where b.board_no = #{boardNo}
+	</select>
+	
+	<select id="selectBoardFiles" parameterType="hashmap"  resultType="com.project.gwasil_zero.model.BoardFile">
+		select * from board_file where board_no = #{boardNo}
+	</select>
+	
+	<select id="selectBoardCmttList" parameterType="hashmap"  resultType="com.project.gwasil_zero.model.BoardCmt">
+		select c.*, l.lawyer_name as lawyerName from board_cmt c inner join lawyer l on c.lawyer_id = l.lawyer_id where board_no = #{boardNo}
+	</select>
+	
+	<insert id="insertBoardCmt" parameterType="hashmap" >
+		insert into board_cmt (cmt_no, board_no, lawyer_id, contents, cdate, udate) values(board_cmt_seq.nextval, #{boardNo}, #{lawyerId}, #{contents}, sysdate, sysdate)
+	</insert>
 </mapper>

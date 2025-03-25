@@ -6,6 +6,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.project.gwasil_zero.model.Board;
+import com.project.gwasil_zero.model.BoardCmt;
+import com.project.gwasil_zero.model.BoardFile;
 
 @Mapper
 public interface BoardMapper {
@@ -22,4 +24,11 @@ public interface BoardMapper {
 
 
 	List<Board> selectBoardList(HashMap<String, Object> map);
+
+	List<BoardFile> selectBoardFiles(HashMap<String, Object> map);
+
+	List<BoardCmt> selectBoardCmttList(HashMap<String, Object> map);
+
+	void insertBoardCmt(HashMap<String, Object> map);
+
 }

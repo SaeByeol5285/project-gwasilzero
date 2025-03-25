@@ -146,8 +146,6 @@
 	<jsp:include page="../common/footer.jsp" />
 </body>
 <script>
-	const userCode = "imp38661450"; // 식별코드
-	IMP.init(userCode);
 	const app = Vue.createApp({
 		data() {
 			return {
@@ -176,8 +174,8 @@
 
 			fnBuy(item) {
 
-				var popupW = 500;
-				var popupH = 500;
+				var popupW = 700;
+				var popupH = 700;
 				var left = Math.ceil((window.screen.width - popupW)/2);
 				var top = Math.ceil((window.screen.height - popupH)/2);
 

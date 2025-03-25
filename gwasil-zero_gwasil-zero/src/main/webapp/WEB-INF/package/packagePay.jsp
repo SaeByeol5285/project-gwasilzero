@@ -75,7 +75,7 @@
         <div class="info">📦 패키지명 : <strong>{{ packageName }}</strong></div>
         <div class="info">💰 금액 : <strong>{{ price.toLocaleString() }} 원</strong></div>
 
-        <button class="pay-btn" @click="payNow">결제하기</button>
+        <button class="pay-btn" @click="fnPay">결제하기</button>
     </div>
 
     <script>
@@ -87,14 +87,15 @@
                 return {
                     packageName: "",
                     price: 0,
-                    orderId: ""
+                    orderId: "",
+                    // userId : 
                 };
             },
             methods: {
-                payNow() {
+                fnPay() {
                     const self = this;
                     IMP.request_pay({
-                        pg: "kakaopay",
+                        pg: "html5_inicis",
                         pay_method: "card",
                         merchant_uid: self.orderId,
                         name: self.packageName,

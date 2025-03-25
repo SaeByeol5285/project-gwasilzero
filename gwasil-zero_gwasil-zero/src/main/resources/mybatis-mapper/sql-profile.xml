@@ -8,6 +8,7 @@
 		FROM LAWYER
 		WHERE 1=1 
 			AND LAWYER_STATUS = 'I'
+			AND LAWYER_PASS = 'Y'
 		<if test="searchOption != null and searchOption == 'all'">
 			AND (LAWYER_NAME LIKE '%' || #{keyword} || '%'
 					OR LAWYER_INFO LIKE '%' || #{keyword} || '%')
@@ -27,6 +28,7 @@
 		FROM LAWYER
 		WHERE 1=1 
 			AND LAWYER_STATUS = 'I'
+			AND LAWYER_PASS = 'Y'
 		<if test="searchOption != null and searchOption == 'all'">
 			AND (LAWYER_NAME LIKE '%' || #{keyword} || '%'
 					OR LAWYER_INFO LIKE '%' || #{keyword} || '%')
@@ -37,6 +39,64 @@
 		<if test="searchOption != null and searchOption == 'txt'">
 			AND LAWYER_INFO LIKE '%' || #{keyword} || '%'
 		</if>
+	</select>
+	
+	<select id = "selectPersonalList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+		SELECT * 
+		FROM LAWYER
+		WHERE 1=1 
+			AND LAWYER_STATUS = 'P'
+			AND LAWYER_PASS = 'Y'
+		<if test="searchOption != null and searchOption == 'all'">
+			AND (LAWYER_NAME LIKE '%' || #{keyword} || '%'
+					OR LAWYER_INFO LIKE '%' || #{keyword} || '%')
+		</if>
+		<if test="searchOption != null and searchOption == 'name'">
+			AND LAWYER_NAME LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="searchOption != null and searchOption == 'txt'">
+			AND LAWYER_INFO LIKE '%' || #{keyword} || '%'
+		</if>
+		ORDER BY LAWYER_NAME
+		OFFSET #{page} ROW  FETCH NEXT 4 ROWS ONLY
+	</select>	
+	
+	<select id="selectPersonalCnt" parameterType="hashmap" resultType="int">
+		SELECT COUNT(*)  
+		FROM LAWYER
+		WHERE 1=1 
+			AND LAWYER_STATUS = 'P'
+			AND LAWYER_PASS = 'Y'
+		<if test="searchOption != null and searchOption == 'all'">
+			AND (LAWYER_NAME LIKE '%' || #{keyword} || '%'
+					OR LAWYER_INFO LIKE '%' || #{keyword} || '%')
+		</if>
+		<if test="searchOption != null and searchOption == 'name'">
+			AND LAWYER_NAME LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="searchOption != null and searchOption == 'txt'">
+			AND LAWYER_INFO LIKE '%' || #{keyword} || '%'
+		</if>
+	</select>
+	
+	<select id="selectLawyer" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+		SELECT *  
+		FROM LAWYER 
+		WHERE LAWYER_ID = #{lawyerId}
+	</select>
+	
+	<select id="lawyerBoardFileList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.BoardFile">
+		SELECT *  
+		FROM LAWYER L
+		LEFT JOIN BOARD B ON L.LAWYER_ID = B.LAWYER_ID
+		INNER JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO
+		WHERE L.LAWYER_ID = #{lawyerId}
+	</select>
+	
+	<select id="lawyerLicenseList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.License">
+		SELECT *  
+		FROM LICENSE 
+		WHERE LAWYER_ID = #{lawyerId}
 	</select>
 </mapper>
 

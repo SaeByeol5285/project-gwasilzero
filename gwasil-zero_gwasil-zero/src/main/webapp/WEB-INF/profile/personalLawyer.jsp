@@ -11,10 +11,10 @@
     <link rel="stylesheet" href="../css/profile.css">
 </head>
 <body>
-	<div id="inLawApp">
+	<div id="perLawApp">
 		<div class="title-area">
-            <h2>소속 변호사</h2>
-            <a href="javascript:;" @click="fnMove">개인 변호사 &gt;</a>
+            <h2>개인 변호사</h2>
+            <a href="javascript:;" @click="fnMove">소속 변호사 &gt;</a>
         </div>
         <div class="content-wrapper">
             <div class="lawyer-list">
@@ -44,7 +44,7 @@
 </body>
 </html>
 <script>
-    const inLawApp = Vue.createApp({
+    const perLawApp = Vue.createApp({
         data() {
             return {
 				list : [],
@@ -63,7 +63,7 @@
 					page : (self.page-1) * 4
 				};
 				$.ajax({
-					url:"/profile/innerLawyer.dox",
+					url:"/profile/personalLawyer.dox",
 					dataType:"json",	
 					type : "POST", 
 					data : nparmap,
@@ -91,7 +91,7 @@
 				pageChange("/profile/view.do", {lawyerId : lawyerId});
 			},
             fnMove: function(){
-                location.href = "/profile/personalLawyer.do"
+                location.href = "/profile/innerLawyer.do"
             }
         },
         mounted() {
@@ -99,6 +99,6 @@
 			self.fnGetList();
         }
     });
-    inLawApp.mount('#inLawApp');
+    perLawApp.mount('#perLawApp');
 </script>
 ​

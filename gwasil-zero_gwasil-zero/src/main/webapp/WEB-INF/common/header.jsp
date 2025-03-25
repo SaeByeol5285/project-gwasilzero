@@ -27,7 +27,7 @@
                 <nav class="main-nav-wrapper">
                     <div class="main-nav">
                         <!-- 로고 -->
-                        <a href="/" class="logo">
+                        <a href="/common/main.do" class="logo">
                             <img src="/img/logo1.png" alt="로고 이미지">
                         </a>
 

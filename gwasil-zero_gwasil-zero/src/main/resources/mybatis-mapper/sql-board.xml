@@ -4,46 +4,78 @@
 	
 <mapper namespace="com.project.gwasil_zero.mapper.BoardMapper">
 	<select id="selectBoardList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Board">
-		SELECT *
-      	FROM BOARD B
-      	INNER JOIN TBL_USER M ON B.USER_ID = M.USER_ID  
-      	WHERE 1=1
-      	<if test="searchOption != null and searchOption == 'all'">
-        	 AND (BOARD_TITLE LIKE '%' || #{keyword} || '%' 
-             	  OR USER_NAME LIKE '%' || #{keyword} || '%') 
-      	</if>
-      	<if test="searchOption != null and searchOption == 'title'">
-        	 AND BOARD_TITLE LIKE '%' || #{keyword} || '%'
-     	 </if>
-     	 <if test="searchOption != null and searchOption == 'name'">
-     	    AND USER_NAME LIKE '%' || #{keyword} || '%' 
-     	 </if>
-     	 order by b.cdate desc
-     	 OFFSET #{page} rows fetch next #{pageSize} rows only
+		  SELECT 
+		    b.board_no, 
+		    b.board_title, 
+		    b.user_id, 
+		    b.cdate, 
+		    b.board_status, 
+		    l.lawyer_name,
+		    bf.file_path AS thumbnail_path
+		  FROM BOARD b
+		  INNER JOIN TBL_USER m ON b.user_id = m.user_id  
+		  LEFT JOIN LAWYER l ON b.lawyer_id = l.lawyer_id
+		  LEFT JOIN (
+		      SELECT board_no, file_path
+		      FROM board_file
+		      WHERE thumbnail = 'Y'
+		  ) bf ON b.board_no = bf.board_no
+		  <if test="category != null and category != 'all'">
+		    INNER JOIN categories c ON b.board_no = c.board_no AND c.category = #{category}
+		  </if>
+		  where 1 = 1
+		 <if test="searchOption != null and searchOption == 'all'">
+		  AND (
+		    b.BOARD_TITLE LIKE '%' || #{keyword} || '%' 
+		    OR l.LAWYER_NAME LIKE '%' || #{keyword} || '%'
+		  )
+		</if>
+		<if test="searchOption != null and searchOption == 'title'">
+		  AND b.BOARD_TITLE LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="searchOption != null and searchOption == 'name'">
+		  AND l.LAWYER_NAME LIKE '%' || #{keyword} || '%'
+		</if>
+		  ORDER BY b.cdate DESC
+		  OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
 	</select>
+
+
 	
 	<select id="selectBoardCnt" parameterType="hashmap" resultType="int">
-      SELECT count(*)
-      FROM BOARD B
-      INNER JOIN TBL_USER M ON B.USER_ID = M.USER_ID 
-      WHERE 1=1
-      <if test="searchOption != null and searchOption == 'all'">
-         AND (BOARD_TITLE LIKE '%' || #{keyword} || '%' 
-               OR USER_NAME LIKE '%' || #{keyword} || '%') 
-      </if>
-      <if test="searchOption != null and searchOption == 'title'">
-         AND BOARD_TITLE LIKE '%' || #{keyword} || '%'
-      </if>
-      <if test="searchOption != null and searchOption == 'name'">
-         AND USER_NAME LIKE '%' || #{keyword} || '%' 
-      </if>
-   </select>
+	SELECT COUNT(*)
+	FROM BOARD B
+	INNER JOIN TBL_USER M ON B.USER_ID = M.USER_ID  
+	LEFT JOIN CATEGORIES C ON B.BOARD_NO = C.BOARD_NO
+	LEFT JOIN LAWYER l ON b.lawyer_id = l.lawyer_id
+	WHERE 1=1
+	<if test="category != null and category != 'all'">
+		AND C.CATEGORY = #{category}
+	</if>
+	<if test="searchOption != null and searchOption == 'all'">
+	  AND (
+	    BOARD_TITLE LIKE '%' || #{keyword} || '%' 
+	    OR l.LAWYER_NAME LIKE '%' || #{keyword} || '%'
+	  )
+	</if>
+	<if test="searchOption != null and searchOption == 'title'">
+	  AND BOARD_TITLE LIKE '%' || #{keyword} || '%'
+	</if>
+	<if test="searchOption != null and searchOption == 'name'">
+	  AND l.LAWYER_NAME LIKE '%' || #{keyword} || '%'
+	</if>
+</select>
+
 
 
 	<insert id = "insertBoard" parameterType="hashmap"  useGeneratedKeys="true" keyColumn="board_no" keyProperty="boardNo">
 		insert into board (board_no, board_title, contents, user_id, cnt, cdate, udate, board_status, lawyer_id, lawyer_review) 
 		values
 		(board_seq.nextval, #{title}, #{contents}, #{userId}, 0, SYSDATE, SYSDATE, #{boardStatus}, null, null)
+	</insert>
+	
+	<insert id="insertCategory" parameterType="hashmap">
+		insert into categories values(#{boardNo}, #{category})
 	</insert>
 	
 	<insert id="insertBoardFile" parameterType="hashmap">

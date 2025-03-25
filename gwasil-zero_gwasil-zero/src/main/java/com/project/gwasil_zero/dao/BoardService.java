@@ -27,6 +27,8 @@ public class BoardService {
 
 	        if (boardNoObj instanceof BigDecimal) {
 	            boardNo = ((BigDecimal) boardNoObj).intValue();
+	            map.put("boardNo", boardNo);
+	            boardMapper.insertCategory(map);
 	        } else if (boardNoObj instanceof Integer) {
 	            boardNo = (Integer) boardNoObj;
 	        }

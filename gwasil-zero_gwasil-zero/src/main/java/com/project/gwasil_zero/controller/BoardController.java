@@ -59,6 +59,8 @@ public class BoardController {
 	public HashMap<String, Object> result(@RequestParam("file1") List<MultipartFile> files,
 	                                      @RequestParam("title") String title,
 	                                      @RequestParam("contents") String contents,
+	                                      @RequestParam("category") String category,
+	                                      
 	                                      HttpServletRequest request,
 	                                      HttpServletResponse response,
 	                                      Model model) {
@@ -78,6 +80,7 @@ public class BoardController {
 	        boardData.put("contents", contents);
 	        boardData.put("userId", "user_1");
 	        boardData.put("boardStatus", "A");
+	        boardData.put("category", category);
 	        resultMap = boardService.saveBoard(boardData);
 	        int boardNo = (int) resultMap.get("boardNo");
 

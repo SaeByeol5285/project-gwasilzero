@@ -17,6 +17,12 @@ public class TotalDocsController {
 	@Autowired
 	TotalDocsService totalDocsService;
 	
+	// 통합자료실 메인
+	@RequestMapping("/totalDocs/main.do") 
+    public String main(Model model) throws Exception{
+        return "/totalDocs/totalDocs-main";
+    }
+	
 	// 공지사항 리스트
 	@RequestMapping("/notice/list.do") 
     public String noticeList(Model model) throws Exception{
@@ -59,16 +65,18 @@ public class TotalDocsController {
 		return "/totalDocs/qna-answer";
 	}
 	
-	
 	// 가이드라인 리스트
+	@RequestMapping("/guide/list.do") 
+	public String guideList(Model model) throws Exception{
+		return "/totalDocs/guide-list";
+	}
+	
 	// 가이드라인 상세보기
+	@RequestMapping("/guide/detail.do") 
+	public String guideDetail(Model model) throws Exception{
+		return "/totalDocs/guide-detail";
+	}
 	
 	
-//	@RequestMapping(value = "/menu.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-//	@ResponseBody
-//	public String add(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-//		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-//		return new Gson().toJson(resultMap);
-//	}
 
 }

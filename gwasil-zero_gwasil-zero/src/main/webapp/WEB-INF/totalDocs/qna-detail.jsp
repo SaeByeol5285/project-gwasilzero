@@ -8,7 +8,7 @@
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 	<link rel="stylesheet" href="/css/common.css">
 
-	<title>totalDocs-main.jsp</title>
+	<title>qna-detail.jsp</title>
 </head>
 <style>
 </style>

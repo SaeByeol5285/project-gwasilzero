@@ -20,7 +20,7 @@
                 <!-- 상단 로그인 / 고객센터 라인 -->
                 <div class="header-line">
                     <a href="#">고객만족센터</a>
-                    <a href="#">로그인 / 회원가입</a>
+                    <a href="/user/login.do">로그인 / 회원가입</a>
                 </div>
 
                 <!-- 네비게이션 바 -->

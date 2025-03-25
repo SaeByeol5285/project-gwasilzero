@@ -59,6 +59,7 @@
 		</if>
 		ORDER BY LAWYER_NAME
 		OFFSET #{page} ROW  FETCH NEXT 4 ROWS ONLY
+		
 	</select>	
 	
 	<select id="selectPersonalCnt" parameterType="hashmap" resultType="int">

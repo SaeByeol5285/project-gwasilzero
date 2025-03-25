@@ -69,7 +69,7 @@
                         <tbody>
                             <tr v-for="(item, index) in list" :key="index">
                                 <td><input type="checkbox" :value="item.packageName" v-model="selectList"/></td>
-                                <td>{{ item.packageName }}</td>
+                                <td><a href="javascript:;" @click="fnEdit(item.packageName)">{{ item.packageName }}</a></td>
                                 <td>{{ item.packageInfo }}</td>
                                 <td>{{ item.packagePrice.toLocaleString() }}원</td>
                                 <td>{{ item.packageStatus === 'U' ? '일반' : '변호사' }}</td>
@@ -170,7 +170,11 @@
 
             fnAdd() {
                 location.href = "/admin/product/add.do";
-            }
+            },
+
+            fnEdit : function(packageName){
+                pageChange("/admin/product/edit.do", {packageName : packageName});
+            },
         },
         mounted() {
 			this.fnGetList();

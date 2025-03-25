@@ -16,6 +16,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.project.gwasil_zero.dao.ProductService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 public class ProductController {
 	
@@ -39,16 +41,21 @@ public class ProductController {
         return "/product/product-add"; 
     }
 	
+	@RequestMapping("/admin/product/edit.do") 
+    public String edit(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		request.setAttribute("map", map);
+        return "/product/product-edit"; 
+    }
 	
 	
 	
-	// 패키지 목록 (PackageController)
+	// 패키지 목록
 	@RequestMapping(value = "/admin/product.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String packageList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+	public String productList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
-		resultMap = productService.getpackageList(map);
+		resultMap = productService.getProductList(map);
 		return new Gson().toJson(resultMap);
 	}
 	
@@ -75,6 +82,26 @@ public class ProductController {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 			
 		resultMap = productService.addProduct(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 상품 수정
+	@RequestMapping(value = "/admin/product/edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String ProductInfo(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = productService.getProduct(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 상품 수정 저장
+	@RequestMapping(value = "/admin/product/editSave.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String ProductEdit(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+		resultMap = productService.editProduct(map);
 		return new Gson().toJson(resultMap);
 	}
 	

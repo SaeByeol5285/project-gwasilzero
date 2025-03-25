@@ -28,23 +28,23 @@ public class UserService {
 	
 	
 	public HashMap<String, Object> getInfo(HashMap<String, Object> map) {
-		// TODO Auto-generated method stub
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		User searchUser = userMapper.searchUser(map);
-		Lawyer searchLawyer = userMapper.searchLawyer(map);
-		
-		if(searchUser!=null) {
-			List<User> list = userMapper.selectUser(map);
-			resultMap.put("list", list);
-		}
-		if(searchLawyer!=null) {
-			List<Lawyer> list = userMapper.selectLawyer(map);
-			resultMap.put("list", list);
-		}
-		
-		
-		resultMap.put("result", "success");	
-		return resultMap;
+	    HashMap<String, Object> resultMap = new HashMap<String, Object>();
+	    User searchUser = userMapper.searchUser(map);
+	    Lawyer searchLawyer = userMapper.searchLawyer(map);
+
+	    if (searchUser != null) {
+	        List<User> list = userMapper.selectUser(map);
+	        resultMap.put("list", list);
+	        resultMap.put("result", "success");  
+	    } else if (searchLawyer != null) {
+	        List<Lawyer> list = userMapper.selectLawyer(map);
+	        resultMap.put("list", list);
+	        resultMap.put("result", "success"); 
+	    } else {
+	        resultMap.put("result", "fail");  
+	    }
+
+	    return resultMap;
 	}
 
 	

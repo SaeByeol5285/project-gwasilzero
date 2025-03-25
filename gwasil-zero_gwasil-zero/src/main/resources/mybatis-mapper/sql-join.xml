@@ -3,7 +3,35 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.project.gwasil_zero.mapper.JoinMapper">
+
+	<insert id="insertUser" parameterType="hashmap">
+		INSERT INTO TBL_USER(USER_NAME, USER_ID, USER_PASSWORD, USER_EMAIL, USER_PHONE, USER_STATUS,CDATE) 
+		VALUES (#{userName}, #{userId}, #{pwd}, #{userEmail}, #{userPhone}, 'ACTIVE', SYSDATE)
+	</insert>
 	
+	<select id="selectUser" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+		SELECT *
+		FROM TBL_USER
+		WHERE USER_ID = #{userId}
+	</select>
+	
+	<insert id="insertLawyer" parameterType="hashmap">
+		INSERT INTO LAWYER(LAWYER_NAME, LAWYER_ID, LAWYER_PWD, LAWYER_EMAIL, LAWYER_PHONE)
+		VALUES (#{lawyerName},#{lawyerId},#{pwd},#{lawyerEmail},#{lawyerPhone})
+	</insert>
+	
+	<select id="selectLawyer" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+		SELECT *
+		FROM LAWYER
+		WHERE LAWYER_ID = #{lawyerId}
+	</select>
+	<update id="updateBoard" parameterType="hashmap">
+		UPDATE TBL_USER
+			USER_NAME = #{userName}
+			USER_EMAIL = #{userEmail}
+			USER_PHONE = #{userPhone}
+		WHERE USER_ID = #{userId}
+	</update>
 	
 </mapper>
 

@@ -53,16 +53,16 @@ public class UserController {
 		return "/user/user-search";
 	}
 
-	@RequestMapping("/searchId.do")
+	@RequestMapping("/user/userId-search.do")
 	public String id(Model model) throws Exception {
 
-		return "/id";
+		return "/user/userId-search";
 	}
 
-	@RequestMapping("/searchPwd.do")
+	@RequestMapping("/user/userPwd-search.do")
 	public String pwd(Model model) throws Exception {
 
-		return "/pwd";
+		return "/user/userPwd-search";
 	}
 
 	// 로그인
@@ -76,7 +76,7 @@ public class UserController {
 	}
 
 	// 아이디 찾기
-	@RequestMapping(value = "/user/user-search.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/user/userId-search.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String findId(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<>();

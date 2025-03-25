@@ -7,122 +7,106 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-        <title>sample.jsp</title>
+        <link rel="stylesheet" href="/css/main.css">
+        <link rel="stylesheet" href="/css/common.css">
+        <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
+        <title>회원가입</title>
+        <style>
+            #app {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                min-height: 70vh;
+                padding: 20px;
+            }
+
+            h1 {
+                color: #FF5722;
+                margin-bottom: 30px;
+                /* 타이틀과 카드 사이 여백 추가 */
+            }
+
+            .card-container {
+                display: flex;
+                gap: 30px;
+                /* 카드 간 간격 넓힘 */
+                max-width: 800px;
+                /* 최대 너비 확장 */
+                width: 100%;
+            }
+
+            .card {
+                flex: 1;
+                background-color: #FFCCBC;
+                border: 2px solid #FF5722;
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                padding: 40px;
+                /* 카드 내부 패딩 증가 */
+                cursor: pointer;
+                transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            }
+
+            .card:hover {
+                background-color: #FF5722;
+                color: #ffffff;
+                transform: scale(1.05);
+            }
+
+            .title {
+                font-size: 24px;
+                /* 제목 크기 키움 */
+                font-weight: bold;
+                margin-bottom: 12px;
+            }
+
+            p {
+                font-size: 16px;
+                /* 문구 크기 키움 */
+                color: #FF5722;
+                transition: color 0.3s ease;
+            }
+
+            .card:hover p {
+                color: #ffffff;
+            }
+        </style>
     </head>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            height: 100vh;
-            justify-content: center;
-            align-items: center;
-            background-color: #f5f5f5;
-        }
-
-        #app {
-            text-align: center;
-        }
-
-        h1 {
-            margin-bottom: 30px;
-        }
-
-        .card-container {
-            display: flex;
-            gap: 20px;
-        }
-
-        .card {
-            width: 200px;
-            padding: 20px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            background-color: #fff;
-            cursor: pointer;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .card:hover {
-            border-color: #4a90e2;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .selected {
-            border-color: #4a90e2;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .card-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-
-        .card-desc {
-            color: #555;
-            font-size: 14px;
-        }
-    </style>
 
     <body>
+        <jsp:include page="../common/header.jsp" />
+        <link rel="stylesheet" href="/css/common.css">
         <div id="app">
             <h1>회원가입</h1>
             <div class="card-container">
-                <div class="card" @click="fnMoveToJoin('normal')" :class="{selected: selected === 'normal'}">
-                    <div class="card-title">사용자</div>
-                    <div class="card-desc">
-                        교통사고 해결을 위한 변호사를 찾고,<br>법률 지원을 받아보세요!
-                    </div>
+                <div class="card" @click="fnUserJoin">
+                    <div class="title">사용자</div>
+                    <p>교통사고 해결을 위한 변호사를 찾고,<br>법률 지원을 받아보세요!</p>
                 </div>
-
-                <div class="card" @click="fnMoveToJoin('lawyer')" :class="{selected: selected === 'lawyer'}">
-                    <div class="card-title">변호사</div>
-                    <div class="card-desc">
-                        교통사고 피해자를 돕고,<br>법률 서비스를 제공하세요!
-                    </div>
+                <div class="card" @click="fnLawyerJoin">
+                    <div class="title">변호사</div>
+                    <p>교통사고 피해자를 돕고,<br>법률 서비스를 제공하세요!</p>
                 </div>
             </div>
         </div>
+        <hr>
+        <jsp:include page="../common/footer.jsp" />
+
     </body>
 
     </html>
     <script>
         const app = Vue.createApp({
-            data() {
-                return {
-                    selected: ''
-
-                };
-            },
             methods: {
-                fnGetList() {
-                    var self = this;
-                    var nparmap = {};
-                    $.ajax({
-                        url: "/join/user-select.dox",
-                        dataType: "json",
-                        type: "POST",
-                        data: nparmap,
-                        success: function (data) {
-                            console.log(data);
-                            if (data.result == "success") {
-                                self.list = data.list;
-                            } else {
-                                alert("오류발생");
-                            }
-                        }
-                    });
+                fnUserJoin() {
+                    location.href = "/join/user-join.do";
                 },
-                fnMoveToJoin(status) {
-                    this.selected = status;  // 선택된 카드 강조
-                    location.href = `/member/add.do?status=${status}`;
+                fnLawyerJoin() {
+                    location.href = "/join/lawyer-join.do";
                 }
-            },
-            mounted() {
-                var self = this;
-                self.fnGetList();
             }
         });
         app.mount('#app');
     </script>
-    ​

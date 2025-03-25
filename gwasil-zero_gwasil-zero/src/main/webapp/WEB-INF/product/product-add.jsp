@@ -77,6 +77,22 @@
 		.btn-submit:hover {
 			background-color: #e55300;
 		}
+
+		.btn-cancel {
+			padding: 10px 30px;
+			background-color: #ccc;
+			color: #333;
+			border: none;
+			border-radius: 5px;
+			font-size: 14px;
+			cursor: pointer;
+			font-weight: bold;
+			transition: background-color 0.2s ease;
+			margin-left: 10px;
+		}
+		.btn-cancel:hover {
+			background-color: #bbb;
+		}
 	</style>
 </head>
 <body>
@@ -117,6 +133,7 @@
 
 			<div class="btn-area">
 				<button @click="fnSave" class="btn-submit">등록</button>
+				<button @click="fnBack" class="btn-cancel">뒤로가기</button>
 			</div>
 		</div>
 	</div>
@@ -172,6 +189,10 @@
 						});
 					}
 				});
+			},
+
+			fnBack() {
+				location.href = "/admin/product.do?page=product";
 			}
 
 		}

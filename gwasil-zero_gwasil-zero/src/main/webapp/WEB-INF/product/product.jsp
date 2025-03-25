@@ -31,15 +31,22 @@
 		.btn {
 			padding: 10px 20px;
 			margin: 0 10px;
-			background-color: #fdfd96;
+			background-color: #FF5722;
+            color: white;
 			border: 1px solid #ccc;
 			cursor: pointer;
 			font-weight: bold;
 			border-radius: 6px;
 		}
 		.btn:hover {
-			background-color: #fbe85d;
+			background-color: #e55300;
 		}
+
+        a {
+            text-decoration: none;
+            color: #FF5722;
+        }
+
 	</style>
 </head>
 <body>

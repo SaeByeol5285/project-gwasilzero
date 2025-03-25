@@ -6,14 +6,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.project.gwasil_zero.mapper.PackageMapper;
+import com.project.gwasil_zero.mapper.PackagesMapper;
+import com.project.gwasil_zero.model.Packages;
 
 import jakarta.servlet.http.HttpSession;
 
 @Service
-public class PackageService {
+public class PackagesService {
 	@Autowired
-	PackageMapper packageMapper;
+	PackagesMapper packagesMapper;
 	
 	@Autowired
 	HttpSession session;
@@ -23,7 +24,7 @@ public class PackageService {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			List<Package> list = packageMapper.selectPackageList(map);		
+			List<Packages> list = packagesMapper.selectPackagesList(map);		
 			resultMap.put("list", list);
 			resultMap.put("result", "success");		
 			
@@ -38,7 +39,7 @@ public class PackageService {
 	public HashMap<String, Object> addPayment(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		packageMapper.insertPayment(map);
+		packagesMapper.insertPayment(map);
 		return resultMap;
 	}
 	

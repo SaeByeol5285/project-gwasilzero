@@ -1,0 +1,331 @@
+/* ---------------------- */
+/* Hero Section Styles */
+/* ---------------------- */
+.hero {
+    text-align: center;
+    padding: 80px 20px;
+    background-color: #fff;
+}
+
+.hero-sub {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+.hero-main {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+
+.orange {
+    color: #ff5a1f;
+    font-weight: bold;
+}
+
+.hero-box {
+    display: inline-block;
+    background-color: #e0e0e0;
+    padding: 16px 24px;
+    border-radius: 10px;
+    font-size: 32px;
+    font-weight: 800;
+}
+
+.blackbox {
+    background-color: #000;
+    color: #fff;
+    padding: 2px 2px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+}
+
+/* ---------------------------- */
+/* Why Needed Section Styles */
+/* ---------------------------- */
+.why-needed {
+    padding: 0 20px;
+    text-align: center;
+    margin: 40px 0;
+}
+
+.why-needed h2.why-title {
+    font-size: 32px;
+    font-weight: bold;
+    display: inline-flex;
+}
+
+.inline-logo {
+    vertical-align: middle;
+}
+
+.inline-logo img {
+    height: 26px;
+    vertical-align: middle;
+}
+
+.why-needed .content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 32px;
+    margin-top: 32px;
+}
+
+.why-needed .blackbox-img {
+    width: 140px;
+    max-width: 100%;
+}
+
+.why-needed .text {
+    max-width: 500px;
+    text-align: left;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.why-needed .bold {
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 16px;
+}
+
+/* ---------------------------- */
+/* Steps Section Styles */
+/* ---------------------------- */
+.steps {
+    padding: 60px 20px;
+    text-align: left;
+    max-width: 800px;
+    margin: 0 auto;
+}
+.steps-title {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  
+
+.inline-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    text-align: center;
+    justify-content: center;
+}
+
+.inline-title img.logo {
+    height: 28px;
+    vertical-align: middle;
+}
+
+.step {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    gap: 16px;
+    max-width: 100%;
+}
+
+.step-number {
+    font-size: 32px;
+    font-weight: bold;
+    color: #ff5a1f;
+    min-width: 32px;
+}
+
+.step-box {
+    background-color: #f1f1f1;
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.step-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;   /* 각 step을 수평 중앙 정렬 */
+    gap: 24px;              /* step 간 간격 */
+    margin: 0 auto;
+  
+  }
+  
+  .steps {
+    text-align: center;
+  }
+
+.features {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    max-width: 800px;
+    margin: 40px auto;
+}
+
+.feature-card {
+    border: 2px solid #ff5a1f;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.feature-card img {
+    width: 72px;
+    height: auto;
+    margin-bottom: 12px;
+}
+
+.feature-card p {
+    font-weight: bold;
+    font-size: 16px;
+    margin: 0;
+}
+
+.cta-box {
+    margin-top: 40px;
+}
+
+.cta-button {
+    background-color: #ff5a1f;
+    color: white;
+    font-weight: bold;
+    padding: 16px 32px;
+    border-radius: 40px;
+    display: inline-block;
+    text-decoration: none;
+    font-size: 18px;
+    margin-bottom: 8px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background 0.2s ease;
+}
+
+.cta-button:hover {
+    background-color: #e94d0f;
+}
+
+.cta-link {
+    display: block;
+    margin-top: 8px;
+    font-size: 15px;
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cta-link:hover {
+    text-decoration: underline;
+}
+
+.compare {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.compare-table {
+    width: 100%;
+    max-width: 900px;
+    margin: 40px auto;
+    border-collapse: collapse;
+    font-size: 16px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.compare-table th,
+.compare-table td {
+    border: 1px solid #ddd;
+    padding: 16px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.compare-table thead th {
+    background-color: #f9f9f9;
+    font-weight: bold;
+}
+
+.compare-table th.highlight-logo {
+    background-color: #ff5a1f;
+}
+
+.compare-table th.highlight-logo img {
+    height: 28px;
+}
+
+.orange {
+    color: #ff5a1f;
+    font-weight: bold;
+}
+
+.target-users {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.target-users h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 24px;
+}
+
+.user-list {
+    display: inline-block;
+    text-align: left;
+    background-color: #fff;
+    border: 2px solid #f2f2f2;
+    border-radius: 12px;
+    padding: 24px 32px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+    font-size: 16px;
+    line-height: 1.8;
+    max-width: 500px;
+}
+
+.user-list li {
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 24px;
+    list-style: none;
+}
+
+.user-list li::before {
+    content: '✔';
+    position: absolute;
+    left: 0;
+    color: #ff5a1f;
+    font-weight: bold;
+}
+
+.top-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #ff5a1f;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease;
+    z-index: 999;
+}
+
+.top-button:hover {
+    background-color: #e04c14;
+}

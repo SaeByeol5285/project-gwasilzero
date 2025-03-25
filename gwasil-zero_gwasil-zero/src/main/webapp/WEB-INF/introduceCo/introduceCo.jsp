@@ -1,99 +1,189 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+  <!DOCTYPE html>
+  <html>
+
+  <head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+      integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link rel="stylesheet" href="/css/common.css">
-	<title>introduceCo.jsp</title>
-</head>
-<style>
-</style>
-<body>
-	<div id="app">
-        <section class="container mt-40 mb-40">
-            <div class="section-title">회사 소개</div>
-          
-            <!-- 브랜드 소개 -->
-            <div class="card mb-40">
-              <h2 class="section-title">우리는 ‘과실제로’입니다</h2>
-              <p>
-                과실제로는 교통사고 사건의 핵심 증거인
-                <strong>“블랙박스 영상”을 기반으로 변호사의 분석과 조언을 제공</strong>하는
-                국내 최초 수준의 교통사고 법률 매칭 플랫폼입니다.
-              </p>
-              <p>
-                <strong>회원가입 시, 최초 1회 무료로 상담글을 등록할 수 있습니다.</strong>
-              </p>
-              <p>
-                단순한 법률 검색을 넘어, <strong>현실적인 상황 분석과 직접적인 법률적 대응 방향</strong>을
-                다양한 변호사의 시각으로 비교할 수 있도록 설계되었습니다.
-              </p>
+    <link rel="stylesheet" href="/css/introduceCo.css">
+    <title>introduceCo</title>
+  </head>
+
+  <body>
+    <jsp:include page="../common/header.jsp" />
+
+    <div id="app">
+      <section class="hero">
+        <p class="hero-sub">억울한 과실비율, 변호사 상담이 필요하다면?</p>
+        <h1 class="hero-main">
+          비용도 결과도, 이제는 <span class="orange">숨김 없이</span> 확인하세요.
+        </h1>
+        <div class="hero-box">
+          과실제로는 <span class="blackbox">블랙박스</span>에서 시작합니다.
+        </div>
+      </section>
+
+      <section class="why-needed">
+        <section class="why-needed">
+          <h2 class="why-title">
+            왜 <span class="inline-logo"><img src="../../img/logo1.png" alt="과실제로 로고"> 가 필요한가요?</span>
+          </h2>
+        </section>
+
+
+        <div class="content">
+          <img src="../../img/blackbox.webp" alt="블랙박스 아이콘" class="blackbox-img" />
+
+          <div class="text">
+            <p>교통사고가 나면 억울함보다 먼저 보험사의 <span class="orange">과실비율 통보</span>가 옵니다.</p>
+            <p>블랙박스가 있어도, 혼자선 <span class="orange">법적 대응이 막막</span>합니다.</p>
+            <p>전문가의 도움이 필요하지만, <span class="orange">비용</span>과 <span class="orange">접근성</span>은 장벽이 됩니다.</p>
+            <p class="bold">그래서, 과실제로가 시작됐습니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="steps">
+        <h2 class="steps-title">
+          <span class="inline-title">
+            <img src="../../img/logo1.png" alt="과실제로 로고" class="logo" />
+            의 <strong>3단계로 끝나는 교통사고 법률 대응</strong>
+          </span>
+        </h2>
+        <div class="step-wrapper">
+          <div class="step">
+            <div class="step-number">1.</div>
+            <div class="step-box">
+              <strong><span class="orange">블랙박스 영상</span></strong>을 업로드하고 질문을 등록하세요.
             </div>
-          
-            <!-- 과실제로가 필요한 이유 -->
-            <div class="card mb-40">
-              <h2 class="section-title">왜 과실제로인가요?</h2>
-              <ul>
-                <li>✅ <strong>블랙박스 영상을 기반으로 한 변호사의 실시간 분석 제공</strong></li>
-                <li>✅ 다양한 변호사의 의견을 비교하고, 소비자가 직접 선택</li>
-                <li>✅ 상담 → 선임까지 원스톱 진행 가능</li>
-                <li>✅ 소송 전 실질적인 대응 전략을 빠르게 확인 가능</li>
-              </ul>
+          </div>
+
+          <div class="step">
+            <div class="step-number">2.</div>
+            <div class="step-box">
+              여러 명의 변호사로부터 분석과 <span class="orange">답변</span>을 받아보세요.
             </div>
-          
-            <!-- 주요 기능 -->
-            <div class="card mb-40">
-              <h2 class="section-title">주요 기능</h2>
-              <ul>
-                <li>🎥 블랙박스 영상 업로드 → 질문 등록</li>
-                <li>🆓 <strong>회원가입 시 최초 1회 무료 상담글 등록 가능</strong></li>
-                <li>⚖️ 변호사의 분석 댓글 답변</li>
-                <li>💬 1:1 채팅 및 상담 기능</li>
-                <li>💰 예상 소송비용 확인 가능</li>
-              </ul>
+          </div>
+
+          <div class="step">
+            <div class="step-number">3.</div>
+            <div class="step-box">
+              마음에 드는 <span class="orange">변호사를 선택</span>하고, 1:1 상담 및 선임까지 진행하세요.
             </div>
-          
-            <!-- 차별화 포인트 -->
-            <div class="card mb-40">
-              <h2 class="section-title">과실제로 사이트의 차별점</h2>
-              <ul>
-                <li><strong>타 플랫폼과 다른 점</strong>：베이스가 되는 “블랙박스 영상”을 기본으로 사용</li>
-                <li>질문/답변은 공개되어 다른 사람의 사례로도 참고가능</li>
-                <li>정해지진 시간 내 답변을 보장하는 유료 패키지</li>
-              </ul>
-            </div>
-          
-            <!-- 이용 대상 -->
-            <div class="card">
-              <h2 class="section-title">이용 대상</h2>
-              <ul>
-                <li>블랙박스 영상을 보유한 교통사고 당사자</li>
-                <li>보험사 과실비율에 이의가 있는 소비자</li>
-                <li>교통사고 소송을 고민 중인 피해자 및 가해자</li>
-              </ul>
-            </div>
-          </section>          
-	</div>
-</body>
-</html>
-<script>
+          </div>
+        </div>
+      </section>
+
+      <section class="features">
+        <h2>주요 서비스</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <img src="../../img/icon-video.png" alt="블랙박스 질문 등록" />
+            <p>블랙박스 영상 기반 질문 등록</p>
+          </div>
+          <div class="feature-card">
+            <img src="../../img/icon-price.png" alt="소송 비용 확인" />
+            <p>사건 별 소송 비용 확인</p>
+          </div>
+          <div class="feature-card">
+            <img src="../../img/icon-chat.png" alt="1:1 상담" />
+            <p>1:1 채팅 및 상담</p>
+          </div>
+          <div class="feature-card">
+            <img src="../../img/icon-lawyer.webp" alt="분석 답변" />
+            <p>변호사들의 분석 답변</p>
+          </div>
+        </div>
+
+        <div class="cta-box">
+          <a href="/user/add.do" class="cta-button">회원가입 시 1회 무료 상담 가능</a>
+        </div>
+      </section>
+
+      <section class="compare">
+        <h2>과실제로는 무엇이 다를까요?</h2>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>항목</th>
+              <th>기존 법률 플랫폼</th>
+              <th class="highlight-logo">
+                <img src="../../img/logo2.png" alt="과실제로 로고" />
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>상담 방식</td>
+              <td>글</td>
+              <td><span class="orange">블랙박스 영상</span></td>
+            </tr>
+            <tr>
+              <td>변호사 선택</td>
+              <td>랜덤 / 1명 선택</td>
+              <td>여러 명의 답변<br><span class="orange">비교 후 선택</span></td>
+            </tr>
+            <tr>
+              <td>질문 공개 여부</td>
+              <td>일부 또는 비공개</td>
+              <td>전체 질문/답변 <span class="orange">공개</span><br>(사례 참고 가능)</td>
+            </tr>
+            <tr>
+              <td>답변 속도</td>
+              <td>불규칙</td>
+              <td>정해진 <span class="orange">시간 내</span><br>답변 보장 (유료)</td>
+            </tr>
+            <tr>
+              <td>상담 흐름</td>
+              <td>상담만 제공</td>
+              <td>상담 → 채팅 → 선임까지 원스톱</td>
+            </tr>
+            <tr>
+              <td>비용 공개</td>
+              <td>X 또는 대략적인 금액</td>
+              <td>완료된 사건<br><span class="orange">비용 공개</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <section class="target-users">
+        <h2>이런 분께 추천드립니다!</h2>
+        <ul class="user-list">
+          <li>블랙박스 영상은 있지만, 법적 판단이 어려운 분</li>
+          <li>보험사의 과실비율 통보에 이의가 있는 분</li>
+          <li>교통사고 대응이 처음이라 막막한 분</li>
+          <li>여러 변호사의 의견을 비교해보고 싶은 분</li>
+          <li>법률 서비스를 쉽고 빠르게 이용하고 싶은 분</li>
+        </ul>
+      </section>
+
+      <button @click="scrollToTop" class="top-button">▲ 맨 위로</button>
+
+    </div>
+    <jsp:include page="../common/footer.jsp" />
+
+  </body>
+
+  </html>
+  <script>
     const app = Vue.createApp({
-        data() {
-            return {
-				list : []
-				
-            };
-        },
-        methods: {
-           
-        },
-        mounted() {
-            var self = this;
+      data() {
+        return {
+        };
+      },
+      methods: {
+        scrollToTop() {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+      },
+      mounted() {
+        var self = this;
+      }
     });
     app.mount('#app');
-</script>
-​
+  </script>
+  ​

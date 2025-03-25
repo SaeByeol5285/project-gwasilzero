@@ -11,37 +11,37 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
-import com.project.gwasil_zero.dao.PackageService;
+import com.project.gwasil_zero.dao.PackagesService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
-public class PackageController {
+public class PackagesController {
 	@Autowired
-	PackageService packageService;
+	PackagesService packagesService;
 	
 	// 패키지 구매
-	@RequestMapping("/package/package.do")
+	@RequestMapping("/packages/packages.do")
 	public String packageList(Model model) throws Exception {
 
-		return "/package/package";
+		return "/packages/packages";
 	}
 	
 	// 결제 창
-	@RequestMapping("/package/packagePay.do")
+	@RequestMapping("/packages/packagesPay.do")
 	public String pay(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 		request.setAttribute("map", map);
 
-		return "/package/packagePay";
+		return "/packages/packagesPay";
 	}
 
 	
-	@RequestMapping(value = "/package/package.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/packages/packages.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String packageList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
-		resultMap = packageService.getpackageList(map);
+		resultMap = packagesService.getpackageList(map);
 		return new Gson().toJson(resultMap);
 	}
 	
@@ -50,7 +50,7 @@ public class PackageController {
 	   public String payment(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 	      HashMap<String, Object> resultMap = new HashMap<String, Object>();
 	      
-	      resultMap = packageService.addPayment(map);
+	      resultMap = packagesService.addPayment(map);
 	      return new Gson().toJson(resultMap);
 	   }
 }

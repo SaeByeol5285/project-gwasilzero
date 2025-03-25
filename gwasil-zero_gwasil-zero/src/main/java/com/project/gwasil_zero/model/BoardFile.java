@@ -10,4 +10,6 @@ public class BoardFile {
 	private String fileName;
 	private String thumbnail;
 	private String fileRealName;
+	private String boardTitle;
+	
 }

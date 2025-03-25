@@ -5,10 +5,12 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-@Mapper
-public interface PackageMapper {
+import com.project.gwasil_zero.model.Packages;
 
-	List<Package> selectPackageList(HashMap<String, Object> map);
+@Mapper
+public interface PackagesMapper {
+
+	List<Packages> selectPackagesList(HashMap<String, Object> map);
 
 	void insertPayment(HashMap<String, Object> map);
 

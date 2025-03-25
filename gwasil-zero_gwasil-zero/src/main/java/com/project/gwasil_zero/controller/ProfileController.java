@@ -39,6 +39,13 @@ public class ProfileController {
         return "/profile/lawyerView"; 
     }
 	
+	@RequestMapping("/profile/lawyerEdit.do") 
+	public String lawyerEdit(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		request.setAttribute("map", map);
+
+        return "/profile/lawyerEdit"; 
+    }
+	
 	// 소속 변호사 목록 시작
 	@RequestMapping(value = "/profile/innerLawyer.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
@@ -66,6 +73,16 @@ public class ProfileController {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		
 		resultMap = profileService.getLawyer(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 게시글 수정
+	@RequestMapping(value = "/profile/lawyerEdit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String lawyerEdit(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+		resultMap = profileService.editLawyer(map);
 		return new Gson().toJson(resultMap);
 	}
 	

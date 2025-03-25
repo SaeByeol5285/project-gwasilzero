@@ -99,6 +99,18 @@
 		FROM LICENSE 
 		WHERE LAWYER_ID = #{lawyerId}
 	</select>
+	
+	<update id="updateLawyer" parameterType="hashmap">
+		UPDATE LAWYER
+		SET
+			LAWYER_INFO = #{lawyerInfo},
+			LAWYER_CAREER = #{lawyerCareer},
+			LAWYER_TASK = #{lawyerTask},
+			LAWYER_EDU = #{lawyerEdu}
+		WHERE LAWYER_ID = #{lawyerId}	
+	</update>
+	
+
 </mapper>
 
 

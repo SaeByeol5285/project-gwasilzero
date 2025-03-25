@@ -70,5 +70,20 @@ public class ProfileService {
 		return resultMap;
 	}
 
+	public HashMap<String, Object> editLawyer(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			profileMapper.updateLawyer(map);
+			
+			resultMap.put("result", "success");
+		} catch(Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+		
+	}
 	
 }

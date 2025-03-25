@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.project.gwasil_zero.mapper.OfficeMapper">
+	<select id="getSi" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Area">
+		SELECT DISTINCT SI
+		FROM AREA
+		ORDER BY SI ASC
+	</select>
+	
+	<select id="getGu" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Area">
+		SELECT DISTINCT GU
+		FROM AREA
+		WHERE SI = #{si} AND GU IS NOT NULL
+		ORDER BY GU ASC
+	</select>
+	
+	<select id="getDong" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Area">
+		SELECT DISTINCT DONG
+		FROM AREA
+		WHERE SI = #{si} AND GU = #{gu} AND DONG IS NOT NULL
+		ORDER BY DONG ASC
+	</select>
+	
+	<select id="getLawyerList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+		SELECT * 
+		FROM LAWYER
+		WHERE LAWYER_STATUS = #{lawyerStatus}
+		
+	</select>
+</mapper>

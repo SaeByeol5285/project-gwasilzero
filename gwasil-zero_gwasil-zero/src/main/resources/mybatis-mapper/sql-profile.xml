@@ -82,8 +82,15 @@
 	
 	<select id="selectLawyer" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
 		SELECT *  
-		FROM LAWYER 
-		WHERE LAWYER_ID = #{lawyerId}
+		FROM LAWYER L
+		WHERE L.LAWYER_ID = #{lawyerId} 
+	</select>
+	
+	<select id="lawyerBoardList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Board">
+		SELECT B.*
+		FROM LAWYER L
+		LEFT JOIN BOARD B ON L.LAWYER_ID = B.LAWYER_ID
+		WHERE L.LAWYER_ID = #{lawyerId}
 	</select>
 	
 	<select id="lawyerBoardFileList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.BoardFile">
@@ -91,7 +98,7 @@
 		FROM LAWYER L
 		LEFT JOIN BOARD B ON L.LAWYER_ID = B.LAWYER_ID
 		INNER JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO
-		WHERE L.LAWYER_ID = #{lawyerId}
+		WHERE L.LAWYER_ID = #{lawyerId} AND THUMBNAIL = 'Y'
 	</select>
 	
 	<select id="lawyerLicenseList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.License">
@@ -118,6 +125,14 @@
 		INSERT INTO LICENSE (LAWYER_ID, LICENSE_NAME)
 		VALUES (#{lawyerId, jdbcType=VARCHAR}, #{licenseName, jdbcType=VARCHAR})
 	</insert>
+	
+	<update id="updateMainCases" parameterType="hashmap">
+	    UPDATE LAWYER
+	    SET MAIN_CASE1_NO = #{mainCase1No, jdbcType=INTEGER},
+	        MAIN_CASE2_NO = #{mainCase2No, jdbcType=INTEGER},
+	        MAIN_CASE3_NO = #{mainCase3No, jdbcType=INTEGER}
+	    WHERE LAWYER_ID = #{lawyerId}
+	</update>
 </mapper>
 
 

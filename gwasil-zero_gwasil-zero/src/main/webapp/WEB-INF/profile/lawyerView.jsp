@@ -90,7 +90,7 @@
 <body>
 	<div id="lawInfoApp">
 		<div class="profile-container">
-            <div class="profile-photo">{{info.lawyerImg}}</div>
+            <div class="profile-photo">이미지없음</div>
                 <div class="profile-info">
                     <div class="section">
                         <h3>이름</h3>
@@ -129,7 +129,7 @@
                     <div class="section">
                         <h3>대표 사건 목록</h3>
                         <div class="case-list">
-                            <div class="case-card" v-for="file in fileList">
+                            <div class="case-card" v-for="file in boardFileList">
                                 <div class="case-desc"> {{file.fileName}}</div>
                                 <div class="case-title">{{file.boardTitle}}</div>
                             </div>
@@ -148,7 +148,7 @@
                 lawyerId : "${map.lawyerId}",
 				info : {},
                 sessionId : "${sessionId}",
-                fileList : [],
+                boardFileList : [],
                 license : []
             };
         },
@@ -164,9 +164,9 @@
 					type : "POST", 
 					data : nparmap,
 					success : function(data) { 
-                        console.log(data.info);
+                        // console.log(data.boardFileList);
                         self.info = data.info;
-                        self.fileList = data.fileList;
+                        self.boardFileList = data.boardFileList;
                         self.license = data.license;
 					}
 				});

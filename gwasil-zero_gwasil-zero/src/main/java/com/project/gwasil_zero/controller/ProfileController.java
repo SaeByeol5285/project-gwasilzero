@@ -81,13 +81,22 @@ public class ProfileController {
 	@RequestMapping(value = "/profile/lawyerEdit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String lawyerEdit(@RequestBody HashMap<String, Object> map) throws Exception {
-	    HashMap<String, Object> resultMap = new HashMap<>();
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		// --- 로그로 데이터 확인 (디버깅 용도) ---
+//	    System.out.println("=== [lawyerEdit] ===");
+//	    System.out.println("lawyerId: " + map.get("lawyerId"));
+//	    System.out.println("licenseList: " + map.get("licenseList"));
+//	    System.out.println("selectedBoards: " + map.get("selectedBoards"));
 		
 		// 1. 기본 정보 수정 (LAWYER 테이블)
 		resultMap = profileService.editLawyer(map);
 		
 		// 2. LICENSE 리스트 수정 (DELETE 후 INSERT)
 	    profileService.editLicense(map);
+	    
+	    // 3. 대표 사건 사례(mainCase1No~3No) 업데이트
+	    profileService.editMainCases(map); 
 	    
 		return new Gson().toJson(resultMap);
 	}

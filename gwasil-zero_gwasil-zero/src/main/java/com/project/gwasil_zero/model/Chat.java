@@ -7,5 +7,5 @@ public class Chat {
 	
 	private int chatNo;
 	private String senderId;
-	private int receiverId;
+	private String receiverId;
 }

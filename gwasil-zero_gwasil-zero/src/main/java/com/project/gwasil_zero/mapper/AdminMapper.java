@@ -17,5 +17,7 @@ public interface AdminMapper {
 	List<Lawyer> selectLawPassList(HashMap<String, Object> map);
 
 	List<Report> selectReportList(HashMap<String, Object> map);
+
+	List<User> selectUserList(HashMap<String, Object> map);
 	
 }

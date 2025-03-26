@@ -22,7 +22,7 @@ public class AdminService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			List<User> newMemList = adminMapper.selectNewMemList(map);
-			
+						
 			resultMap.put("newMemList", newMemList);
 		} catch(Exception e) {
 			System.out.println(e.getMessage());
@@ -52,6 +52,20 @@ public class AdminService {
 			List<Report> repoList = adminMapper.selectReportList(map);
 			
 			resultMap.put("repoList", repoList);
+		} catch(Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
+
+	public HashMap<String, Object> getUserList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			List<User> userList = adminMapper.selectUserList(map);
+						
+			resultMap.put("userList", userList);
 		} catch(Exception e) {
 			System.out.println(e.getMessage());
 			resultMap.put("result", "fail");

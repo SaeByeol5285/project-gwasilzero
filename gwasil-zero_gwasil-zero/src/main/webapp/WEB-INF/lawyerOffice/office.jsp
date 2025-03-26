@@ -145,6 +145,12 @@
 		<button class="tab-btn" :class="{active: currentTab==='personal'}" @click="currentTab='personal'">개인 변호사</button>
 	</div>
 
+	<!-- ✅ 검색창  -->
+	<div class="select-row" v-if="currentTab !== 'area'" style="margin-top: 10px;">
+		<input v-model="keyword" class="select-box" style="flex: 1; min-width: 200px;"  @keyup.enter="fnSearchByKeyword" placeholder="지역명을 입력하세요 (예: 강남역)">
+		<button class="btn-search" @click="fnSearchByKeyword">지도 이동</button>
+	</div>
+
 	<!-- ✅ 지역 선택 -->
 	<div v-if="currentTab==='area'" class="select-row">
 		<select v-model="selectSi" @change="fnGu" class="select-box">
@@ -172,9 +178,9 @@
 	<div id="map"></div>
 
 	<!-- ✅ 거리순 리스트 -->
-	<div class="lawyer-list" v-if="sortedLawyers.length > 0">
-		<h3>📋 거리순 변호사 리스트</h3>
-		<div class="lawyer-card" v-for="lawyer in sortedLawyers" :key="lawyer.lawyerId" @click="fnDetail(lawyer.lawyerId)">
+	<div class="lawyer-list" v-if="showNearbyList">
+		<h3>📋 법률 사무소 목록 (거리순)</h3>
+		<div class="lawyer-card" v-for="lawyer in sortedLawyers" :key="lawyer.lawyerId" @click="goToLawyerMarker(lawyer)">
 			<h4 style="margin: 0 0 6px;">{{ lawyer.lawyerName }}</h4>
 			<p style="margin: 0 0 2px; font-size: 14px;">{{ lawyer.lawyerAddr }}</p>
 			<p style="margin: 0; font-size: 13px; color: #888;" v-if="lawyer.distance">거리: {{ lawyer.distance.toFixed(2) }} km</p>
@@ -210,6 +216,8 @@ const mapApp = Vue.createApp({
 			myLongitude: null,
 			lawyerList: [],
 			infowindowAnchor: null,
+			keyword : "",
+			showNearbyList: false
 
 
 		};
@@ -218,6 +226,9 @@ const mapApp = Vue.createApp({
 		currentTab(newTab) {
 			this.removeMarkers();
 			this.lawyerList = [];
+
+			this.keyword = "";
+			this.showNearbyList = false;
 
 			if (newTab === 'area') {
 				this.fnSi();
@@ -320,6 +331,10 @@ const mapApp = Vue.createApp({
 
 				// ✅ 거리 계산 다시 적용
 				self.calculateDistances();
+
+				// 리스트 보여주기
+				self.showNearbyList = true;
+
 			}, () => {
 				alert("현재 위치를 가져오지 못했습니다.");
 			});
@@ -488,9 +503,61 @@ const mapApp = Vue.createApp({
 			
 		},
 
-		fnDetail(lawyerId) {
-			pageChange("lawyer/office/view.do", {lawyerId : lawyerId})
+		goToLawyerMarker(lawyer) {
+			const self = this;
+
+			
+
+
+			if (!lawyer._lat || !lawyer._lng) return;
+
+			const position = new kakao.maps.LatLng(lawyer._lat, lawyer._lng);
+			self.map.panTo(position);  // 부드럽게 이동
+
+			// 기존 인포윈도우 닫기
+			if (self.infowindow) self.infowindow.close();
+
+			// 새 인포윈도우 열기
+			const contentHtml = `
+				<div style="padding:8px;">
+					<strong>` + lawyer.lawyerName + `</strong><br>
+					` + lawyer.lawyerAddr + `<br>
+					📞 ` + lawyer.phoneNumbe + `
+				</div>
+			`;
+
+			self.infowindow.setContent(contentHtml);
+			self.infowindow.open(self.map, self.findMarkerByLawyer(lawyer));
+			self.infowindowAnchor = self.findMarkerByLawyer(lawyer);
+		},
+
+		findMarkerByLawyer(lawyer) {
+			return this.markers.find(marker => {
+				const pos = marker.getPosition();
+				return pos.getLat() === lawyer._lat && pos.getLng() === lawyer._lng;
+			});
+		},
+
+		fnSearchByKeyword() {
+			const self = this;
+			const keyword = self.keyword ? self.keyword.trim() : "";
+
+			if (!keyword) {
+				alert("검색어를 입력해주세요.");
+				return;
+			}
+
+			const ps = new kakao.maps.services.Places();
+			ps.keywordSearch(keyword, function(data, status) {
+				if (status === kakao.maps.services.Status.OK) {
+					const coords = new kakao.maps.LatLng(data[0].y, data[0].x);
+					self.map.setCenter(coords);
+				} else {
+					alert("검색한 장소를 찾을 수 없습니다.");
+				}
+			});
 		}
+
 
 	},
 	mounted() {

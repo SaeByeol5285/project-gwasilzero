@@ -23,6 +23,7 @@ public class Lawyer {
 	   private int mainCase3No;
 	   private String lawyerAddr;
 	   private String boardTitle;
+	   private int boardNo;
 	   
 	   
 

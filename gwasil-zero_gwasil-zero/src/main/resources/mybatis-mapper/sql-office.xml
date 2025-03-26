@@ -24,9 +24,12 @@
 	</select>
 	
 	<select id="getLawyerList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
-		SELECT * 
-		FROM LAWYER
-		WHERE LAWYER_STATUS = #{lawyerStatus}
-		
+	    SELECT * 
+	    FROM LAWYER
+	    WHERE 1=1
+	    <if test="lawyerStatus != null and lawyerStatus != ''">
+	        AND LAWYER_STATUS = #{lawyerStatus}
+	    </if>
 	</select>
+
 </mapper>

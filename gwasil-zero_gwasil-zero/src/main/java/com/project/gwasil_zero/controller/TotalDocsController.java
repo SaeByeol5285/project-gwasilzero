@@ -1,6 +1,7 @@
 package com.project.gwasil_zero.controller;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,12 +31,13 @@ public class TotalDocsController {
     }
 	
 	// 공지사항 상세보기
-	@RequestMapping("/notice/detail.do") 
-	public String noticeDetail(Model model) throws Exception{
-		return "/totalDocs/notice-detail";
+	@RequestMapping("/notice/detail.do")
+	public String noticeDetail(@RequestParam Map<String, Object> map, Model model) throws Exception {
+	    model.addAttribute("map", map);
+	    return "/totalDocs/notice-detail";
 	}
-	
-	// 글쓰기
+
+	// 공지사항 글쓰기
 	@RequestMapping("/notice/add.do") 
 	public String noticeAdd(Model model) throws Exception{
 		return "/totalDocs/notice-add";
@@ -77,6 +79,32 @@ public class TotalDocsController {
 		return "/totalDocs/guide-detail";
 	}
 	
-	
+	// 공지사항 리스트
+	@RequestMapping(value = "/notice/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String noticeList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+		resultMap = totalDocsService.getNoticeList(map);
+		return new Gson().toJson(resultMap);
+	}
+	// 공지사항 상세보기
+	@RequestMapping(value = "/notice/view.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String noticeView(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = totalDocsService.getNoticeInfo(map);
+		return new Gson().toJson(resultMap);
+	}
+	// 공지사항 이전,다음 글 보기
+	@RequestMapping(value = "/notice/adjacent.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String noticeAdjacent(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = totalDocsService.getNoticeAdjacent(map);
+		return new Gson().toJson(resultMap);
+	}
 
 }

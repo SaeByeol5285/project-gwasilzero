@@ -3,10 +3,73 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.project.gwasil_zero.mapper.TotalDocsMapper">
-	<select id = "selectUser" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs">
+	<select id = "selectNoticeList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs">
 		SELECT * 
-		FROM TBL_USER
-		WHERE user_id = #{id} AND user_password = #{pwd}
+		FROM TOTALDOCS
+		WHERE KIND = 'NOTICE'
+		<if test="searchOption != null and searchOption == 'all'">
+			AND (TOTAL_TITLE LIKE '%' || #{keyword} || '%'
+					OR USER_ID LIKE '%' || #{keyword} || '%')		
+		</if>
+
+		<if test="searchOption != null and searchOption == 'title'">
+			AND (TOTAL_TITLE LIKE '%' || #{keyword} || '%')
+		</if>
+		
+		<if test="searchOption != null and searchOption == 'writer'">
+			AND (USER_ID LIKE '%' || #{keyword} || '%') 
+		</if>
+		ORDER BY CDATE DESC
+		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+		
+	</select>
+	
+	<select id = "selectNoticeCnt" parameterType="hashmap" resultType="int">
+		SELECT COUNT(*) 
+		FROM TOTALDOCS
+		WHERE KIND = 'NOTICE'
+		<if test="searchOption != null and searchOption == 'all'">
+			AND (TOTAL_TITLE LIKE '%' || #{keyword} || '%'
+					OR USER_ID LIKE '%' || #{keyword} || '%')		
+		</if>
+
+		<if test="searchOption != null and searchOption == 'title'">
+			AND (TOTAL_TITLE LIKE '%' || #{keyword} || '%')
+		</if>
+		
+		<if test="searchOption != null and searchOption == 'writer'">
+			AND (USER_ID LIKE '%' || #{keyword} || '%') 
+		</if>
+		
+	</select>
+	
+	<select id = "selectNoticeInfo" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs">
+		SELECT *
+		FROM TOTALDOCS
+		WHERE TOTAL_NO = #{totalNo}
+	</select>
+	
+	<update id="updateCnt" parameterType="hashmap">
+		UPDATE TOTALDOCS
+		SET
+			CNT = CNT+1
+		WHERE TOTAL_NO = #{totalNo}
+	</update>
+	
+	<select id = "selectPrevNotice" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs">
+		SELECT * 
+		FROM TOTALDOCS
+		WHERE KIND = 'NOTICE' AND TOTAL_NO &lt; #{totalNo}
+		ORDER BY TOTAL_NO DESC
+		FETCH FIRST 1 ROWS ONLY
+	</select>
+	
+	<select id = "selectNextNotice" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs">
+		SELECT * 
+		FROM TOTALDOCS
+		WHERE KIND = 'NOTICE' AND TOTAL_NO &gt; #{totalNo}
+		ORDER BY TOTAL_NO ASC
+		FETCH FIRST 1 ROWS ONLY
 	</select>
 
 	

@@ -5,11 +5,12 @@ import lombok.Data;
 @Data
 public class BoardCmt {
 	
-	private String orderId;
-	private String packageName;
-	private String payTime;
-	private String userId;
+	private String cmt_no;
+	private String boardNo;
+	private String contents;
 	private String lawyerId;
-	private String payStatus;
+	private String lawyerName;
+	private String cdate;
+	private String udate; 
 
 }

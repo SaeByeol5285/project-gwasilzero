@@ -15,6 +15,7 @@ public class Board {
 	private String boardStatus;
 	private String lawyerId;
 	private String lawyerReview;
-
+	private String thumbnailPath;
+	private String lawyerName; 
 
 }

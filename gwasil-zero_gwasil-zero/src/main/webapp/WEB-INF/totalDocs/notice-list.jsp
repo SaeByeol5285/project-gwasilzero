@@ -7,116 +7,83 @@
 		<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 		<script src="/js/page-change.js"></script>
+		<link rel="stylesheet" href="/css/common.css">
+		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
 		<title>공지사항</title>
+		<style>
+			.fab-wrapper {
+				position: fixed;
+				bottom: 30px;
+				right: 30px;
+				display: flex;
+				gap: 10px;
+				z-index: 999;
+			}
+
+			.fab-btn {
+				background-color: var(--main-color);
+				color: white;
+				border: none;
+				border-radius: 20px;
+				padding: 10px 16px;
+				font-size: 14px;
+				font-weight: 500;
+				box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+				cursor: pointer;
+				transition: background-color 0.2s;
+			}
+
+			.fab-btn:hover {
+				background-color: #ff5c00;
+			}
+		</style>
 	</head>
-	<style>
-		/* 기존 사고유형 코드 스타일 재사용 */
-		.card-container {
-			width: 66%;
-			margin: 0 auto;
-			padding: 40px 20px;
-		}
-
-		.card-grid {
-			display: grid;
-			grid-template-columns: repeat(3, 1fr);
-			gap: 24px;
-			margin-top: 30px;
-		}
-
-		.box {
-			background: white;
-			padding: 24px;
-			border-radius: 10px;
-			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-			cursor: pointer;
-			transition: transform 0.2s ease, box-shadow 0.2s ease;
-		}
-
-		.box:hover {
-			transform: translateY(-5px);
-			box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-		}
-
-		.search-bar {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			gap: 10px;
-			margin: 20px auto;
-			width: 66%;
-		}
-
-		.search-select,
-		.search-input {
-			padding: 8px 12px;
-			font-size: 14px;
-			border: 1px solid #ccc;
-			border-radius: 6px;
-		}
-
-		.btn {
-			padding: 8px 16px;
-			border-radius: 6px;
-			font-size: 14px;
-			font-weight: 500;
-			cursor: pointer;
-		}
-
-		.btn-primary {
-			background-color: #FF5722;
-			color: white;
-			border: none;
-		}
-
-		.btn-primary:hover {
-			background-color: #e55300;
-		}
-	</style>
 
 	<body>
 		<jsp:include page="../common/header.jsp" />
+		<div id="app" class="container">
+			<!-- 📌 메인 검색/옵션 줄 -->
+			<div class="flex-between mb-20" style="align-items: center; font-family: var(--font-main);">
+				<!-- 왼쪽: 검색창 그룹 -->
+				<div style="display: flex; gap: 10px; flex-wrap: wrap;">
+					<select v-model="searchOption" class="search-select">
+						<option value="all">:: 전체 ::</option>
+						<option value="title">제목</option>
+						<option value="writer">작성자</option>
+					</select>
+					<input v-model="keyword" @keyup.enter="fnNoticeList" class="search-input" placeholder="검색어 입력">
+					<button @click="fnNoticeList" class="btn btn-primary">검색</button>
+				</div>
 
-		<div id="app">
-			<select v-model="pageSize" @change="fnNoticeList">
-				<option value="5">5개씩</option>
-				<option value="10">10개씩</option>
-				<option value="15">15개씩</option>
-				<option value="20">20개씩</option>
-			</select>
-			<div class="search-bar">
-				<select v-model="searchOption" class="search-select">
-					<option value="all">:: 전체 ::</option>
-					<option value="title">제목</option>
-					<option value="writer">작성자</option>
+				<!-- 오른쪽: 페이지 개수 드롭다운 -->
+				<select v-model="pageSize" @change="fnNoticeList" class="search-select" style="min-width: 100px;">
+					<option value="5">5개씩</option>
+					<option value="10">10개씩</option>
+					<option value="15">15개씩</option>
+					<option value="20">20개씩</option>
 				</select>
-				<input v-model="keyword" @keyup.enter="fnNoticeList" class="search-input" placeholder="검색어 입력">
-				<button @click="fnNoticeList" class="btn btn-primary">검색</button>
 			</div>
 
-			<div class="box" v-for="item in list" :key="item.totalNo" @click="fnNoticeView(item.totalNo)">
+			<div class="card mb-20" v-for="item in list" :key="item.totalNo" @click="fnNoticeView(item.totalNo)"
+				style="cursor:pointer;">
 				<h3>{{ item.totalTitle }}</h3>
-				<p>작성자: {{ item.userId}}</p>
+				<p>작성자: {{ item.userId }}</p>
 				<p>작성일: {{ item.cdate }}</p>
 			</div>
 
-
-			<div style="text-align: center; margin-top: 40px;">
+			<div class="flex-center mt-40">
 				<button @click="prevPage" :disabled="page === 1">〈</button>
-				<button v-for="n in index" :key="n" @click="goToPage(n)" :style="{ 
-        margin: '0 4px',
-        fontWeight: page === n ? 'bold' : 'normal',
-        backgroundColor: page === n ? '#FF5722' : '#fff',
-        color: page === n ? '#fff' : '#000',
-        border: '1px solid #ccc',
-        borderRadius: '4px',
-        padding: '4px 8px',
-        cursor: 'pointer'
-      }">{{ n }}</button>
+				<button v-for="n in index" :key="n" @click="goToPage(n)"
+					:class="['btn', page === n ? 'btn-primary' : 'btn-outline']" class="mx-1">{{ n }}</button>
 				<button @click="nextPage" :disabled="page === index">〉</button>
 			</div>
-		</div>
 
+			<div class="fab-wrapper">
+				<button class="fab-btn" @click="goToAddPage">＋ 글쓰기</button>
+				<button class="fab-btn" v-show="showScrollBtn" @click="scrollToTop">↑ 맨 위로</button>
+			</div>
+
+		</div>
 		<jsp:include page="../common/footer.jsp" />
 	</body>
 
@@ -131,7 +98,9 @@
 					searchOption: "all",
 					page: 1,
 					pageSize: 5,
-					index: 0
+					index: 0,
+					showScrollBtn: false
+
 				};
 			},
 			methods: {
@@ -149,7 +118,6 @@
 						dataType: "json",
 						data: params,
 						success: function (data) {
-							console.log(data);
 							self.list = data.list;
 							self.index = Math.ceil(data.count / self.pageSize);
 						}
@@ -172,12 +140,27 @@
 					}
 				},
 				fnNoticeView(noticeNo) {
-					pageChange("/notice/detail.do", { noticeNo : noticeNo });
+					pageChange("/notice/detail.do", { noticeNo: noticeNo });
+				},
+				scrollToTop() {
+					window.scrollTo({ top: 0, behavior: 'smooth' });
+				},
+				handleScroll() {
+					this.showScrollBtn = window.scrollY > 100;
+				},
+				goToAddPage() {
+					pageChange("/notice/add.do", {});
 				}
+				
 			},
 			mounted() {
 				this.fnNoticeList();
+				window.addEventListener("scroll", this.handleScroll);
+			},
+			beforeUnmount() {
+				window.removeEventListener("scroll", this.handleScroll);
 			}
-		});
+		}
+		);
 		app.mount("#app");
 	</script>

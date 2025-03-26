@@ -68,7 +68,7 @@ public class AdminController {
     }
     
     // 신규 유저 목록
- 	@RequestMapping(value = "/newMemList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+ 	@RequestMapping(value = "/admin/newMemList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
  	@ResponseBody
  	public String newMemList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
  		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -78,7 +78,7 @@ public class AdminController {
  	}
  	
  	// 변호사 승인 대기 목록
-  	@RequestMapping(value = "/lawPassList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+  	@RequestMapping(value = "/admin/lawPassList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
   	@ResponseBody
   	public String lawPassList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
   		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -87,14 +87,14 @@ public class AdminController {
   		return new Gson().toJson(resultMap);
   	}
   	
-//  	// 게시글 신고 목록 = 추후 작업
-//   	@RequestMapping(value = "/repoList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-//   	@ResponseBody
-//   	public String repoList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-//   		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-//   		
-//   		resultMap = adminService.getRepoList(map);
-//   		return new Gson().toJson(resultMap);
-//   	}
+  	// 게시글 신고 목록 = 추후 작업
+   	@RequestMapping(value = "/admin/repoList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String repoList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+   		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+   		
+   		resultMap = adminService.getRepoList(map);
+   		return new Gson().toJson(resultMap);
+   	}
 		
 }

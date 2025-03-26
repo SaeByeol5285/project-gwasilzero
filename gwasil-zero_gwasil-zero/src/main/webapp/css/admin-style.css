@@ -66,3 +66,42 @@ body {
     color: blue;
     cursor: pointer;
 }
+h3 {
+	margin-top: 30px;
+	margin-bottom: 10px;
+	font-size: 18px;
+	font-weight: bold;
+	border-left: 6px solid #6fa3ef;
+	padding-left: 10px;
+	color: #333;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	background-color: white;
+	border: 1px solid #ccc;
+	margin-bottom: 30px;
+}
+
+th,
+td {
+	padding: 10px;
+	text-align: left;
+	border: 1px solid #ccc;
+	font-size: 14px;
+}
+
+th {
+	background-color: #e0e7ff;
+	color: #333;
+	font-weight: 600;
+}
+
+tr:nth-child(even) {
+	background-color: #f9f9f9;
+}
+
+tr:hover {
+	background-color: #f1f1f1;
+}

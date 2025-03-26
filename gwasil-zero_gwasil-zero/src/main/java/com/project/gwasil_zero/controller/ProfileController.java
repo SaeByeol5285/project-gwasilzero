@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -79,11 +80,15 @@ public class ProfileController {
 	// 게시글 수정
 	@RequestMapping(value = "/profile/lawyerEdit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String lawyerEdit(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-			
+	public String lawyerEdit(@RequestBody HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+		
+		// 1. 기본 정보 수정 (LAWYER 테이블)
 		resultMap = profileService.editLawyer(map);
+		
+		// 2. LICENSE 리스트 수정 (DELETE 후 INSERT)
+	    profileService.editLicense(map);
+	    
 		return new Gson().toJson(resultMap);
 	}
-	
 }

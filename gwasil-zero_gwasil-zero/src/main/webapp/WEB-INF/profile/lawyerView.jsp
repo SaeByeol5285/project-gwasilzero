@@ -90,7 +90,7 @@
 <body>
 	<div id="lawInfoApp">
 		<div class="profile-container">
-            <div class="profile-photo">프로필 사진</div>
+            <div class="profile-photo">{{info.lawyerImg}}</div>
                 <div class="profile-info">
                     <div class="section">
                         <h3>이름</h3>

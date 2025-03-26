@@ -18,7 +18,7 @@
             background-color: #ddd;
             padding: 30px;
             border-radius: 14px;
-            width: 600px;
+            width: 1000px;
             margin: 0 auto;
         }
     
@@ -110,22 +110,28 @@
                     <tr>
                         <th>대표 사건 사례<br>(최대 3개)</th>
                         <td>
+                            <p style="font-size: 12px; color: #888;">
+                                {{ selectedFiles.length }}개 선택됨 (최대 3개까지)
+                            </p>
                             <table class="case-table">
                                 <tr>
                                     <th style="width: 50px;">선택</th>
-                                    <th>사진 제목 or 내용 or 사건 번호</th>
+                                    <th>게시판 번호</th>
+                                    <th>게시판 제목</th>
+                                    <th>실제 파일명</th>
                                 </tr>
-                                <tr>
-                                    <td><input type="checkbox" name="caseSelect1" /></td>
-                                    <td><input type="text" name="caseDesc1" /></td>
-                                </tr>
-                                <tr>
-                                    <td><input type="checkbox" name="caseSelect2" /></td>
-                                    <td><input type="text" name="caseDesc2" /></td>
-                                </tr>
-                                <tr>
-                                    <td><input type="checkbox" name="caseSelect3" /></td>
-                                    <td><input type="text" name="caseDesc3" /></td>
+                                <tr v-for="file in fileList" :key="file.boardNo">
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            :value="file.boardNo + '-' + file.fileName"
+                                            v-model="selectedFiles"
+                                            :disabled="selectedFiles.length >= 3 && !selectedFiles.includes(file.boardNo + '-' + file.fileName)"
+                                        />
+                                    </td>
+                                    <td>{{ file.boardNo }}</td>
+                                    <td>{{ file.boardTitle }}</td>
+                                    <td>{{ file.fileName }}</td>
                                 </tr>
                             </table>
                         </td>
@@ -145,7 +151,8 @@
                 lawyerId : "lawyer_2",
 				info : {},
                 fileList : [],
-                license : []
+                license : [],
+                selectedFiles: []
             };
         },
         methods: {
@@ -160,7 +167,7 @@
 					type : "POST", 
 					data : nparmap,
 					success : function(data) {
-                        console.log(data.license);
+                        console.log(data.fileList);
                         self.info = data.info;
                         self.fileList = data.fileList;
                         self.license = data.license;
@@ -172,18 +179,21 @@
                 var nparmap = {
                     ...self.info,
                     lawyerId: self.lawyerId,
-                    licenseList: self.license
+                    licenseList: self.license,
+                    selectedFiles: self.selectedFiles
                 };
 				$.ajax({
-					url:"/profile/lawyerEdit.dox",
-					dataType:"json",	
-					type : "POST", 
-					data : nparmap,
-					success : function(data) { 
+                    url: "/profile/lawyerEdit.dox",
+                    type: "POST",
+                    data: JSON.stringify(nparmap), // JSON으로 변환
+                    contentType: "application/json;charset=UTF-8",
+                    success: function(data) {
                         alert("수정되었습니다");
-                        location.href = "/profile/innerLawyer.do"
-					}
+                        location.href = "/profile/innerLawyer.do";
+                    }
 				});
+                // console.log("전송할 licenseList:", self.license);
+                // console.log("전송할 전체 데이터:", nparmap);
             }
         },
         mounted() {

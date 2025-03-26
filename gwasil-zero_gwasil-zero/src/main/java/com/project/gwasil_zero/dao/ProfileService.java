@@ -1,7 +1,9 @@
 package com.project.gwasil_zero.dao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,6 +77,7 @@ public class ProfileService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		
 		try {
+			// 1. LAWYER 기본 정보 수정
 			profileMapper.updateLawyer(map);
 			
 			resultMap.put("result", "success");
@@ -85,5 +88,37 @@ public class ProfileService {
 		return resultMap;
 		
 	}
-	
+
+	public HashMap<String, Object> editLicense(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+	        String lawyerId = (String) map.get("lawyerId");
+	        Object rawList = map.get("licenseList");
+	        List<Map<String, Object>> licenseList = new ArrayList<>();
+
+	        if (rawList instanceof List) {
+	            for (Object item : (List<?>) rawList) {
+	                if (item instanceof Map) {
+	                    licenseList.add((Map<String, Object>) item);
+	                }
+	            }
+	        }
+
+	        // 기존 삭제 후 insert
+	        profileMapper.deleteLicenseByLawyerId(lawyerId);
+	        for (Map<String, Object> license : licenseList) {
+	            license.put("lawyerId", lawyerId);
+	            profileMapper.insertLicense(license);
+	        }
+
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+
+	    return resultMap;
+	}
 }

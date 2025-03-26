@@ -64,6 +64,14 @@ public class UserController {
 
 		return "/user/userPwd-search";
 	}
+	
+	@RequestMapping("/user/reMakePwd.do")
+	public String reMakePwd(Model model) throws Exception {
+
+		return "/user/user-reMakePwd";
+	}
+	
+
 
 	// 로그인
 	@RequestMapping(value = "/user/user-login.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -151,5 +159,12 @@ public class UserController {
 			return null; // 예외 발생 시 null 반환
 		}
 	}
-
+	//비밀번호 재설정
+	@RequestMapping(value = "/user/user-reMakePwd.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String reMakePwd(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		resultMap = userService.selectUserPwd(map);
+		return new Gson().toJson(resultMap);
+	}
 }

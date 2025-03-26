@@ -4,8 +4,11 @@ import lombok.Data;
 
 @Data
 public class Chat {
-	
+
 	private int chatNo;
-	private int senderNo;
-	private int receiverNo;
+	private String time;
+	private String chatFilePath;
+	private String senderId;
+	private String senderName;
+
 }

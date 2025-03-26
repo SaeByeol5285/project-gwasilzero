@@ -22,7 +22,7 @@ public interface UserMapper {
 
 	User CheckUser(HashMap<String, Object> map);
 
-	void selectUserId(HashMap<String, Object> map);
+	User selectUserId(HashMap<String, Object> map);
 
 	void selectUserPwd(HashMap<String, Object> map);
 	

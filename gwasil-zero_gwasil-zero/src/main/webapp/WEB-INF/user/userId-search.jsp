@@ -13,13 +13,13 @@
         <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
         <title>아이디 찾기</title>
     </head>
+
     <style>
         #app {
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 70vh;
-            /* 전체 높이의 70%만 차지하게 설정 */
             padding: 20px;
         }
 
@@ -61,39 +61,36 @@
             background-color: #FF5722;
         }
     </style>
-    </head>
 
     <body>
         <jsp:include page="../common/header.jsp" />
-        <div id="app">
 
+        <div id="app">
             <div class="form-section">
                 <h2>아이디 찾기</h2>
-                <input v-model="user.name" placeholder="이름 입력">
-                <input v-model="user.phone" placeholder="핸드폰 번호 입력">
+                <input v-model="user.userName" placeholder="이름 입력">
+                <input v-model="user.userPhone" placeholder="핸드폰 번호 입력">
                 <button @click="requestCert()" style="margin-bottom: 10px;">인증하기</button>
                 <button @click="fnSearchId">아이디 찾기</button>
             </div>
-
         </div>
+
         <jsp:include page="../common/footer.jsp" />
     </body>
 
     </html>
     <script>
         IMP.init("imp29272276");
+
         const app = Vue.createApp({
             data() {
                 return {
                     user: {
-                        name: "", phone: "", userId: ""
+                        userName: "",
+                        userPhone: "",
+                        userId: ""
                     },
-                    authNum: "",
-                    authInputNum: "",
-                    count: 180,
                     foundUserId: "",
-                    foundUserPwd: "",
-                    showPopup: false
                 };
             },
             methods: {
@@ -102,28 +99,52 @@
                         channelKey: "channel-key-5164809c-6049-4ea1-9145-89fdfd4b17f4",
                         merchant_uid: "test_m83tgrb2",
                         min_age: 15,
-                        name: "",
-                        phone: "",
+                        name: this.user.userName,
+                        phone: this.user.userPhone,
                         carrier: "",
                         company: "",
                         m_redirect_url: "",
-                        popup: false,
                     });
                 },
-
                 fnSearchId() {
                     var self = this;
+                    var nparmap = {
+                        userName: self.user.userName,
+                        userPhone: self.user.userPhone
+                    };
                     $.ajax({
-                        url: "/user/findId",
+                        url: "/user/userId-search.dox",
                         type: "POST",
-                        data: { name: self.user.name, phone: self.user.phone },
+                        data: nparmap,
                         success: function (data) {
-                            if (data.status === "success") {
-                                self.foundUserId = data.userId;
-                                self.showPopup = true; // 팝업 활성화
+                            console.log("data:", data); // 데이터 구조 확인
+                            console.log("userName:", self.user.userName);
+                            if (data.result === "success") {
+                                const popup = window.open("", "아이디 찾기 결과", "width=400, height=300");
+                                const popupContent = `
+                                <html>
+                                <head>
+                                    <title>아이디 찾기 결과</title>
+                                    <style>
+                                        body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+                                        h3 { color: #FF5722; }
+                                    </style>
+                                </head>
+                                <body>
+                                    <h3>아이디 찾기 성공!</h3>
+                                    <p>${self.user.userName}님의 아이디는 <strong>${data.userId}</strong>입니다.</p>
+                                    <button onclick="window.close()">닫기</button>
+                                </body>
+                                </html>
+                            `;
+                                popup.document.write(popupContent);
+                                popup.document.close();
                             } else {
                                 alert("아이디 찾기 실패");
                             }
+                        },
+                        error: function () {
+                            alert("서버 통신 오류");
                         }
                     });
                 }
@@ -134,4 +155,3 @@
         });
         app.mount('#app');
     </script>
-    ​

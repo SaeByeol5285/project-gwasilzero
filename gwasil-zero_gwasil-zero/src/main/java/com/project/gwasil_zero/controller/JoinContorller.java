@@ -85,12 +85,12 @@ public class JoinContorller {
 		return new Gson().toJson(resultMap);
 	}
 
-//	// 일반 유저 정보수정
-//	@RequestMapping(value = "/join/user-edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-//	@ResponseBody
-//	public String editUser(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-//		HashMap<String, Object> resultMap = new HashMap<>();
-//		resultMap = joinService.editUser(map);
-//		return new Gson().toJson(resultMap);
-//	}
+	// 일반 유저 정보수정
+	@RequestMapping(value = "/join/user-edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String editUser(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		resultMap = joinService.editUser(map);
+		return new Gson().toJson(resultMap);
+	}
 }

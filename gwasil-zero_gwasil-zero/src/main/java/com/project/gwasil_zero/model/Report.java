@@ -10,6 +10,8 @@ public class Report {
 	private int boardNo;
 	private String reportStatus;
 	private String cdate;
+	private String contents;
+	
 
 
 }

@@ -109,19 +109,7 @@
                     });
                 },
                 fnSearchPwd() {
-                    var self = this;
-                    $.ajax({
-                        url: "/user/findPwd",
-                        type: "POST",
-                        data: { userId: self.user.userId, phone: self.user.phone },
-                        success: function (data) {
-                            if (data.status === "success") {
-                                self.foundUserPwd = data.userPwd;
-                            } else {
-                                alert("비밀번호 찾기 실패");
-                            }
-                        }
-                    });
+                    location.href="/user/reMakePwd.do"
                 }
             },
             mounted() {

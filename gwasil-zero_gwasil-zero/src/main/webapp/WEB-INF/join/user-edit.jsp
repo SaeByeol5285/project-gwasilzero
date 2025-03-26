@@ -107,6 +107,7 @@
         methods: {
             fnUpdate() {
                 const nparmap = {
+                    userId: this.user.userId,
                     userName: this.user.userName,
                     userPhone: this.user.userPhone,
                     userEmail: this.user.userEmail
@@ -128,6 +129,7 @@
             }
         },
         mounted() {
+            this.user.userId = '<%= session.getAttribute("userId") %>'
             this.fnGetList();
         }
     });

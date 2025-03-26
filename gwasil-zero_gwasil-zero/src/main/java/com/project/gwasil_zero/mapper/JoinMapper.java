@@ -18,6 +18,8 @@ public interface JoinMapper {
 
 	Lawyer selectLawyer(HashMap<String, Object> map);
 
+	void updateBoard(HashMap<String, Object> map);
+
 
 
 }

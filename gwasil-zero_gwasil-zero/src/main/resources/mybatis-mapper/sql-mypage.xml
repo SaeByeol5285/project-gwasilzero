@@ -3,6 +3,15 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.project.gwasil_zero.mapper.MypageMapper">
+	<select id="selectUser" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+	    SELECT USER_NAME, USER_PHONE, USER_EMAIL
+	    FROM TBL_USER
+	    WHERE USER_ID = #{userId}
+	</select>
+	<delete id="deleteUser" parameterType="hashmap">
+	    DELETE FROM TBL_USER
+	    WHERE USER_ID = #{userId}
+	</delete>
 	
 </mapper>
 

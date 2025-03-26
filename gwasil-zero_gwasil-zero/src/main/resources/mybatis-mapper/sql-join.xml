@@ -27,7 +27,7 @@
 	</select>
 	<update id="updateBoard" parameterType="hashmap">
 		UPDATE TBL_USER
-			USER_NAME = #{userName}
+		SET	USER_NAME = #{userName}
 			USER_EMAIL = #{userEmail}
 			USER_PHONE = #{userPhone}
 		WHERE USER_ID = #{userId}

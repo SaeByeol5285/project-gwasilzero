@@ -64,17 +64,15 @@ public class AdminService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			List<User> userList = adminMapper.selectUserList(map);
+			int count = adminMapper.userCnt(map);
 						
 			resultMap.put("userList", userList);
+			resultMap.put("count", count);
+			resultMap.put("result", "success");
 		} catch(Exception e) {
 			System.out.println(e.getMessage());
 			resultMap.put("result", "fail");
 		}
 		return resultMap;
 	}
-
-
-
-
-
 }

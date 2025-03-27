@@ -41,9 +41,9 @@
                         <select v-model="searchStatus">
                             <option value="">회원 상태</option>
                             <option value="ALL">전체</option>
-                            <option value="탈퇴">탈퇴</option>
-                            <option value="유료">유료회원</option>
-                            <option value="무료">무료회원</option>
+                            <option value="out">탈퇴</option>
+                            <option value="paid">유료회원</option>
+                            <option value="free">무료회원</option>
                         </select>
                 
                         <select v-model="searchKey">
@@ -53,7 +53,7 @@
                             <option value="packageName">패키지이름</option>
                         </select>
                 
-                        <input type="text" v-model="searchWord" placeholder="검색어 입력" />
+                        <input type="text" v-model="searchWord" @keyup.enter="fnUserList" placeholder="검색어 입력" />
                 
                         <button @click="fnSearch">검색</button>
                     </div>
@@ -138,18 +138,19 @@
             fnUserPage(num) {
                 var self = this;
                 self.userPage = num;
-                self.fnNewMemList();
+                self.fnUserList();
             },
             fnUserPageMove(direction) {
                 var self = this;
                 if (direction === 'next') self.userPage++;
                 else self.userPage--;
-                self.fnNewMemList();
+                self.fnUserList();
             }
         },
         mounted() {
             var self = this;
             self.fnNewMemList();
+            self.fnUserList();
         }
     });
     userApp.mount('#userApp');

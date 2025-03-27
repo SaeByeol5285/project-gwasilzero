@@ -19,5 +19,7 @@ public interface AdminMapper {
 	List<Report> selectReportList(HashMap<String, Object> map);
 
 	List<User> selectUserList(HashMap<String, Object> map);
+
+	int userCnt(HashMap<String, Object> map);
 	
 }

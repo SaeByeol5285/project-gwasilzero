@@ -28,7 +28,86 @@
 		    ORDER BY CDATE DESC
 		)
 		WHERE ROWNUM &lt;= 5
-
 	</select>	
+	
+	<select id="selectUserList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+		SELECT *
+		FROM TBL_USER U
+		WHERE 1=1
+		<if test="status != null and status != '' and status != 'ALL'">
+			<choose>
+				<when test="status == 'out'">
+					AND U.USER_STATUS = 'Out'
+				</when>
+				<when test="status == 'paid'">
+					AND U.USER_STATUS = 'Nomal'
+					AND EXISTS (
+						SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
+					)
+				</when>
+				<when test="status == 'free'">
+					AND U.USER_STATUS = 'Nomal'
+					AND NOT EXISTS (
+						SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
+					)
+				</when>
+			</choose>
+		</if>
+	
+		<if test="key != null and key != '' and word != null and word != ''">
+			<choose>
+				<when test="key == 'userName'">
+					AND U.USER_NAME LIKE '%' || #{word} || '%'
+				</when>
+				<when test="key == 'packageName'">
+					AND EXISTS (
+						SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID AND P.PACKAGE_NAME LIKE '%' || #{word} || '%'
+					)
+				</when>
+			</choose>
+		</if>
+	
+		ORDER BY CDATE DESC
+		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+	</select>
+	
+	<select id="userCnt" parameterType="hashmap" resultType="int">
+		SELECT COUNT(*)
+		FROM TBL_USER U
+		WHERE 1=1
+		<if test="status != null and status != '' and status != 'ALL'">
+			<choose>
+				<when test="status == 'out'">
+					AND U.USER_STATUS = 'Out'
+				</when>
+				<when test="status == 'paid'">
+					AND U.USER_STATUS = 'Nomal'
+					AND EXISTS (
+						SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
+					)
+				</when>
+				<when test="status == 'free'">
+					AND U.USER_STATUS = 'Nomal'
+					AND NOT EXISTS (
+						SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
+					)
+				</when>
+			</choose>
+		</if>
+	
+		<if test="key != null and key != '' and word != null and word != ''">
+			<choose>
+				<when test="key == 'userName'">
+					AND U.USER_NAME LIKE '%' || #{word} || '%'
+				</when>
+				<when test="key == 'packageName'">
+					AND EXISTS (
+						SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID AND P.PACKAGE_NAME LIKE '%' || #{word} || '%'
+					)
+				</when>
+			</choose>
+		</if>
+		
+	</select>
 	
 </mapper>

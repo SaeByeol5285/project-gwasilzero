@@ -128,3 +128,13 @@ body {
     border-radius: 50%;
     object-fit: cover;
 }
+
+/* =============================
+     셀렉트 박스
+  ============================= */
+.search-select {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}

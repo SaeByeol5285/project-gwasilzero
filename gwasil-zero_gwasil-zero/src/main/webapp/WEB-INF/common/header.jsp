@@ -8,6 +8,8 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <link rel="stylesheet" href="/css/header.css">
+		<link rel="stylesheet" href="/css/common.css">
+
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
@@ -72,7 +74,7 @@
                     sections: [
                         [],
                         [],
-                        ['소속 변호사', '개인 변호사'],
+                        ['소속 변호사', '개인 변호사', '사무소 위치'],
                         [],
                         ['공지사항', 'Q & A', '사건 종류 가이드']
                     ]

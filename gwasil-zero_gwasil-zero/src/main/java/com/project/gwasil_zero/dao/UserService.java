@@ -27,20 +27,25 @@ public class UserService {
 	PasswordEncoder passwordEncoder;
 	
 	
+	
 	public HashMap<String, Object> getInfo(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<String, Object>();
-	    User searchUser = userMapper.searchUser(map);
-	    Lawyer searchLawyer = userMapper.searchLawyer(map);
+	    
+	    // 사용자와 변호사 정보 조회
+	    User searchUser = userMapper.searchUser(map);  // 유저 찾기
+	    Lawyer searchLawyer = userMapper.searchLawyer(map);  // 변호사 찾기
 
-	    if (searchUser != null) {
-	        List<User> list = userMapper.selectUser(map);
-	        resultMap.put("list", list);
-	        resultMap.put("result", "success");  
-	    } else if (searchLawyer != null) {
-	        List<Lawyer> list = userMapper.selectLawyer(map);
-	        resultMap.put("list", list);
+	    // 비밀번호 비교 (PasswordEncoder 사용)
+	    if (searchUser != null && passwordEncoder.matches(map.get("pwd").toString(), searchUser.getUserPassword())) {
+	        // 비밀번호가 맞으면 로그인 성공 처리
+	        resultMap.put("list", userMapper.selectUser(map));  // 유저 정보 조회
+	        resultMap.put("result", "success");
+	    } else if (searchLawyer != null && passwordEncoder.matches(map.get("pwd").toString(), searchLawyer.getLawyerPwd())) {
+	        // 비밀번호가 맞으면 로그인 성공 처리
+	        resultMap.put("list", userMapper.selectLawyer(map));  // 변호사 정보 조회
 	        resultMap.put("result", "success"); 
 	    } else {
+	        // 로그인 실패 처리
 	        resultMap.put("result", "fail");  
 	    }
 

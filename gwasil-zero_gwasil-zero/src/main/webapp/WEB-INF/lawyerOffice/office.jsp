@@ -397,6 +397,7 @@ const mapApp = Vue.createApp({
 								map: self.map,
 								position: pos
 							});
+							marker.lawyerId = lawyer.lawyerId;
 							self.markers.push(marker);
 							kakao.maps.event.addListener(marker, 'click', function () {
 							
@@ -505,10 +506,6 @@ const mapApp = Vue.createApp({
 
 		goToLawyerMarker(lawyer) {
 			const self = this;
-
-			
-
-
 			if (!lawyer._lat || !lawyer._lng) return;
 
 			const position = new kakao.maps.LatLng(lawyer._lat, lawyer._lng);
@@ -519,12 +516,20 @@ const mapApp = Vue.createApp({
 
 			// 새 인포윈도우 열기
 			const contentHtml = `
-				<div style="padding:8px;">
-					<strong>` + lawyer.lawyerName + `</strong><br>
-					` + lawyer.lawyerAddr + `<br>
-					📞 ` + lawyer.phoneNumbe + `
-				</div>
-			`;
+									<div style="
+										width: 230px;
+										padding: 12px;
+										border-radius: 10px;
+										box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+										background-color: white;
+										font-family: 'Noto Sans KR', sans-serif;
+									">
+										<h4 style="margin: 0 0 8px 0; font-size: 16px; color: #333;">` + lawyer.lawyerName + `</h4>
+										<p style="margin: 0 0 4px 0; font-size: 13px; color: #666;">📍 ` + lawyer.lawyerAddr + `</p>
+										<p style="margin: 0 0 8px 0; font-size: 13px; color: #666;">📞 ` + lawyer.lawyerPhone + `</p>
+									</div>
+								`;
+
 
 			self.infowindow.setContent(contentHtml);
 			self.infowindow.open(self.map, self.findMarkerByLawyer(lawyer));
@@ -532,10 +537,7 @@ const mapApp = Vue.createApp({
 		},
 
 		findMarkerByLawyer(lawyer) {
-			return this.markers.find(marker => {
-				const pos = marker.getPosition();
-				return pos.getLat() === lawyer._lat && pos.getLng() === lawyer._lng;
-			});
+			return this.markers.find(marker => marker.lawyerId === lawyer.lawyerId);
 		},
 
 		fnSearchByKeyword() {

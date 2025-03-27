@@ -124,12 +124,11 @@ public class TotalDocsService {
 		
 	}
 
-
 	//제목, 내용 수정
-	public HashMap<String, Object> editNotice(HashMap<String, Object> map) {
+	public HashMap<String, Object> editDocs(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
 	    try {
-	        totalDocsMapper.updateNotice(map);
+	        totalDocsMapper.updateDocs(map);
 	        resultMap.put("result", "success");
 	    } catch (Exception e) {
 			System.out.println(e.getMessage());

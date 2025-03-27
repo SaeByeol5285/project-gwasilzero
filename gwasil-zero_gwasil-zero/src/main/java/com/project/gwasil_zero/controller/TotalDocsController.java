@@ -88,7 +88,7 @@ public class TotalDocsController {
 			@RequestParam(value = "file1", required = false) List<MultipartFile> files) {
 		HashMap<String, Object> resultMap = new HashMap<>();
 		try {
-			totalDocsService.editNotice(map); // 제목, 내용만 수정
+			totalDocsService.editDocs(map); // 제목, 내용만 수정
 
 			// 파일 업로드 처리
 			if (files != null && !files.isEmpty()) {
@@ -125,9 +125,6 @@ public class TotalDocsController {
 		resultMap = totalDocsService.removeDocs(map);
 		return new Gson().toJson(resultMap);
 	}
-
-	
-	
 	
 	
 	// 글쓰기

@@ -39,6 +39,9 @@ public interface TotalDocsMapper {
 	
 	//글쓰기
 	void insertDocs(HashMap<String, Object> map);
+	
+	//글수정
+    void updateDocs(HashMap<String,Object> map);
 
 	
 	
@@ -48,7 +51,6 @@ public interface TotalDocsMapper {
 
 
 
-    void updateNotice(HashMap<String,Object> map);
     
     void insertFile(HashMap<String,Object> map);
 

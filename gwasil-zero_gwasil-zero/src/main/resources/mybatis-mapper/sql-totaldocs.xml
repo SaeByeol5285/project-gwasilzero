@@ -95,6 +95,16 @@
 		FROM TOTALDOCS
 		WHERE TOTAL_NO = #{totalNo}
 	</delete>
+	
+	<!--글수정-->
+	<update id="updateDocs" parameterType="map">
+	    UPDATE TOTALDOCS
+	    SET
+	        TOTAL_TITLE = #{totalTitle},
+	        TOTAL_CONTENTS = #{totalContents},
+	        UDATE = SYSDATE
+	    WHERE TOTAL_NO = #{totalNo}
+	</update>
 
 
 
@@ -117,14 +127,7 @@
 
 	
 	
-	<update id="updateNotice" parameterType="map">
-	    UPDATE TOTALDOCS
-	    SET
-	        TOTAL_TITLE = #{totalTitle},
-	        TOTAL_CONTENTS = #{totalContents},
-	        UDATE = SYSDATE
-	    WHERE TOTAL_NO = #{totalNo}
-	</update>
+
 	
 	<insert id="insertFile" parameterType="map">
 	    INSERT INTO TOTAL_FILE (TOTAL_NO, FILE_NAME, FILE_PATH)

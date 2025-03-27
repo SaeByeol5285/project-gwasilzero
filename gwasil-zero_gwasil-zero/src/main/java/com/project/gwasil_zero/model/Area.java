@@ -10,5 +10,5 @@ public class Area {
 	private String dong;
 	private String nx;
 	private String ny;
-	
+
 }

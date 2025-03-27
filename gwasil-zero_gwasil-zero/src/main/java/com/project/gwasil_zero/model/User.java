@@ -11,6 +11,7 @@ public class User {
 	private String userPhone;
 	private String userId;
 	private int reportCnt;
-	private String packageName;
+	private String cdate;
+	private String packageName; 
 
 }

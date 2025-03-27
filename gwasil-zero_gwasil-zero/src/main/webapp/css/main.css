@@ -1,0 +1,19 @@
+
+.swiper-slide {
+    text-align: center;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.question-board {
+    padding: 40px;
+    background: #f8f8f8;
+}
+
+.question-list {
+    list-style: none;
+    padding: 0;
+}
+

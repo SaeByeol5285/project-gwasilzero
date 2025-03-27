@@ -11,4 +11,5 @@ public class BoardFile {
 	private String thumbnail;
 	private String fileRealName;
 	private String boardTitle;
+	
 }

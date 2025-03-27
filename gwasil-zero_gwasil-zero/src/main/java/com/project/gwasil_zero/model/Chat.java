@@ -4,8 +4,9 @@ import lombok.Data;
 
 @Data
 public class Chat {
-	
-	private int chatNo;
-	private String senderId;
-	private String receiverId;
+	   
+	   private int chatNo;
+	   private String senderId;
+	   private String receiverId;
 }
+

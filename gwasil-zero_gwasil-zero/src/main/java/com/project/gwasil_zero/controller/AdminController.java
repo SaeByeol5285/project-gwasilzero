@@ -68,7 +68,7 @@ public class AdminController {
     }
     
     // 신규 유저 목록
- 	@RequestMapping(value = "/newMemList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+ 	@RequestMapping(value = "/admin/newMemList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
  	@ResponseBody
  	public String newMemList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
  		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -76,5 +76,35 @@ public class AdminController {
  		resultMap = adminService.getNewMemList(map);
  		return new Gson().toJson(resultMap);
  	}
+ 	
+ 	// 변호사 승인 대기 목록
+  	@RequestMapping(value = "/admin/lawAdminWaitList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+  	@ResponseBody
+  	public String lawAdminWaitList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+  		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+  		
+  		resultMap = adminService.getLawAdminWaitList(map);
+  		return new Gson().toJson(resultMap);
+  	}
+  	
+  	// 게시글 신고 목록 
+   	@RequestMapping(value = "/admin/repoList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String repoList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+   		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+   		
+   		resultMap = adminService.getRepoList(map);
+   		return new Gson().toJson(resultMap);
+   	}
+   	
+   	// 모든 유저 목록
+  	@RequestMapping(value = "/admin/userList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+  	@ResponseBody
+  	public String userList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+  		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+  		
+  		resultMap = adminService.getUserList(map);
+  		return new Gson().toJson(resultMap);
+  	}
 		
 }

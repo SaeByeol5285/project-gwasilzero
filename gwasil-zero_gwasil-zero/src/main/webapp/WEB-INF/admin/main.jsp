@@ -6,7 +6,7 @@
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-	<title>admin main</title>
+	<title>관리자 메인</title>
 </head>
 <body>
     <div id="mainApp">
@@ -27,16 +27,47 @@
                             <th>등급</th>
                             <th>가입일자</th>
                         </tr>
-                        <tr v-for="item in list">
-                            <td>{{item.userName}}</td>
-                            <td>{{item.userId}}</td>
-                            <td>{{item.userStatus}}</td>
-                            <td>{{item.cdate}}</td>
+                        <tr v-for="newMem in newMemList">
+                            <td>{{newMem.userName}}</td>
+                            <td>{{newMem.userId}}</td>
+                            <td>{{newMem.userStatus}}</td>
+                            <td>{{newMem.cdate}}</td>
                         </tr>
                     </table>
                 </div>
                 <div>
                     <h3>변호사 승인 대기 목록</h3>
+                    <table>
+                        <tr>
+                            <th>이름</th>
+                            <th>아이디</th>
+                            <th>승인여부</th>
+                        </tr>
+                        <tr v-for="lawWait in lawAdminWaitList">
+                            <td>{{lawWait.lawyerName}}</td>
+                            <td>{{lawWait.lawyerId}}</td>
+                            <td>{{lawWait.lawyerPass}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <h3>게시글 신고 목록</h3>
+                    <table>
+                        <tr>
+                            <th>아이디</th>
+                            <th>게시판 번호</th>
+                            <th>신고상태</th>
+                            <th>신고날짜</th>
+                            <th>신고내용</th>
+                        </tr>
+                        <tr v-for="report in repoList">
+                            <td>{{report.userId}}</td>
+                            <td>{{report.boardNo}}</td>
+                            <td>{{report.reportStatus}}</td>
+                            <td>{{report.cdate}}</td>
+                            <td>{{report.contents}}</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>
@@ -47,7 +78,9 @@
     const mainApp = Vue.createApp({
         data() {
             return {
-                list : []
+                newMemList : [],
+                lawPassList : [],
+                repoList : []
             };
         },
         methods: {
@@ -57,21 +90,52 @@
 					
 				};
 				$.ajax({
-					url:"/newMemList.dox",
+					url:"/admin/newMemList.dox",
+					dataType:"json",	
+					type : "POST", 
+					data : nparmap,
+					success : function(data) {
+                        self.newMemList = data.newMemList;
+					}
+				});
+            },
+            fnLawAdminWaitList(){
+                var self = this;
+				var nparmap = {
+					
+				};
+				$.ajax({
+					url:"/admin/lawAdminWaitList.dox",
 					dataType:"json",	
 					type : "POST", 
 					data : nparmap,
 					success : function(data) { 
-						console.log(data);
-                        self.list = data.list;
+                        self.lawAdminWaitList = data.lawAdminWaitList;
 					}
 				});
             },
+            fnRepoList(){
+                var self = this;
+				var nparmap = {
+					
+				};
+				$.ajax({
+					url:"/admin/repoList.dox",
+					dataType:"json",	
+					type : "POST", 
+					data : nparmap,
+					success : function(data) { 
+						self.repoList = data.repoList;
+					}
+				});
+            }   
             
         },
         mounted() {
             var self = this;
             self.fnNewMemList();
+            self.fnLawAdminWaitList();
+            self.fnRepoList();
         }
     });
     mainApp.mount('#mainApp');

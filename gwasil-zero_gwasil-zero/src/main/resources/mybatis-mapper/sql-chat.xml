@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.gwasil_zero.mapper.ChatMapper">
+
+    <insert id="insertChatMessage" parameterType="com.project.gwasil_zero.model.ChatMessage">
+        INSERT INTO chat_message (
+            chat_no,
+            time,
+            message,
+            sender_id
+        ) VALUES (
+            #{chatNo},
+            TO_DATE(#{time}, 'YYYY-MM-DD HH24:MI:SS'),
+            #{message},
+            #{senderId}
+        )
+    </insert>
+
+    <insert id="insertChatFile" parameterType="com.project.gwasil_zero.model.ChatFile">
+        INSERT INTO chat_file (
+            chat_no,
+            time,
+            chat_filepath,
+            sender_id
+        ) VALUES (
+            #{chatNo},
+            TO_DATE(#{time}, 'YYYY-MM-DD HH24:MI:SS'),
+            #{chatFilePath},
+            #{senderId}
+        )	
+    </insert>
+	
+	<select id="selectSenderName" resultType="string" parameterType="string">
+	    SELECT user_name FROM tbl_user WHERE user_id = #{senderId}
+	    UNION
+	    SELECT lawyer_name FROM lawyer WHERE lawyer_id = #{senderId}
+	</select>
+</mapper>

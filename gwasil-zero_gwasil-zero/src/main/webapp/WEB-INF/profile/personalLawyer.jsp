@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="../css/profile.css">
 </head>
 <body>
+    <jsp:include page="../common/header.jsp" />
+
 	<div id="perLawApp">
 		<div class="title-area">
             <h2>개인 변호사</h2>
@@ -41,6 +43,8 @@
             </div>
         </div>
 	</div>
+    <jsp:include page="../common/footer.jsp" />
+
 </body>
 </html>
 <script>

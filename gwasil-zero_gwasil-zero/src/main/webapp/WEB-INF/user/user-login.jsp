@@ -7,7 +7,11 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-        <title>sample.jsp</title>
+        <link rel="stylesheet" href="/css/main.css">
+        <link rel="stylesheet" href="/css/common.css">
+        <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
+        <title>로그인</title>
     </head>
 
     <style>
@@ -37,7 +41,7 @@
             width: 100%;
             padding: 10px;
             margin: 10px 0;
-            background-color: #b5c7f2;
+            background-color: #FF5722;
             border: none;
             border-radius: 5px;
             font-size: 16px;
@@ -68,10 +72,51 @@
             width: 100%;
             height: 100%;
         }
-    </style>
+
+        #app .link-container a {
+            padding: 5px 15px;
+            border: 2px solid #FF5722;
+            border-radius: 20px;
+            background-color: #fff5f0;
+            color: #FF5722;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        #app .link-container a:hover {
+            background-color: #FF5722;
+            color: #ffffff;
+        }
+
+        #app button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #FF5722;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #app button:hover {
+            background-color: #e64a00;
+            transform: scale(1.05);
+            /* 호버 시 약간 확대 */
+        }
+
+        #app button:active {
+            transform: scale(0.95);
+            /* 클릭 시 약간 눌리는 효과 */
+        }
     </style>
 
     <body>
+        <jsp:include page="../common/header.jsp" />
+        <link rel="stylesheet" href="/css/common.css">
         <div id="app">
             <h1>로그인</h1>
             <div>
@@ -85,19 +130,22 @@
             <div>
                 <button @click="fnLogin">로그인</button>
             </div>
-            <div>
+            <div class="link-container">
                 <a @click="fnJoin">회원가입</a>
                 <a @click="searchUser">아이디/비밀번호 찾기</a>
             </div>
-            <div class="social-login">
+            <!-- <div>
                 <a :href="location">
                     <img src="../img/naver_login.png">
                 </a>
+            </div> -->
+            <div>
                 <a :href="location">
                     <img src="../img/kakao_login.png">
                 </a>
             </div>
         </div>
+        <jsp:include page="../common/footer.jsp" />
     </body>
 
     </html>
@@ -105,7 +153,6 @@
         const app = Vue.createApp({
             data() {
                 return {
-
                     id: "",
                     pwd: "",
                     location: "${location}"
@@ -127,15 +174,15 @@
                             console.log(data);
                             if (data.result == "success") {
                                 alert("로그인 성공");
-                                location.href = "/main.do";
+                                location.href = "/common/main.do"
                             } else {
-                                alert("오류발생");
+                                alert("아이디/비밀번호 확인해주세요");
                             }
                         }
                     });
                 },
                 fnJoin() {
-                    location.href = "/user/add.do";
+                    location.href = "/join/select.do";
                 },
                 searchUser() {
                     location.href = "/user/search.do"; // 아이디/비밀번호 찾기 페이지
@@ -143,8 +190,7 @@
             },
             mounted() {
                 var self = this;
-                const queryParams = new URLSearchParams(window.location.search);
-                self.code = queryParams.get('code') || '';
+                console.log(this.location);
             }
         });
         app.mount('#app');

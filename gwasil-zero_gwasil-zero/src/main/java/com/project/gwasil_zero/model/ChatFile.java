@@ -9,6 +9,6 @@ public class ChatFile {
 	private String time;
 	private String chatFilePath;
 	private String senderId;
-	private String senderName;
+	private String senderName; 
 
 }

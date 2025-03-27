@@ -88,6 +88,7 @@
       </style>
 </head>
 <body>
+    <jsp:include page="../common/header.jsp" />
 	<div id="lawInfoApp">
 		<div class="profile-container">
             <div class="profile-photo">이미지없음</div>
@@ -139,6 +140,7 @@
             </div>
         </div>
 	</div>
+    <jsp:include page="../common/footer.jsp" />
 </body>
 </html>
 <script>

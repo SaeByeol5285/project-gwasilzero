@@ -19,6 +19,8 @@ public interface UserMapper {
 	Lawyer searchLawyer(HashMap<String, Object> map);
 
 	List<Lawyer> selectLawyer(HashMap<String, Object> map);
+	
+	Lawyer selectLawyerId(HashMap<String, Object> map);
 
 	User CheckUser(HashMap<String, Object> map);
 

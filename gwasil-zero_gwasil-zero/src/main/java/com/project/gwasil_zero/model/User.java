@@ -13,5 +13,6 @@ public class User {
 	private int reportCnt;
 	private String cdate;
 	private String userEmail;
+	private String packageName;
   
 }

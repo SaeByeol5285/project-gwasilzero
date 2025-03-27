@@ -7,75 +7,75 @@
 		<script src="https://code.jquery.com/jquery-3.7.1.js"
 			integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+		<script src="/js/page-change.js"></script>
 		<title>sample.jsp</title>
-		<style>
-			#app {
-				max-width: 1000px;
-				margin: 0 auto;
-				padding: 20px;
-			}
-
-			#app h2 {
-				font-size: 28px;
-				text-align: center;
-				margin-bottom: 20px;
-			}
-
-			#app .section {
-				border-bottom: 2px solid #ddd;
-				margin-bottom: 20px;
-				padding-bottom: 15px;
-			}
-
-			#app .info-section {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-			}
-
-			#app .info-details {
-				line-height: 2;
-			}
-
-			#app .post-section {
-				display: flex;
-				gap: 20px;
-				justify-content: center;
-				margin-top: 15px;
-			}
-
-			#app .post-card {
-				width: 30%;
-				border: 1px solid #ddd;
-				border-radius: 8px;
-				padding: 15px;
-				text-align: center;
-				background-color: #f9f9f9;
-				box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-			}
-
-			#app .chat-section table,
-			#app .payment-table {
-				width: 100%;
-				border-collapse: collapse;
-				margin-top: 10px;
-			}
-
-			#app .chat-section th,
-			.chat-section td,
-			#app .payment-table th,
-			.payment-table td {
-				border: 1px solid #ddd;
-				padding: 10px;
-				text-align: center;
-			}
-		</style>
 	</head>
+	<style>
+		#app {
+			max-width: 1000px;
+			margin: 0 auto;
+			padding: 20px;
+		}
+
+		#app h2 {
+			font-size: 28px;
+			text-align: center;
+			margin-bottom: 20px;
+		}
+
+		#app .section {
+			border-bottom: 2px solid #ddd;
+			margin-bottom: 20px;
+			padding-bottom: 15px;
+		}
+
+		#app .info-section {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		#app .info-details {
+			line-height: 2;
+		}
+
+		#app .post-section {
+			display: flex;
+			gap: 20px;
+			justify-content: center;
+			margin-top: 15px;
+		}
+
+		#app .post-card {
+			width: 30%;
+			border: 1px solid #ddd;
+			border-radius: 8px;
+			padding: 15px;
+			text-align: center;
+			background-color: #f9f9f9;
+			box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+		}
+
+		#app .chat-section table,
+		#app .payment-table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 10px;
+		}
+
+		#app .chat-section th,
+		.chat-section td,
+		#app .payment-table th,
+		.payment-table td {
+			border: 1px solid #ddd;
+			padding: 10px;
+			text-align: center;
+		}
+	</style>
 
 	<body>
 		<jsp:include page="../common/header.jsp" />
 		<div id="app">
-
 			<h2>마이페이지</h2>
 
 			<div class="section info-section">
@@ -153,49 +153,43 @@
 	</html>
 	<script>
 		const app = Vue.createApp({
-
 			data() {
 				return {
-					userId: "",
 					info: {},
-					sessionId: ""
+					userId: "${map.userId}"
+
 				};
 			},
 			methods: {
 				fnGetList() {
 					var self = this;
 					var nparmap = {
-						userId: self.sessionId,
-						option: "SELECT"
+						userId: "juwon1234"
 					};
-					console.log("보내는 데이터: ", nparmap);  // 🔎 값 확인용
-
 					$.ajax({
-						url: "/mypage/mypage-list.dox",
+						url: "/mypage/mypage-view.dox",
 						dataType: "json",
 						type: "POST",
 						data: nparmap,
 						success: function (data) {
-							console.log("응답 데이터: ", data);
-							if (data.user && data.user.length > 0) {
-								self.info = data.user[0];  // ✅ 응답 데이터 구조에 맞게 수정
-							} else {
-								alert("사용자 정보를 찾을 수 없습니다.");
-							}
+							console.log(data);
+							self.info = data.info
 						}
 					});
 				},
 				fnEdit: function () {
-					location.href = "/join/edit.do";
+					pageChange("/mypage/edit.do", { userId: this.userId });
 				},
-				fnRemoveUser: function () {
-					location.href = "/mypage-remove.do";
+				fnRemoveUser : function(){
+					pageChange("/mypage/remove.do", {userId : this.userId});
 				}
+
 			},
 			mounted() {
-				this.sessionId = "juwon1234"
-				this.fnGetList();
+				var self = this;
+				self.fnGetList();
 			}
 		});
 		app.mount('#app');
 	</script>
+	​

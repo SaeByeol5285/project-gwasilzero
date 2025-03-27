@@ -36,6 +36,11 @@
 	    FROM TBL_USER
 	    WHERE USER_PHONE = #{userPhone}
 	</select>
+	<select id="selectLawyerId" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+		SELECT LAWYER_ID
+		FROM LAWYER
+		WHERE LAWYER_PHONE = #{lawyerPhone}
+	</select>	
 	<select id="selectUserPwd" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
 		SELECT USER_PASSWORD
 		FROM TBL_USER

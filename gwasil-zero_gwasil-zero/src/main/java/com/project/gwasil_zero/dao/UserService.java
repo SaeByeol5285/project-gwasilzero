@@ -62,15 +62,12 @@ public class UserService {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		User user = userMapper.selectUserId(map);
-		 if (user != null) {
-		        resultMap.put("result", "success");
-		        resultMap.put("userId", user.getUserId()); // 조회된 아이디 추가
-		    } else {
-		        resultMap.put("result", "fail"); // 조회 실패 시 'fail' 추가
-		    }
-
-		    return resultMap;
-		}
+		Lawyer lawyer = userMapper.selectLawyerId(map);
+		resultMap.put("user", user);
+		resultMap.put("lawyer", lawyer);		
+		resultMap.put("result", "success");
+		return resultMap;
+	}
 
 	public HashMap<String, Object> selectUserPwd(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub

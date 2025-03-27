@@ -88,7 +88,10 @@
                     user: {
                         userName: "",
                         userPhone: "",
-                        userId: ""
+                        userId: "",
+                        lawyerName: "",
+                        lawyerPhone: "",
+                        lawyerId: "",
                     },
                     foundUserId: "",
                 };
@@ -110,41 +113,18 @@
                     var self = this;
                     var nparmap = {
                         userName: self.user.userName,
-                        userPhone: self.user.userPhone
+                        userPhone: self.user.userPhone,
+                        lawyerName: self.user.lawyerName,
+                        lawyerPhone: self.user.lawyerPhone,
                     };
                     $.ajax({
                         url: "/user/userId-search.dox",
+                        dataType: "json",
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
-                            console.log("data:", data); // 데이터 구조 확인
-                            console.log("userName:", self.user.userName);
-                            if (data.result === "success") {
-                                const popup = window.open("", "아이디 찾기 결과", "width=400, height=300");
-                                const popupContent = `
-                                <html>
-                                <head>
-                                    <title>아이디 찾기 결과</title>
-                                    <style>
-                                        body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
-                                        h3 { color: #FF5722; }
-                                    </style>
-                                </head>
-                                <body>
-                                    <h3>아이디 찾기 성공!</h3>
-                                    <p>${self.user.userName}님의 아이디는 <strong>${data.userId}</strong>입니다.</p>
-                                    <button onclick="window.close()">닫기</button>
-                                </body>
-                                </html>
-                            `;
-                                popup.document.write(popupContent);
-                                popup.document.close();
-                            } else {
-                                alert("아이디 찾기 실패");
-                            }
-                        },
-                        error: function () {
-                            alert("서버 통신 오류");
+                            console.log(data);
+
                         }
                     });
                 }

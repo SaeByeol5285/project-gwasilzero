@@ -10,8 +10,13 @@ import com.project.gwasil_zero.model.User;
 @Mapper
 public interface MypageMapper {
 
-	List<User> selectUser(HashMap<String, Object> map);
+	User selectUserInfo(HashMap<String, Object> map);
 
-	int deleteUser(HashMap<String, Object> map);
+	void updateUser(HashMap<String, Object> map);
+
+	void updateStatus(HashMap<String, Object> map);
+
+
+	
 
 }

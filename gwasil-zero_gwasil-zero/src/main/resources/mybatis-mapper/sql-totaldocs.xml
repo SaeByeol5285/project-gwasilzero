@@ -3,51 +3,88 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.project.gwasil_zero.mapper.TotalDocsMapper">
-	<select id = "selectNoticeList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs">
-		SELECT * 
-		FROM TOTALDOCS
-		WHERE KIND = 'NOTICE'
+	
+	<!-- 공지사항/이용문의 공통 리스트 -->
+	<select id="selectDocsList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs"> 
+		SELECT * FROM TOTALDOCS 
+		WHERE KIND = #{kind} 
 		<if test="searchOption != null and searchOption == 'all'">
-			AND (TOTAL_TITLE LIKE '%' || #{keyword} || '%'
-					OR USER_ID LIKE '%' || #{keyword} || '%')		
+			AND (TOTAL_TITLE LIKE '%' || #{keyword} || '%' OR USER_ID LIKE '%' || #{keyword} || '%')
 		</if>
-
+	
 		<if test="searchOption != null and searchOption == 'title'">
 			AND (TOTAL_TITLE LIKE '%' || #{keyword} || '%')
 		</if>
-		
-		<if test="searchOption != null and searchOption == 'writer'">
-			AND (USER_ID LIKE '%' || #{keyword} || '%') 
-		</if>
-		ORDER BY CDATE DESC
-		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
-		
-	</select>
 	
-	<select id = "selectNoticeCnt" parameterType="hashmap" resultType="int">
+		<if test="searchOption != null and searchOption == 'writer'">
+			AND (USER_ID LIKE '%' || #{keyword} || '%')
+		</if> 
+		ORDER BY CDATE DESC 
+		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY 
+	</select>
+
+	<!-- 공지사항/이용문의 공통 페이징 -->
+	<select id="selectDocsCnt" parameterType="hashmap" resultType="int">
 		SELECT COUNT(*) 
 		FROM TOTALDOCS
-		WHERE KIND = 'NOTICE'
+		WHERE KIND = #{kind}
 		<if test="searchOption != null and searchOption == 'all'">
-			AND (TOTAL_TITLE LIKE '%' || #{keyword} || '%'
-					OR USER_ID LIKE '%' || #{keyword} || '%')		
+			AND (TOTAL_TITLE LIKE '%' || #{keyword} || '%' OR USER_ID LIKE '%' || #{keyword} || '%')		
 		</if>
-
 		<if test="searchOption != null and searchOption == 'title'">
 			AND (TOTAL_TITLE LIKE '%' || #{keyword} || '%')
 		</if>
-		
 		<if test="searchOption != null and searchOption == 'writer'">
 			AND (USER_ID LIKE '%' || #{keyword} || '%') 
 		</if>
-		
 	</select>
 	
-	<select id = "selectNoticeInfo" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs">
+	<!--상세보기-->
+	<select id="selectDocsInfo" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs">
 		SELECT *
 		FROM TOTALDOCS
 		WHERE TOTAL_NO = #{totalNo}
+		<if test="kind != null and kind != ''">
+			AND KIND = #{kind}
+		</if>
 	</select>
+	
+	<!--이미지리스트-->
+	<select id = "selectImgList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalFile">
+		SELECT *
+		FROM TOTALDOCS D 
+		INNER JOIN TOTAL_FILE F ON D.TOTAL_NO = F.TOTAL_NO
+		WHERE D.TOTAL_NO = #{totalNo}
+	</select>
+	
+	<!--이전 글-->
+	<select id = "selectPrevDocs" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs">
+		SELECT * 
+		FROM TOTALDOCS
+		WHERE TOTAL_NO &lt; #{totalNo}
+		<if test="kind != null and kind != ''">
+			AND KIND = #{kind}
+		</if>
+		ORDER BY TOTAL_NO DESC
+		FETCH FIRST 1 ROWS ONLY
+	</select>
+	
+	<!--다음 글-->
+	<select id = "selectNextDocs" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs">
+		SELECT * 
+		FROM TOTALDOCS
+		WHERE TOTAL_NO &gt; #{totalNo}
+		<if test="kind != null and kind != ''">
+			AND KIND = #{kind}
+		</if>
+		ORDER BY TOTAL_NO ASC
+		FETCH FIRST 1 ROWS ONLY
+	</select>
+	
+
+
+
+
 	
 	<update id="updateCnt" parameterType="hashmap">
 		UPDATE TOTALDOCS
@@ -56,21 +93,7 @@
 		WHERE TOTAL_NO = #{totalNo}
 	</update>
 	
-	<select id = "selectPrevNotice" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs">
-		SELECT * 
-		FROM TOTALDOCS
-		WHERE KIND = 'NOTICE' AND TOTAL_NO &lt; #{totalNo}
-		ORDER BY TOTAL_NO DESC
-		FETCH FIRST 1 ROWS ONLY
-	</select>
 	
-	<select id = "selectNextNotice" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs">
-		SELECT * 
-		FROM TOTALDOCS
-		WHERE KIND = 'NOTICE' AND TOTAL_NO &gt; #{totalNo}
-		ORDER BY TOTAL_NO ASC
-		FETCH FIRST 1 ROWS ONLY
-	</select>
 	
 	<insert id = "insertNotice"  parameterType="hashmap" useGeneratedKeys="true" keyColumn="TOTAL_NO" keyProperty="totalNo">
 		INSERT INTO TOTALDOCS (TOTAL_NO, TOTAL_TITLE, TOTAL_CONTENTS, CDATE, UDATE, USER_ID, KIND, CNT)
@@ -82,12 +105,7 @@
 		VALUES (#{totalNo},#{filePath},#{fileName})
 	</insert>
 	
-	<select id = "selectImgList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalFile">
-		SELECT *
-		FROM TOTALDOCS D 
-		INNER JOIN TOTAL_FILE F ON D.TOTAL_NO = F.TOTAL_NO
-		WHERE D.TOTAL_NO = #{totalNo}
-	</select>
+
 	
 	<delete id="deleteNotice" parameterType="hashmap">
 		DELETE 
@@ -109,9 +127,6 @@
 	    VALUES (#{totalNo}, #{fileName}, #{filePath})
 	</insert>
 
-	
-
-	
 </mapper>
 
 

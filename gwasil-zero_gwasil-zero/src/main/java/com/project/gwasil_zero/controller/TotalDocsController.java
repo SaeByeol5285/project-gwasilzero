@@ -24,111 +24,107 @@ public class TotalDocsController {
 	@Autowired
 	TotalDocsService totalDocsService;
 
-	// 통합자료실 메인
-	@RequestMapping("/totalDocs/main.do")
-	public String main(Model model) throws Exception {
-		return "/totalDocs/totalDocs-main";
-	}
-
-	// 공지사항 리스트
-	@RequestMapping("/notice/list.do")
-	public String noticeList(Model model) throws Exception {
-		return "/totalDocs/notice-list";
-	}
-
-	// 공지사항 상세보기
-	@RequestMapping("/notice/detail.do")
-	public String noticeDetail(@RequestParam Map<String, Object> map, Model model) throws Exception {
+	// 리스트
+	@RequestMapping("/totalDocs/list.do")
+	public String docsList(@RequestParam Map<String, Object> map, Model model) throws Exception {
 		model.addAttribute("map", map);
-		return "/totalDocs/notice-detail";
+		return "/totalDocs/docs-list";
 	}
 
-	// 공지사항 글쓰기
-	@RequestMapping("/notice/add.do")
-	public String noticeAdd(Model model) throws Exception {
-		return "/totalDocs/notice-add";
+	// 상세보기
+	@RequestMapping("/totalDocs/detail.do")
+	public String docsDetail(@RequestParam Map<String, Object> map, Model model) throws Exception {
+		model.addAttribute("map", map);
+		return "/totalDocs/docs-detail";
 	}
 
 	// 공지사항 수정
-	@RequestMapping("/notice/edit.do")
-	public String noticeEdit(@RequestParam Map<String, Object> map, Model model) throws Exception {
+	@RequestMapping("/totalDocs/edit.do")
+	public String docsEdit(@RequestParam Map<String, Object> map, Model model) throws Exception {
 		model.addAttribute("map", map);
-		return "/totalDocs/notice-edit";
+		return "/totalDocs/docs-edit";
 	}
 
-	// qna 리스트
-	@RequestMapping("/qna/list.do")
-	public String qnaList(Model model) throws Exception {
-		return "/totalDocs/qna-list";
+	// 글쓰기
+	@RequestMapping("/totalDocs/add.do")
+	public String docsAdd(Model model) throws Exception {
+		return "/totalDocs/docs-add";
 	}
 
-	// qna 상세보기
-	@RequestMapping("/qna/detail.do")
-	public String qnaDetail(Model model) throws Exception {
-		return "/totalDocs/qna-detail";
-	}
-
-	// qna 질문등록
-	@RequestMapping("/qna/write.do")
-	public String qnaWrite(Model model) throws Exception {
-		return "/totalDocs/qna-write";
-	}
-
-	// qna 답변등록
-	@RequestMapping("/qna/answer.do")
-	public String qnaAnswer(Model model) throws Exception {
-		return "/totalDocs/qna-answer";
-	}
-
-	// 가이드라인 리스트
-	@RequestMapping("/guide/list.do")
-	public String guideList(Model model) throws Exception {
-		return "/totalDocs/guide-list";
-	}
-
-	// 가이드라인 상세보기
-	@RequestMapping("/guide/detail.do")
-	public String guideDetail(Model model) throws Exception {
-		return "/totalDocs/guide-detail";
-	}
-
-	// 공지사항 리스트
-	@RequestMapping(value = "/notice/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	// 리스트
+	@RequestMapping(value = "/totalDocs/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String noticeList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+	public String docsList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
-		resultMap = totalDocsService.getNoticeList(map);
+		resultMap = totalDocsService.getDocsList(map);
 		return new Gson().toJson(resultMap);
 	}
 
-	// 공지사항 상세보기
-	@RequestMapping(value = "/notice/view.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	// 상세보기
+	@RequestMapping(value = "/totalDocs/view.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String noticeView(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+	public String docsView(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
-		resultMap = totalDocsService.getNoticeInfo(map);
+		resultMap = totalDocsService.getDocsInfo(map);
 		return new Gson().toJson(resultMap);
 	}
 
-	// 공지사항 이전,다음 글 보기
-	@RequestMapping(value = "/notice/adjacent.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	// 이전글,다음글
+	@RequestMapping(value = "/totalDocs/adjacent.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String noticeAdjacent(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+	public String docsAdjacent(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
-		resultMap = totalDocsService.getNoticeAdjacent(map);
+		resultMap = totalDocsService.getAdjacent(map);
 		return new Gson().toJson(resultMap);
+	}
+
+	// 글수정
+	@RequestMapping("/totalDocs/edit.dox")
+	@ResponseBody
+	public Map<String, Object> editNotice(@RequestParam HashMap<String, Object> map,
+			@RequestParam(value = "file1", required = false) List<MultipartFile> files) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		try {
+			totalDocsService.editNotice(map); // 제목, 내용만 수정
+
+			// 파일 업로드 처리
+			if (files != null && !files.isEmpty()) {
+				for (MultipartFile file : files) {
+					String originFilename = file.getOriginalFilename();
+					String extName = originFilename.substring(originFilename.lastIndexOf("."));
+					String saveFileName = Common.genSaveFileName(extName);
+
+					String path = System.getProperty("user.dir") + "\\src\\main\\webapp\\img";
+					File dest = new File(path, saveFileName);
+					file.transferTo(dest);
+
+					HashMap<String, Object> fileMap = new HashMap<>();
+					fileMap.put("totalNo", map.get("totalNo"));
+					fileMap.put("fileName", originFilename);
+					fileMap.put("filePath", "../img/" + saveFileName);
+
+					totalDocsService.insertFile(fileMap);
+				}
+			}
+
+			resultMap.put("result", "success");
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
 	}
 
 	// 공지사항 글쓰기
-	@RequestMapping(value = "/notice/add.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/totalDocs/add.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String noticeAdd(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+	public String docsAdd(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
-		resultMap = totalDocsService.addNotice(map);
+		resultMap = totalDocsService.addDocs(map);
 		return new Gson().toJson(resultMap);
 	}
 
@@ -185,43 +181,5 @@ public class TotalDocsController {
 		resultMap = totalDocsService.removeNotice(map);
 		return new Gson().toJson(resultMap);
 	}
-
-	// 공지사항 수정
-	@RequestMapping("/notice/edit.dox")
-	@ResponseBody
-	public Map<String, Object> editNotice(@RequestParam HashMap<String, Object> map, @RequestParam(value = "file1", required = false) List<MultipartFile> files) {
-		HashMap<String, Object> resultMap = new HashMap<>();
-	    try {
-	        totalDocsService.editNotice(map); // 제목, 내용만 수정
-
-	        // 파일 업로드 처리
-	        if (files != null && !files.isEmpty()) {
-	            for (MultipartFile file : files) {
-	                String originFilename = file.getOriginalFilename();
-	                String extName = originFilename.substring(originFilename.lastIndexOf("."));
-	                String saveFileName = Common.genSaveFileName(extName);
-
-	                String path = System.getProperty("user.dir") + "\\src\\main\\webapp\\img";
-	                File dest = new File(path, saveFileName);
-	                file.transferTo(dest);
-
-	                HashMap<String, Object> fileMap = new HashMap<>();
-	                fileMap.put("totalNo", map.get("totalNo"));
-	                fileMap.put("fileName", originFilename);
-	                fileMap.put("filePath", "../img/" + saveFileName);
-
-	                totalDocsService.insertFile(fileMap);
-	            }
-	        }
-
-	        resultMap.put("result", "success");
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        resultMap.put("result", "fail");
-	    }
-	    return resultMap;
-	}
-
-
 
 }

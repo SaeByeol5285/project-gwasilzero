@@ -19,53 +19,49 @@ public class TotalDocsService {
 	@Autowired
 	TotalDocsMapper totalDocsMapper;
 
-	//
-	public HashMap<String, Object> getNoticeList(HashMap<String, Object> map) {
-		// TODO Auto-generated method stub
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+	//리스트
+	public HashMap<String, Object> getDocsList(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<>();
 		try {
-			List<TotalDocs> list = totalDocsMapper.selectNoticeList(map);
-			int count = totalDocsMapper.selectNoticeCnt(map);
+			List<TotalDocs> list = totalDocsMapper.selectDocsList(map);
+			int count = totalDocsMapper.selectDocsCnt(map);
 			resultMap.put("list", list);
 			resultMap.put("count", count);
 			resultMap.put("result", "success");
-
 		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 			resultMap.put("result", "fail");
 		}
 		return resultMap;
 	}
-
-	public HashMap<String, Object> getNoticeInfo(HashMap<String, Object> map) {
+	
+	//상세보기
+	public HashMap<String, Object> getDocsInfo(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		HashMap<String, Object> resultMap = new HashMap<>();
 		try {
-			TotalDocs info = totalDocsMapper.selectNoticeInfo(map);
-			List<TotalFile>imgList= totalDocsMapper.selectImgList(map);
-			if (map.containsKey("option")) {
-				totalDocsMapper.updateCnt(map);
-			}
-			resultMap.put("info", info);
-			resultMap.put("imgList", imgList);
-			resultMap.put("result", "success");
+	        TotalDocs info = totalDocsMapper.selectDocsInfo(map);
+			List<TotalFile> imgList = totalDocsMapper.selectImgList(map);
 			
-
-		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println(e.getMessage());
-			resultMap.put("result", "fail");
-		}
-		return resultMap;
+	        resultMap.put("result", "success");
+	        resultMap.put("info", info);
+	        resultMap.put("imgList", imgList);
+	        
+	    } catch (Exception e) {
+	        resultMap.put("result", "fail");
+	        resultMap.put("message", e.getMessage());
+	    }
+	    return resultMap;
 	}
 
-	public HashMap<String, Object> getNoticeAdjacent(HashMap<String, Object> map) {
+
+	//이전글,다음글
+	public HashMap<String, Object> getAdjacent(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			TotalDocs prev = totalDocsMapper.selectPrevNotice(map);
-			TotalDocs next = totalDocsMapper.selectNextNotice(map);
+			TotalDocs prev = totalDocsMapper.selectPrevDocs(map);
+			TotalDocs next = totalDocsMapper.selectNextDocs(map);
 
 			resultMap.put("prev", prev);
 			resultMap.put("next", next);
@@ -78,13 +74,14 @@ public class TotalDocsService {
 		}
 		return resultMap;
 	}
-
-	public HashMap<String, Object> addNotice(HashMap<String, Object> map) {
+	
+	//글쓰기
+	public HashMap<String, Object> addDocs(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
 		try {
-			totalDocsMapper.insertNotice(map);
+			totalDocsMapper.insertDocs(map);
 			System.out.println("key ==> " + map.get("totalNo"));
 			resultMap.put("totalNo", map.get("totalNo"));
 			resultMap.put("result", "success");
@@ -98,6 +95,7 @@ public class TotalDocsService {
 		return resultMap;
 	}
 
+	// 글쓰기 첨부파일
 	public HashMap<String, Object> addFiles(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -109,6 +107,7 @@ public class TotalDocsService {
 		
 	}
 
+	// 공지사항 삭제
 	public HashMap<String, Object> removeNotice(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -130,11 +129,12 @@ public class TotalDocsService {
 	        totalDocsMapper.updateNotice(map);
 	        resultMap.put("result", "success");
 	    } catch (Exception e) {
-	        e.printStackTrace();
+			System.out.println(e.getMessage());
 	        resultMap.put("result", "fail");
 	    }
 	    return resultMap;
 	}
+	
 	// 파일 수정
 	public HashMap<String, Object> insertFile(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
@@ -142,11 +142,14 @@ public class TotalDocsService {
 	        totalDocsMapper.insertFile(map);
 	        resultMap.put("result", "success");
 	    } catch (Exception e) {
-	        e.printStackTrace();
+			System.out.println(e.getMessage());
 	        resultMap.put("result", "fail");
 	    }
 	    return resultMap;
 	}
+
+
+	
 
 	
 

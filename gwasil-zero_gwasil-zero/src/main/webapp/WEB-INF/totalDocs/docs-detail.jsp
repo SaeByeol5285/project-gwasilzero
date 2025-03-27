@@ -9,7 +9,7 @@
 		<script src="/js/page-change.js"></script>
 		<link rel="stylesheet" href="/css/common.css">
 		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-		<title>공지사항 상세</title>
+		<title>상세 페이지</title>
 	</head>
 
 	<body>
@@ -24,11 +24,13 @@
 					{{ info.totalContents }}
 				</div>
 				<div>
-					<img v-for="(image, index) in imgList" :src="image.filePath" :key="index" alt="제품 이미지">
+					<img v-for="(image, index) in imgList" :src="image.filePath" :key="index" alt="첨부 이미지">
 				</div>
 				<div v-if="sessionStatus == 'A'" class="mb-20">
 					<button @click="fnEdit(info.totalNo)" class="btn btn-outline">수정</button>
 					<button @click="fnRemove(info.totalNo)" class="btn btn-outline">삭제</button>
+				</div>
+				<div class="mb-20">
 					<button @click="goToListPage" class="btn btn-outline">목록보기</button>
 				</div>
 			</div>
@@ -51,97 +53,80 @@
 		const app = Vue.createApp({
 			data() {
 				return {
-					totalNo: "${map.noticeNo}",
-					info: "",
-					sessionId: "",
-					sessionStatus: "A",
+					totalNo: "${map.totalNo}",
+					kind: "${map.kind}",
+					info: {},
+					imgList: [],
 					prev: null,
 					next: null,
-					imgList : []
+					sessionStatus: "A"
 				};
 			},
 			methods: {
-				fnNoticeView() {
-					var self = this;
-					var nparmap = {
-						totalNo: self.totalNo,
-						option: "SELECT"
-					};
+				fnDocsView() {
+					const self = this;
 					$.ajax({
-						url: "/notice/view.dox",
-						dataType: "json",
+						url: "/totalDocs/view.dox",
 						type: "POST",
-						data: nparmap,
-						success: function (data) {
-							console.log(data);
-							
-							if (data.result == "success") {
+						dataType: "json",
+						data: { totalNo: self.totalNo },
+						success(data) {
+							if (data.result === "success") {
 								self.info = data.info;
 								self.imgList = data.imgList;
-								self.fnAdjacent(self.totalNo);
+								self.fnAdjacent(self.totalNo, self.info.kind);
 							} else {
 								alert("오류발생");
 							}
 						}
 					});
 				},
-				fnAdjacent(no) {
+				fnAdjacent(no, kind) {
 					const self = this;
-					var nparmap = {
-						totalNo: no
-					};
 					$.ajax({
-						url: "/notice/adjacent.dox",
+						url: "/totalDocs/adjacent.dox",
 						type: "POST",
 						dataType: "json",
-						data: nparmap,
+						data: { totalNo: no, kind: kind },
 						success(data) {
-							console.log(data);
 							self.prev = data.prev;
 							self.next = data.next;
 						}
 					});
 				},
+				fnEdit(totalNo) {
+					pageChange("/totalDocs/edit.do", { totalNo: totalNo });
+				},
 				fnRemove(totalNo) {
-					var self = this;
-					if(!confirm("정말 삭제하시겠습니까?")){
+					if (!confirm("정말 삭제하시겠습니까?")) {
 						return;
 					}
-					var nparmap = {
-						totalNo: totalNo,
-					};
 					$.ajax({
-						url: "/notice/remove.dox",
-						dataType: "json",
+						url: "/docs/remove.dox",
 						type: "POST",
-						data: nparmap,
-						success: function (data) {
-							console.log(data);
-							if (data.result == "success") {
+						dataType: "json",
+						data: { totalNo: totalNo },
+						success(data) {
+							if (data.result === "success") {
 								alert("삭제되었습니다.");
-								location.href="/notice/list.do";
+								location.href = "/totalDocs/list.do";
 							} else {
 								alert("삭제 중 오류발생");
 							}
 						}
 					});
-
-				},
-				fnEdit(totalNo){
-					pageChange("/notice/edit.do", { totalNo: totalNo });
 				},
 				moveTo(no) {
-					this.totalNo = no;// 새 번호로 업데이트!
-					this.fnNoticeView();// 새 totalNo 기준으로 다시 조회
-					window.scrollTo({ top: 0, behavior: 'smooth' });// 선택사항: 스크롤도 위로				
-
+					this.totalNo = no;
+					this.fnDocsView();
+					window.scrollTo({ top: 0, behavior: 'smooth' });
 				},
-				goToListPage (){
-					pageChange("/notice/list.do", {});
+				goToListPage() {
+					pageChange("/totalDocs/list.do", { kind: this.kind });
 				}
 			},
 			mounted() {
-				this.fnNoticeView();
+				this.fnDocsView();
 			}
 		});
 		app.mount("#app");

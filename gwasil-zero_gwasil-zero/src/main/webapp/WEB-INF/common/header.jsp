@@ -23,6 +23,7 @@
                 <div class="header-line">
                     <a href="#">고객만족센터</a>
                     <a href="/user/login.do">로그인 / 회원가입</a>
+                    <a v-if="sessionId != ''" href="/mypage-home.do">마이페이지</a>
                 </div>
 
                 <!-- 네비게이션 바 -->
@@ -46,7 +47,7 @@
                                 </div>
                             </li>
                             <li class="menu-item" v-if="sessionStatus == 'A'">
-                                <a href="#" class="menu-font">관리자 페이지</a>
+                                <a href="/admin/main.do" class="menu-font">관리자 페이지</a>
                             </li>
                         </ul>
                     </div>
@@ -61,17 +62,18 @@
         const header = Vue.createApp({
             data() {
                 return {
+                    sessionId : "${map.userId}",
                     sessionStatus: 'A',
                     menuItems: [
                         { name: '회사 소개', url: '/common/introduce.do' },
-                        { name: '상품 소개', url: '' },
-                        { name: '구성원', url: '' },
-                        { name: '게시판', url: '' },
-                        { name: '통합 자료실', url: '' }
+                        { name: '패키지 소개', url: '/package/package.do' },
+                        { name: '구성원', url: '/profile/innerLawyer.do' },
+                        { name: '게시판', url: '/board/list.do' },
+                        { name: '통합 자료실', url: '/totalDocs/list.do' }
                     ],
                     sections: [
                         [],
-                        ['패키지 소개', '물품 소개'],
+                        [],
                         ['소속 변호사', '개인 변호사', '사무소 위치'],
                         [],
                         ['공지사항', 'Q & A', '사건 종류 가이드']

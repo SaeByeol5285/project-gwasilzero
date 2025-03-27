@@ -74,7 +74,7 @@
 				<section class="question-board">
 					<div class="section-title flex-between">
 						최근 질문
-						<button class="btn btn-outline">질문하러 가기</button>
+						<button class="btn btn-outline"><a href="/board/list.do">질문하러 가기</a></button>
 					</div>
 					<ul class="question-list mt-40 mb-40">
 						<li class="card mb-20">

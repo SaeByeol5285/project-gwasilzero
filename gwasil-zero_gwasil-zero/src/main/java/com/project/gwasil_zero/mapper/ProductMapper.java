@@ -5,9 +5,11 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.project.gwasil_zero.model.Packages;
+
 @Mapper
 public interface ProductMapper {
 
-	List<Package> selectPackageList(HashMap<String, Object> map);
+	List<Packages> selectPackageList(HashMap<String, Object> map);
 
 }

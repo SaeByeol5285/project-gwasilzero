@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.gwasil_zero.mapper.ProductMapper;
+import com.project.gwasil_zero.model.Packages;
 
 @Service
 public class ProductService {
@@ -18,7 +19,7 @@ public class ProductService {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			List<Package> list = adminMapper.selectPackageList(map);		
+			List<Packages> list = adminMapper.selectPackageList(map);		
 			resultMap.put("list", list);
 			resultMap.put("result", "success");		
 			

@@ -10,84 +10,115 @@
 	<script src="/js/page-change.js"></script>
 	<title>package.jsp</title>
 	<style>
-		body {
-			font-family: 'Segoe UI', sans-serif;
-			background-color: #f9f9f9;
-			padding: 40px;
+		.package-section-title {
+			font-size: 20px;
+			font-weight: bold;
+			color: var(--main-color);
+			text-align: center;
+			margin-bottom: 10px;
 		}
-		h2 {
-			margin-bottom: 30px;
-			color: #333;
-		}
-		.package-container {
+	
+		.package-container,
+		.lawyer-package-container {
 			display: flex;
 			gap: 20px;
 			justify-content: center;
 			flex-wrap: wrap;
 			margin-bottom: 50px;
 		}
-		.lawyer-package-container {
-			display: flex;
-			justify-content: center;
-			margin-top: 20px;
-		}
-		.package-section-title {
-			font-size: 20px;
-			font-weight: bold;
-			color: #444;
-			text-align: center;
-			margin-bottom: 10px;
-		}
+	
 		.package-box {
 			width: 280px;
-			background-color: #fff;
-			border-radius: 20px;
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+			background-color: white;
+			border-radius: 10px;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 			padding: 24px;
 			text-align: center;
-			transition: transform 0.2s ease;
+			transition: transform 0.2s ease, box-shadow 0.2s ease;
+			border: 1px solid #eee;
 		}
+	
 		.package-box:hover {
 			transform: translateY(-5px);
-			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 		}
+	
 		.package-title {
 			font-size: 20px;
 			font-weight: bold;
 			margin-bottom: 12px;
-			color: #333;
+			color: #222;
 		}
+	
 		.package-info {
 			font-size: 15px;
 			margin-bottom: 16px;
-			color: #555;
+			color: #666;
+			min-height: 48px;
 		}
+	
 		.package-price {
 			font-size: 18px;
 			font-weight: bold;
-			color: #007bff;
+			color: var(--main-color);
 		}
+	
 		.buy-btn {
 			margin-top: 20px;
-			display: inline-block;
 			padding: 10px 16px;
-			background-color: #007bff;
+			border-radius: 8px;
+			background-color: var(--main-color);
 			color: white;
-			border-radius: 10px;
-			text-decoration: none;
 			font-size: 14px;
+			font-weight: 500;
+			cursor: pointer;
+			text-decoration: none;
+			display: inline-block;
+			transition: background-color 0.2s ease;
+			border: none;
 		}
+	
 		.buy-btn:hover {
-			background-color: #0056b3;
+			background-color: #e55300; /* 조금 짙은 주황 */
+		}
+	
+		.section-subtitle {
+			font-size: 28px;
+			font-weight: bold;
+			margin-bottom: 30px;
+			text-align: center;
+			color: #222;
+			position: relative;
+			display: inline-block;
+			padding-bottom: 10px;
+
+			display: block;
+			text-align: center;
+			margin-left: auto;
+			margin-right: auto;
+		}
+	
+		.section-subtitle::after {
+			content: "";
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+			bottom: 0;
+			width: 60px;
+			height: 3px;
+			background-color: var(--main-color);
+			border-radius: 2px;
 		}
 	</style>
+	
 </head>
 <body>
+	<jsp:include page="../common/header.jsp" />
 	<div id="app">
-		<h2>패키지 구매</h2>
+		<h2 class="section-subtitle">패키지 구매</h2>
 
 		<!-- 사용자용 패키지 (위쪽 가로 배치) -->
-		<div class="package-section-title">일반 사용자용 패키지</div>
+		<div class="package-section-title">일반 사용자용 <span style="color: #333;">패키지</span></div>
 		<div class="package-container">
 			<template v-for="item in list" :key="item.packageName">
 				<div class="package-box" v-if="item.packageStatus === 'U'">
@@ -100,7 +131,7 @@
 		</div>
 
 		<!-- 변호사용 패키지 (아래쪽 따로) -->
-		<div class="package-section-title">변호사용 패키지</div>
+		<div class="package-section-title">변호사용 <span style="color: #333;">패키지</span></div>
 		<div class="lawyer-package-container">
 			<template v-for="item in list" :key="item.packageName">
 				<div class="package-box" v-if="item.packageStatus === 'L'">
@@ -112,10 +143,9 @@
 			</template>
 		</div>
 	</div>
+	<jsp:include page="../common/footer.jsp" />
 </body>
 <script>
-	const userCode = "imp38661450"; // 식별코드
-	IMP.init(userCode);
 	const app = Vue.createApp({
 		data() {
 			return {
@@ -144,14 +174,14 @@
 
 			fnBuy(item) {
 
-				var popupW = 500;
-				var popupH = 500;
+				var popupW = 700;
+				var popupH = 700;
 				var left = Math.ceil((window.screen.width - popupW)/2);
 				var top = Math.ceil((window.screen.height - popupH)/2);
 
 
 				const popup = window.open(
-					"/project/packagePay.do?name=" + encodeURIComponent(item.packageName)
+					"/package/packagePay.do?name=" + encodeURIComponent(item.packageName)
 					+ "&price=" + item.packagePrice
 					+ "&orderId=" + new Date().getTime(),
 					"결제창",

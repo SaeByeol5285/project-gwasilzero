@@ -25,8 +25,6 @@ import com.google.gson.Gson;
 import com.project.gwasil_zero.dao.BoardService;
 
 
-//ffmpeg -i C:\pixelizer\examples\angelina.mp4 -t 60 -vf scale=1024:726 C:\pixelizer\examples\angelina_1min_1024x726.mp4 && python pixelizer.py C:\pixelizer\examples\angelina_1min_1024x726.mp4 C:\pixelizer\examples\testResult_1min.mp4
-
 @Controller
 public class BoardController {
 	
@@ -42,13 +40,40 @@ public class BoardController {
     public String boardList(Model model) throws Exception{
         return "/board/board-list";
     }
-
 	
-	
-	@RequestMapping(value = "/menu.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	 @RequestMapping("/board/view.do") 
+	   public String boardView(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+			System.out.println(map);
+			request.setAttribute("map", map);
+			return "/board/board-view";
+	   }
+	 @RequestMapping("/board/edit.do") 
+	   public String boardEdit(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+			System.out.println(map);
+			request.setAttribute("map", map);
+			return "/board/board-edit";
+	   }
+	@RequestMapping(value = "/board/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String add(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+	public String board_list(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = boardService.getBoardList(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/board/commentAdd.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String commentAdd(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = boardService.commentAdd(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/board/view.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String boardView(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = boardService.getBoard(map);
 		return new Gson().toJson(resultMap);
 	}
 	
@@ -60,6 +85,8 @@ public class BoardController {
 	public HashMap<String, Object> result(@RequestParam("file1") List<MultipartFile> files,
 	                                      @RequestParam("title") String title,
 	                                      @RequestParam("contents") String contents,
+	                                      @RequestParam("category") String category,
+	                                      
 	                                      HttpServletRequest request,
 	                                      HttpServletResponse response,
 	                                      Model model) {
@@ -68,20 +95,26 @@ public class BoardController {
 	    String originPath = path2 + "\\src\\main\\webapp\\img\\originVedio";
 	    String cutPathDir = path2 + "\\src\\main\\webapp\\img\\cutVedio";
 	    String mosaicPathDir = path2 + "\\src\\main\\webapp\\img\\mosaicVedio";
+	    String thumbPathDir = path2 + "\\src\\main\\webapp\\img\\thumbnails";
 	    String pythonExec = "C:\\pixelizer_env\\Scripts\\python.exe";
 	    String scriptPath = "C:\\pixelizer\\pixelizer.py";
 
 	    try {
-	        // 게시판
+	        // 게시판 저장
 	        HashMap<String, Object> boardData = new HashMap<>();
 	        boardData.put("title", title);
 	        boardData.put("contents", contents);
-	        boardData.put("userId", 1); // 임시값
+	        boardData.put("userId", "user_1");
 	        boardData.put("boardStatus", "A");
+	        boardData.put("category", category);
 	        resultMap = boardService.saveBoard(boardData);
 	        int boardNo = (int) resultMap.get("boardNo");
 
-	        // 멀티파트aa
+	        // 마지막 파일 정보 저장용
+	        String lastMosaicPath = "";
+	        String lastOriginFilename = "";
+	        String lastSaveFileName = "";
+
 	        for (MultipartFile multi : files) {
 	            if (!multi.isEmpty()) {
 	                String originFilename = multi.getOriginalFilename();
@@ -95,12 +128,12 @@ public class BoardController {
 	                String cutPath = cutPathDir + "\\cut_" + saveFileName;
 	                String mosaicPath = mosaicPathDir + "\\mosaic_" + saveFileName;
 
+	                // 스크립트 커맨드
 	                String fullCommand = String.join(" && ",
 	                        "del \"" + mosaicPath + "\"",
 	                        "ffmpeg -y -i \"" + inputPath + "\" -t 40 -vf scale=800:600 \"" + cutPath + "\"",
 	                        "\"" + pythonExec + "\" \"" + scriptPath + "\" \"" + cutPath + "\" \"" + mosaicPath + "\""
 	                );
-
 	                System.out.println("CMD: " + fullCommand);
 
 	                ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", fullCommand);
@@ -115,7 +148,7 @@ public class BoardController {
 	                }
 	                process.waitFor();
 
-	                // 📌 파일 DB 등록
+	                // DB 등록 (thumbnail = N)
 	                HashMap<String, Object> fileMap = new HashMap<>();
 	                fileMap.put("boardNo", boardNo);
 	                fileMap.put("filePath", "../img/mosaicVedio/mosaic_" + saveFileName);
@@ -123,7 +156,44 @@ public class BoardController {
 	                fileMap.put("fileRealName", originFilename);
 	                fileMap.put("thumbnail", "N");
 	                boardService.saveBoardFile(fileMap);
+
+	                // 마지막 정보 저장
+	                lastMosaicPath = mosaicPath;
+	                lastSaveFileName = saveFileName;
+	                lastOriginFilename = originFilename;
 	            }
+	        }
+
+	        // 마지막 모자이크 영상에서 썸네일 추출
+	        if (!lastMosaicPath.isEmpty()) {
+	            String thumbnailName = "thumb_" + lastSaveFileName.replaceAll("\\.[^.]+$", ".jpg");
+	            String thumbnailPath = thumbPathDir + "\\" + thumbnailName;
+
+	            String thumbCommand = String.format(
+	                    "ffmpeg -y -i \"%s\" -ss 00:00:02.000 -vframes 1 \"%s\"",
+	                    lastMosaicPath, thumbnailPath
+	            );
+	            System.out.println("THUMB CMD: " + thumbCommand);
+
+	            ProcessBuilder thumbPB = new ProcessBuilder("cmd.exe", "/c", thumbCommand);
+	            thumbPB.redirectErrorStream(true);
+	            Process thumbProcess = thumbPB.start();
+
+	            BufferedReader thumbIn = new BufferedReader(new InputStreamReader(thumbProcess.getInputStream()));
+	            String thumbLine;
+	            while ((thumbLine = thumbIn.readLine()) != null) {
+	                System.out.println("[THUMB] " + thumbLine);
+	            }
+	            thumbProcess.waitFor();
+
+	            // 썸네일 DB 저장 (thumbnail = Y)
+	            HashMap<String, Object> thumbMap = new HashMap<>();
+	            thumbMap.put("boardNo", boardNo);
+	            thumbMap.put("filePath", "../img/thumbnails/" + thumbnailName);
+	            thumbMap.put("fileName", thumbnailName);
+	            thumbMap.put("fileRealName", lastOriginFilename);
+	            thumbMap.put("thumbnail", "Y");
+	            boardService.saveBoardFile(thumbMap);
 	        }
 
 	        resultMap.put("fileResult", "success");
@@ -135,8 +205,6 @@ public class BoardController {
 	        return resultMap;
 	    }
 	}
-
-
 
 
 	

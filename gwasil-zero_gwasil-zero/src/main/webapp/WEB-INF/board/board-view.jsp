@@ -123,7 +123,7 @@
 </head>
 <body>
 	<div id="app">
-	    <div class="view-container" v-if="board.boardNo">
+	    <div class="view-container" v-if="board?.boardNo">
 	        <div class="view-title">{{ board.boardTitle }}</div>
 	        
 	        <div class="view-meta">
@@ -153,6 +153,7 @@
 	                </video>
 	            </div>
 	        </div>
+			<button @click="EditBoard">수정</button>
 	    </div>
 		
 		<div class="comment-wrapper">
@@ -161,7 +162,7 @@
 		  <!-- 입력창 -->
 		  <textarea v-model="newComment" placeholder="댓글을 입력하세요" rows="3"></textarea>
 		  <button @click="submitComment">등록</button>
-
+		  
 		  <!-- 목록 -->
 		  <div class="comment-list" v-if="comments.length > 0">
 		    <div class="comment-item" v-for="(cmt, index) in comments" :key="index">
@@ -204,8 +205,10 @@
 	                    self.images = [];
 	                    self.videos = [];
 	                    data.boardFile.forEach(file => {
+							if (file.thumbnail === 'Y') return; // 썸네일은 건너뜀
+
 	                        const lower = file.fileName.toLowerCase();
-	                        if (lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.png') || lower.endsWith('.gif')) {
+	                        if (lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.png') || lower.endsWith('.gif') || lower.endsWith('.jfif')) {
 	                            self.images.push(file);
 	                        } else if (lower.endsWith('.mp4') || lower.endsWith('.mov') || lower.endsWith('.avi')) {
 	                            self.videos.push(file);
@@ -234,10 +237,15 @@
 			               self.fnGetBoard(); // 댓글 다시 불러오기
 			           }
 			       });
-			   }
+			   },
+			EditBoard: function(){
+				let self = this;
+				pageChange("/board/edit.do", {boardNo : self.boardNo})
+			}
 	    },
 	    mounted() {
-	        this.fnGetBoard();
+			let self = this;
+	        self.fnGetBoard();
 	    }
 	});
 	app.mount("#app");

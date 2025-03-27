@@ -43,28 +43,28 @@
 
 	
 	<select id="selectBoardCnt" parameterType="hashmap" resultType="int">
-	SELECT COUNT(*)
-	FROM BOARD B
-	INNER JOIN TBL_USER M ON B.USER_ID = M.USER_ID  
-	LEFT JOIN CATEGORIES C ON B.BOARD_NO = C.BOARD_NO
-	LEFT JOIN LAWYER l ON b.lawyer_id = l.lawyer_id
-	WHERE 1=1
-	<if test="category != null and category != 'all'">
-		AND C.CATEGORY = #{category}
-	</if>
-	<if test="searchOption != null and searchOption == 'all'">
-	  AND (
-	    BOARD_TITLE LIKE '%' || #{keyword} || '%' 
-	    OR l.LAWYER_NAME LIKE '%' || #{keyword} || '%'
-	  )
-	</if>
-	<if test="searchOption != null and searchOption == 'title'">
-	  AND BOARD_TITLE LIKE '%' || #{keyword} || '%'
-	</if>
-	<if test="searchOption != null and searchOption == 'name'">
-	  AND l.LAWYER_NAME LIKE '%' || #{keyword} || '%'
-	</if>
-</select>
+		SELECT COUNT(*)
+		FROM BOARD B
+		INNER JOIN TBL_USER M ON B.USER_ID = M.USER_ID  
+		LEFT JOIN CATEGORIES C ON B.BOARD_NO = C.BOARD_NO
+		LEFT JOIN LAWYER l ON b.lawyer_id = l.lawyer_id
+		WHERE 1=1
+		<if test="category != null and category != 'all'">
+			AND C.CATEGORY = #{category}
+		</if>
+		<if test="searchOption != null and searchOption == 'all'">
+		  AND (
+		    BOARD_TITLE LIKE '%' || #{keyword} || '%' 
+		    OR l.LAWYER_NAME LIKE '%' || #{keyword} || '%'
+		  )
+		</if>
+		<if test="searchOption != null and searchOption == 'title'">
+		  AND BOARD_TITLE LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="searchOption != null and searchOption == 'name'">
+		  AND l.LAWYER_NAME LIKE '%' || #{keyword} || '%'
+		</if>
+	</select>
 
 
 
@@ -89,7 +89,7 @@
 	</insert>
 	
 	<select id="selectBoard" parameterType="hashmap"  resultType="com.project.gwasil_zero.model.Board">
-		select b.*, lawyer_name  from board b inner join lawyer l on l.lawyer_id = b.lawyer_id where b.board_no = #{boardNo}
+		select b.*, lawyer_name  from board b left join lawyer l on l.lawyer_id = b.lawyer_id where b.board_no = #{boardNo}
 	</select>
 	
 	<select id="selectBoardFiles" parameterType="hashmap"  resultType="com.project.gwasil_zero.model.BoardFile">

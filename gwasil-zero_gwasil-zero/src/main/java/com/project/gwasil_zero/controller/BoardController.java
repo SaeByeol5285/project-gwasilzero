@@ -40,14 +40,19 @@ public class BoardController {
     public String boardList(Model model) throws Exception{
         return "/board/board-list";
     }
-
+	
 	 @RequestMapping("/board/view.do") 
 	   public String boardView(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 			System.out.println(map);
 			request.setAttribute("map", map);
 			return "/board/board-view";
 	   }
-	
+	 @RequestMapping("/board/edit.do") 
+	   public String boardEdit(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+			System.out.println(map);
+			request.setAttribute("map", map);
+			return "/board/board-edit";
+	   }
 	@RequestMapping(value = "/board/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String board_list(Model model, @RequestParam HashMap<String, Object> map) throws Exception {

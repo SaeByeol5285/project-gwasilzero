@@ -23,5 +23,5 @@ public class Lawyer {
 	   private int mainCase3No;
 	   private String boardTitle;
 	   private String lawyerAddr;
-
+	   private int boardNo;
 }

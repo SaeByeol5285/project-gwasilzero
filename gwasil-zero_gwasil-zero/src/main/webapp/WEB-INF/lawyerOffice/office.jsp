@@ -90,6 +90,7 @@
 			list-style: none;
 			padding: 0;
 		}
+		
 		.lawyer-list li {
 			padding: 10px;
 			border-bottom: 1px solid #ddd;

@@ -31,13 +31,13 @@ public class AdminService {
 		return resultMap;
 	}
 
-	public HashMap<String, Object> getLawPassList(HashMap<String, Object> map) {
+	public HashMap<String, Object> getLawAdminWaitList(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			List<Lawyer> lawPassList = adminMapper.selectLawPassList(map);
+			List<Lawyer> lawAdminWaitList = adminMapper.selectLawAdminWaitList(map);
 			
-			resultMap.put("lawPassList", lawPassList);
+			resultMap.put("lawAdminWaitList", lawAdminWaitList);
 		} catch(Exception e) {
 			System.out.println(e.getMessage());
 			resultMap.put("result", "fail");

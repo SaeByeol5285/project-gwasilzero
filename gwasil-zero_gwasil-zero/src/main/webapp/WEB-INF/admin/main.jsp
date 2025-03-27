@@ -43,10 +43,10 @@
                             <th>아이디</th>
                             <th>승인여부</th>
                         </tr>
-                        <tr v-for="lawPass in lawPassList">
-                            <td>{{lawPass.lawyerName}}</td>
-                            <td>{{lawPass.lawyerId}}</td>
-                            <td>{{lawPass.lawyerPass}}</td>
+                        <tr v-for="lawWait in lawAdminWaitList">
+                            <td>{{lawWait.lawyerName}}</td>
+                            <td>{{lawWait.lawyerId}}</td>
+                            <td>{{lawWait.lawyerPass}}</td>
                         </tr>
                     </table>
                 </div>
@@ -99,18 +99,18 @@
 					}
 				});
             },
-            fnLawPassList(){
+            fnLawAdminWaitList(){
                 var self = this;
 				var nparmap = {
 					
 				};
 				$.ajax({
-					url:"/admin/lawPassList.dox",
+					url:"/admin/lawAdminWaitList.dox",
 					dataType:"json",	
 					type : "POST", 
 					data : nparmap,
 					success : function(data) { 
-                        self.lawPassList = data.lawPassList;
+                        self.lawAdminWaitList = data.lawAdminWaitList;
 					}
 				});
             },
@@ -134,7 +134,7 @@
         mounted() {
             var self = this;
             self.fnNewMemList();
-            self.fnLawPassList();
+            self.fnLawAdminWaitList();
             self.fnRepoList();
         }
     });

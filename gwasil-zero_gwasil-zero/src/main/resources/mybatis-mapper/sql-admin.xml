@@ -13,7 +13,7 @@
 		WHERE ROWNUM &lt;= 5
 	</select>	
 	
-	<select id="selectLawPassList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+	<select id="selectLawAdminWaitList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
 		SELECT *
 		FROM LAWYER
 		WHERE LAWYER_PASS = 'N' AND ROWNUM &lt;= 5
@@ -31,83 +31,121 @@
 	</select>	
 	
 	<select id="selectUserList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
-		SELECT *
-		FROM TBL_USER U
-		WHERE 1=1
-		<if test="status != null and status != '' and status != 'ALL'">
-			<choose>
-				<when test="status == 'out'">
-					AND U.USER_STATUS = 'Out'
-				</when>
-				<when test="status == 'paid'">
-					AND U.USER_STATUS = 'Nomal'
-					AND EXISTS (
-						SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
-					)
-				</when>
-				<when test="status == 'free'">
-					AND U.USER_STATUS = 'Nomal'
-					AND NOT EXISTS (
-						SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
-					)
-				</when>
-			</choose>
-		</if>
+		SELECT
+	        U.USER_ID,
+	        U.USER_NAME,
+	        U.USER_STATUS,
+	        U.REPORT_CNT,
+	        U.CDATE,
+	        (
+	            SELECT MAX(PACKAGE_NAME)
+	            FROM PAY P
+	            WHERE P.USER_ID = U.USER_ID
+	        ) AS PACKAGE_NAME
+	    FROM TBL_USER U
+	    WHERE 1=1
 	
-		<if test="key != null and key != '' and word != null and word != ''">
-			<choose>
-				<when test="key == 'userName'">
-					AND U.USER_NAME LIKE '%' || #{word} || '%'
-				</when>
-				<when test="key == 'packageName'">
-					AND EXISTS (
-						SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID AND P.PACKAGE_NAME LIKE '%' || #{word} || '%'
-					)
-				</when>
-			</choose>
-		</if>
+	    <!-- 회원 상태 필터 -->
+	    <if test="status != null and status != 'ALL'">
+	        <choose>
+	            <when test="status == 'Out'">
+	                AND U.USER_STATUS = 'Out'
+	            </when>
+	            <when test="status == 'paid'">
+	                AND U.USER_STATUS = 'Nomal'
+	                AND EXISTS (
+	                    SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
+	                )
+	            </when>
+	            <when test="status == 'free'">
+	                AND U.USER_STATUS = 'Nomal'
+	                AND NOT EXISTS (
+	                    SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
+	                )
+	            </when>
+	        </choose>
+	    </if>
 	
-		ORDER BY CDATE DESC
-		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+	    <!-- 가입일 조건 -->
+	    <if test="period != null and period != 'ALL'">
+	        <choose>
+	            <when test="period == 'WEEK'">
+	                AND U.CDATE &gt;= SYSDATE - 7
+	            </when>
+	            <when test="period == 'MONTH'">
+	                AND U.CDATE &gt;= ADD_MONTHS(SYSDATE, -1)
+	            </when>
+	            <when test="period == 'YEAR'">
+	                AND U.CDATE &gt;= ADD_MONTHS(SYSDATE, -12)
+	            </when>
+	        </choose>
+	    </if>
+	
+	    <!-- 검색어 (이름 또는 패키지명) -->
+	    <if test="word != null and word != ''">
+	        AND (
+	            U.USER_NAME LIKE '%' || #{word} || '%'
+	            OR EXISTS (
+	                SELECT 1 FROM PAY P
+	                WHERE P.USER_ID = U.USER_ID
+	                AND P.PACKAGE_NAME LIKE '%' || #{word} || '%'
+	            )
+	        )
+	    </if>
+	
+	    ORDER BY U.CDATE DESC
+	    OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
 	</select>
 	
 	<select id="userCnt" parameterType="hashmap" resultType="int">
 		SELECT COUNT(*)
-		FROM TBL_USER U
-		WHERE 1=1
-		<if test="status != null and status != '' and status != 'ALL'">
-			<choose>
-				<when test="status == 'out'">
-					AND U.USER_STATUS = 'Out'
-				</when>
-				<when test="status == 'paid'">
-					AND U.USER_STATUS = 'Nomal'
-					AND EXISTS (
-						SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
-					)
-				</when>
-				<when test="status == 'free'">
-					AND U.USER_STATUS = 'Nomal'
-					AND NOT EXISTS (
-						SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
-					)
-				</when>
-			</choose>
-		</if>
+	    FROM TBL_USER U
+	    WHERE 1=1
 	
-		<if test="key != null and key != '' and word != null and word != ''">
-			<choose>
-				<when test="key == 'userName'">
-					AND U.USER_NAME LIKE '%' || #{word} || '%'
-				</when>
-				<when test="key == 'packageName'">
-					AND EXISTS (
-						SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID AND P.PACKAGE_NAME LIKE '%' || #{word} || '%'
-					)
-				</when>
-			</choose>
-		</if>
-		
+	    <if test="status != null and status != 'ALL'">
+	        <choose>
+	            <when test="status == 'Out'">
+	                AND U.USER_STATUS = 'Out'
+	            </when>
+	            <when test="status == 'paid'">
+	                AND U.USER_STATUS = 'Nomal'
+	                AND EXISTS (
+	                    SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
+	                )
+	            </when>
+	            <when test="status == 'free'">
+	                AND U.USER_STATUS = 'Nomal'
+	                AND NOT EXISTS (
+	                    SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
+	                )
+	            </when>
+	        </choose>
+	    </if>
+	
+	    <if test="period != null and period != 'ALL'">
+	        <choose>
+	            <when test="period == 'WEEK'">
+	                AND U.CDATE &gt;= SYSDATE - 7
+	            </when>
+	            <when test="period == 'MONTH'">
+	                AND U.CDATE &gt;= ADD_MONTHS(SYSDATE, -1)
+	            </when>
+	            <when test="period == 'YEAR'">
+	                AND U.CDATE &gt;= ADD_MONTHS(SYSDATE, -12)
+	            </when>
+	        </choose>
+	    </if>
+	
+	    <if test="word != null and word != ''">
+	        AND (
+	            U.USER_NAME LIKE '%' || #{word} || '%'
+	            OR EXISTS (
+	                SELECT 1 FROM PAY P
+	                WHERE P.USER_ID = U.USER_ID
+	                AND P.PACKAGE_NAME LIKE '%' || #{word} || '%'
+	            )
+	        )
+	    </if>
 	</select>
 	
 </mapper>

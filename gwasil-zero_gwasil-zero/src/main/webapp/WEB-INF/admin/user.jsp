@@ -38,24 +38,21 @@
                 <div>
                     <h3>회원 목록</h3>
                     <div class="filter-bar">
+                        <select v-model="searchPeriod">
+                            <option value="ALL">기간설정</option>
+                            <option value="WEEK">1주</option>
+                            <option value="MONTH">1달</option>
+                            <option value="YEAR">1년</option>
+                        </select>
+
                         <select v-model="searchStatus">
-                            <option value="">회원 상태</option>
-                            <option value="ALL">전체</option>
-                            <option value="out">탈퇴</option>
+                            <option value="ALL">회원 분류</option>
+                            <option value="Out">탈퇴</option>
                             <option value="paid">유료회원</option>
                             <option value="free">무료회원</option>
                         </select>
-                
-                        <select v-model="searchKey">
-                            <option value="">검색 키워드</option>
-                            <option value="ALL">전체</option>
-                            <option value="userName">회원이름</option>
-                            <option value="packageName">패키지이름</option>
-                        </select>
-                
                         <input type="text" v-model="searchWord" @keyup.enter="fnUserList" placeholder="검색어 입력" />
-                
-                        <button @click="fnSearch">검색</button>
+                        <button @click="fnUserList">검색</button>
                     </div>
                 
                     <!-- 결과 테이블 자리 -->
@@ -63,13 +60,17 @@
                         <tr>
                             <th>이름</th>
                             <th>아이디</th>
-                            <th>회원상태</th>
+                            <th>등급</th>
+                            <th>신고회수</th>
+                            <th>구매상품</th>
                             <th>가입일자</th>
                         </tr>
                         <tr v-for="user in userList" :key="user.userId">
                             <td>{{ user.userName }}</td>
                             <td>{{ user.userId }}</td>
                             <td>{{ user.userStatus }}</td>
+                            <td>{{ user.reportCnt }}</td>
+                            <td>{{ user.packageName }}</td>
                             <td>{{ user.cdate }}</td>
                         </tr>
                     </table>
@@ -91,8 +92,8 @@
             return {
                 newMemList: [],
                 userList: [],
-                searchStatus: '',
-                searchKey: '',
+                searchPeriod: 'ALL', 
+                searchStatus: 'ALL',
                 searchWord: '',
                 userPage: 1,
                 userPageSize: 5,
@@ -119,7 +120,7 @@
                 var self = this;
 				var nparmap = {
 					status: self.searchStatus,
-                    key: self.searchKey,
+                    period: self.searchPeriod,
                     word: self.searchWord,
                     pageSize: self.userPageSize,
                     page: (self.userPage - 1) * self.userPageSize

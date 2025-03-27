@@ -78,12 +78,12 @@ public class AdminController {
  	}
  	
  	// 변호사 승인 대기 목록
-  	@RequestMapping(value = "/admin/lawPassList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+  	@RequestMapping(value = "/admin/lawAdminWaitList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
   	@ResponseBody
-  	public String lawPassList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+  	public String lawAdminWaitList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
   		HashMap<String, Object> resultMap = new HashMap<String, Object>();
   		
-  		resultMap = adminService.getLawPassList(map);
+  		resultMap = adminService.getLawAdminWaitList(map);
   		return new Gson().toJson(resultMap);
   	}
   	

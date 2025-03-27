@@ -11,6 +11,6 @@ public class BoardCmt {
 	private String lawyerId;
 	private String lawyerName;
 	private String cdate;
-	private String udate;
+	private String udate; 
 
 }

@@ -8,6 +8,5 @@ public class Chat {
 	private int chatNo;
 	private String senderId;
 	private String receiverId; 
-	
-}
 
+}

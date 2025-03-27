@@ -17,7 +17,21 @@
                     <div>관리자페이지</div>
                     <div>Admin님</div>
                 </div>
-                <h2>변호사 관리</h2>
+                <div>
+                    <h3>변호사 승인 대기 목록</h3>
+                    <table>
+                        <tr>
+                            <th>이름</th>
+                            <th>아이디</th>
+                            <th>승인여부</th>
+                        </tr>
+                        <tr v-for="lawWait in lawWaitList">
+                            <td>{{lawWait.lawyerName}}</td>
+                            <td>{{lawWait.lawyerId}}</td>
+                            <td>{{lawWait.lawyerPass}}</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
 

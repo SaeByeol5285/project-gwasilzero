@@ -49,8 +49,7 @@
       <section class="steps">
         <h2 class="steps-title">
           <span class="inline-title">
-            <img src="../../img/logo1.png" alt="과실제로 로고" class="logo" />
-            의 <strong>3단계로 끝나는 교통사고 법률 대응</strong>
+            <img src="../../img/logo1.png" alt="과실제로 로고" class="logo" />의 <strong>3단계로 끝나는 교통사고 법률 대응</strong>   
           </span>
         </h2>
         <div class="step-wrapper">

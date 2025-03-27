@@ -22,14 +22,14 @@
                 <!-- 상단 로그인 / 고객센터 라인 -->
                 <div class="header-line">
                     <a href="#">고객만족센터</a>
-                    <a href="#">로그인 / 회원가입</a>
+                    <a href="/user/login.do">로그인 / 회원가입</a>
                 </div>
 
                 <!-- 네비게이션 바 -->
                 <nav class="main-nav-wrapper">
                     <div class="main-nav">
                         <!-- 로고 -->
-                        <a href="/" class="logo">
+                        <a href="/common/main.do" class="logo">
                             <img src="/img/logo1.png" alt="로고 이미지">
                         </a>
 

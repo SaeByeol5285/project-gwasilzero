@@ -10,4 +10,5 @@ public class ChatFile {
 	private String chatFilePath;
 	private String senderId;
 	private String senderName;
+
 }

@@ -5,6 +5,8 @@
     <head>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="/css/footer.css">
+		<link rel="stylesheet" href="/css/common.css">
+
 
         <title>footer.jsp</title>
         <style>

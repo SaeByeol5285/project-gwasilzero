@@ -10,6 +10,14 @@ import com.project.gwasil_zero.model.Packages;
 @Mapper
 public interface ProductMapper {
 
-	List<Packages> selectPackageList(HashMap<String, Object> map);
+	List<Packages> selectProductList(HashMap<String, Object> map);
+
+	void deleteProductList(HashMap<String, Object> map);
+
+	void insertProduct(HashMap<String, Object> map);
+
+	Packages selectProduct(HashMap<String, Object> map);
+
+	void updateProduct(HashMap<String, Object> map);
 
 }

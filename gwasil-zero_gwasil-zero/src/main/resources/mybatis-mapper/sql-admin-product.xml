@@ -2,10 +2,38 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 	
-<mapper namespace="com.project.gwasil_zero.mapper.AdminMapper">
-	<select id = "selectPackageList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Packages">
+<mapper namespace="com.project.gwasil_zero.mapper.ProductMapper">
+	<select id = "selectProductList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Packages">
 		SELECT * 
 		FROM packages
 	</select>	
 	
+	<delete id = "deleteProductList" parameterType="hashmap" >
+		DELETE FROM PACKAGES WHERE PACKAGE_NAME IN 
+       <foreach collection="list" item="item" open="(" separator="," close=")">
+           #{item}
+       </foreach>
+    </delete>
+    
+    <insert id="insertProduct" parameterType="hashmap">
+		INSERT INTO PACKAGES(PACKAGE_NAME, PACKAGE_PRICE, PACKAGE_INFO, PACKAGE_STATUS)
+		VALUES(#{packageName}, #{packagePrice}, #{packageInfo}, #{packageStatus})
+	</insert>
+	
+	<select id="selectProduct" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Packages">
+		SELECT * 
+		FROM PACKAGES
+		WHERE PACKAGE_NAME = #{packageName}
+		
+	</select>
+	
+	<update id="updateProduct" parameterType="hashmap">
+		UPDATE PACKAGES
+		SET
+			PACKAGE_INFO = #{packageInfo},
+			PACKAGE_PRICE = #{packagePrice},
+			PACKAGE_STATUS = #{packageStatus}
+		WHERE PACKAGE_NAME = #{packageName}
+	</update>
+    
 </mapper>

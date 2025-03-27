@@ -13,13 +13,13 @@ import com.project.gwasil_zero.model.Packages;
 public class ProductService {
 	
 	@Autowired
-	ProductMapper adminMapper;
+	ProductMapper productMapper;
 
-	public HashMap<String, Object> getpackageList(HashMap<String, Object> map) {
+	public HashMap<String, Object> getProductList(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			List<Packages> list = adminMapper.selectPackageList(map);		
+			List<Packages> list = productMapper.selectProductList(map);		
 			resultMap.put("list", list);
 			resultMap.put("result", "success");		
 			
@@ -30,4 +30,45 @@ public class ProductService {
 		}
 		return resultMap;
 	}
+
+	public HashMap<String, Object> deleteAll(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		productMapper.deleteProductList(map);
+		resultMap.put("result", "success");
+		return resultMap;
+	}
+
+	public HashMap<String, Object> addProduct(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		productMapper.insertProduct(map);
+		resultMap.put("result", "success");
+		
+		return resultMap;
+	}
+	
+	
+	public HashMap<String, Object> getProduct(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		Packages info = productMapper.selectProduct(map);
+		
+		resultMap.put("info", info);
+		resultMap.put("result", "success");
+		return resultMap;
+	}
+
+	public HashMap<String, Object> editProduct(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		productMapper.updateProduct(map);
+		resultMap.put("result", "success");
+		return resultMap;
+	}
+
+	
+	
+	
 }

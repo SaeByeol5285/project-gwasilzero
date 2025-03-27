@@ -30,19 +30,23 @@ public interface TotalDocsMapper {
 
 	//이미지리스트
 	List<TotalFile> selectImgList(HashMap<String, Object> map);
+	
+	//조회수 증가
+	void updateCnt(HashMap<String, Object> map);
 
+	//글삭제
+	int deleteDocs(HashMap<String, Object> map);
+	
 	//글쓰기
 	void insertDocs(HashMap<String, Object> map);
 
 	
 	
-	void updateCnt(HashMap<String, Object> map);
 	
 
 	void insertFiles(HashMap<String, Object> map);
 
 
-	int deleteNotice(HashMap<String, Object> map);
 
     void updateNotice(HashMap<String,Object> map);
     

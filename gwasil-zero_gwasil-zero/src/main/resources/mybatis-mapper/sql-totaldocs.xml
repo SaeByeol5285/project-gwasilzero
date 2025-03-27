@@ -4,7 +4,7 @@
 
 <mapper namespace="com.project.gwasil_zero.mapper.TotalDocsMapper">
 	
-	<!-- 공지사항/이용문의 공통 리스트 -->
+	<!-- 리스트 -->
 	<select id="selectDocsList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs"> 
 		SELECT * FROM TOTALDOCS 
 		WHERE KIND = #{kind} 
@@ -23,7 +23,7 @@
 		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY 
 	</select>
 
-	<!-- 공지사항/이용문의 공통 페이징 -->
+	<!-- 페이징 -->
 	<select id="selectDocsCnt" parameterType="hashmap" resultType="int">
 		SELECT COUNT(*) 
 		FROM TOTALDOCS
@@ -81,17 +81,26 @@
 		FETCH FIRST 1 ROWS ONLY
 	</select>
 	
-
-
-
-
-	
+	<!--조회수 증가-->
 	<update id="updateCnt" parameterType="hashmap">
 		UPDATE TOTALDOCS
 		SET
 			CNT = CNT+1
 		WHERE TOTAL_NO = #{totalNo}
 	</update>
+	
+	<!--글삭제-->
+	<delete id="deleteDocs" parameterType="hashmap">
+		DELETE 
+		FROM TOTALDOCS
+		WHERE TOTAL_NO = #{totalNo}
+	</delete>
+
+
+
+
+	
+
 	
 	
 	
@@ -107,11 +116,6 @@
 	
 
 	
-	<delete id="deleteNotice" parameterType="hashmap">
-		DELETE 
-		FROM TOTALDOCS
-		WHERE TOTAL_NO = #{totalNo}
-	</delete>
 	
 	<update id="updateNotice" parameterType="map">
 	    UPDATE TOTALDOCS

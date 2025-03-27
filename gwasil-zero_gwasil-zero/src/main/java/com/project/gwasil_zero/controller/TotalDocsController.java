@@ -109,7 +109,6 @@ public class TotalDocsController {
 					totalDocsService.insertFile(fileMap);
 				}
 			}
-
 			resultMap.put("result", "success");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -117,8 +116,21 @@ public class TotalDocsController {
 		}
 		return resultMap;
 	}
+	// 글삭제
+	@RequestMapping(value = "/totalDocs/remove.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String docsRemove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
-	// 공지사항 글쓰기
+		resultMap = totalDocsService.removeDocs(map);
+		return new Gson().toJson(resultMap);
+	}
+
+	
+	
+	
+	
+	// 글쓰기
 	@RequestMapping(value = "/totalDocs/add.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String docsAdd(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
@@ -172,14 +184,6 @@ public class TotalDocsController {
 		return "redirect:/notice/list.do";
 	}
 
-	// 공지사항 삭제
-	@RequestMapping(value = "/notice/remove.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	@ResponseBody
-	public String noticeRemove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
-		resultMap = totalDocsService.removeNotice(map);
-		return new Gson().toJson(resultMap);
-	}
 
 }

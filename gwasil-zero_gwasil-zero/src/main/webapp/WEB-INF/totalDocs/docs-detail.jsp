@@ -26,10 +26,12 @@
 				<div>
 					<img v-for="(image, index) in imgList" :src="image.filePath" :key="index" alt="첨부 이미지">
 				</div>
-				<div v-if="sessionStatus == 'A'" class="mb-20">
+				<span v-if="sessionId == info.userId" class="mb-20">
 					<button @click="fnEdit(info.totalNo)" class="btn btn-outline">수정</button>
+				</span>
+				<span v-if="sessionStatus == 'A' || sessionId == info.userId" class="mb-20">
 					<button @click="fnRemove(info.totalNo)" class="btn btn-outline">삭제</button>
-				</div>
+				</span>
 				<div class="mb-20">
 					<button @click="goToListPage" class="btn btn-outline">목록보기</button>
 				</div>
@@ -59,17 +61,23 @@
 					imgList: [],
 					prev: null,
 					next: null,
-					sessionStatus: "A"
+					sessionStatus: "",
+					sessionId : "101", //"${sessionId}"
+
 				};
 			},
 			methods: {
 				fnDocsView() {
-					const self = this;
+					var self = this;
+					var nparmap = {
+						totalNo: self.totalNo,
+						option: "SELECT" //조회수 증가
+					};
 					$.ajax({
 						url: "/totalDocs/view.dox",
-						type: "POST",
 						dataType: "json",
-						data: { totalNo: self.totalNo },
+						type: "POST",
+						data: nparmap,
 						success(data) {
 							if (data.result === "success") {
 								self.info = data.info;
@@ -98,18 +106,20 @@
 					pageChange("/totalDocs/edit.do", { totalNo: totalNo });
 				},
 				fnRemove(totalNo) {
+					const self = this;
+
 					if (!confirm("정말 삭제하시겠습니까?")) {
 						return;
 					}
 					$.ajax({
-						url: "/docs/remove.dox",
+						url: "/totalDocs/remove.dox",
 						type: "POST",
 						dataType: "json",
 						data: { totalNo: totalNo },
 						success(data) {
-							if (data.result === "success") {
+							if (data.result == "success") {
 								alert("삭제되었습니다.");
-								location.href = "/totalDocs/list.do";
+								pageChange("/totalDocs/list.do", { kind : self.kind });
 							} else {
 								alert("삭제 중 오류발생");
 							}

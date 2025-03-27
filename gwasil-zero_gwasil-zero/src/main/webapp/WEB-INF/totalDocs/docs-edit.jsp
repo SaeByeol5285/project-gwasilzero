@@ -102,7 +102,7 @@
                         success(data) {
                             if (data.result === "success") {
                                 alert("수정 완료!");
-                                location.href = "/totalDocs/list.do";
+								pageChange("/totalDocs/list.do", { kind: self.info.kind });
                             } else {
                                 alert("수정 실패!");
                             }

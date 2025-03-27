@@ -22,7 +22,7 @@
                 <div class="header-line">
                     <a href="#">고객만족센터</a>
                     <a v-if="sessionId == ''" href="/user/login.do">로그인 / 회원가입</a>
-                    <a v-else href="#">로그아웃</a>
+                    <a v-else href="javascript:void(0);">로그아웃</a>
                     <a v-if="sessionId != ''" href="/mypage-home.do">마이페이지</a>
                 </div>
 
@@ -62,7 +62,7 @@
         const header = Vue.createApp({
             data() {
                 return {
-                    sessionId : "${sessionId}",//"juwon1234"
+                    sessionId : "juwon1234",//"${sessionId}"
                     sessionStatus: 'A',
                     menuItems: [
                         { name: '회사 소개', url: '/common/introduce.do' },

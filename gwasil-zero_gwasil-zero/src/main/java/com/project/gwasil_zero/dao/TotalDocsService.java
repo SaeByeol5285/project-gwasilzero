@@ -43,6 +43,10 @@ public class TotalDocsService {
 	        TotalDocs info = totalDocsMapper.selectDocsInfo(map);
 			List<TotalFile> imgList = totalDocsMapper.selectImgList(map);
 			
+			if(map.containsKey("option")){
+				totalDocsMapper.updateCnt(map);
+			}
+			
 	        resultMap.put("result", "success");
 	        resultMap.put("info", info);
 	        resultMap.put("imgList", imgList);
@@ -70,6 +74,19 @@ public class TotalDocsService {
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
+	
+	// 글삭제
+	public HashMap<String, Object> removeDocs(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		int num = totalDocsMapper.deleteDocs(map);
+		if(num > 0) {
+			resultMap.put("result", "success");
+		} else {
 			resultMap.put("result", "fail");
 		}
 		return resultMap;
@@ -107,20 +124,6 @@ public class TotalDocsService {
 		
 	}
 
-	// 공지사항 삭제
-	public HashMap<String, Object> removeNotice(HashMap<String, Object> map) {
-		// TODO Auto-generated method stub
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		int num = totalDocsMapper.deleteNotice(map);
-		if(num > 0) {
-			resultMap.put("result", "success");
-		} else {
-			resultMap.put("result", "fail");
-		}
-		
-		
-		return resultMap;
-	}
 
 	//제목, 내용 수정
 	public HashMap<String, Object> editNotice(HashMap<String, Object> map) {

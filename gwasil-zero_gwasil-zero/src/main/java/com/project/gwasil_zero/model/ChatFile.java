@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ChatFile {
-	
+
 	private int chatNo;
 	private String time;
 	private String chatFilePath;

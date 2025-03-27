@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project.gwasil_zero.mapper.ProfileMapper">
+	<select id = "selectInnerList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+		SELECT * 
+		FROM LAWYER
+		WHERE 1=1 
+			AND LAWYER_STATUS = 'I'
+			AND LAWYER_PASS = 'Y'
+		<if test="searchOption != null and searchOption == 'all'">
+			AND (LAWYER_NAME LIKE '%' || #{keyword} || '%'
+					OR LAWYER_INFO LIKE '%' || #{keyword} || '%')
+		</if>
+		<if test="searchOption != null and searchOption == 'name'">
+			AND LAWYER_NAME LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="searchOption != null and searchOption == 'txt'">
+			AND LAWYER_INFO LIKE '%' || #{keyword} || '%'
+		</if>
+		ORDER BY LAWYER_NAME
+		OFFSET #{page} ROW  FETCH NEXT 4 ROWS ONLY
+	</select>	
+	
+	<select id="selectInnerCnt" parameterType="hashmap" resultType="int">
+		SELECT COUNT(*)  
+		FROM LAWYER
+		WHERE 1=1 
+			AND LAWYER_STATUS = 'I'
+			AND LAWYER_PASS = 'Y'
+		<if test="searchOption != null and searchOption == 'all'">
+			AND (LAWYER_NAME LIKE '%' || #{keyword} || '%'
+					OR LAWYER_INFO LIKE '%' || #{keyword} || '%')
+		</if>
+		<if test="searchOption != null and searchOption == 'name'">
+			AND LAWYER_NAME LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="searchOption != null and searchOption == 'txt'">
+			AND LAWYER_INFO LIKE '%' || #{keyword} || '%'
+		</if>
+	</select>
+	
+	<select id = "selectPersonalList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+		SELECT * 
+		FROM LAWYER
+		WHERE 1=1 
+			AND LAWYER_STATUS = 'P'
+			AND LAWYER_PASS = 'Y'
+		<if test="searchOption != null and searchOption == 'all'">
+			AND (LAWYER_NAME LIKE '%' || #{keyword} || '%'
+					OR LAWYER_INFO LIKE '%' || #{keyword} || '%')
+		</if>
+		<if test="searchOption != null and searchOption == 'name'">
+			AND LAWYER_NAME LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="searchOption != null and searchOption == 'txt'">
+			AND LAWYER_INFO LIKE '%' || #{keyword} || '%'
+		</if>
+		ORDER BY LAWYER_NAME
+		OFFSET #{page} ROW  FETCH NEXT 4 ROWS ONLY
+		
+	</select>	
+	
+	<select id="selectPersonalCnt" parameterType="hashmap" resultType="int">
+		SELECT COUNT(*)  
+		FROM LAWYER
+		WHERE 1=1 
+			AND LAWYER_STATUS = 'P'
+			AND LAWYER_PASS = 'Y'
+		<if test="searchOption != null and searchOption == 'all'">
+			AND (LAWYER_NAME LIKE '%' || #{keyword} || '%'
+					OR LAWYER_INFO LIKE '%' || #{keyword} || '%')
+		</if>
+		<if test="searchOption != null and searchOption == 'name'">
+			AND LAWYER_NAME LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="searchOption != null and searchOption == 'txt'">
+			AND LAWYER_INFO LIKE '%' || #{keyword} || '%'
+		</if>
+	</select>
+	
+	<select id="selectLawyer" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+		SELECT *  
+		FROM LAWYER L
+		WHERE L.LAWYER_ID = #{lawyerId} 
+	</select>
+	
+	<select id="lawyerBoardList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Board">
+		SELECT B.*
+		FROM LAWYER L
+		LEFT JOIN BOARD B ON L.LAWYER_ID = B.LAWYER_ID
+		WHERE L.LAWYER_ID = #{lawyerId}
+	</select>
+	
+	<select id="lawyerBoardFileList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.BoardFile">
+		SELECT *  
+		FROM LAWYER L
+		LEFT JOIN BOARD B ON L.LAWYER_ID = B.LAWYER_ID
+		INNER JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO
+		WHERE L.LAWYER_ID = #{lawyerId} AND THUMBNAIL = 'Y'
+	</select>
+	
+	<select id="lawyerLicenseList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.License">
+		SELECT *  
+		FROM LICENSE 
+		WHERE LAWYER_ID = #{lawyerId}
+	</select>
+	
+	<update id="updateLawyer">
+		UPDATE LAWYER
+		SET
+			LAWYER_INFO = #{lawyerInfo, jdbcType=VARCHAR},
+			LAWYER_CAREER = #{lawyerCareer, jdbcType=VARCHAR},
+			LAWYER_TASK = #{lawyerTask, jdbcType=VARCHAR},
+			LAWYER_EDU = #{lawyerEdu, jdbcType=VARCHAR}
+		WHERE LAWYER_ID = #{lawyerId, jdbcType=VARCHAR}	
+	</update>
+	
+	<delete id="deleteLicenseByLawyerId" parameterType="string">
+		DELETE FROM LICENSE WHERE LAWYER_ID = #{lawyerId}
+	</delete>
+	
+	<insert id="insertLicense">
+		INSERT INTO LICENSE (LAWYER_ID, LICENSE_NAME)
+		VALUES (#{lawyerId, jdbcType=VARCHAR}, #{licenseName, jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="updateMainCases" parameterType="hashmap">
+	    UPDATE LAWYER
+	    SET MAIN_CASE1_NO = #{mainCase1No, jdbcType=INTEGER},
+	        MAIN_CASE2_NO = #{mainCase2No, jdbcType=INTEGER},
+	        MAIN_CASE3_NO = #{mainCase3No, jdbcType=INTEGER}
+	    WHERE LAWYER_ID = #{lawyerId}
+	</update>
+</mapper>
+
+
+
+

@@ -2,12 +2,15 @@ package com.project.gwasil_zero.dao;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.gwasil_zero.mapper.BoardMapper;
-
+import com.project.gwasil_zero.model.Board;
+import com.project.gwasil_zero.model.BoardCmt;
+import com.project.gwasil_zero.model.BoardFile;
 @Service
 public class BoardService {
 	@Autowired
@@ -25,6 +28,8 @@ public class BoardService {
 
 	        if (boardNoObj instanceof BigDecimal) {
 	            boardNo = ((BigDecimal) boardNoObj).intValue();
+	            map.put("boardNo", boardNo);
+	            boardMapper.insertCategory(map);
 	        } else if (boardNoObj instanceof Integer) {
 	            boardNo = (Integer) boardNoObj;
 	        }
@@ -51,6 +56,60 @@ public class BoardService {
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 			resultMap.put("fileResult","failed");
+		}
+		
+		return resultMap;
+	}
+	
+	
+	public HashMap<String, Object> getBoardList(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			List<Board> boardList = boardMapper.selectBoardList(map);
+			int count = boardMapper.selectBoardCnt(map);
+			resultMap.put("list", boardList);
+			resultMap.put("result","success");
+			resultMap.put("count", count);
+			
+			System.out.println(count);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result","failed");
+		}
+		
+		return resultMap;
+	}
+	
+	
+	public HashMap<String, Object> getBoard(HashMap<String, Object> map) {
+	
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			Board board = boardMapper.selectBoard(map);
+			List<BoardFile> bf = boardMapper.selectBoardFiles(map);
+			List<BoardCmt> bc = boardMapper.selectBoardCmttList(map);
+			System.out.println(map);
+			resultMap.put("result","success");
+			resultMap.put("board", board);			
+			resultMap.put("boardFile", bf);
+			resultMap.put("comment", bc);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result","failed");
+		}
+		
+		return resultMap;
+	}
+	public HashMap<String, Object> commentAdd(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			boardMapper.insertBoardCmt(map);
+			System.out.println(map);
+			resultMap.put("result","success");
+			
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result","failed");
 		}
 		
 		return resultMap;

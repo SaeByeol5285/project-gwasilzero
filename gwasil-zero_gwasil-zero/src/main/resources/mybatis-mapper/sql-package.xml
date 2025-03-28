@@ -10,7 +10,19 @@
 	
 	<insert id="insertPayment" parameterType="hashmap">
 	    INSERT INTO PAY(ORDER_ID, PACKAGE_NAME, PAY_TIME, USER_ID, PRICE)
-	    VALUES (#{orderId}, #{packageName}, sysdate, 'test', #{packagePrice})
+	    VALUES (#{orderId}, #{packageName}, sysdate, #{userId}, #{packagePrice})
 	</insert>
 	
+	<select id="selectpayList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
+		SELECT * 
+		FROM PAY
+		WHERE 1=1
+		<if test="userId != null and userId != ''">
+			AND USER_ID = #{userId}
+		</if>
+		<if test="lawyerId != null and lawyerId != ''">
+			AND LAWYER_ID = #{lawyerId}
+		</if>
+	</select>
+
 </mapper>

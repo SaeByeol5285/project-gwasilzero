@@ -125,7 +125,17 @@
 					<div class="package-title">{{ item.packageName }}</div>
 					<div class="package-info">{{ item.packageInfo }}</div>
 					<div class="package-price">₩{{ item.packagePrice.toLocaleString() }}</div>
-					<a href="javascript:;" @click="fnBuy(item)" class="buy-btn">구매하기</a>
+
+					<a v-if="!isPurchased(item) && canBuy(item)" href="javascript:;" @click="fnBuy(item)" class="buy-btn">
+					구매하기
+					</a>
+					<span v-else-if="isPurchased(item)" class="buy-btn" style="background-color: #ccc; cursor: default;">
+					구매 완료
+					</span>
+					<span v-else class="buy-btn" style="background-color: #eee; cursor: not-allowed;" title="해당 사용자는 구매할 수 없습니다.">
+					구매 불가
+					</span>
+
 				</div>
 			</template>
 		</div>
@@ -138,7 +148,18 @@
 					<div class="package-title">{{ item.packageName }}</div>
 					<div class="package-info">{{ item.packageInfo }}</div>
 					<div class="package-price">₩{{ item.packagePrice.toLocaleString() }}</div>
-					<a href="javascript:;" @click="fnBuy(item)" class="buy-btn">구매하기</a>
+
+					<a v-if="!isPurchased(item) && canBuy(item)" href="javascript:;" @click="fnBuy(item)" class="buy-btn">
+						구매하기
+					</a>
+					<span v-else-if="isPurchased(item)" class="buy-btn" style="background-color: #ccc; cursor: default;">
+					구매 완료
+					</span>
+					<span v-else class="buy-btn" style="background-color: #eee; cursor: not-allowed;" title="해당 사용자는 구매할 수 없습니다.">
+					구매 불가
+					</span>
+
+
 				</div>
 			</template>
 		</div>
@@ -150,7 +171,9 @@
 		data() {
 			return {
 				list: [],
-				// userId : ${session.Id}
+				sessionId: "${sessionId}",
+				purchasedList: [],
+				role: "${role}",
 			};
 		},
 		methods: {
@@ -171,6 +194,20 @@
 					}
 				});
 			},
+			canBuy(item) {
+				// 변호사는 일반 사용자용 구매 불가
+				if (item.packageStatus === 'U' && this.role === 'lawyer') return false;
+				// 일반 사용자는 변호사용 구매 불가
+				if (item.packageStatus === 'L' && this.role === 'user') return false;
+				// 이미 구매한 패키지는 비활성화
+				if (this.purchasedList.includes(item.packageName)) return false;
+				return true;
+			},
+
+			isPurchased(item) {
+				return this.purchasedList.includes(item.packageName);
+			},
+
 
 			fnBuy(item) {
 
@@ -187,11 +224,34 @@
 					"결제창",
 					`width=` + popupW + `,height=` + popupH + `,left=` + left + `,top=` + top
 				);
-			}
+
+				let timer = setInterval(() => {
+					if (popup.closed) {
+						clearInterval(timer);
+						this.fnGetPurchased();  // 🆕 구매완료 목록 갱신
+					}
+				}, 1000);
+			},
+
+			fnGetPurchased() {
+				let self = this;
+				$.ajax({
+					url: "/package/purchased.dox",  // 📝 userId로 구매 내역 조회
+					data: {sessionId: self.sessionId},
+					type: "POST",
+					dataType: "json",
+					success: function(res) {
+						if (res.result === "success") {
+							self.purchasedList = res.purchasedList.map(item => item.packageName);
+						}
+					}
+				});
+			},
 
 		},
 		mounted() {
 			this.fnGetList();
+			this.fnGetPurchased();
 		}
 	});
 	app.mount('#app');

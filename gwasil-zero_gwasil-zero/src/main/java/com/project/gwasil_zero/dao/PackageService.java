@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.gwasil_zero.mapper.PackageMapper;
 import com.project.gwasil_zero.model.Packages;
+import com.project.gwasil_zero.model.Pay;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -40,6 +41,17 @@ public class PackageService {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		packageMapper.insertPayment(map);
+		return resultMap;
+	}
+
+	public HashMap<String, Object> getpayList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		List<Pay> purchasedList  = packageMapper.selectpayList(map);		
+		resultMap.put("purchasedList", purchasedList);
+		resultMap.put("result", "success");	
+		
 		return resultMap;
 	}
 	

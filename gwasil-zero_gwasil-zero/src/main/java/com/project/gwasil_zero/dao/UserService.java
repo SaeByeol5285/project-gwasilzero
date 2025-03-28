@@ -40,7 +40,9 @@ public class UserService {
          resultMap.put("result", "success");
          session.setAttribute("sessionId", user.getUserId());
          session.setAttribute("sessionName", user.getUserName());
-         session.setAttribute("sessionStatus", user.getUserStatus());         
+         session.setAttribute("sessionStatus", user.getUserStatus());  
+         session.setAttribute("role", "user"); // 25.03.28 연주가 추가
+         
       } else if (lawyer != null && lawyer.getLawyerId() != null) { // 변호사 존재하고 lawyerId가 null이 아닌지 확인
          loginFlg = passwordEncoder.matches(map.get("pwd").toString(), lawyer.getLawyerPwd()); // 비밀번호 확인
          if (loginFlg) { // 변호사 로그인 성공
@@ -49,6 +51,7 @@ public class UserService {
             session.setAttribute("sessionId", lawyer.getLawyerId());
             session.setAttribute("sessionName", lawyer.getLawyerName());
             session.setAttribute("sessionStatus", lawyer.getLawyerStatus());
+            session.setAttribute("role", "lawyer"); // 25.03.28 연주가 추가
          }
       }
       if (!loginFlg) {

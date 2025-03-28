@@ -22,7 +22,7 @@
                 <div class="header-line">
                     <a href="#">고객만족센터</a>
                     <a v-if="sessionId == ''" href="/user/login.do">로그인 / 회원가입</a>
-                    <a v-else href="#">로그아웃</a>
+                    <a v-else href="/logout.do">로그아웃</a>
                     <a v-if="sessionId != ''" href="/mypage-home.do">마이페이지</a>
                 </div>
 

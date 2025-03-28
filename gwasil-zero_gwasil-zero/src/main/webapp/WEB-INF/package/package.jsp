@@ -8,6 +8,8 @@
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 	<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 	<script src="/js/page-change.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 	<title>package.jsp</title>
 	<style>
 		.package-section-title {
@@ -195,6 +197,7 @@
 				});
 			},
 			canBuy(item) {
+				if (!this.sessionId || this.sessionId === "") return true;
 				// 변호사는 일반 사용자용 구매 불가
 				if (item.packageStatus === 'U' && this.role === 'lawyer') return false;
 				// 일반 사용자는 변호사용 구매 불가
@@ -205,11 +208,30 @@
 			},
 
 			isPurchased(item) {
+				if (!this.sessionId || this.sessionId === "") return false;
+
 				return this.purchasedList.includes(item.packageName);
 			},
 
 
 			fnBuy(item) {
+				if (!this.sessionId || this.sessionId === "") {
+					Swal.fire({
+						title: "구매 불가!",
+						text: "로그인 후 이용하실 수 있습니다.",
+						icon: "warning",
+						showCancelButton: true,
+						confirmButtonColor: "#ff5c00", // 주황색
+						cancelButtonColor: "#aaa",
+						confirmButtonText: "로그인하러 가기",
+						cancelButtonText: "취소"
+					}).then((result) => {
+						if (result.isConfirmed) {
+							location.href = "/user/login.do";
+						}
+					});
+					return;
+				}
 
 				var popupW = 700;
 				var popupH = 700;

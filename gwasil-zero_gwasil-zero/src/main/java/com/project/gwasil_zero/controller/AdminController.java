@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,10 +48,10 @@ public class AdminController {
     }
     
     // admin 게시판관리 주소
-    @RequestMapping("/admin/board.do") 
+    @RequestMapping("/admin/report.do") 
     public String adminBoard(@RequestParam(value = "page", required = false) String page, Model model) {
         model.addAttribute("currentPage", page);
-        return "/admin/board"; 
+        return "/admin/report"; 
     }
 
     // admin 차트 주소
@@ -64,7 +65,7 @@ public class AdminController {
     @RequestMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate(); // 세션 초기화
-        return "redirect:/login"; // 로그인 페이지로 리다이렉트
+        return "redirect:/common/main"; // 메인 페이지로 리다이렉트
     }
     
     // 신규 유저 목록
@@ -77,7 +78,7 @@ public class AdminController {
  		return new Gson().toJson(resultMap);
  	}
  	
- 	// 변호사 승인 대기 목록
+ 	// 변호사 승인 대기 목록(메인화면 5명출력)
   	@RequestMapping(value = "/admin/lawAdminWaitList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
   	@ResponseBody
   	public String lawAdminWaitList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
@@ -88,12 +89,12 @@ public class AdminController {
   	}
   	
   	// 게시글 신고 목록 
-   	@RequestMapping(value = "/admin/repoList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@RequestMapping(value = "/admin/repoAdminList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
    	@ResponseBody
-   	public String repoList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+   	public String repoAdminList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
    		HashMap<String, Object> resultMap = new HashMap<String, Object>();
    		
-   		resultMap = adminService.getRepoList(map);
+   		resultMap = adminService.getRepoAdminList(map);
    		return new Gson().toJson(resultMap);
    	}
    	
@@ -106,5 +107,114 @@ public class AdminController {
   		resultMap = adminService.getUserList(map);
   		return new Gson().toJson(resultMap);
   	}
+  	
+  	// 변호사 승인 대기 목록
+   	@RequestMapping(value = "/admin/lawWaitList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String lawWaitList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+   		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+   		
+   		resultMap = adminService.getLawWaitList(map);
+   		return new Gson().toJson(resultMap);
+   	}
+   	
+   	// 변호사 승인 처리
+   	@RequestMapping(value = "/admin/lawApprove.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String lawApprove(@RequestParam HashMap<String, Object> map) throws Exception {
+   	    HashMap<String, Object> resultMap = new HashMap<>();
+
+   	    adminService.approveLawyer(map);
+
+   	    resultMap.put("result", "success");
+   	    return new Gson().toJson(resultMap);
+   	}
+   	
+   	// 현재 변호사 목록
+   	@RequestMapping(value = "/admin/lawPassedList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String lawPassedList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+   		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+   		
+   		resultMap = adminService.getLawPassedList(map);
+   		return new Gson().toJson(resultMap);
+   	}
+   	
+   	// 변호사 취소 처리
+   	@RequestMapping(value = "/admin/lawCencel.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String lawCencel(@RequestParam HashMap<String, Object> map) throws Exception {
+   	    HashMap<String, Object> resultMap = new HashMap<>();
+
+   	    adminService.cencelLawyer(map);
+
+   	    resultMap.put("result", "success");
+   	    return new Gson().toJson(resultMap);
+   	}
+   	
+   	// 탈퇴한 변호사 목록
+   	@RequestMapping(value = "/admin/lawOutList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String lawOutList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+   		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+   		
+   		resultMap = adminService.getLawOutList(map);
+   		return new Gson().toJson(resultMap);
+   	}
+   	
+   	// 변호사 재가입 처리
+   	@RequestMapping(value = "/admin/lawComeBack.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String lawComeBack(@RequestParam HashMap<String, Object> map) throws Exception {
+   	    HashMap<String, Object> resultMap = new HashMap<>();
+
+   	    adminService.comeBackLawyer(map);
+
+   	    resultMap.put("result", "success");
+   	    return new Gson().toJson(resultMap);
+   	}
+   	
+   	// 신고 게시판 목록
+   	@RequestMapping(value = "/admin/reportList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String reportList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+   		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+   		
+   		resultMap = adminService.getReportList(map);
+   		return new Gson().toJson(resultMap);
+   	}
+   	
+   	// 게시글 신고 상태 업데이트
+   	@RequestMapping(value = "/admin/updateReportStatus.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String updateReportStatus(@RequestParam HashMap<String, Object> map) throws Exception {
+   	    HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+   	    try {
+   	        adminService.updateReportStatus(map);
+   	        resultMap.put("result", "success");
+   	    } catch (Exception e) {
+   	        e.printStackTrace();
+   	        resultMap.put("result", "fail");
+   	    }
+
+   	    return new Gson().toJson(resultMap);
+   	}
+   	
+   	// 매출액 차트 그리기
+   	@RequestMapping(value = "/admin/statChart.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String statChart(@RequestBody HashMap<String, Object> map) throws Exception {
+   	    HashMap<String, Object> resultMap = new HashMap<>();
+   	    
+   	    try {
+   	        resultMap = adminService.getStatChart(map);
+   	    } catch (Exception e) {
+   	        System.out.println("통계 에러: " + e.getMessage());
+   	        resultMap.put("result", "fail");
+   	    }
+   	    
+   	    return new Gson().toJson(resultMap);
+   	}
 		
 }

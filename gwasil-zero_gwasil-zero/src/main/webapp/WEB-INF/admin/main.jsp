@@ -60,7 +60,7 @@
                             <th>신고날짜</th>
                             <th>신고내용</th>
                         </tr>
-                        <tr v-for="report in repoList">
+                        <tr v-for="report in repoAdminList">
                             <td>{{report.userId}}</td>
                             <td>{{report.boardNo}}</td>
                             <td>{{report.reportStatus}}</td>
@@ -79,7 +79,7 @@
         data() {
             return {
                 newMemList : [],
-                lawPassList : [],
+                lawAdminWaitList : [],
                 repoList : []
             };
         },
@@ -120,12 +120,12 @@
 					
 				};
 				$.ajax({
-					url:"/admin/repoList.dox",
+					url:"/admin/repoAdminList.dox",
 					dataType:"json",	
 					type : "POST", 
 					data : nparmap,
 					success : function(data) { 
-						self.repoList = data.repoList;
+						self.repoAdminList = data.repoAdminList;
 					}
 				});
             }   

@@ -51,8 +51,11 @@
                             <option value="paid">유료회원</option>
                             <option value="free">무료회원</option>
                         </select>
-                        <input type="text" v-model="searchWord" @keyup.enter="fnUserList" placeholder="검색어 입력" />
+                        <input type="text" v-model="searchWord" @keyup.enter="fnUserList" placeholder="이름 혹은 패키지 검색" />
                         <button @click="fnUserList">검색</button>
+                        <span class="result-count">
+                            총 {{ userTotalCount }}명 검색됨
+                        </span>
                     </div>
                 
                     <!-- 결과 테이블 자리 -->
@@ -60,7 +63,7 @@
                         <tr>
                             <th>이름</th>
                             <th>아이디</th>
-                            <th>등급</th>
+                            <th>회원분류</th>
                             <th>신고회수</th>
                             <th>구매상품</th>
                             <th>가입일자</th>
@@ -68,7 +71,12 @@
                         <tr v-for="user in userList" :key="user.userId">
                             <td>{{ user.userName }}</td>
                             <td>{{ user.userId }}</td>
-                            <td>{{ user.userStatus }}</td>
+                            <td>
+                                <span v-if="user.userStatus === 'Admin'">관리자</span>
+                                <span v-else-if="user.userStatus === 'Nomal'">일반 회원</span>
+                                <span v-else-if="user.userStatus === 'Out'">탈퇴 회원</span>
+                                <span v-else>{{ user.userStatus }}</span>
+                            </td>
                             <td>{{ user.reportCnt }}</td>
                             <td>{{ user.packageName }}</td>
                             <td>{{ user.cdate }}</td>
@@ -92,6 +100,7 @@
             return {
                 newMemList: [],
                 userList: [],
+                userTotalCount: 0,
                 searchPeriod: 'ALL', 
                 searchStatus: 'ALL',
                 searchWord: '',
@@ -132,7 +141,14 @@
 					data : nparmap,
 					success : function(data) {
                         self.userList = data.userList;
+                        self.userTotalCount = data.count;
                         self.userPageCount = Math.ceil(data.count / self.userPageSize);
+
+                        // 현재 페이지에 데이터가 하나만 있고 삭제된 경우 페이지 이동
+                        if (self.userList.length === 0 && self.userPage > 1) {
+                            self.userPage--;
+                            self.fnUserList(); // 다시 불러오기
+                        }
 					}
 				});
             },

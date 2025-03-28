@@ -109,6 +109,7 @@
   </style>
 </head>
 <body>
+	<jsp:include page="../common/header.jsp"/>
   <div id="app">
     <div class="chat-wrapper">
       <div id="chatBox">
@@ -139,7 +140,7 @@
       </div>
     </div>
   </div>
-
+  <jsp:include page="../common/footer.jsp"/>
   <script>
   const app = Vue.createApp({
     data() {

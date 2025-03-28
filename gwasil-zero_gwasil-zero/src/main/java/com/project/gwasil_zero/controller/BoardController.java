@@ -43,13 +43,13 @@ public class BoardController {
 	
 	 @RequestMapping("/board/view.do") 
 	   public String boardView(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
-			System.out.println(map);
+			
 			request.setAttribute("map", map);
 			return "/board/board-view";
 	   }
 	 @RequestMapping("/board/edit.do") 
 	   public String boardEdit(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
-			System.out.println(map);
+			
 			request.setAttribute("map", map);
 			return "/board/board-edit";
 	   }
@@ -86,7 +86,8 @@ public class BoardController {
 	                                      @RequestParam("title") String title,
 	                                      @RequestParam("contents") String contents,
 	                                      @RequestParam("category") String category,
-	                                      
+	                                      @RequestParam("sessionId") String sessionId,
+
 	                                      HttpServletRequest request,
 	                                      HttpServletResponse response,
 	                                      Model model) {
@@ -104,7 +105,7 @@ public class BoardController {
 	        HashMap<String, Object> boardData = new HashMap<>();
 	        boardData.put("title", title);
 	        boardData.put("contents", contents);
-	        boardData.put("userId", "user_1");
+	        boardData.put("userId", sessionId);
 	        boardData.put("boardStatus", "A");
 	        boardData.put("category", category);
 	        resultMap = boardService.saveBoard(boardData);

@@ -21,8 +21,8 @@
                 <!-- 상단 로그인 / 고객센터 라인 -->
                 <div class="header-line">
                     <a href="#">고객만족센터</a>
-                    <a v-if="sessionId == ''" href="/user/login.do">로그인 / 회원가입</a>
-                    <a v-else href="#">로그아웃</a>
+					<a v-if="sessionId == ''" href="/user/login.do">로그인 / 회원가입</a>
+					<a v-else href="/user/logout.do">로그아웃</a>
                     <a v-if="sessionId != ''" href="/mypage-home.do">마이페이지</a>
                 </div>
 
@@ -41,7 +41,7 @@
                                 <div class="dropdown" v-if="sections[index] && sections[index].length">
                                     <ul>
                                         <li v-for="(sub, i) in sections[index]" :key="i">
-                                            <a href="#">{{ sub }}</a>
+                                            <a :href="sub.url">{{ sub.name }}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -62,7 +62,7 @@
         const header = Vue.createApp({
             data() {
                 return {
-                    sessionId : "${sessionId}",//"juwon1234"
+                    sessionId : "${sessionScope.sessionId}",
                     sessionStatus: 'A',
                     menuItems: [
                         { name: '회사 소개', url: '/common/introduce.do' },
@@ -74,9 +74,17 @@
                     sections: [
                         [],
                         [],
-                        ['소속 변호사', '개인 변호사', '사무소 위치'],
+                        [
+                            { name: '소속 변호사', url: '/profile/innerLawyer.do' },
+                            { name: '개인 변호사', url: '/profile/personalLawyer.do' },
+                            { name: '사무소 위치', url: '/lawyer/office.do' }
+                        ],
                         [],
-                        ['공지사항', 'Q & A', '사건 종류 가이드']
+                        [
+                            { name: '공지사항' },
+                            { name: 'Q & A' },
+                            { name: '사건 종류 가이드' }
+                        ]
                     ]
                 }
             },

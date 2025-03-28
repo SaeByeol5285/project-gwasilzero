@@ -122,13 +122,14 @@
 	</style>
 </head>
 <body>
+	<jsp:include page="../common/header.jsp"/>
 	<div id="app">
 	    <div class="view-container" v-if="board?.boardNo">
 	        <div class="view-title">{{ board.boardTitle }}</div>
 	        
 	        <div class="view-meta">
 	            <div>
-	                작성자: {{ board.userId }} | 담당 변호사: {{ board.lawyerName }} | 등록일: {{ board.cdate }}
+	                작성자: {{ board.userName }} | 담당 변호사: {{ board.lawyerName }} | 등록일: {{ board.cdate }}
 	            </div>
 	            <small>조회수: {{ board.cnt }} | 상태: {{ board.boardStatus }}</small>
 	        </div>
@@ -153,26 +154,31 @@
 	                </video>
 	            </div>
 	        </div>
-			<button @click="EditBoard">수정</button>
+			<button v-if="sessionId === board.userId" @click="EditBoard">수정</button>
+
 	    </div>
 		
 		<div class="comment-wrapper">
 		  <h4>댓글</h4>
-
-		  <!-- 입력창 -->
-		  <textarea v-model="newComment" placeholder="댓글을 입력하세요" rows="3"></textarea>
-		  <button @click="submitComment">등록</button>
-		  
 		  <!-- 목록 -->
-		  <div class="comment-list" v-if="comments.length > 0">
-		    <div class="comment-item" v-for="(cmt, index) in comments" :key="index">
-		      <div class="comment-meta">{{ cmt.lawyerName }} | {{ cmt.cdate }}</div>
-		      <div class="comment-text">{{ cmt.contents }}</div>
-		    </div>
-		  </div>
+		  	  <div class="comment-list" v-if="comments.length > 0">
+		  	    <div class="comment-item" v-for="(cmt, index) in comments" :key="index">
+		  	      <div class="comment-meta">{{ cmt.lawyerName }} | {{ cmt.cdate }}</div>
+		  	      <div class="comment-text">{{ cmt.contents }}</div>
+		  	    </div>
+		  	  </div>
+
+			  <div v-if="sessionType === 'lawyer' ">
+			      <textarea v-model="newComment" placeholder="댓글을 입력하세요" rows="3"></textarea>
+			      <button @click="submitComment">등록</button>
+			  </div>
+
+		 
 		</div>
+
 		
 	</div>
+	<jsp:include page="../common/footer.jsp"/>
 </body>
 </html>
 
@@ -182,11 +188,13 @@
 	        return {
 	            board: {},
 	            boardNo: "${map.boardNo}",
+				sessionId : "${sessionScope.sessionId}",
 	            images: [],
 	            videos: [],
 				comments:[],
 				newComment: "",
-				lawyer_id:"lawyer_2"
+				lawyer_id:"",
+				sessionType : "${sessionScope.sessionType}"
 	        };
 	    },
 	    methods: {
@@ -199,6 +207,7 @@
 	                dataType: "json",
 	                success: function (data) {
 	                    console.log(data);
+						console.log(self.sessionType);
 	                    self.board = data.board;
 						self.comments = data.comment || [];
 	                    // 파일 분류
@@ -230,7 +239,7 @@
 			           data: {
 			               boardNo: self.boardNo,
 			               contents: self.newComment,
-						   lawyerId: self.lawyer_id
+						   lawyerId: self.sessionId
 			           },
 			           success: function () {
 			               self.newComment = "";
@@ -245,6 +254,7 @@
 	    },
 	    mounted() {
 			let self = this;
+			console.log(self.sessionType);
 	        self.fnGetBoard();
 	    }
 	});

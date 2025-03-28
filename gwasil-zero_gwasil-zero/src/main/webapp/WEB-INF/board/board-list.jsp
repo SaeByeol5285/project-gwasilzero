@@ -218,6 +218,7 @@
         data() {
             return {
 				list : [],
+				sessionId : "${sessionScope.sessionId}",
 				categoryList: [
 					{ value: "all", label: "전체 사고 보기" },
 				  { value: "01", label: "신호위반 사고" },

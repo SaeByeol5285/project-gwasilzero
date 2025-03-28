@@ -163,6 +163,7 @@
 	</style>
 </head>
 <body>
+	<jsp:include page="../common/header.jsp"/>
 	<div id="app">
 	    <div class="view-container" v-if="board?.boardNo">
 			<input v-model="board.boardTitle" placeholder="제목을 입력하세요" class="input-title"/>
@@ -206,6 +207,7 @@
 		</div>
 		
 	</div>
+	<jsp:include page="../common/footer.jsp"/>
 </body>
 </html>
 

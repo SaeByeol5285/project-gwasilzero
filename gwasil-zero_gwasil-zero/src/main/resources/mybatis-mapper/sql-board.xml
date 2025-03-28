@@ -9,7 +9,8 @@
 		    b.board_title, 
 		    b.user_id, 
 		    b.cdate, 
-		    b.board_status, 
+		    b.board_status,
+		    m.user_name as userName, 
 		    l.lawyer_name,
 		    bf.file_path AS thumbnail_path
 		  FROM BOARD b
@@ -89,7 +90,7 @@
 	</insert>
 	
 	<select id="selectBoard" parameterType="hashmap"  resultType="com.project.gwasil_zero.model.Board">
-		select b.*, lawyer_name  from board b left join lawyer l on l.lawyer_id = b.lawyer_id where b.board_no = #{boardNo}
+		select b.*,u.user_name , lawyer_name  from board b left join lawyer l on l.lawyer_id = b.lawyer_id inner join tbl_user u on u.user_id = b.user_id where b.board_no = #{boardNo}
 	</select>
 	
 	<select id="selectBoardFiles" parameterType="hashmap"  resultType="com.project.gwasil_zero.model.BoardFile">

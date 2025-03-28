@@ -36,4 +36,30 @@
 	    UNION
 	    SELECT lawyer_name FROM lawyer WHERE lawyer_id = #{senderId}
 	</select>
+	
+	<select id="selectChatMessages" parameterType="hashmap" resultType="ChatMessage">
+	  SELECT 
+	    m.chat_no, 
+	    m.sender_id,
+	    NVL(u.user_name, l.lawyer_name) AS sender_name,
+	    m.message,
+	    m.time 
+	  FROM chat_message m
+	  LEFT JOIN tbl_user u ON m.sender_id = u.user_id
+	  LEFT JOIN lawyer l ON m.sender_id = l.lawyer_id
+	  WHERE m.chat_no = #{chatNo}
+	</select>
+		
+	<select id="selectChatFiles" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatFile">
+	  SELECT 
+	    f.chat_no, 
+	    f.sender_id,
+	    NVL(u.user_name, l.lawyer_name) AS sender_name,
+	    f.chat_filepath as chatFilePath,
+	    f.time 
+	  FROM chat_file f
+	  LEFT JOIN tbl_user u ON f.sender_id = u.user_id
+	  LEFT JOIN lawyer l ON f.sender_id = l.lawyer_id
+	  WHERE f.chat_no = #{chatNo}
+	</select>
 </mapper>

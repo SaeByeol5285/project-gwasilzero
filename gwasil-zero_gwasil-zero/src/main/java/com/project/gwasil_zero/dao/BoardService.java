@@ -51,7 +51,6 @@ public class BoardService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			boardMapper.insertBoardFile(map);
-			System.out.println(map);
 			resultMap.put("fileResult","success");
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
@@ -88,7 +87,6 @@ public class BoardService {
 			Board board = boardMapper.selectBoard(map);
 			List<BoardFile> bf = boardMapper.selectBoardFiles(map);
 			List<BoardCmt> bc = boardMapper.selectBoardCmttList(map);
-			System.out.println(map);
 			resultMap.put("result","success");
 			resultMap.put("board", board);			
 			resultMap.put("boardFile", bf);
@@ -104,7 +102,6 @@ public class BoardService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			boardMapper.insertBoardCmt(map);
-			System.out.println(map);
 			resultMap.put("result","success");
 			
 		}catch(Exception e) {

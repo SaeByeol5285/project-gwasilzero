@@ -8,7 +8,7 @@
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="/js/page-change.js"></script>
 	<title>admin sider</title>
-	<link rel="stylesheet" href="../css/admin-style.css">
+	<link rel="stylesheet" href="/css/admin-style.css">
 </head>
 <body>
     <div class="layout">
@@ -19,6 +19,7 @@
             <button onclick="fnPageMove('lawyer')" class="${currentPage == 'lawyer' ? 'active' : ''}">변호사 관리</button>
             <button onclick="fnPageMove('board')" class="${currentPage == 'board' ? 'active' : ''}">게시글 관리</button>
             <button onclick="fnPageMove('chart')" class="${currentPage == 'chart' ? 'active' : ''}">통계</button>
+            <button onclick="fnPageMove('product')" class="${currentPage == 'product' ? 'active' : ''}">상품 관리</button>
     
             <button onclick="fnLogOut()" class="logout">Logout</button>
         </div>

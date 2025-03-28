@@ -216,7 +216,7 @@
 				},
 				//글쓰기
 				goToAddPage() {
-					pageChange("/notice/add.do", {});
+					pageChange("/totalDocs/add.do", {});
 				}
 			},
 			watch: {

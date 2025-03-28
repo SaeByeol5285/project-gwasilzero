@@ -1,4 +1,4 @@
-package com.project.gwasil_zero.model;
+package com.project.gwasil_zero.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

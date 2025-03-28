@@ -13,5 +13,5 @@ public interface PackageMapper {
 	List<Packages> selectPackageList(HashMap<String, Object> map);
 
 	void insertPayment(HashMap<String, Object> map);
-
+  
 }

@@ -21,9 +21,9 @@
                 <!-- 상단 로그인 / 고객센터 라인 -->
                 <div class="header-line">
                     <a href="#">고객만족센터</a>
-                    <a v-if="sessionId == ''" href="/user/login.do">로그인 / 회원가입</a>
-                    <a v-else href="#">로그아웃</a>
-                    <a v-if="sessionId != ''" href="/mypage-home.do">마이페이지</a>
+                    <a v-if="!id" href="/user/login.do">로그인 / 회원가입</a>
+                    <a v-else @click="fnLogout">로그아웃</a>
+                    <a v-if="id != null" href="/mypage-home.do">마이페이지</a>
                 </div>
 
                 <!-- 네비게이션 바 -->
@@ -62,8 +62,9 @@
         const header = Vue.createApp({
             data() {
                 return {
-                    sessionId : "${sessionId}",//"juwon1234"
-                    sessionStatus: 'A',
+                    id: "${sessionId}",
+                    location: "${location}",
+                    sessionStatus: "${sessionStatus}",
                     menuItems: [
                         { name: '회사 소개', url: '/common/introduce.do' },
                         { name: '패키지 소개', url: '/package/package.do' },
@@ -80,7 +81,33 @@
                     ]
                 }
             },
-            mounted() { }
+            methods : {
+                fnLogout() {
+                    var self = this;
+                    var nparmap = {
+                    };
+                    $.ajax({
+                        url: "/user/logout.dox",
+                        dataType: "json",
+                        type: "POST",
+                        data: nparmap,
+                        success: function (data) {
+                            if (data.result == "success") {
+                                console.log("sessionId =====> " + self.id);
+                                alert("로그아웃 되었습니다.");
+                                location.href = "/common/main.do"; // 로그아웃 후 이동할 페이지
+                            } else {
+                                alert("로그아웃 실패");
+                            }
+                        }
+                    });
+                },
+
+
+            },
+            mounted() { 
+                console.log("id =====> " + this.id);
+        }
         });
         header.mount('#header');
     </script>

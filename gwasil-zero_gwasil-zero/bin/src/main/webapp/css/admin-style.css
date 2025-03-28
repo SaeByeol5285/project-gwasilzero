@@ -1,0 +1,154 @@
+#app {
+    display: flex;
+    height: 100vh;
+}
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+.layout {
+    display: flex;
+    height: 100vh;
+}
+.sidebar {
+    width: 300px;
+    padding: 10px;
+    background: #b0c4de;
+    padding: 20px;
+    height: 900px;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+.sidebar h2 {
+    text-align: center;
+}
+.sidebar button {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: none;
+    background: #f7f7f7;
+    cursor: pointer;
+}
+.sidebar button.active {
+	background-color: yellow;
+	font-weight: bold;
+}
+.logout {
+    margin-top: 20px;
+    width: 100%;
+    background: white;
+    border: 1px solid black;
+}
+.content {
+    width: 1500px;
+    flex: 1;
+    padding: 20px;
+    margin-top: 10px;
+    background: #f0f0f0;
+}
+.header {
+    background: #a0a0c0;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+.box {
+    background: #d3d3d3;
+    padding: 20px;
+    margin: 10px 0;
+}
+.more {
+    text-align: right;
+    font-size: small;
+    color: blue;
+    cursor: pointer;
+}
+h3 {
+	margin-top: 30px;
+	margin-bottom: 10px;
+	font-size: 18px;
+	font-weight: bold;
+	border-left: 6px solid #6fa3ef;
+	padding-left: 10px;
+	color: #333;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	background-color: white;
+	border: 1px solid #ccc;
+	margin-bottom: 30px;
+}
+
+th,
+td {
+	padding: 10px;
+	text-align: left;
+	border: 1px solid #ccc;
+	font-size: 14px;
+}
+
+th {
+	background-color: #e0e7ff;
+	color: #333;
+	font-weight: 600;
+}
+
+tr:nth-child(even) {
+	background-color: #f9f9f9;
+}
+
+tr:hover {
+	background-color: #f1f1f1;
+}
+.filter-bar {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	margin: 20px 0;
+}
+
+.filter-bar select,
+.filter-bar input[type="text"] {
+	padding: 6px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	font-size: 14px;
+}
+
+.filter-bar button {
+	padding: 6px 12px;
+	background-color: #a0a0c0;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.filter-bar button:hover {
+	background-color: #8080b0;
+}
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+.page-btn {
+    display: inline-block;
+    margin: 0 5px;
+    padding: 6px 12px;
+    background: #fff;
+    border: 1px solid #ccc;
+    color: #333;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.page-btn.active {
+    background: #a0a0c0;
+    color: #fff;
+    font-weight: bold;
+}

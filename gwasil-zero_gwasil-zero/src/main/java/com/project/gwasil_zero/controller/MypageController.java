@@ -2,6 +2,7 @@ package com.project.gwasil_zero.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,8 @@ public class MypageController {
 
    @Autowired
    MypageService mypageService;
+   
+   
 
    // 마이페이지
    @RequestMapping("/mypage-home.do")
@@ -33,7 +36,7 @@ public class MypageController {
       return "/mypage/mypage-edit";
    }
 
-   // 정보수정
+   // 회원탈퇴
    @RequestMapping("/mypage/remove.do")
    public String remove(@RequestParam Map<String, Object> map, Model model) throws Exception {
       model.addAttribute("map", map);
@@ -43,10 +46,9 @@ public class MypageController {
    @RequestMapping(value = "/mypage/mypage-view.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
    @ResponseBody
    public String view(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-      HashMap<String, Object> resultMap = new HashMap<String, Object>();
-
-      resultMap = mypageService.getUser(map);
-      return new Gson().toJson(resultMap);
+       System.out.println("map: " + map); // 여기 추가
+       HashMap<String, Object> resultMap = mypageService.getUser(map);
+       return new Gson().toJson(resultMap);
    }
 
    @RequestMapping(value = "/mypage/mypage-edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")

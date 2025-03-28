@@ -44,7 +44,7 @@
                 fnGetInfo() {
                     var self = this;
                     var nparmap = {
-                        userId: "juwon1234"
+                        sessionId: self.sessionId
                     };
                     $.ajax({
                         url: "/mypage/mypage-view.dox",

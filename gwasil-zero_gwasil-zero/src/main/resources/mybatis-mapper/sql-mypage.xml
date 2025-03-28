@@ -6,7 +6,7 @@
    <select id="selectUserInfo" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
       SELECT *
       FROM TBL_USER
-      WHERE USER_ID = #{userId}
+      WHERE USER_ID = #{sessionId}
    </select>
    <update id="updateUser" parameterType="hashmap">
       UPDATE TBL_USER
@@ -14,13 +14,13 @@
          USER_NAME = #{userName},
          USER_PHONE = #{userPhone},
          USER_EMAIL = #{userEmail}
-      WHERE USER_ID = #{userId}
+      WHERE USER_ID = #{sessionId}
    </update>
    <update id="updateStatus" parameterType="hashmap">
       UPDATE TBL_USER
       SET
-         USER_STATUS = 'OUTUSER'
-      WHERE USER_ID = #{userId}
+         USER_STATUS = 'Out'
+      WHERE USER_ID = #{sessionId}
    </update>
    
 </mapper>

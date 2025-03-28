@@ -261,22 +261,24 @@ const mapApp = Vue.createApp({
 			let self = this;
 			$.post('/si.dox', {}, function(res) {
 				self.siList = res.siList;
-				self.guList = [];
-				self.dongList = [];
-				self.selectGu = '';
-				self.selectDong = '';
 			});
 		},
 		fnGu() {
 			let self = this;
+
+			self.selectGu = '';
+			self.selectDong = '';
+			self.guList = [];
+			self.dongList = [];
+
 			$.post('/gu.dox', { si: self.selectSi }, function(res) {
 				self.guList = res.guList;
-				self.dongList = [];
-				self.selectDong = '';
 			});
 		},
 		fnDong() {
 			let self = this;
+			self.selectDong = '';
+			self.dongList = [];
 			$.post('/dong.dox', { si: self.selectSi, gu: self.selectGu }, function(res) {
 				self.dongList = res.dongList;
 			});
@@ -555,6 +557,7 @@ const mapApp = Vue.createApp({
 				if (status === kakao.maps.services.Status.OK) {
 					const coords = new kakao.maps.LatLng(data[0].y, data[0].x);
 					self.map.setCenter(coords);
+					self.map.setLevel(3); // 지도 확대 정도
 				} else {
 					alert("검색한 장소를 찾을 수 없습니다.");
 				}

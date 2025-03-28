@@ -22,12 +22,14 @@
 			<div class="tab-menu">
 				<button class="tab-btn" :class="{ active: currentTab === 'notice' }"
 					@click="currentTab = 'notice'">공지사항</button>
-				<button class="tab-btn" :class="{ active: currentTab === 'help' }" @click="currentTab = 'help'">이용 문의</button>
-				<button class="tab-btn" :class="{ active: currentTab === 'guide' }" @click="currentTab = 'guide'">사건 종류 가이드</button>
+				<button class="tab-btn" :class="{ active: currentTab === 'help' }" @click="currentTab = 'help'">이용
+					문의</button>
+				<button class="tab-btn" :class="{ active: currentTab === 'guide' }" @click="currentTab = 'guide'">사건 종류
+					가이드</button>
 			</div>
 
 			<!-- 탭 내용 -->
-			
+
 			<!-- 공지사항 -->
 			<div v-if="currentTab === 'notice'">
 				<div class="flex-between mb-20" style="align-items: center; font-family: var(--font-main);">
@@ -105,9 +107,22 @@
 
 			<!-- 우측 하단 버튼 -->
 			<div class="fab-wrapper">
-				<button class="fab-btn" @click="goToAddPage">＋ 글쓰기</button>
+				<!-- 글쓰기 버튼: 조건부 렌더링 -->
+				<button class="fab-btn" v-if="(sessionStatus === 'A' && currentTab === 'notice') || 
+			 								(sessionStatus === '' && currentTab === 'help')" @click="goToAddPage">
+					＋ 글쓰기
+				</button>
+
+				<!-- 맨 위로 버튼 -->
 				<button class="fab-btn" v-show="showScrollBtn" @click="scrollToTop">↑ 맨 위로</button>
 			</div>
+
+
+			<!-- 우측 하단 버튼
+			<div class="fab-wrapper">
+				<button class="fab-btn" @click="goToAddPage">＋ 글쓰기</button>
+				<button class="fab-btn" v-show="showScrollBtn" @click="scrollToTop">↑ 맨 위로</button>
+			</div> -->
 		</div>
 		<jsp:include page="../common/footer.jsp" />
 	</body>
@@ -124,7 +139,9 @@
 					index: 0,
 					showScrollBtn: false, // 맨위로 버튼
 					currentTab: "notice", // 기본 탭,
-					kind: "${map.kind}" //글종류 : NOTICE, HELP, GUIDE
+					kind: "${map.kind}", //글종류 : NOTICE, HELP, GUIDE
+					sessionStatus: '',//"${sessionStatus}"
+
 				};
 			},
 			methods: {
@@ -216,7 +233,11 @@
 				},
 				//글쓰기
 				goToAddPage() {
-					pageChange("/totalDocs/add.do", {});
+					if (this.currentTab === 'notice') {
+						pageChange("/totalDocs/addNotice.do", {});
+					} else if (this.currentTab === 'help') {
+						pageChange("/totalDocs/addHelp.do", {});
+					}
 				}
 			},
 			watch: {

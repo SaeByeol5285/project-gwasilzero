@@ -4,7 +4,7 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>공지사항 등록</title>
+        <title>이용문의 등록</title>
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <script src="/js/page-change.js"></script>
@@ -18,7 +18,7 @@
         <jsp:include page="../common/header.jsp" />
         <div id="app" class="container">
             <div class="card">
-                <h2 class="section-title">공지사항 등록</h2>
+                <h2 class="section-title">이용문의 등록</h2>
 
                 <div class="form-group mb-20">
                     <label>제목</label>
@@ -50,9 +50,8 @@
                 return {
                     totalTitle: "",
                     userId: "101", // "${sessionId}"
-                    kind: "NOTICE",
+                    kind: "HELP",
                     quill: null,
-                    sessionStatus: 'A',//"${sessionStatus}"
                     isSubmitting: false // 중복 방지용 플래그
 
                 };
@@ -85,31 +84,28 @@
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
-                            if (data.result === "forbidden") {
-                                alert(data.message || "권한이 없습니다.");
-                                pageChange("/totalDocs/list.do", { kind: "NOTICE" });
-                                return;
-                            }
                             if (data.result === "success") {
                                 if ($("#file1")[0].files.length > 0) {
                                     const form = new FormData();
                                     for (let i = 0; i < $("#file1")[0].files.length; i++) {
                                         form.append("file1", $("#file1")[0].files[i]);
                                     }
-                                    form.append("totalNo", data.totalNo);
+                                    form.append("totalNo", data.totalNo); // 서버에서 리턴한 PK
                                     self.upload(form);
                                 } else {
                                     alert("글쓰기가 완료되었습니다.");
-                                    pageChange("/totalDocs/list.do", { kind: "NOTICE" });
+                                    pageChange("/totalDocs/list.do", { kind: "HELP" });
                                 }
                             } else {
                                 alert("글쓰기 실패!");
                                 self.isSubmitting = false;
+
                             }
                         },
                         error: function () {
                             alert("서버 오류가 발생했습니다.");
                             self.isSubmitting = false;
+
                         }
                     });
                 },
@@ -123,19 +119,15 @@
                         success: function (data) {
                             if (data.result === "success") {
                                 alert("글쓰기가 완료되었습니다.");
-                                self.isSubmitting = false;
-                                pageChange("/totalDocs/list.do", { kind: "NOTICE" });
-
+                                pageChange("/totalDocs/list.do", { kind: "HELP" });
                             } else {
                                 alert("파일 업로드 실패.");
-                                self.isSubmitting = false;
-
                             }
                         }
                     });
                 },
                 goToListPage() {
-                    pageChange("/totalDocs/list.do", { kind: "NOTICE" });
+                    pageChange("/totalDocs/list.do", { kind: "HELP" });
                 },
                 initQuill() {
                     const self = this;
@@ -189,20 +181,11 @@
                             }
                         }
                     });
-
                 },
-                checkAdmin(sessionStatus) {
-                    if (sessionStatus != 'A') {
-                        alert("관리자만 접근할 수 있습니다.");
-                        pageChange("/totalDocs/list.do", { kind: "NOTICE" });
-                        return false;
-                    }
-                    return true;
-                }
+
             },
             mounted() {
                 this.initQuill();
-                if (!this.checkAdmin(this.sessionStatus)) return;
             }
         });
 
@@ -210,6 +193,3 @@
     </script>
 
     </html>
-
-
-ChatGPT

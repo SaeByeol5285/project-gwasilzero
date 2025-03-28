@@ -41,7 +41,7 @@ public class TotalDocsService {
 		HashMap<String, Object> resultMap = new HashMap<>();
 		try {
 	        TotalDocs info = totalDocsMapper.selectDocsInfo(map);
-			List<TotalFile> imgList = totalDocsMapper.selectImgList(map);
+			List<TotalFile> fileList = totalDocsMapper.selectFileList(map);
 			
 			if(map.containsKey("option")){
 				totalDocsMapper.updateCnt(map);
@@ -49,7 +49,7 @@ public class TotalDocsService {
 			
 	        resultMap.put("result", "success");
 	        resultMap.put("info", info);
-	        resultMap.put("imgList", imgList);
+	        resultMap.put("fileList", fileList);
 	        
 	    } catch (Exception e) {
 	        resultMap.put("result", "fail");
@@ -141,13 +141,19 @@ public class TotalDocsService {
 	public HashMap<String, Object> insertFile(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
 	    try {
-	        totalDocsMapper.insertFile(map);
+	        totalDocsMapper.insertFiles(map);
 	        resultMap.put("result", "success");
 	    } catch (Exception e) {
 			System.out.println(e.getMessage());
 	        resultMap.put("result", "fail");
 	    }
 	    return resultMap;
+	}
+
+	public void deleteFile(HashMap<String, Object> delMap) {
+		// TODO Auto-generated method stub
+		totalDocsMapper.deleteFile(delMap);
+		
 	}
 
 

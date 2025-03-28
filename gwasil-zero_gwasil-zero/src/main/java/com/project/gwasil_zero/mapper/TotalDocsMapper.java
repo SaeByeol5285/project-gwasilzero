@@ -28,8 +28,8 @@ public interface TotalDocsMapper {
 	//다음글
 	TotalDocs selectNextDocs(HashMap<String, Object> map);
 
-	//이미지리스트
-	List<TotalFile> selectImgList(HashMap<String, Object> map);
+	//첨부파일 리스트
+	List<TotalFile> selectFileList(HashMap<String, Object> map);
 	
 	//조회수 증가
 	void updateCnt(HashMap<String, Object> map);
@@ -37,27 +37,17 @@ public interface TotalDocsMapper {
 	//글삭제
 	int deleteDocs(HashMap<String, Object> map);
 	
-	//글쓰기
-	void insertDocs(HashMap<String, Object> map);
-	
 	//글수정
     void updateDocs(HashMap<String,Object> map);
 
+	//글쓰기
+	void insertDocs(HashMap<String, Object> map);
 	
-	
-	
-
+	//첨부파일 넣기
 	void insertFiles(HashMap<String, Object> map);
 
-
-
-    
-    void insertFile(HashMap<String,Object> map);
-
-	List<TotalDocs> selectHelpList(HashMap<String, Object> map);
-
-	int selectHelpCnt(HashMap<String, Object> map);
-
+	//첨부파일 삭제
+	void deleteFile(HashMap<String, Object> delMap);
 
 
 

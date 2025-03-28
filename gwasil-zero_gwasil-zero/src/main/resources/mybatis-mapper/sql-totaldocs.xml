@@ -50,7 +50,7 @@
 	</select>
 	
 	<!--이미지리스트-->
-	<select id = "selectImgList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalFile">
+	<select id = "selectFileList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalFile">
 		SELECT *
 		FROM TOTALDOCS D 
 		INNER JOIN TOTAL_FILE F ON D.TOTAL_NO = F.TOTAL_NO
@@ -105,34 +105,25 @@
 	        UDATE = SYSDATE
 	    WHERE TOTAL_NO = #{totalNo}
 	</update>
-
-
-
-
 	
-
-	
-	
-	
-	<insert id = "insertNotice"  parameterType="hashmap" useGeneratedKeys="true" keyColumn="TOTAL_NO" keyProperty="totalNo">
+	<!--글쓰기-->
+	<insert id = "insertDocs"  parameterType="hashmap" useGeneratedKeys="true" keyColumn="TOTAL_NO" keyProperty="totalNo">
 		INSERT INTO TOTALDOCS (TOTAL_NO, TOTAL_TITLE, TOTAL_CONTENTS, CDATE, UDATE, USER_ID, KIND, CNT)
 		VALUES (TOTALDOCS_SEQ.NEXTVAL, #{totalTitle}, #{totalContents}, SYSDATE, SYSDATE, #{userId}, #{kind}, 0)
 	</insert>
 	
+	<!--첨부파일 넣기-->
 	<insert id="insertFiles" parameterType="hashmap">
 		INSERT INTO TOTAL_FILE
 		VALUES (#{totalNo},#{filePath},#{fileName})
 	</insert>
 	
+	<!--첨부파일 삭제-->
+	<delete id="deleteFile" parameterType="hashmap">
+	    DELETE FROM TOTAL_FILE
+	    WHERE FILE_PATH = #{filePath}
+	</delete>
 
-	
-	
-
-	
-	<insert id="insertFile" parameterType="map">
-	    INSERT INTO TOTAL_FILE (TOTAL_NO, FILE_NAME, FILE_PATH)
-	    VALUES (#{totalNo}, #{fileName}, #{filePath})
-	</insert>
 
 </mapper>
 

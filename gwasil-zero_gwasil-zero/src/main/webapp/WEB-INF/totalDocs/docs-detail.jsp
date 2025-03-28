@@ -20,11 +20,21 @@
 				<div class="view-meta mb-20">
 					작성자: {{ info.userId }} | 작성일: {{ info.cdate }} | 조회수: {{ info.cnt }}
 				</div>
-				<div class="view-content mb-20">
-					{{ info.totalContents }}
+				<div class="form-group mb-20" v-if="fileList.length > 0">
+					<label>첨부파일</label>
+					<ul>
+						<li v-for="(file, idx) in fileList" :key="idx">
+							📎 {{ file.fileName }}
+							<template v-if="isPreviewable(file.fileName)">
+								<a :href="file.filePath" target="_blank" style="margin-left: 10px;">보기</a>
+							</template>
+							<a :href="file.filePath" :download="file.fileName" style="margin-left: 10px;">다운로드</a>
+						</li>
+					</ul>
 				</div>
-				<div>
-					<img v-for="(image, index) in imgList" :src="image.filePath" :key="index" alt="첨부 이미지">
+
+				<div class="view-content mb-20">
+					<div class="detail-contents" v-html="info.totalContents"></div>
 				</div>
 				<span v-if="sessionId == info.userId" class="mb-20">
 					<button @click="fnEdit(info.totalNo)" class="btn btn-outline">수정</button>
@@ -58,11 +68,11 @@
 					totalNo: "${map.totalNo}",
 					kind: "${map.kind}",
 					info: {},
-					imgList: [],
+					fileList: [],
 					prev: null,
 					next: null,
 					sessionStatus: "",
-					sessionId : "101", //"${sessionId}"
+					sessionId: "101", //"${sessionId}"
 
 				};
 			},
@@ -81,7 +91,7 @@
 						success(data) {
 							if (data.result === "success") {
 								self.info = data.info;
-								self.imgList = data.imgList;
+								self.fileList = data.fileList;
 								self.fnAdjacent(self.totalNo, self.info.kind);
 							} else {
 								alert("오류발생");
@@ -102,12 +112,19 @@
 						}
 					});
 				},
+				isImage(fileName) { //이미지 파일인지
+					const ext = fileName.split('.').pop().toLowerCase();
+					return ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].includes(ext);
+				},
+				isPreviewable(fileName) { //미리보기 가능한지
+					const ext = fileName.split('.').pop().toLowerCase();
+					return ['pdf', 'png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].includes(ext);
+				},
 				fnEdit(totalNo) {
 					pageChange("/totalDocs/edit.do", { totalNo: totalNo });
 				},
 				fnRemove(totalNo) {
 					const self = this;
-
 					if (!confirm("정말 삭제하시겠습니까?")) {
 						return;
 					}
@@ -119,7 +136,7 @@
 						success(data) {
 							if (data.result == "success") {
 								alert("삭제되었습니다.");
-								pageChange("/totalDocs/list.do", { kind : self.kind });
+								pageChange("/totalDocs/list.do", { kind: self.kind });
 							} else {
 								alert("삭제 중 오류발생");
 							}

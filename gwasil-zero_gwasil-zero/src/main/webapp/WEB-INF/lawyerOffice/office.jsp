@@ -295,6 +295,7 @@ const mapApp = Vue.createApp({
 				if (status === kakao.maps.services.Status.OK) {
 					let coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 					self.map.setCenter(coords);
+					self.map.setLevel(3);
 				} else {
 					alert("해당 주소를 찾을 수 없습니다.");
 				}

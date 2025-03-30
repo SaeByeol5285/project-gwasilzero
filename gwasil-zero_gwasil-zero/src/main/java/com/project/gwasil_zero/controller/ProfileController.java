@@ -100,4 +100,6 @@ public class ProfileController {
 	    
 		return new Gson().toJson(resultMap);
 	}
+	
+	// git test
 }

@@ -62,11 +62,11 @@ public class AdminController {
     }
     
     // 로그아웃 세션처리 
-    @RequestMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate(); // 세션 초기화
-        return "redirect:/common/main"; // 메인 페이지로 리다이렉트
-    }
+//    @RequestMapping("/logout")
+//    public String logout(HttpSession session) {
+//        session.invalidate(); // 세션 초기화
+//        return "redirect:/common/main"; // 메인 페이지로 리다이렉트
+//    }
     
     // 신규 유저 목록
  	@RequestMapping(value = "/admin/newMemList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")

@@ -201,7 +201,7 @@ public class AdminController {
    	    return new Gson().toJson(resultMap);
    	}
    	
-   	// 매출액 차트 그리기
+   	// 매출액 차트 그리기(바차트, 라인차트)
    	@RequestMapping(value = "/admin/statChart.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
    	@ResponseBody
    	public String statChart(@RequestBody HashMap<String, Object> map) throws Exception {
@@ -214,6 +214,22 @@ public class AdminController {
    	        resultMap.put("result", "fail");
    	    }
    	    
+   	    return new Gson().toJson(resultMap);
+   	}
+   	
+   	// 패키지별 총 매출 (도넛 차트용)
+   	@RequestMapping(value = "/admin/statDonut.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String statDonut(@RequestBody HashMap<String, Object> map) throws Exception {
+   	    HashMap<String, Object> resultMap = new HashMap<>();
+
+   	    try {
+   	        resultMap = adminService.getStatDonut(map);
+   	    } catch (Exception e) {
+   	        System.out.println("도넛 차트 에러: " + e.getMessage());
+   	        resultMap.put("result", "fail");
+   	    }
+
    	    return new Gson().toJson(resultMap);
    	}
 		

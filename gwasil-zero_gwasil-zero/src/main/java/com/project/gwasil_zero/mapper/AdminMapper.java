@@ -48,6 +48,8 @@ public interface AdminMapper {
 
 	List<HashMap<String, Object>> selectStatChart(HashMap<String, Object> map);
 
+	List<HashMap<String, Object>> selectStatDonut(HashMap<String, Object> map);
+
 	
 	
 }

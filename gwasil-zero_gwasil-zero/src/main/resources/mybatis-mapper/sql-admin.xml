@@ -258,5 +258,26 @@
 	        )
 	    ORDER BY TIME_GROUP
 	</select>
+	
+	<select id="selectStatDonut" parameterType="hashmap" resultType="hashmap">
+	    SELECT 
+	        PACKAGE_NAME,
+	        SUM(TO_NUMBER(PRICE)) AS TOTAL_PRICE
+	    FROM PAY
+	    WHERE PAY_STATUS = 'PAID'
+	    <if test="startDate != null and endDate != null and startDate != '' and endDate != ''">
+	        AND PAY_TIME BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD') AND TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	    </if>
+	    <if test="groupType == 'monthly'">
+	        AND TO_CHAR(PAY_TIME, 'YYYY-MM') BETWEEN TO_CHAR(TO_DATE(#{startDate}, 'YYYY-MM-DD'), 'YYYY-MM') 
+	        AND TO_CHAR(TO_DATE(#{endDate}, 'YYYY-MM-DD'), 'YYYY-MM')
+	    </if>
+	    <if test="groupType == 'yearly'">
+	        AND TO_CHAR(PAY_TIME, 'YYYY') BETWEEN TO_CHAR(TO_DATE(#{startDate}, 'YYYY-MM-DD'), 'YYYY') 
+	        AND TO_CHAR(TO_DATE(#{endDate}, 'YYYY-MM-DD'), 'YYYY')
+	    </if>
+	    GROUP BY PACKAGE_NAME
+	    ORDER BY PACKAGE_NAME
+	</select>
 
 </mapper>

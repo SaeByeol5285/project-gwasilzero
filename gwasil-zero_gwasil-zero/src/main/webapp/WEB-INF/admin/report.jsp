@@ -33,14 +33,18 @@
                         <td>{{ item.boardNo }}</td>
                         <td>{{ item.userId }}</td>
                         <td>{{ item.contents }}</td>
-                        <td>{{ item.reportStatus }}</td>
+                        <td>
+                            <span v-if="item.reportStatus === 'DELETE'">삭제 상태</span>
+                            <span v-else-if="item.reportStatus === 'REJECT'">신고 기각</span>
+                            <span v-else-if="item.reportStatus === 'WAIT'">처리 대기</span>
+                        </td>
                         <td>
                             <select v-model="item.actionStatus">
                                 <option disabled value="">선택</option>
                                 <option value="DELETE">게시글 삭제</option>
                                 <option value="REJECT">신고기각</option>
                                 <option value="WAIT">처리대기</option>
-                            </select>
+                            </select>&nbsp;
                             <button @click="fnHandleReport(item)">처리하기</button>
                         </td>
                     </tr>

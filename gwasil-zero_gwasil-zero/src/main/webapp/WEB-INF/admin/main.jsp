@@ -30,7 +30,12 @@
                         <tr v-for="newMem in newMemList">
                             <td>{{newMem.userName}}</td>
                             <td>{{newMem.userId}}</td>
-                            <td>{{newMem.userStatus}}</td>
+                            <td>
+                                <span v-if="newMem.userStatus === 'ADMIN'">관리자</span>
+                                <span v-else-if="newMem.userStatus === 'NORMAL'">일반 회원</span>
+                                <span v-else-if="newMem.userStatus === 'OUT'">탈퇴 회원</span>
+                                <span v-else>{{ newMem.userStatus }}</span>
+                            </td>
                             <td>{{newMem.cdate}}</td>
                         </tr>
                     </table>

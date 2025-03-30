@@ -241,4 +241,33 @@ public class AdminService {
 
 	    return resultMap;
 	}
+
+	public HashMap<String, Object> getStatDonut(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<>();
+
+	    try {
+	        // 도넛 차트용 데이터 조회
+	        List<HashMap<String, Object>> list = adminMapper.selectStatDonut(map);
+
+	        List<String> labels = new ArrayList<>();
+	        List<Integer> series = new ArrayList<>();
+
+	        for (HashMap<String, Object> row : list) {
+	            labels.add((String) row.get("PACKAGE_NAME"));
+	            // PRICE는 VARCHAR2라서 TO_NUMBER 처리 후 intValue로 변환
+	            BigDecimal price = (BigDecimal) row.get("TOTAL_PRICE");
+	            series.add(price.intValue());
+	        }
+
+	        resultMap.put("labels", labels);
+	        resultMap.put("series", series);
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        System.out.println("도넛 차트 서비스 에러: " + e.getMessage());
+	        resultMap.put("result", "fail");
+	    }
+
+	    return resultMap;
+	}
 }

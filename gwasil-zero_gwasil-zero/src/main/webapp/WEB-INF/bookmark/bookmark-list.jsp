@@ -6,34 +6,31 @@
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-	<link rel="stylesheet" href="/css/common.css">
-	<title>guide-detail.jsp</title>
+	<title>sample.jsp</title>
 </head>
-
+<style>
+</style>
 <body>
-	<jsp:include page="../common/header.jsp" />
-
 	<div id="app">
 		{{list}}
 	</div>
-
-	<jsp:include page="../common/footer.jsp" />
 </body>
 </html>
 <script>
     const app = Vue.createApp({
         data() {
             return {
-				list : []
+				list : [],
+				sessionId : "${sessionScope.sessionId}"
 				
             };
         },
         methods: {
-            fnGetList(){
+            fnGetBookmarkList(){
 				var self = this;
-				var nparmap = {};
+				var nparmap = {sessionId : self.sessionId};
 				$.ajax({
-					url:"/project/list.dox",
+					url:"/bookmark/list.dox",
 					dataType:"json",	
 					type : "POST", 
 					data : nparmap,
@@ -50,7 +47,7 @@
         },
         mounted() {
             var self = this;
-			self.fnGetList();
+			self.fnGetBookmarkList();
         }
     });
     app.mount('#app');

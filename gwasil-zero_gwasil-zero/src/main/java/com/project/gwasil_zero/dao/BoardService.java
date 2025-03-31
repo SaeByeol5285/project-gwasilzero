@@ -8,13 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.gwasil_zero.mapper.BoardMapper;
+import com.project.gwasil_zero.mapper.BookmarkMapper;
 import com.project.gwasil_zero.model.Board;
 import com.project.gwasil_zero.model.BoardCmt;
 import com.project.gwasil_zero.model.BoardFile;
+import com.project.gwasil_zero.model.Bookmark;
 @Service
 public class BoardService {
 	@Autowired
 	BoardMapper boardMapper;
+	@Autowired
+	BookmarkMapper bookmarkMapper;
 	
 	public HashMap<String, Object> saveBoard(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
@@ -87,10 +91,12 @@ public class BoardService {
 			Board board = boardMapper.selectBoard(map);
 			List<BoardFile> bf = boardMapper.selectBoardFiles(map);
 			List<BoardCmt> bc = boardMapper.selectBoardCmttList(map);
+			List<Bookmark> bm = bookmarkMapper.selectBookmarkList(map);
 			resultMap.put("result","success");
 			resultMap.put("board", board);			
 			resultMap.put("boardFile", bf);
 			resultMap.put("comment", bc);
+			resultMap.put("bookmark", bm);
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 			resultMap.put("result","failed");

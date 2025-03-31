@@ -5,7 +5,7 @@
 <head>
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 	<script src="/js/page-change.js"></script>
 	<title>게시글 상세보기</title>
 	<style>
@@ -161,12 +161,22 @@
 		<div class="comment-wrapper">
 		  <h4>댓글</h4>
 		  <!-- 목록 -->
-		  	  <div class="comment-list" v-if="comments.length > 0">
-		  	    <div class="comment-item" v-for="(cmt, index) in comments" :key="index">
-		  	      <div class="comment-meta">{{ cmt.lawyerName }} | {{ cmt.cdate }}</div>
-		  	      <div class="comment-text">{{ cmt.contents }}</div>
-		  	    </div>
-		  	  </div>
+		  <div class="comment-list" v-if="comments.length > 0">
+		    <div class="comment-item" v-for="(cmt, index) in comments" :key="index">
+		      <div class="comment-meta">
+		        {{ cmt.lawyerName }} | {{ cmt.cdate }}
+		        
+		        <!-- 북마크 아이콘 -->
+		        <img
+		          v-if="sessionType === 'user'"
+		          :src="isBookmarked(cmt.lawyerId) ? '/img/selectedBookmark.png' : '/img/Bookmark.png'"
+		          @click="toggleBookmark(cmt.lawyerId)"
+		          style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
+		        />
+		      </div>
+		      <div class="comment-text">{{ cmt.contents }}</div>
+		    </div>
+		  </div>
 
 			  <div v-if="sessionType === 'lawyer' ">
 			      <textarea v-model="newComment" placeholder="댓글을 입력하세요" rows="3"></textarea>
@@ -194,7 +204,9 @@
 				comments:[],
 				newComment: "",
 				lawyer_id:"",
-				sessionType : "${sessionScope.sessionType}"
+				sessionType : "${sessionScope.sessionType}",
+				bookmarkList : [],
+				makerId : ""
 	        };
 	    },
 	    methods: {
@@ -203,13 +215,18 @@
 	            $.ajax({
 	                url: "/board/view.dox",
 	                type: "POST",
-	                data: { boardNo: self.boardNo },
+	                data: { 
+						boardNo: self.boardNo, 
+						sessionId : self.sessionId
+					},
 	                dataType: "json",
 	                success: function (data) {
 	                    console.log(data);
 						console.log(self.sessionType);
 	                    self.board = data.board;
+						self.makerId = data.board.userId;
 						self.comments = data.comment || [];
+						self.bookmarkList = data.bookmark;
 	                    // 파일 분류
 	                    self.images = [];
 	                    self.videos = [];
@@ -243,6 +260,7 @@
 			           },
 			           success: function () {
 			               self.newComment = "";
+						   self.addNotification();
 			               self.fnGetBoard(); // 댓글 다시 불러오기
 			           }
 			       });
@@ -250,7 +268,67 @@
 			EditBoard: function(){
 				let self = this;
 				pageChange("/board/edit.do", {boardNo : self.boardNo})
-			}
+			},
+			isBookmarked(lawyerId) {
+			   return this.bookmarkList.some(bm => bm.lawyerId === lawyerId);
+			 },
+
+			 // 북마크 토글
+			 toggleBookmark(lawyerId) {
+			   const self = this;
+
+			   if (!self.sessionId) {
+			     alert("로그인이 필요합니다.");
+			     return;
+			   }
+
+			   const isMarked = self.isBookmarked(lawyerId);
+			   const url = isMarked ? "/bookmark/remove.dox" : "/bookmark/add.dox";
+
+			   $.ajax({
+			     url: url,
+			     type: "POST",
+			     data: {
+			       userId: self.sessionId,
+			       lawyerId: lawyerId
+			     },
+			     success: function (data) {
+			       if (isMarked) {
+			         self.bookmarkList = self.bookmarkList.filter(b => b.lawyerId !== lawyerId);
+					 alert(data.result);
+			       } else {
+			         self.bookmarkList.push({ lawyerId: lawyerId });
+					 alert(data.result);
+			       }
+			     },
+			     error: function () {
+			       alert("북마크 처리 중 오류가 발생했습니다.");
+			     }
+			   });
+			 },
+			 addNotification(){
+				let self = this;
+				var nparmap = {
+					senderId : self.sessionId,
+					notiType : "C",
+					contents : "새 댓글이 달렸습니다",
+					receiverId : self.makerId
+				};
+				$.ajax({
+					url:"/notification/add.dox",
+					dataType:"json",	
+					type : "POST", 
+					data : nparmap,
+					success : function(data) { 
+						console.log(data);
+						if(data.result == "success"){
+							self.list = data.list;
+						} else {
+							alert("오류발생");
+						}
+					}
+				});
+			 }
 	    },
 	    mounted() {
 			let self = this;

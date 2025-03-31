@@ -6,20 +6,20 @@
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.7.1.js"
 	            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 	<script src="/js/page-change.js"></script>
 	<title>board-list</title>
 	
 </head>
 <style>
 	.card-container {
-	    width: 66%; /* 전체 화면의 2/3 */
-	    margin: 0 auto; /* 중앙 정렬 */
+	    width: 66%;
+	    margin: 0 auto; 
 	    padding: 40px 20px;
 	  }
 	.card-grid {
 	  display: grid;
-	  grid-template-columns: repeat(3, 1fr); /* 한 줄에 3개 */
+	  grid-template-columns: repeat(3, 1fr);
 	  gap: 24px;
 	  padding: 10px;
 	  margin-top: 30px;

@@ -20,6 +20,7 @@
       FROM TBL_USER
       WHERE user_id = #{id}
    </select>
+   
    <select id = "searchLawyer" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
       SELECT * 
       FROM LAWYER

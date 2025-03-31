@@ -38,6 +38,7 @@
        FROM TBL_USER
        WHERE USER_PHONE = #{phone} AND USER_NAME = #{name}
    </select>
+   
    <select id="selectLawyerId" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
       SELECT *
       FROM LAWYER

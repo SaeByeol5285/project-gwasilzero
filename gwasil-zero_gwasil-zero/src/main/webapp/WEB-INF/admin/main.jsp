@@ -9,6 +9,7 @@
 	<title>관리자 메인</title>
 </head>
 <body>
+    <jsp:include page="../common/header.jsp" />
     <div id="mainApp">
         <div class="layout">
             <jsp:include page="layout.jsp" />
@@ -77,6 +78,7 @@
             </div>
         </div>
     </div>  
+    <jsp:include page="../common/footer.jsp" />
 </body>
 </html>
 <script>

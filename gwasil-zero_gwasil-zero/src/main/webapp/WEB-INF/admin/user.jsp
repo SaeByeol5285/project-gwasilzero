@@ -9,6 +9,7 @@
 	<title>관리자 회원관리</title>
 </head>
 <body>
+    <jsp:include page="../common/header.jsp" />
     <div id="userApp">
         <div class="layout">
             <jsp:include page="layout.jsp" />
@@ -96,7 +97,8 @@
                 </div>
             </div>
         </div>
-    </div>  
+    </div> 
+    <jsp:include page="../common/footer.jsp" /> 
 </body>
 </html>
 <script>

@@ -9,6 +9,7 @@
 	<title>변호사 관리</title>
 </head>
 <body>
+    <jsp:include page="../common/header.jsp" />
     <div id="lawyerApp">
         <div class="layout">
             <jsp:include page="layout.jsp" />
@@ -106,8 +107,8 @@
                 </div>
             </div>
         </div>
-
-    </div>  
+    </div> 
+    <jsp:include page="../common/footer.jsp" /> 
 </body>
 </html>
 <script>

@@ -26,156 +26,158 @@
 	</style>
 </head>
 <body>
-<div id="chartApp">
-    <div class="layout">
-        <jsp:include page="layout.jsp" />
+    <jsp:include page="../common/header.jsp" />
+    <div id="chartApp">
+        <div class="layout">
+            <jsp:include page="layout.jsp" />
 
-        <div class="content">
-            <div class="header">
-                <div>관리자페이지</div>
-                <div>Admin님</div>
-            </div>
-            <div class="filter-bar" style="margin-bottom: 20px;">
-                <label>검색 기간 설정 :</label>
-                <input type="date" v-model="startDate">
-                ~
-                <input type="date" v-model="endDate">
-
-                <label style="margin-left: 20px;">구분:</label>
-                <select v-model="chartType">
-                    <option value="daily">일별</option>
-                    <option value="monthly">월별</option>
-                    <option value="yearly">연도별</option>
-                </select>
-
-                <button @click="fnGetChartData">검색</button>
-            </div>
-
-            <h2>매출 통계</h2>
-            <!-- Grouped Bar Chart -->
-            <div class="chart-header">
-                <h3>
-                    Grouped Bar Chart
-                    <span>
-                        <button @click="showGrouped = !showGrouped" class="chart-button">
-                            {{ showGrouped ? '숨기기' : '펼치기' }}
-                        </button>
-                    </span>
-                    <span>
-                        <button @click="fnDownloadChart('groupedChart')" class="chart-button">
-                            엑셀로 저장
-                        </button>
-                    </span>   
-                </h3>
-            </div>
-            <div v-show="showGrouped" class="chart-wrapper">
-                <div id="groupedChart"></div>
-            </div>
-
-            <!-- Stacked Bar Chart -->
-            <div class="chart-header">
-                <h3>Stacked Bar Chart
-                    <span>
-                        <button @click="showStacked = !showStacked" class="chart-button">
-                            {{ showStacked ? '숨기기' : '펼치기' }}
-                        </button>
-                    </span>
-                    <span>
-                        <button @click="fnDownloadChart('stackedChart')" class="chart-button">
-                            엑셀로 저장
-                        </button>
-                    </span>
-                </h3>    
-            </div>
-            <div v-show="showStacked" class="chart-wrapper">
-                <div id="stackedChart"></div>
-            </div>
-
-            <!-- Line Chart -->
-            <div class="chart-header">
-                <h3>Line Chart
-                    <span>
-                        <button @click="showLine = !showLine" class="chart-button">
-                            {{ showLine ? '숨기기' : '펼치기' }}
-                        </button>
-                    </span>
-                    <span>
-                        <button @click="fnDownloadChart('lineChart')" class="chart-button">
-                            엑셀로 저장
-                        </button>
-                    </span>
-                </h3>
-            </div>
-            <div v-show="showLine" class="chart-wrapper">
-                <div id="lineChart"></div>
-            </div>
-
-            <!-- Simple Pie Chart -->
-            <div class="chart-header">
-                <h3>Simple Pie Chart
-                    <span>
-                        <button @click="showPie = !showPie" class="chart-button">
-                            {{ showPie ? '숨기기' : '펼치기' }}
-                        </button>
-                    </span>
-                    <span>    
-                        <button @click="fnDownloadChart('pieChart')" class="chart-button">
-                            엑셀로 저장
-                        </button>
-                    </span>
-                </h3>
-            </div>
-
-            <div v-show="showPie" class="chart-wrapper">
-                <div class="chart-button">
-                    <select v-model="selectedYear" @change="fnLoadAvailableMonths">
-                        <option value="">전체 연도</option>
-                        <option v-for="year in availableYears" :key="year" :value="year">{{ year }}년</option>
-                    </select>
-
-                    <select v-model="selectedMonth" @change="fnLoadAvailableDays" v-if="availableMonths.length > 0" class="chart-button">
-                        <option value="">전체 월</option>
-                        <option v-for="month in availableMonths" :key="month" :value="month">{{ month }}월</option>
-                    </select>
-
-                    <select v-model="selectedDay" v-if="availableDays.length > 0" class="chart-button">
-                        <option value="">전체 일</option>
-                        <option v-for="day in availableDays" :key="day" :value="day">{{ day }}일</option>
-                    </select>
-
-                    <button @click="fnGetPieChart" class="chart-button">검색</button>
+            <div class="content">
+                <div class="header">
+                    <div>관리자페이지</div>
+                    <div>Admin님</div>
                 </div>
-                <!-- 총 매출 금액 표시 -->
-                <div v-if="totalSales > 0" style="margin: 10px 0; font-weight: bold;">
-                    총 매출 금액: ₩{{ totalSales.toLocaleString() }}
+                <div class="filter-bar" style="margin-bottom: 20px;">
+                    <label>검색 기간 설정 :</label>
+                    <input type="date" v-model="startDate">
+                    ~
+                    <input type="date" v-model="endDate">
+
+                    <label style="margin-left: 20px;">구분:</label>
+                    <select v-model="chartType">
+                        <option value="daily">일별</option>
+                        <option value="monthly">월별</option>
+                        <option value="yearly">연도별</option>
+                    </select>
+
+                    <button @click="fnGetChartData">검색</button>
                 </div>
 
-                <div id="pieChart"></div>
-            </div>
+                <h2>매출 통계</h2>
+                <!-- Grouped Bar Chart -->
+                <div class="chart-header">
+                    <h3>
+                        Grouped Bar Chart
+                        <span>
+                            <button @click="showGrouped = !showGrouped" class="chart-button">
+                                {{ showGrouped ? '숨기기' : '펼치기' }}
+                            </button>
+                        </span>
+                        <span>
+                            <button @click="fnDownloadChart('groupedChart')" class="chart-button">
+                                엑셀로 저장
+                            </button>
+                        </span>   
+                    </h3>
+                </div>
+                <div v-show="showGrouped" class="chart-wrapper">
+                    <div id="groupedChart"></div>
+                </div>
 
-            <h2>일반 이용자 통계</h2>
-            <!-- 누적 회원 등록수 Line Chart -->
-            <div class="chart-header">
-                <h3>회원 누적 등록 수 (Line Chart)
-                    <span>
-                        <button @click="showUserLine = !showUserLine" class="chart-button">
-                            {{ showUserLine ? '숨기기' : '펼치기' }}
-                        </button>
-                    </span>
-                    <span>
-                        <button @click="fnDownloadChart('userLineChart')" class="chart-button">
-                            엑셀로 저장
-                        </button>
-                    </span>
-                </h3>
-            </div>
+                <!-- Stacked Bar Chart -->
+                <div class="chart-header">
+                    <h3>Stacked Bar Chart
+                        <span>
+                            <button @click="showStacked = !showStacked" class="chart-button">
+                                {{ showStacked ? '숨기기' : '펼치기' }}
+                            </button>
+                        </span>
+                        <span>
+                            <button @click="fnDownloadChart('stackedChart')" class="chart-button">
+                                엑셀로 저장
+                            </button>
+                        </span>
+                    </h3>    
+                </div>
+                <div v-show="showStacked" class="chart-wrapper">
+                    <div id="stackedChart"></div>
+                </div>
 
-            <div v-show="showUserLine" class="chart-wrapper">
-                <div id="userLineChart"></div>
+                <!-- Line Chart -->
+                <div class="chart-header">
+                    <h3>Line Chart
+                        <span>
+                            <button @click="showLine = !showLine" class="chart-button">
+                                {{ showLine ? '숨기기' : '펼치기' }}
+                            </button>
+                        </span>
+                        <span>
+                            <button @click="fnDownloadChart('lineChart')" class="chart-button">
+                                엑셀로 저장
+                            </button>
+                        </span>
+                    </h3>
+                </div>
+                <div v-show="showLine" class="chart-wrapper">
+                    <div id="lineChart"></div>
+                </div>
+
+                <!-- Simple Pie Chart -->
+                <div class="chart-header">
+                    <h3>Simple Pie Chart
+                        <span>
+                            <button @click="showPie = !showPie" class="chart-button">
+                                {{ showPie ? '숨기기' : '펼치기' }}
+                            </button>
+                        </span>
+                        <span>    
+                            <button @click="fnDownloadChart('pieChart')" class="chart-button">
+                                엑셀로 저장
+                            </button>
+                        </span>
+                    </h3>
+                </div>
+
+                <div v-show="showPie" class="chart-wrapper">
+                    <div class="chart-button">
+                        <select v-model="selectedYear" @change="fnLoadAvailableMonths">
+                            <option value="">전체 연도</option>
+                            <option v-for="year in availableYears" :key="year" :value="year">{{ year }}년</option>
+                        </select>
+
+                        <select v-model="selectedMonth" @change="fnLoadAvailableDays" v-if="availableMonths.length > 0" class="chart-button">
+                            <option value="">전체 월</option>
+                            <option v-for="month in availableMonths" :key="month" :value="month">{{ month }}월</option>
+                        </select>
+
+                        <select v-model="selectedDay" v-if="availableDays.length > 0" class="chart-button">
+                            <option value="">전체 일</option>
+                            <option v-for="day in availableDays" :key="day" :value="day">{{ day }}일</option>
+                        </select>
+
+                        <button @click="fnGetPieChart" class="chart-button">검색</button>
+                    </div>
+                    <!-- 총 매출 금액 표시 -->
+                    <div v-if="totalSales > 0" style="margin: 10px 0; font-weight: bold;">
+                        총 매출 금액: ₩{{ totalSales.toLocaleString() }}
+                    </div>
+
+                    <div id="pieChart"></div>
+                </div>
+
+                <h2>일반 이용자 통계</h2>
+                <!-- 누적 회원 등록수 Line Chart -->
+                <div class="chart-header">
+                    <h3>회원 누적 등록 수 (Line Chart)
+                        <span>
+                            <button @click="showUserLine = !showUserLine" class="chart-button">
+                                {{ showUserLine ? '숨기기' : '펼치기' }}
+                            </button>
+                        </span>
+                        <span>
+                            <button @click="fnDownloadChart('userLineChart')" class="chart-button">
+                                엑셀로 저장
+                            </button>
+                        </span>
+                    </h3>
+                </div>
+
+                <div v-show="showUserLine" class="chart-wrapper">
+                    <div id="userLineChart"></div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+    <jsp:include page="../common/footer.jsp" />
 </body>
 </html>
 <script>

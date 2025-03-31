@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<title>변호사 지도 보기</title>
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b58f49b3384edf05982d77a3259c7afb&libraries=services"></script>
 	<script src="/js/page-change.js"></script>
 	<style>

@@ -7,176 +7,98 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-        <title>sample.jsp</title>
+        <link rel="stylesheet" href="/css/common.css">
+        <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
+        <title>아이디 찾기</title>
+        <style>
+            #app {
+                display: flex;
+                flex-direction: column;
+                /* 세로 정렬 */
+                justify-content: center;
+                align-items: center;
+                min-height: 70vh;
+                padding: 20px;
+            }
+
+            h1 {
+                text-align: center;
+                width: 100%;
+                /* 전체 너비 확보 */
+                margin-bottom: 40px;
+                /* 카드와의 간격 확보 */
+                font-size: 28px;
+                font-weight: bold;
+                color: #FF5722;
+            }
+
+            .card-container {
+                display: flex;
+                gap: 30px;
+                /* 카드 간 간격 확장 */
+                max-width: 600px;
+                /* 최대 너비 확장 */
+                width: 100%;
+                margin: 0 auto;
+                /* 중앙 정렬 */
+            }
+
+            .card {
+                flex: 1;
+                background-color: #FFFFFF;
+                border: 2px solid #FF5722;
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                padding: 40px;
+                /* 카드 내부 패딩 증가 */
+                cursor: pointer;
+                transition: background-color 0.3s ease, transform 0.2s ease;
+            }
+
+            .card:hover {
+                background-color: #ff5c00;
+                color: #ffffff;
+                transform: scale(1.05);
+            }
+
+            .title {
+                font-size: 24px;
+                /* 폰트 크기 확장 */
+                font-weight: bold;
+            }
+        </style>
     </head>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        #app {
-            display: flex;
-            width: 80%;
-            max-width: 900px;
-        }
-
-        .form-section {
-            width: 50%;
-            padding: 20px;
-        }
-
-        .divider {
-            width: 2px;
-            background-color: #000;
-            height: 100%;
-            margin: 0 20px;
-        }
-
-        .form-section input {
-            margin: 10px 0;
-            padding: 8px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .form-section button {
-            margin-top: 10px;
-            padding: 8px;
-            width: 100%;
-            cursor: pointer;
-        }
-    </style>
 
     <body>
+        <jsp:include page="../common/header.jsp" />
         <div id="app">
-            <div class="form-section">
-                <div>아이디 찾기</div>
-                <div>이름 <input v-model="user.name" placeholder="이름 입력"></div>
-                <div>
-                    핸드폰 번호 : <input v-model="user.phone" placeholder="번호 입력">
-                    <button @click="fnSmsAuth">인증요청</button>
+            <h1>아이디/비밀번호 찾기</h1>
+            <div class="card-container">
+                <div class="card" @click="fnFindId">
+                    <div class="title">아이디 찾기</div>
                 </div>
-                <div>
-                    <input v-model="authInputNum" :placeholder="timer">
-                    <button @click="fnNumAuth">인증 확인</button>
-                </div>
-                <div>
-                    <button @click="fnSearchId">아이디 찾기</button>
-                </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="form-section">
-                <div>비밀번호 찾기</div>
-                <div>아이디 <input v-model="user.userId" placeholder="아이디 입력"></div>
-                <div>
-                    핸드폰 번호 : <input v-model="user.phone" placeholder="번호 입력">
-                    <button @click="fnSmsAuth">인증요청</button>
-                </div>
-                <div>
-                    <input v-model="authInputNum" :placeholder="timer">
-                    <button @click="fnNumAuth">인증 확인</button>
-                </div>
-                <div>
-                    <button @click="fnSearchPwd">비밀번호 찾기</button>
+                <div class="card" @click="fnFindPwd">
+                    <div class="title">비밀번호 찾기</div>
                 </div>
             </div>
         </div>
+        <jsp:include page="../common/footer.jsp" />
 
     </body>
 
     </html>
     <script>
         const app = Vue.createApp({
-        data() {
-            return {
-                user: {
-                    name: "", phone: "", userId: ""
+            methods: {
+                fnFindId() {
+                    location.href = "/user/userId-search.do";
                 },
-                authNum: "",
-                authInputNum: "",
-                timer: "",
-                count: 180,
-                foundUserId: "", 
-                foundUserPwd: "" 
-            };
-        },
-        methods: {
-            fnSmsAuth() {
-                var self = this;
-                $.ajax({
-                    url: "/user/user-search.dox",  
-                    type: "POST",
-                    data: { phone: self.user.phone },
-                    success: function (data) {
-                        if (data.status === "success") {
-                            alert("문자 발송 완료");
-                            self.authNum = data.authNum;
-                            setInterval(self.fnTimer, 1000);
-                        } else {
-                            alert("문자 발송 실패");
-                        }
-                    }
-                });
-            },
-
-            fnNumAuth() {
-                if (this.authNum === this.authInputNum) {
-                    alert("인증 완료");
-                } else {
-                    alert("인증 실패");
+                fnFindPwd() {
+                    location.href = "/user/userPwd-search.do";
                 }
-            },
-
-            fnTimer() {
-                this.count--;
-                let min = Math.floor(this.count / 60);
-                let sec = this.count % 60;
-                this.timer = `${min}:${sec < 10 ? '0' + sec : sec}`;
-            },
-
-            fnSearchId() {
-                var self = this;
-                $.ajax({
-                    url: "/user/findId",  
-                    type: "POST",
-                    data: { name: self.user.name, phone: self.user.phone },
-                    success: function (data) {
-                        if (data.status === "success") {
-                            self.foundUserId = data.userId;  
-                        } else {
-                            alert("아이디 찾기 실패");
-                        }
-                    }
-                });
-            },
-
-            fnSearchPwd() {
-                var self = this;
-                $.ajax({
-                    url: "/user/findPwd", 
-                    type: "POST",
-                    data: { userId: self.user.userId, phone: self.user.phone },
-                    success: function (data) {
-                        if (data.status === "success") {
-                            self.foundUserPwd = data.userPwd; 
-                        } else {
-                            alert("비밀번호 찾기 실패");
-                        }
-                    }
-                });
             }
-        },
-        mounted() {
-            console.log('Vue instance mounted');
-        }
-    });
-    app.mount('#app');
+        });
+        app.mount('#app');
     </script>
-    ​

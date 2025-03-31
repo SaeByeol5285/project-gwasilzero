@@ -12,6 +12,10 @@
 </head>
 <body>
     <jsp:include page="../common/header.jsp" />
+<<<<<<< HEAD
+=======
+
+>>>>>>> branch 'master' of https://github.com/SaeByeol5285/project-gwasilzero.git
 	<div id="perLawApp">
 		<div class="title-area">
             <h2>개인 변호사</h2>
@@ -43,6 +47,10 @@
         </div>
 	</div>
     <jsp:include page="../common/footer.jsp" />
+<<<<<<< HEAD
+=======
+
+>>>>>>> branch 'master' of https://github.com/SaeByeol5285/project-gwasilzero.git
 </body>
 </html>
 <script>

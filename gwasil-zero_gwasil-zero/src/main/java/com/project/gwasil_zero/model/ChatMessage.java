@@ -9,6 +9,6 @@ public class ChatMessage {
 	private String time;
 	private String message;
 	private String senderId;
-	private String senderName; 
+	private String senderName;
 
 }

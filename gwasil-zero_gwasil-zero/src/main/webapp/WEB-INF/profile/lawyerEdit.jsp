@@ -5,7 +5,6 @@
 <head>
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 	<title>프로필 수정</title>
     <style>
         body {
@@ -102,6 +101,7 @@
     </style>
 </head>
 <body>
+    <jsp:include page="../common/header.jsp" />
 	<div id="lawEditApp">
 		<div class="form-container">
             <form id="lawyerEditForm">
@@ -171,6 +171,7 @@
             </form>
         </div>
 	</div>
+    <jsp:include page="../common/footer.jsp" />
 </body>
 </html>
 <script>

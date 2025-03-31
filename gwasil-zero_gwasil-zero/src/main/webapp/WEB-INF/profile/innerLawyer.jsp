@@ -5,7 +5,6 @@
 <head>
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 	<script src="/js/page-change.js"></script>
 	<title>소속 변호사</title>
     <link rel="stylesheet" href="../css/profile.css">
@@ -34,7 +33,9 @@
     
                     <div class="lawyer-list">
                         <div class="lawyer-card" v-for="item in list" :key="item.lawyerId" @click="fnView(item.lawyerId)">
-                            <div class="profile-pic">프로필 사진</div>
+                            <div class="profile-pic">
+                                <img src="../../img/66432819ad4f841ac7c5d8a7-original-1715677210341.jpg" alt="프로필 사진">
+                            </div>
                             <div class="lawyer-name">{{item.lawyerName}}</div>
                             <div class="intro">소개 : {{item.lawyerInfo}}</div>
                         </div>

@@ -5,7 +5,6 @@
 <head>
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 	<title>변호사 상세보기</title>
     <style>
         body {
@@ -36,13 +35,19 @@
             width: 200px;
             height: 200px;
             background-color: #f88;
-            text-align: center;
-            line-height: 200px;
-            color: white;
-            font-weight: bold;
+            border-radius: 50%;
+            overflow: hidden;
             margin-right: 30px;
-            border-radius: 8px;
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .profile-info {
@@ -102,7 +107,9 @@
 		<div class="layout">
             <div class="content">
                 <div class="profile-container">
-                    <div class="profile-photo">이미지없음</div>
+                    <div class="profile-photo">
+                        <img src="../../img/66432819ad4f841ac7c5d8a7-original-1715677210341.jpg" alt="프로필 사진">
+                    </div>
                     <div class="profile-info">
                         <div class="section">
                             <h3>이름</h3>

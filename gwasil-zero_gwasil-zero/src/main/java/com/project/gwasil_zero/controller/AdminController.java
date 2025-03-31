@@ -217,20 +217,108 @@ public class AdminController {
    	    return new Gson().toJson(resultMap);
    	}
    	
-   	// 패키지별 총 매출 (도넛 차트용)
-   	@RequestMapping(value = "/admin/statDonut.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	// 연도 목록 조회
+   	@RequestMapping(value = "/admin/pieAvailableYears.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
    	@ResponseBody
-   	public String statDonut(@RequestBody HashMap<String, Object> map) throws Exception {
+   	public String pieAvailableYears() {
+   	    HashMap<String, Object> resultMap = adminService.getAvailableYears();
+   	    return new Gson().toJson(resultMap);
+   	}
+
+   	// 월 목록 조회
+   	@RequestMapping(value = "/admin/pieAvailableMonths.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String pieAvailableMonths(@RequestBody HashMap<String, Object> map) {
+   	    HashMap<String, Object> resultMap = adminService.getAvailableMonths(map);
+   	    return new Gson().toJson(resultMap);
+   	}
+
+   	// 일 목록 조회
+   	@RequestMapping(value = "/admin/pieAvailableDays.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String pieAvailableDays(@RequestBody HashMap<String, Object> map) {
+   	    HashMap<String, Object> resultMap = adminService.getAvailableDays(map);
+   	    return new Gson().toJson(resultMap);
+   	}
+   	
+   	// 파이차트 데이터 조회
+   	@RequestMapping(value = "/admin/statPie.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String statPie(@RequestBody HashMap<String, Object> map) throws Exception {
    	    HashMap<String, Object> resultMap = new HashMap<>();
 
    	    try {
-   	        resultMap = adminService.getStatDonut(map);
+   	        // 파라미터 정리
+   	        String year = (String) map.getOrDefault("year", "");
+   	        String month = (String) map.getOrDefault("month", "");
+   	        String day = (String) map.getOrDefault("day", "");
+
+   	        // 유효성 검사 및 포맷 보정
+   	        if (!year.isEmpty()) {
+   	            if (!year.matches("\\d{4}")) {
+   	                resultMap.put("result", "fail");
+   	                resultMap.put("message", "올바르지 않은 연도 형식입니다.");
+   	                return new Gson().toJson(resultMap);
+   	            }
+   	            map.put("year", year);
+   	        }
+
+   	        if (!month.isEmpty()) {
+   	            int m = Integer.parseInt(month);
+   	            if (m < 1 || m > 12) {
+   	                resultMap.put("result", "fail");
+   	                resultMap.put("message", "올바르지 않은 월 형식입니다.");
+   	                return new Gson().toJson(resultMap);
+   	            }
+   	            if (month.length() == 1) {
+   	                month = "0" + month;
+   	                map.put("month", month);
+   	            }
+   	        }
+
+   	        if (!day.isEmpty()) {
+   	            int d = Integer.parseInt(day);
+   	            if (d < 1 || d > 31) {
+   	                resultMap.put("result", "fail");
+   	                resultMap.put("message", "올바르지 않은 일 형식입니다.");
+   	                return new Gson().toJson(resultMap);
+   	            }
+   	            if (day.length() == 1) {
+   	                day = "0" + day;
+   	                map.put("day", day);
+   	            }
+   	        }
+
+   	        // 실제 데이터 조회
+   	        resultMap = adminService.getStatPie(map);
+
    	    } catch (Exception e) {
-   	        System.out.println("도넛 차트 에러: " + e.getMessage());
+   	        System.out.println("Pie 차트 에러: " + e.getMessage());
    	        resultMap.put("result", "fail");
+   	        resultMap.put("message", "서버 오류가 발생했습니다.");
    	    }
 
    	    return new Gson().toJson(resultMap);
    	}
-		
+   	
+   	// 일반 이용자 등록 차트 데이타 조회
+   	@RequestMapping(value = "/admin/statUserLine.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String statUserLine(@RequestBody HashMap<String, Object> map) {
+   	    HashMap<String, Object> resultMap = new HashMap<>();
+
+   	 try {
+         // 필터 기본값 처리
+         String groupType = (String) map.getOrDefault("groupType", "monthly");
+         map.put("groupType", groupType);
+
+         resultMap = adminService.getStatUserLine(map);
+     } catch (Exception e) {
+         e.printStackTrace();
+         resultMap.put("result", "fail");
+     }
+
+   	    return new Gson().toJson(resultMap);
+   	}
+
 }

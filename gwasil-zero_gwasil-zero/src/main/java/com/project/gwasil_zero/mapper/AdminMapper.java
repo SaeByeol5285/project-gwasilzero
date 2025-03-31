@@ -48,7 +48,15 @@ public interface AdminMapper {
 
 	List<HashMap<String, Object>> selectStatChart(HashMap<String, Object> map);
 
-	List<HashMap<String, Object>> selectStatDonut(HashMap<String, Object> map);
+	List<String> selectAvailableYears();
+
+	List<String> selectAvailableMonths(HashMap<String, Object> map);
+
+	List<String> selectAvailableDays(HashMap<String, Object> map);
+
+	List<HashMap<String, Object>> selectStatPie(HashMap<String, Object> map);
+
+	List<HashMap<String, Object>> selectStatUserLine(HashMap<String, Object> map);
 
 	
 	

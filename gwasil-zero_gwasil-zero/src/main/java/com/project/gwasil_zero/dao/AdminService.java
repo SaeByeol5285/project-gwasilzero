@@ -242,32 +242,137 @@ public class AdminService {
 	    return resultMap;
 	}
 
-	public HashMap<String, Object> getStatDonut(HashMap<String, Object> map) {
+	public HashMap<String, Object> getAvailableYears() {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	        List<String> years = adminMapper.selectAvailableYears();
+	        resultMap.put("years", years);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+	    return resultMap;
+	}
+
+	public HashMap<String, Object> getAvailableMonths(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	        String year = (String) map.get("year");
+	        if (year == null || year.isEmpty()) {
+	            resultMap.put("months", new ArrayList<>());
+	        } else {
+	            List<String> months = adminMapper.selectAvailableMonths(map);
+	            resultMap.put("months", months);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+	    return resultMap;
+	}
+	
+	public HashMap<String, Object> getAvailableDays(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	        String year = (String) map.get("year");
+	        String month = (String) map.get("month");
+	        if (year == null || year.isEmpty() || month == null || month.isEmpty()) {
+	            resultMap.put("days", new ArrayList<>());
+	        } else {
+	            List<String> days = adminMapper.selectAvailableDays(map);
+	            resultMap.put("days", days);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+	    return resultMap;
+	}
+
+	public HashMap<String, Object> getStatPie(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
 
 	    try {
-	        // 도넛 차트용 데이터 조회
-	        List<HashMap<String, Object>> list = adminMapper.selectStatDonut(map);
+	        // 파라미터 처리
+	        String year = (String) map.get("year");
+	        String month = (String) map.get("month");
+	        String day = (String) map.get("day");
 
+	        // 기본값 처리 (전체 선택)
+	        if (year == null) year = "";
+	        if (month == null) month = "";
+	        if (day == null) day = "";
+
+	        map.put("year", year);
+	        map.put("month", month);
+	        map.put("day", day);
+
+	        // 데이터 조회
+	        List<HashMap<String, Object>> dataList = adminMapper.selectStatPie(map);
+
+	        // 차트 구성 요소
 	        List<String> labels = new ArrayList<>();
 	        List<Integer> series = new ArrayList<>();
+	        int total = 0; // 총 매출 누적 변수
 
-	        for (HashMap<String, Object> row : list) {
-	            labels.add((String) row.get("PACKAGE_NAME"));
-	            // PRICE는 VARCHAR2라서 TO_NUMBER 처리 후 intValue로 변환
-	            BigDecimal price = (BigDecimal) row.get("TOTAL_PRICE");
-	            series.add(price.intValue());
+	        for (HashMap<String, Object> row : dataList) {
+	            String pkgName = (String) row.get("PACKAGE_NAME");
+	            int price = ((BigDecimal) row.get("TOTAL_PRICE")).intValue();
+
+	            labels.add(pkgName);
+	            series.add(price);
+	            total += price; // 총합 누적
 	        }
 
+	        // 결과 구성
 	        resultMap.put("labels", labels);
 	        resultMap.put("series", series);
+	        resultMap.put("totalSales", total); 
 	        resultMap.put("result", "success");
+
 	    } catch (Exception e) {
-	        System.out.println("도넛 차트 서비스 에러: " + e.getMessage());
+	        e.printStackTrace();
 	        resultMap.put("result", "fail");
+	        resultMap.put("message", "통계 데이터 처리 중 오류 발생");
 	    }
 
 	    return resultMap;
 	}
+
+	public HashMap<String, Object> getStatUserLine(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<>();
+
+	    List<HashMap<String, Object>> rawList = adminMapper.selectStatUserLine(map);
+
+	    List<String> categories = new ArrayList<>();
+	    List<Integer> series = new ArrayList<>();
+
+	    int cumulative = 0;
+
+	    for (HashMap<String, Object> row : rawList) {
+	        String date = (String) row.get("TIME_GROUP");
+	        int count = ((BigDecimal) row.get("USER_COUNT")).intValue();
+
+	        cumulative += count;
+
+	        categories.add(date);
+	        series.add(cumulative);
+	    }
+
+	    List<HashMap<String, Object>> seriesList = new ArrayList<>();
+	    HashMap<String, Object> oneSeries = new HashMap<>();
+	    oneSeries.put("name", "누적 회원 수");
+	    oneSeries.put("data", series);
+	    seriesList.add(oneSeries);
+
+	    resultMap.put("series", seriesList);
+	    resultMap.put("categories", categories);
+	    resultMap.put("result", "success");
+
+	    return resultMap;
+	}	  
 }

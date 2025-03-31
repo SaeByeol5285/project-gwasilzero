@@ -259,25 +259,109 @@
 	    ORDER BY TIME_GROUP
 	</select>
 	
-	<select id="selectStatDonut" parameterType="hashmap" resultType="hashmap">
+	<!-- 연도 목록 -->
+	<select id="selectAvailableYears" resultType="string">
+	    SELECT DISTINCT TO_CHAR(PAY_TIME, 'YYYY') AS YEAR
+	    FROM PAY
+	    WHERE PAY_STATUS = 'PAID'
+	    ORDER BY YEAR
+	</select>
+	
+	<!-- 특정 연도에 대한 월 목록 -->
+	<select id="selectAvailableMonths" parameterType="hashmap" resultType="string">
+	    SELECT DISTINCT TO_CHAR(PAY_TIME, 'MM') AS MONTH
+	    FROM PAY
+	    WHERE PAY_STATUS = 'PAID'
+	    <if test="year != null and year != ''">
+	        AND TO_CHAR(PAY_TIME, 'YYYY') = #{year}
+	    </if>
+	    ORDER BY TO_NUMBER(MONTH)
+	</select>
+	
+	<!-- 특정 연도, 월에 대한 일 목록 -->
+	<select id="selectAvailableDays" parameterType="hashmap" resultType="string">
+	    SELECT DISTINCT TO_CHAR(PAY_TIME, 'DD') AS DAY
+	    FROM PAY
+	    WHERE PAY_STATUS = 'PAID'
+	    <if test="year != null and year != ''">
+	        AND TO_CHAR(PAY_TIME, 'YYYY') = #{year}
+	    </if>
+	    <if test="month != null and month != ''">
+	        AND TO_CHAR(PAY_TIME, 'MM') = LPAD(#{month}, 2, '0')
+	    </if>
+	    ORDER BY TO_NUMBER(DAY)
+	</select>
+	
+	<!-- pie 차트용 데이터 조회 -->
+	<select id="selectStatPie" parameterType="hashmap" resultType="hashmap">
 	    SELECT 
 	        PACKAGE_NAME,
 	        SUM(TO_NUMBER(PRICE)) AS TOTAL_PRICE
 	    FROM PAY
 	    WHERE PAY_STATUS = 'PAID'
-	    <if test="startDate != null and endDate != null and startDate != '' and endDate != ''">
-	        AND PAY_TIME BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD') AND TO_DATE(#{endDate}, 'YYYY-MM-DD')
-	    </if>
-	    <if test="groupType == 'monthly'">
-	        AND TO_CHAR(PAY_TIME, 'YYYY-MM') BETWEEN TO_CHAR(TO_DATE(#{startDate}, 'YYYY-MM-DD'), 'YYYY-MM') 
-	        AND TO_CHAR(TO_DATE(#{endDate}, 'YYYY-MM-DD'), 'YYYY-MM')
-	    </if>
-	    <if test="groupType == 'yearly'">
-	        AND TO_CHAR(PAY_TIME, 'YYYY') BETWEEN TO_CHAR(TO_DATE(#{startDate}, 'YYYY-MM-DD'), 'YYYY') 
-	        AND TO_CHAR(TO_DATE(#{endDate}, 'YYYY-MM-DD'), 'YYYY')
-	    </if>
+	      <if test="year != null and year != ''">
+	        AND TO_CHAR(PAY_TIME, 'YYYY') = #{year}
+	      </if>
+	      <if test="month != null and month != ''">
+	        AND TO_CHAR(PAY_TIME, 'MM') = LPAD(#{month}, 2, '0')
+	      </if>
+	      <if test="day != null and day != ''">
+	        AND TO_CHAR(PAY_TIME, 'DD') = LPAD(#{day}, 2, '0')
+	      </if>
 	    GROUP BY PACKAGE_NAME
 	    ORDER BY PACKAGE_NAME
 	</select>
+	
+	<!-- 누적 일반 이용자 데이터 조회 -->
+	<select id="selectStatUserLine" parameterType="hashmap" resultType="hashmap">
+	    <choose>
+	        <when test="groupType == 'daily'">
+	            SELECT 
+	                TO_CHAR(CDATE, 'YYYY-MM-DD') AS TIME_GROUP,
+	                COUNT(*) AS USER_COUNT
+	            FROM TBL_USER
+	            WHERE USER_STATUS = 'NORMAL'
+	            <if test="startDate != null and startDate != ''">
+	                AND CDATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	            </if>
+	            <if test="endDate != null and endDate != ''">
+	                AND CDATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	            </if>
+	            GROUP BY TO_CHAR(CDATE, 'YYYY-MM-DD')
+	            ORDER BY TIME_GROUP
+	        </when>
+	        <when test="groupType == 'monthly'">
+	            SELECT 
+	                TO_CHAR(CDATE, 'YYYY-MM') AS TIME_GROUP,
+	                COUNT(*) AS USER_COUNT
+	            FROM TBL_USER
+	            WHERE USER_STATUS = 'NORMAL'
+	            <if test="startDate != null and startDate != ''">
+	                AND CDATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	            </if>
+	            <if test="endDate != null and endDate != ''">
+	                AND CDATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	            </if>
+	            GROUP BY TO_CHAR(CDATE, 'YYYY-MM')
+	            ORDER BY TIME_GROUP
+	        </when>
+	        <when test="groupType == 'yearly'">
+	            SELECT 
+	                TO_CHAR(CDATE, 'YYYY') AS TIME_GROUP,
+	                COUNT(*) AS USER_COUNT
+	            FROM TBL_USER
+	            WHERE USER_STATUS = 'NORMAL'
+	            <if test="startDate != null and startDate != ''">
+	                AND CDATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	            </if>
+	            <if test="endDate != null and endDate != ''">
+	                AND CDATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	            </if>
+	            GROUP BY TO_CHAR(CDATE, 'YYYY')
+	            ORDER BY TIME_GROUP
+	        </when>
+	    </choose>
+	</select>
+
 
 </mapper>

@@ -2,11 +2,10 @@ package com.project.gwasil_zero.mapper;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
+import com.project.gwasil_zero.model.TotalCmt;
 import com.project.gwasil_zero.model.TotalDocs;
 import com.project.gwasil_zero.model.TotalFile;
 
@@ -48,6 +47,12 @@ public interface TotalDocsMapper {
 
 	//첨부파일 삭제
 	void deleteFile(HashMap<String, Object> delMap);
+
+	//댓글 등록
+	int insertCmt(HashMap<String, Object> map);
+
+	//댓글 리스트
+	List<TotalCmt> selectCmtList(HashMap<String, Object> map);
 
 
 

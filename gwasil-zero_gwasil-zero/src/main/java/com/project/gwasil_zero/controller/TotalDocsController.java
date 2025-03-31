@@ -250,6 +250,25 @@ public class TotalDocsController {
 		}
 		return "redirect:/notice/list.do";
 	}
+	// 댓글 달기
+	@RequestMapping(value = "/totalDocs/addCmt.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String docsCmtAdd(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+		resultMap = totalDocsService.addCmt(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 댓글 리스트 불러오기
+	@RequestMapping(value = "/totalDocs/cmtList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String docsCmtList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+		resultMap = totalDocsService.getCmtList(map);
+		return new Gson().toJson(resultMap);
+	}
 
 
 

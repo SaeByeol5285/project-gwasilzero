@@ -18,7 +18,7 @@
 <jsp:include page="../common/header.jsp" />
 <div id="app" class="container">
     <div class="card">
-        <h2 class="section-title">공지사항 수정</h2>
+        <h2 class="section-title">통합자료실 게시물 수정</h2>
 
         <div class="form-group mb-20">
             <label>제목</label>

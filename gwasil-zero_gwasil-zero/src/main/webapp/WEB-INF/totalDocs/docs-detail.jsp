@@ -36,6 +36,7 @@
 				<div class="view-content mb-20">
 					<div class="detail-contents" v-html="info.totalContents"></div>
 				</div>
+
 				<span v-if="sessionId == info.userId" class="mb-20">
 					<button @click="fnEdit(info.totalNo)" class="btn btn-outline">수정</button>
 				</span>
@@ -54,6 +55,22 @@
 				<div v-if="next">
 					➡️ 다음글: <a href="javascript:void(0)" @click="moveTo(next.totalNo)">{{ next.totalTitle }}</a>
 				</div>
+				<!-- 댓글 영역: 관리자만 보임 -->
+				<div v-if="sessionStatus === 'A'" class="mt-40">
+					<h3 class="section-title">관리자 댓글</h3>
+					<div class="form-group mb-10">
+						<textarea v-model="commentContent" rows="3" placeholder="댓글을 입력하세요" style="width: 100%; padding: 10px;"></textarea>
+					</div>
+					<div>
+						<button @click="submitComment" class="btn btn-primary">댓글 등록</button>
+					</div>
+					<!-- 댓글 리스트 -->
+					<ul class="mt-20" v-if="comments.length > 0">
+						<li v-for="(comment, idx) in comments" :key="idx" style="margin-bottom: 10px;">
+							<strong>{{ comment.writer }}</strong>: {{ comment.content }} <small style="color: #aaa;">{{comment.cdate }}</small>
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
 		<jsp:include page="../common/footer.jsp" />
@@ -71,8 +88,11 @@
 					fileList: [],
 					prev: null,
 					next: null,
-					sessionStatus: "",
+					sessionStatus: "A",
 					sessionId: "101", //"${sessionId}"
+					commentContent: "",
+					comments: [],
+
 
 				};
 			},
@@ -112,6 +132,46 @@
 						}
 					});
 				},
+				submitComment() {
+					if (!this.commentContent.trim()) {
+						alert("댓글 내용을 입력해주세요.");
+						return;
+					}
+					const self = this;
+					$.ajax({
+						url: "/totalDocs/addCmt.dox",
+						type: "POST",
+						dataType: "json",
+						data: {
+							totalNo: self.totalNo,
+							content: self.commentContent
+						},
+						success(data) {
+							if (data.result === "success") {
+								self.commentContent = "";
+								self.loadComments(); // 다시 불러오기
+							} else {
+								alert("댓글 등록 실패");
+							}
+						}
+					});
+				},
+
+				loadComments() {
+					const self = this;
+					$.ajax({
+						url: "/totalDocs/cmtList.dox",
+						type: "POST",
+						dataType: "json",
+						data: { totalNo: self.totalNo },
+						success(data) {
+							if (data.result === "success") {
+								self.comments = data.list;
+							}
+						}
+					});
+				},
+
 				isImage(fileName) { //이미지 파일인지
 					const ext = fileName.split('.').pop().toLowerCase();
 					return ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].includes(ext);
@@ -154,6 +214,9 @@
 			},
 			mounted() {
 				this.fnDocsView();
+				if (this.sessionStatus === 'A') {
+					this.loadComments(); // 관리자만 로드
+				}
 			}
 		});
 		app.mount("#app");

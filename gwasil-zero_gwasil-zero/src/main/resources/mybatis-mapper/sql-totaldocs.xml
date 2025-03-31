@@ -123,6 +123,19 @@
 	    DELETE FROM TOTAL_FILE
 	    WHERE FILE_PATH = #{filePath}
 	</delete>
+	
+	<!--댓글 등록-->
+	<insert id = "insertCmt"  parameterType="hashmap">
+		INSERT INTO TOTAL_CMT
+		VALUES (TOTAL_CMT_SEQ.NEXTVAL, #{contents}, #{totalNo}, SYSDATE, SYSDATE)
+	</insert>
+	
+	<!-- 댓글 리스트 -->
+	<select id="selectCmtList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalCmt"> 
+		SELECT * FROM TOTAL_CMT 
+		ORDER BY CDATE DESC 
+	</select>
+
 
 
 </mapper>

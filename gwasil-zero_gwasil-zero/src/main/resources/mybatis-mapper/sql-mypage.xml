@@ -23,4 +23,34 @@
       WHERE USER_ID = #{sessionId}
    </update>
    
+   
+   <select id="selectLawyerInfo" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+      SELECT *
+      FROM LAWYER
+      WHERE LAWYER_ID = #{sessionId}
+   </select>
+   
+   <update id="updateLawyer" parameterType="hashmap">
+      UPDATE LAWYER
+      SET
+         LAWYER_NAME = #{lawyerName},
+         LAWYER_PHONE = #{lawyerPhone},
+         LAWYER_EMAIL = #{lawyerEmail}
+      WHERE LAWYER_ID = #{sessionId}
+   </update>
+   
+   <update id="deleteLawyer" parameterType="hashmap">
+      UPDATE LAWYER
+      SET
+         LAWYER_STATUS = 'O'
+      WHERE LAWYER_ID = #{sessionId}
+   </update>
+   
+   <update id="updateCounsel" parameterType="hashmap">
+      UPDATE LAWYER
+      SET
+         COUNSEL = #{counsel}
+      WHERE LAWYER_ID = #{lawyerId}
+   </update>
+   
 </mapper>

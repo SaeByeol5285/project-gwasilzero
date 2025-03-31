@@ -22,11 +22,18 @@ public class MypageController {
    
    
 
-   // 마이페이지
+   // 유저 마이페이지
    @RequestMapping("/mypage-home.do")
-   public String mypage(@RequestParam Map<String, Object> map, Model model) throws Exception {
+   public String userMyPage(@RequestParam Map<String, Object> map, Model model) throws Exception {
       model.addAttribute("map", map);
       return "/mypage/mypage-home"; // 뷰 이름 반환
+   }
+   
+   // 변호사 마이페이지
+   @RequestMapping("/mypage/lawyerMyPage.do")
+   public String lawyerMyPage(@RequestParam Map<String, Object> map, Model model) throws Exception {
+      model.addAttribute("map", map);
+      return "/mypage/lawyerMyPage"; 
    }
 
    // 정보수정
@@ -66,6 +73,45 @@ public class MypageController {
       HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
       resultMap = mypageService.removeUser(map);
+      return new Gson().toJson(resultMap);
+   }
+   
+   // 변호사 마이페이지 정보 보기
+   @RequestMapping(value = "/lawyerMyPage/view.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   @ResponseBody
+   public String lawyerView(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+       System.out.println("map: " + map); // 여기 추가
+       HashMap<String, Object> resultMap = mypageService.getLawyer(map);
+       return new Gson().toJson(resultMap);
+   }
+   
+   // 변호사 마이페이지 정보 수정
+   @RequestMapping(value = "/lawyerMyPage/edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   @ResponseBody
+   public String lawyerEdit(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+      HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+      resultMap = mypageService.editLawyer(map);
+      return new Gson().toJson(resultMap);
+   }
+   
+   // 변호사 마이페이지 정보 삭제
+   @RequestMapping(value = "/lawyerMyPage/remove.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   @ResponseBody
+   public String lawyerRemove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+      HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+      resultMap = mypageService.removeLawyer(map);
+      return new Gson().toJson(resultMap);
+   }
+   
+   // 변호사 상담 상태 
+   @RequestMapping(value = "/lawyerMyPage/updateStatus.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   @ResponseBody
+   public String lawyerCounsel(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+      HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+      resultMap = mypageService.counselUpdate(map);
       return new Gson().toJson(resultMap);
    }
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.project.gwasil_zero.model.Lawyer;
 import com.project.gwasil_zero.model.User;
 
 @Mapper
@@ -14,6 +15,14 @@ public interface MypageMapper {
    void updateUser(HashMap<String, Object> map);
 
    void updateStatus(HashMap<String, Object> map);
+
+   Lawyer selectLawyerInfo(HashMap<String, Object> map);
+
+   void updateLawyer(HashMap<String, Object> map);
+
+   void deleteLawyer(HashMap<String, Object> map);
+
+   void updateCounsel(HashMap<String, Object> map);
 
 
    

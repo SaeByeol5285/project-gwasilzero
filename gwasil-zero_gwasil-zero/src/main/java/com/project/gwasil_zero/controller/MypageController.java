@@ -106,6 +106,7 @@ public class MypageController {
    }
    
    // 변호사 상담 상태 
+   
    @RequestMapping(value = "/lawyerMyPage/updateStatus.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
    @ResponseBody
    public String lawyerCounsel(Model model, @RequestParam HashMap<String, Object> map) throws Exception {

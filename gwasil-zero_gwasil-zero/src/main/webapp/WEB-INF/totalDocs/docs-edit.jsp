@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <title>공지사항 수정</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <script src="/js/page-change.js"></script>
     <link rel="stylesheet" href="/css/common.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">

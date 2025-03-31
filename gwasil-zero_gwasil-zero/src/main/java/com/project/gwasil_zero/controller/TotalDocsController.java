@@ -57,6 +57,13 @@ public class TotalDocsController {
 	public String helpAdd(Model model) throws Exception {
 		return "/totalDocs/help-add";
 	}
+	
+	// 가이드라인 리스트
+	@RequestMapping("/totalDocs/guide.do")
+	public String guideList(Model model) throws Exception {
+		return "/totalDocs/guide-list";
+	}
+
 
 	// 리스트
 	@RequestMapping(value = "/totalDocs/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")

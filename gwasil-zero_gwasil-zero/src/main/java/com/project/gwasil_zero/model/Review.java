@@ -12,7 +12,6 @@ public class Review {
 	private String contents;
 	private String cdate;
 	private String udate;
-
 	private int boardNo;
 	private String boardTitle;
 	private String boardStatus;

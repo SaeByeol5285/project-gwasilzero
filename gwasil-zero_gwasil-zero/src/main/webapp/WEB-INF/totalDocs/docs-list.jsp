@@ -105,7 +105,7 @@
 
 			<!-- 우측 하단 버튼 -->
 			<div class="fab-wrapper">
-				<button class="fab-btn" @click="goToAddPage">＋ 글쓰기</button>
+				<button class="fab-btn" v-if="currentTab !== 'guide'" @click="goToAddPage">＋ 글쓰기</button>
 				<button class="fab-btn" v-show="showScrollBtn" @click="scrollToTop">↑ 맨 위로</button>
 			</div>
 		</div>
@@ -229,17 +229,27 @@
 				}
 			},
 			mounted() {
-				if (this.kind === "NOTICE" || this.kind == '') {
+				// 쿼리스트링에서 탭 정보 읽기
+				const urlParams = new URLSearchParams(window.location.search);
+				const tab = urlParams.get("tab");
+
+				if (tab === "notice" || tab === "help" || tab === "guide") {
+					this.currentTab = tab;
+				} else if (this.kind === "NOTICE" || this.kind == '') {
 					this.currentTab = "notice";
-					this.fnNoticeList();
 				} else if (this.kind === "HELP") {
 					this.currentTab = "help";
+				}
+
+				// 탭에 따라 초기 데이터 로딩
+				if (this.currentTab === "notice") {
+					this.fnNoticeList();
+				} else if (this.currentTab === "help") {
 					this.fnHelpList();
 				}
+
+				// 맨 위로 버튼 이벤트
 				window.addEventListener("scroll", this.handleScroll);
-			},
-			beforeUnmount() {
-				window.removeEventListener("scroll", this.handleScroll);
 			}
 		});
 		app.mount("#app");

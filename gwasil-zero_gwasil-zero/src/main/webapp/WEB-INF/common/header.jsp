@@ -37,7 +37,7 @@
                                     <div class="dropdown" v-if="sections[index] && sections[index].length">
                                         <ul>
                                             <li v-for="(sub, i) in sections[index]" :key="i">
-                                                <a href="#">{{ sub }}</a>
+                                                <a :href="sub.url">{{ sub.name }}</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -68,9 +68,17 @@
                         sections: [
                             [],
                             [],
-                            ['소속 변호사', '개인 변호사', '사무소 위치'],
+                            [
+                                { name: '소속 변호사', url: '/profile/innerLawyer.do' },
+                                { name: '개인 변호사', url: '/profile/personalLawyer.do' },
+                                { name: '사무소 위치', url: '/lawyer/office.do' }
+                            ],
                             [],
-                            ['공지사항', 'Q & A', '사건 종류 가이드']
+                            [
+                                { name: '공지사항', url: '/totalDocs/list.do?tab=notice' },
+                                { name: 'Q & A', url: '/totalDocs/list.do?tab=help' },
+                                { name: '사건 종류 가이드', url: '/totalDocs/list.do?tab=guide' }
+                            ]
                         ]
                     }
                 },

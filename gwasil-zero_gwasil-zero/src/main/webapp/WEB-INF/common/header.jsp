@@ -10,13 +10,40 @@
 <!-- Vue, jQuery 등 라이브러리는 한 번만 로드 -->
 <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-
+<script src="/js/page-change.js"></script>
 
 <div id="header">
     <header>
         <!-- 로그인 / 북마크 / 알림 -->
         <div class="header-line">
-            <a v-if="sessionType === 'user'" href="/notification/list.do">새 소식</a>
+			<a v-if="sessionType === 'user'" href="javascript:void(0);" class="noti-link" @click="toggleNotification" ref="notiToggle">
+			    새 소식
+			    <span v-if="list.length > 0" class="noti-badge">{{ list.length > 9 ? '9+' : list.length }}</span>
+
+				<div v-if="showNotification" class="noti-popup"  ref="notiPopup" @click.stop>
+				    <div class="noti-section">
+				        <h4>댓글 알림</h4>
+				        <div class="noti-list" v-if="commentNoti.length > 0">
+				            <div class="noti-item" v-for="item in commentNoti" :key="item.notiNo" @click="markAsRead(item)">
+				                {{ item.contents }}
+				                <br><small>{{ item.createdAt }}</small>
+				            </div>
+				        </div>
+				        <div v-else class="noti-empty">댓글 알림이 없습니다.</div>
+				    </div>
+
+				    <div class="noti-section">
+				        <h4>채팅 알림</h4>
+				        <div class="noti-list" v-if="messageNoti.length > 0">
+				            <div class="noti-item" v-for="item in messageNoti" :key="item.notiNo">
+				                {{ item.contents }}
+				                <br><small>{{ item.createdAt }}</small>
+				            </div>
+				        </div>
+				        <div v-else class="noti-empty">채팅 알림이 없습니다.</div>
+				    </div>
+				</div>
+			</a>
             <a v-if="sessionType === 'user'" href="/bookmark/list.do">북마크 목록</a>
             <a href="#">고객만족센터</a>
             <a v-if="sessionId === ''" href="/user/login.do">로그인 / 회원가입</a>
@@ -56,10 +83,13 @@
     const header = Vue.createApp({
         data() {
             return {
+				showNotification: false,
                 sessionId: "${sessionScope.sessionId}",
                 sessionType: "${sessionScope.sessionType}",
                 sessionStatus: "${sessionScope.sessionStatus}", // 예: A, U 등
-                list: [], // 알림 리스트 등
+                list: [],
+				commentNoti : [],
+				messageNoti : [],
                 menuItems: [
                     { name: '회사 소개', url: '/common/introduce.do' },
                     { name: '패키지 소개', url: '/package/package.do' },
@@ -95,19 +125,68 @@
                     success(data) {
                         if (data.result === "success") {
                             self.list = data.list;
+							self.commentNoti = data.list.filter(n => n.notiType === 'C');
+							self.messageNoti = data.list.filter(n => n.notiType === 'M');
 							console.log(self.list);
                         } else {
                             console.warn("알림 로딩 실패");
                         }
                     }
                 });
-            }
+            },
+			toggleNotification() {
+				this.showNotification = !this.showNotification;
+			    if (this.showNotification) {
+			    	this.fnGetNotificationList();
+			    }
+			},
+			markAsRead(item) {
+				let self = this;
+			    // 읽음
+				if (!confirm("해당 게시글로 이동하시겠습니까?")) {
+					return;
+				}
+				
+			    $.ajax({
+			       url: "/notification/read.dox",
+			       type: "POST",
+			       data: { notiNo: item.notiNo },
+			       success: () => {
+						self.fnGetNotificationList();
+						self.fnBoardView(item);
+			    	}
+				});
+			},
+			handleClickOutside(event) {
+			        const toggle = this.$refs.notiToggle;
+			        const popup = this.$refs.notiPopup;
+
+			        if (!toggle || !popup) return;
+
+			        if (
+			            !toggle.contains(event.target) &&
+			            !popup.contains(event.target)
+			        ) {
+			            this.showNotification = false;
+			        }
+			    },
+			fnBoardView(item) {  // 읽음처리 후 해당보드로 넘어가기
+				let self = this;
+				pageChange("/board/view.do", {boardNo : item.boardNo});
+			}
         },
         mounted() {
-            if (this.sessionType === 'user') {
-                this.fnGetNotificationList();
+			let self = this;
+			
+            if (self.sessionType === 'user') {
+                self.fnGetNotificationList();
             }
-        }
+			
+			document.addEventListener('click', self.handleClickOutside);
+        },
+		beforeUnmount() {
+		    document.removeEventListener('click', this.handleClickOutside);
+		},
     });
     header.mount("#header");
 </script>

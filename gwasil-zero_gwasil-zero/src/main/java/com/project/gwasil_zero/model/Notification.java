@@ -11,4 +11,5 @@ public class Notification {
 	private boolean isRead;
 	private String createdAt;
 	private String senderId;
+	private int boardNo;
 }

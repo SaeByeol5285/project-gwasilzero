@@ -312,7 +312,8 @@
 					senderId : self.sessionId,
 					notiType : "C",
 					contents : "새 댓글이 달렸습니다",
-					receiverId : self.makerId
+					receiverId : self.makerId,
+					boardNo : self.boardNo
 				};
 				$.ajax({
 					url:"/notification/add.dox",

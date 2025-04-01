@@ -47,7 +47,7 @@ public class NotificationController {
 		return new Gson().toJson(resultMap);
 	}
 	
-	@RequestMapping(value = "/notification/update.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/notification/read.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String notificationIsRead(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();

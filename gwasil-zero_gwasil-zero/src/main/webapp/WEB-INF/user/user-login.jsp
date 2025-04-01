@@ -47,7 +47,7 @@
             font-size: 16px;
         }
 
-        a {
+        #app a {
             display: inline-block;
             margin: 10px;
             font-size: 14px;
@@ -105,19 +105,20 @@
         #app button:hover {
             background-color: #e64a00;
             transform: scale(1.05);
-            /* 호버 시 약간 확대 */
+
         }
 
         #app button:active {
+
             transform: scale(0.95);
-            /* 클릭 시 약간 눌리는 효과 */
+
         }
     </style>
 
     <body>
         <jsp:include page="../common/header.jsp" />
-        <link rel="stylesheet" href="/css/common.css">
         <div id="app">
+
             <h1>로그인</h1>
             <div>
                 <label>아이디</label>

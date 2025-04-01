@@ -17,5 +17,6 @@ public class Board {
 	private String lawyerReview;
 	private String thumbnailPath;
 	private String lawyerName;
+	private String userName; 
 
 }

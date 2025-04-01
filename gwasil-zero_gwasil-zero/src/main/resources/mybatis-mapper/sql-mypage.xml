@@ -1,26 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.project.gwasil_zero.mapper.MypageMapper">
-   <select id="selectUserInfo" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
-      SELECT *
-      FROM TBL_USER
-      WHERE USER_ID = #{sessionId}
-   </select>
-   <update id="updateUser" parameterType="hashmap">
-      UPDATE TBL_USER
-      SET
-         USER_NAME = #{userName},
-         USER_PHONE = #{userPhone},
-         USER_EMAIL = #{userEmail}
-      WHERE USER_ID = #{sessionId}
-   </update>
-   <update id="updateStatus" parameterType="hashmap">
-      UPDATE TBL_USER
-      SET
-         USER_STATUS = 'Out'
-      WHERE USER_ID = #{sessionId}
-   </update>
-   
+	<select id="selectUser" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+	    SELECT USER_NAME, USER_PHONE, USER_EMAIL
+	    FROM TBL_USER
+	    WHERE USER_ID = #{userId}
+	</select>
+	<delete id="deleteUser" parameterType="hashmap">
+	    DELETE FROM TBL_USER
+	    WHERE USER_ID = #{userId}
+	</delete>
+	
+	<select id="selectUserBoardList" parameterType="hashmap" resultType="hashmap">
+	    SELECT
+	        B.BOARD_NO AS boardNo,
+	        B.BOARD_TITLE AS boardTitle,
+	        B.CONTENTS AS contents,
+	        F.FILE_PATH || '/' || F.FILE_REALNAME AS thumb
+	    FROM
+	        BOARD B
+	    LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
+	    WHERE
+	        B.USER_ID = #{userId}
+	    ORDER BY B.CDATE DESC
+	</select>
+	
+	<select id="selectMyChatList" parameterType="hashmap" resultType="hashmap">
+	    SELECT
+	        CM.CHAT_NO AS chatNo,
+	        CM.MESSAGE AS message,
+	        C.RECEIVER_ID AS receiverId
+	    FROM CHAT_MESSAGE CM
+	    JOIN CHAT C ON CM.CHAT_NO = C.CHAT_NO
+	    WHERE C.SENDER_ID = #{userId}
+	    ORDER BY CM.TIME DESC
+	</select>
+	
+	
+	<select id="selectMyPayList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
+	    SELECT *
+	    FROM PAY
+	   	WHERE USER_ID = #{userId}
+	    
+	</select>
+	
+	<select id="selectUserForMypage" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+	    SELECT USER_NAME, USER_PHONE, USER_EMAIL, USER_ID
+	    FROM TBL_USER
+	    WHERE USER_ID = #{userId}
+	</select>
+	
 </mapper>

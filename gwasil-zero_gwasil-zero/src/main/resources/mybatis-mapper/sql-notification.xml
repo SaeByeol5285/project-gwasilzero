@@ -8,7 +8,11 @@
 	</select>
 	
 	<insert id="insertNotification" parameterType="hashmap">
-		insert into notification values(notification_seq.nextval, #{receiverId}, #{notiType}, #{contents}, 'N', sysdate, #{senderId}, <if test="boardNo != null"> #{boardNo}</if> <if test="boardNo == null"> null</if>)
+		insert into notification values(notification_seq.nextval, #{receiverId}, #{notiType}, #{contents}, 'N', sysdate, #{senderId}, <if test="boardNo != null"> #{boardNo}</if> <if test="boardNo == null"> null</if>, null)
+	</insert>
+	
+	<insert id="insertNotificationToMessage" parameterType="hashmap">
+		insert into notification values(notification_seq.nextval, #{receiverId}, #{notiType}, #{contents}, 'N', sysdate, #{senderId},null, #{chatNo})
 	</insert>
 	
 	<delete id="deleteNotification" parameterType="hashmap">
@@ -18,4 +22,12 @@
 	<update id="updateNotification" parameterType="hashmap">
 		update notification set is_read = 'Y' where noti_no = #{notiNo}
 	</update>
+	
+	<select id="countUnreadNotificationByChatNo" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*) 
+    FROM notification 
+    WHERE is_read = 'N' 
+      AND chat_no = #{chatNo} 
+      AND receiver_id = #{receiverId}
+</select>
 </mapper>

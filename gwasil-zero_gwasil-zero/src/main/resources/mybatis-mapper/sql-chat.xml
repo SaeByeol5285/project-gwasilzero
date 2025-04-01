@@ -62,4 +62,14 @@
 	  LEFT JOIN lawyer l ON f.sender_id = l.lawyer_id
 	  WHERE f.chat_no = #{chatNo}
 	</select>
+	
+	<select id="selectReceiverIdFromChat" parameterType="hashmap" resultType="string">
+    SELECT 
+        CASE 
+            WHEN sender_id = #{senderId} THEN receiver_id 
+            ELSE sender_id 
+        END AS receiver_id
+    FROM chat
+    WHERE chat_no = #{chatNo}
+</select>
 </mapper>

@@ -17,4 +17,8 @@ public interface NotificationMapper {
 	public void deleteNotification(HashMap<String, Object> map);
 	
 	public void updateNotification(HashMap<String, Object> map);
+	
+	public void insertNotificationToMessage(HashMap<String, Object> map);
+	
+	int countUnreadNotificationByChatNo(HashMap<String, Object> map);
 }

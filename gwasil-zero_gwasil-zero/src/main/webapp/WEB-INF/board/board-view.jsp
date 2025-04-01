@@ -167,12 +167,30 @@
 		        {{ cmt.lawyerName }} | {{ cmt.cdate }}
 		        
 		        <!-- 북마크 아이콘 -->
-		        <img
-		          v-if="sessionType === 'user'"
-		          :src="isBookmarked(cmt.lawyerId) ? '/img/selectedBookmark.png' : '/img/Bookmark.png'"
-		          @click="toggleBookmark(cmt.lawyerId)"
-		          style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
-		        />
+				<img
+				  v-if="sessionType === 'user'"
+				  :src="isBookmarked(cmt.lawyerId) ? '/img/selectedBookmark.png' : '/img/Bookmark.png'"
+				  @click="toggleBookmark(cmt.lawyerId)"
+				  style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
+				/>
+
+				<!-- 계약 아이콘 -->
+				<img
+				  v-if="sessionType === 'user'"
+				  src="/img/contract.png"
+				  @click="startContract(cmt.lawyerId)"
+				  title="계약하기"
+				  style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
+				/>
+
+				<!-- 채팅 아이콘 -->
+				<img
+				  v-if="sessionType === 'user'"
+				  src="/img/icon-chat.png"
+				  @click="startChat(cmt.lawyerId)"
+				  title="채팅하기"
+				  style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
+				/>
 		      </div>
 		      <div class="comment-text">{{ cmt.contents }}</div>
 		    </div>
@@ -329,7 +347,16 @@
 						}
 					}
 				});
-			 }
+			 },
+			 startContract(lawyerId) {
+			        // 계약하기 페이지로 이동 (예: contract.do?lawyerId=XXX)
+			        pageChange("/contract/start.do", { lawyerId: lawyerId });
+			    },
+
+			    startChat(lawyerId) {
+			        // 채팅방으로 이동 (예: chat.do?lawyerId=XXX)
+			        pageChange("/chat/chat.do", { lawyerId: lawyerId });
+			    }
 	    },
 	    mounted() {
 			let self = this;

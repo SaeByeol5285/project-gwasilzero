@@ -47,6 +47,22 @@ public class NotificationService {
 		return resultMap;
 	}
 	
+	public HashMap<String, Object> addNotificationToMessage(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		try {
+			 notificationMapper.insertNotificationToMessage(map);
+			resultMap.put("result", "success");
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			resultMap.put("result", "failed");
+			
+		}
+		
+		return resultMap;
+	}
+	
 	public HashMap<String, Object> removeNotification(HashMap<String, Object> map){
 		HashMap<String, Object> resultMap = new HashMap<>();
 		

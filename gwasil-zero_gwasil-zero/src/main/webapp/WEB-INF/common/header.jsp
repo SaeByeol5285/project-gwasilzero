@@ -35,7 +35,7 @@
 				    <div class="noti-section">
 				        <h4>채팅 알림</h4>
 				        <div class="noti-list" v-if="messageNoti.length > 0">
-				            <div class="noti-item" v-for="item in messageNoti" :key="item.notiNo">
+				            <div class="noti-item" v-for="item in messageNoti" :key="item.notiNo" @click="fnChat">
 				                {{ item.contents }}
 				                <br><small>{{ item.createdAt }}</small>
 				            </div>
@@ -142,7 +142,7 @@
 			},
 			markAsRead(item) {
 				let self = this;
-			    // 읽음
+			    // 읽음처리
 				if (!confirm("해당 게시글로 이동하시겠습니까?")) {
 					return;
 				}
@@ -173,6 +173,21 @@
 			fnBoardView(item) {  // 읽음처리 후 해당보드로 넘어가기
 				let self = this;
 				pageChange("/board/view.do", {boardNo : item.boardNo});
+			},
+			fnChat(){
+				let self = this;
+				// 읽음처리
+				if (!confirm("해당 게시글로 이동하시겠습니까?")) {
+					return;
+				}
+				$.ajax({
+					url: "/notification/read.dox",
+					type: "POST",
+					data: { notiNo: item.notiNo },
+						success: () => {
+							location.href="/chat/chat/do";
+					}
+				});			
 			}
         },
         mounted() {

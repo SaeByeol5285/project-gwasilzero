@@ -17,7 +17,9 @@ public interface ChatMapper {
 	  
 	  String selectSenderName(String senderId); // 유저 변호사 페이지 조회해서 이름 갖고옴
 
-	List<ChatMessage> selectChatMessages(HashMap<String, Object> map);
+	  List<ChatMessage> selectChatMessages(HashMap<String, Object> map);
 
-	List<ChatFile> selectChatFiles(HashMap<String, Object> map);
+	  List<ChatFile> selectChatFiles(HashMap<String, Object> map);
+	
+	  String selectReceiverIdFromChat(HashMap<String, Object> map);
 }

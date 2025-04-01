@@ -210,6 +210,3 @@
     </script>
 
     </html>
-
-
-ChatGPT

@@ -9,98 +9,9 @@
 		<script src="/js/page-change.js"></script>
 		<link rel="stylesheet" href="/css/common.css">
 		<link rel="stylesheet" href="/css/totalDocs.css">
-		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap"
-			rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 		<title>통합 자료실</title>
 		<style>
-			.guide-card-grid {
-				display: grid;
-				grid-template-columns: repeat(3, 1fr);
-				gap: 20px;
-			}
-
-			.mini-card {
-				background-color: #fff7f2;
-				border: 1px solid #ffe3d0;
-				border-radius: 10px;
-				padding: 16px;
-				min-height: 100px;
-				box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-				transition: box-shadow 0.2s;
-			}
-
-			.mini-card:hover {
-				box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
-			}
-
-			.card-title {
-				color: var(--main-color);
-				font-weight: bold;
-			}
-
-			.card-summary {
-				font-size: 14px;
-				color: #333;
-				margin-top: 4px;
-			}
-
-			.arrow-icon {
-				float: right;
-				color: #bbb;
-			}
-
-			.text-center {
-				text-align: center;
-			}
-
-			.big-button {
-				padding: 14px 28px;
-				font-size: 16px;
-				font-weight: bold;
-				border-radius: 8px;
-				background-color: #ff5c00;
-				color: white;
-				transition: all 0.3s ease;
-			}
-
-			.big-button:hover {
-				background-color: #e64a00;
-				transform: scale(1.03);
-			}
-
-			.tab-menu {
-				display: flex;
-				gap: 12px;
-				justify-content: center;
-				margin: 40px 0 30px;
-			}
-
-
-			.tab-btn {
-				padding: 12px 24px;
-				border: none;
-				border-radius: 999px;
-				background-color: #f6f6f6;
-				font-size: 16px;
-				font-weight: 500;
-				color: #444;
-				cursor: pointer;
-				transition: all 0.2s ease;
-				box-shadow: inset 0 0 0 1px #ddd;
-			}
-
-			.tab-btn:hover {
-				background-color: #ffece1;
-				color: #ff5c00;
-			}
-
-			.tab-btn.active {
-				background-color: #ff5c00;
-				color: #fff;
-				font-weight: 600;
-				box-shadow: none;
-			}
-
 			* {
 				font-family: 'Noto Sans KR', sans-serif;
 			}
@@ -169,6 +80,7 @@
 							<option value="writer">작성자</option>
 						</select>
 						<input v-model="keyword" @keyup.enter="fnHelpList" class="search-input" placeholder="검색어 입력">
+						<button v-if="keyword" @click="keyword = ''" class="btn btn-small">×</button>
 						<button @click="fnHelpList" class="btn btn-primary">검색</button>
 					</div>
 					<select v-model="pageSize" @change="fnHelpList" class="search-select" style="min-width: 100px;">
@@ -179,11 +91,14 @@
 					</select>
 				</div>
 
-				<div class="card mb-20" v-for="item in list" :key="item.totalNo" @click="fnHelpView(item.totalNo)"
-					style="cursor:pointer;">
+				<div class="card mb-20" v-for="item in list" :key="item.totalNo" @click="fnHelpView(item.totalNo)" style="cursor:pointer;">
 					<h3>{{ item.totalTitle }}</h3>
 					<p>작성자: {{ item.userId }}</p>
 					<p>작성일: {{ item.cdate }}</p>
+					<div>
+						<span v-if="item.answerStatus == '답변완료'" class="btn btn-primary">{{ item.answerStatus }}</span>
+						<span v-else class="btn btn-outline">{{ item.answerStatus }}</span>
+					</div>
 				</div>
 
 				<div class="flex-center mt-40">
@@ -220,6 +135,7 @@
 								전체 가이드 보기
 							</a>
 						</div>
+
 					</div>
 				</div>
 			</div>
@@ -428,6 +344,7 @@
 						success: function (data) {
 							self.list = data.list;
 							self.index = Math.ceil(data.count / self.pageSize);
+							self.page = 1;
 						}
 					});
 				},
@@ -446,8 +363,11 @@
 						dataType: "json",
 						data: params,
 						success: function (data) {
+							console.log(data);
 							self.list = data.list;
 							self.index = Math.ceil(data.count / self.pageSize);
+							self.page = 1;
+
 						}
 					});
 				},

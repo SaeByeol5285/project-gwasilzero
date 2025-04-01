@@ -250,7 +250,18 @@ public class TotalDocsController {
 		}
 		return "redirect:/notice/list.do";
 	}
-	// 댓글 달기
+	
+	// 댓글 리스트 불러오기
+	@RequestMapping(value = "/totalDocs/cmtList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String docsCmtList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = totalDocsService.getCmtList(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 댓글추가
 	@RequestMapping(value = "/totalDocs/addCmt.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String docsCmtAdd(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
@@ -259,14 +270,24 @@ public class TotalDocsController {
 		resultMap = totalDocsService.addCmt(map);
 		return new Gson().toJson(resultMap);
 	}
-	
-	// 댓글 리스트 불러오기
-	@RequestMapping(value = "/totalDocs/cmtList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	@ResponseBody
-	public String docsCmtList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
-		resultMap = totalDocsService.getCmtList(map);
+	// 댓글수정
+	@RequestMapping(value = "/totalDocs/editCmt.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String docsCmtEdit(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = totalDocsService.editCmt(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 댓글삭제
+	@RequestMapping(value = "/totalDocs/removeCmt.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String docsCmtRemove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = totalDocsService.removeCmt(map);
 		return new Gson().toJson(resultMap);
 	}
 

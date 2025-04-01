@@ -37,14 +37,14 @@
 					<div class="detail-contents" v-html="info.totalContents"></div>
 				</div>
 
-				<span v-if="sessionId == info.userId" class="mb-20">
-					<button @click="fnEdit(info.totalNo)" class="btn btn-outline">수정</button>
-				</span>
-				<span v-if="sessionStatus == 'A' || sessionId == info.userId" class="mb-20">
-					<button @click="fnRemove(info.totalNo)" class="btn btn-outline">삭제</button>
-				</span>
-				<div class="mb-20">
-					<button @click="goToListPage" class="btn btn-outline">목록보기</button>
+				<div class="button-wrap" style="display: flex; justify-content: space-between; margin-top: 20px;">
+					<div class="left-buttons">
+						<button class="btn btn-outline">수정</button>
+						<button class="btn btn-outline">삭제</button>
+					</div>
+					<div class="right-buttons">
+						<button @click="goToListPage" class="btn btn-primary">목록보기</button>
+					</div>
 				</div>
 			</div>
 
@@ -55,23 +55,40 @@
 				<div v-if="next">
 					➡️ 다음글: <a href="javascript:void(0)" @click="moveTo(next.totalNo)">{{ next.totalTitle }}</a>
 				</div>
-				<!-- 댓글 영역: 관리자만 보임 -->
-				<div v-if="sessionStatus === 'A'" class="mt-40">
-					<h3 class="section-title">관리자 댓글</h3>
-					<div class="form-group mb-10">
-						<textarea v-model="commentContent" rows="3" placeholder="댓글을 입력하세요" style="width: 100%; padding: 10px;"></textarea>
-					</div>
-					<div>
-						<button @click="submitComment" class="btn btn-primary">댓글 등록</button>
-					</div>
-					<!-- 댓글 리스트 -->
-					<ul class="mt-20" v-if="comments.length > 0">
-						<li v-for="(comment, idx) in comments" :key="idx" style="margin-bottom: 10px;">
-							<strong>{{ comment.writer }}</strong>: {{ comment.content }} <small style="color: #aaa;">{{comment.cdate }}</small>
-						</li>
-					</ul>
+			</div>
+			<!-- 댓글 영역: 관리자만 보임 -->
+			<div class="mt-40" v-if="sessionStatus == 'A'">
+				<h3 class="section-title">관리자 댓글</h3>
+				<div class="form-group mb-10">
+					<textarea v-model="cmtContents" rows="3" placeholder="댓글을 입력하세요"
+						style="width: 100%; padding: 10px;"></textarea>
+				</div>
+				<div>
+					<button @click="fnAddCmt" class="btn btn-primary">댓글 등록</button>
 				</div>
 			</div>
+			<!-- 댓글 리스트 -->
+			<ul class="mt-20">
+				<li v-for="(comment, idx) in cmtList" :key="idx" style="margin-bottom: 10px;">
+					<div v-if="editCmtId === comment.cmtNo">
+						<textarea v-model="editContents" rows="3" style="width: 100%; padding: 10px;"></textarea>
+						<div style="margin-top: 5px;">
+							<button @click="fnSaveCmt(comment.cmtNo)" class="btn btn-outline">수정 완료</button>
+							<button @click="editCmtId = null" class="btn btn-danger">취소</button>
+						</div>
+					</div>
+					<div v-else>
+						<strong>[관리자 답변]</strong>: {{ comment.contents }}
+						<small style="color: #aaa;">{{ comment.cdate }}</small>
+						<div style="margin-top: 5px;">
+							<button @click="fnEditCmt(comment)" class="btn btn-outline btn-sm">수정</button>
+							<button @click="fnRemoveCmt(comment.cmtNo)" class="btn btn-danger btn-sm">삭제</button>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<p v-else class="mt-20" style="color: #888;">아직 등록된 댓글이 없습니다.</p>
+
 		</div>
 		<jsp:include page="../common/footer.jsp" />
 	</body>
@@ -90,10 +107,11 @@
 					next: null,
 					sessionStatus: "A",
 					sessionId: "101", //"${sessionId}"
-					commentContent: "",
-					comments: [],
-
-
+					cmtContents: "",
+					cmtList: [], //댓글리스트
+					isSubmitting: false,
+					editCmtId: null,
+					editContents: '',
 				};
 			},
 			methods: {
@@ -110,6 +128,7 @@
 						data: nparmap,
 						success(data) {
 							if (data.result === "success") {
+								console.log(data);
 								self.info = data.info;
 								self.fileList = data.fileList;
 								self.fnAdjacent(self.totalNo, self.info.kind);
@@ -132,46 +151,101 @@
 						}
 					});
 				},
-				submitComment() {
-					if (!this.commentContent.trim()) {
+				fnGetCmtList() {
+					var self = this;
+					var nparmap = {
+						totalNo: self.totalNo
+					};
+					$.ajax({
+						url: "/totalDocs/cmtList.dox",
+						type: "POST",
+						dataType: "json",
+						data: nparmap,
+						success(data) {
+							console.log(data);
+							if (data.result === "success") {
+								self.cmtList = data.list;
+							}
+						}
+					});
+				},
+				fnAddCmt() {
+					const self = this;
+					if (self.isSubmitting) return;
+					if (!self.cmtContents.trim()) {
 						alert("댓글 내용을 입력해주세요.");
 						return;
 					}
-					const self = this;
+					self.isSubmitting = true;
+					var nparmap = {
+						totalNo: self.totalNo,
+						contents: self.cmtContents
+					};
 					$.ajax({
 						url: "/totalDocs/addCmt.dox",
 						type: "POST",
 						dataType: "json",
-						data: {
-							totalNo: self.totalNo,
-							content: self.commentContent
-						},
+						data: nparmap,
 						success(data) {
-							if (data.result === "success") {
-								self.commentContent = "";
-								self.loadComments(); // 다시 불러오기
+							if (data.result == "success") {
+								self.cmtContents = "";
+								self.isSubmitting = false;
+								self.fnGetCmtList();
 							} else {
+								self.isSubmitting = false;
 								alert("댓글 등록 실패");
 							}
 						}
 					});
 				},
-
-				loadComments() {
+				fnEditCmt(comment) {
+					this.editCmtId = comment.cmtNo;
+					this.editContents = comment.contents;
+				},
+				fnSaveCmt(cmtNo) {
 					const self = this;
+					if (!self.editContents.trim()) return alert("내용을 입력하세요");
+					var nparmap = {
+						cmtNo: cmtNo,
+						contents: self.editContents
+					};
 					$.ajax({
-						url: "/totalDocs/cmtList.dox",
+						url: "/totalDocs/editCmt.dox",
 						type: "POST",
 						dataType: "json",
-						data: { totalNo: self.totalNo },
+						data: nparmap,
 						success(data) {
-							if (data.result === "success") {
-								self.comments = data.list;
+							if (data.result == "success") {
+								self.editCmtId = null;
+								self.editContents = '';
+								self.fnGetCmtList();
+							} else {
+								alert("수정 실패");							
 							}
 						}
 					});
 				},
-
+				fnRemoveCmt(cmtNo) {
+					const self = this;
+					if (!confirm("정말 삭제하시겠습니까?")) return;
+					var nparmap = {
+						cmtNo : cmtNo,
+					};
+					$.ajax({
+						url: "/totalDocs/removeCmt.dox",
+						type: "POST",
+						dataType: "json",
+						data: nparmap,
+						success(data) {
+							if (data.result == "success") {
+								alert("답변이 삭제되었습니다.");
+								self.fnGetCmtList();
+							} else {
+								alert("삭제 실패");						
+							}
+						}
+					});
+				},
 				isImage(fileName) { //이미지 파일인지
 					const ext = fileName.split('.').pop().toLowerCase();
 					return ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].includes(ext);
@@ -214,9 +288,7 @@
 			},
 			mounted() {
 				this.fnDocsView();
-				if (this.sessionStatus === 'A') {
-					this.loadComments(); // 관리자만 로드
-				}
+				this.fnGetCmtList();
 			}
 		});
 		app.mount("#app");

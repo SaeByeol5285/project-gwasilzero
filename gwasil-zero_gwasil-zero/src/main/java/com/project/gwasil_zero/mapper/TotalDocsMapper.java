@@ -54,6 +54,14 @@ public interface TotalDocsMapper {
 	//댓글 리스트
 	List<TotalCmt> selectCmtList(HashMap<String, Object> map);
 
+	//댓글 수정
+	int updateCmt(HashMap<String, Object> map);
+
+	//댓글 삭제
+	int deleteCmt(HashMap<String, Object> map);
+
+
+
 
 
 

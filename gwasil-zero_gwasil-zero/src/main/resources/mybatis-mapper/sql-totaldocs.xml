@@ -4,10 +4,13 @@
 
 <mapper namespace="com.project.gwasil_zero.mapper.TotalDocsMapper">
 	
-	<!-- 리스트 -->
-	<select id="selectDocsList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs"> 
-		SELECT * FROM TOTALDOCS 
-		WHERE KIND = #{kind} 
+	<!-- 리스트, 답변 개수 조회 -->
+	<select id="selectDocsList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs">
+		SELECT D.*, 
+				(SELECT COUNT(*) FROM TOTAL_CMT C WHERE C.TOTAL_NO = D.TOTAL_NO) AS ANSWER_COUNT
+		FROM TOTALDOCS D 
+		WHERE KIND = #{kind}
+		
 		<if test="searchOption != null and searchOption == 'all'">
 			AND (TOTAL_TITLE LIKE '%' || #{keyword} || '%' OR USER_ID LIKE '%' || #{keyword} || '%')
 		</if>
@@ -18,9 +21,10 @@
 	
 		<if test="searchOption != null and searchOption == 'writer'">
 			AND (USER_ID LIKE '%' || #{keyword} || '%')
-		</if> 
+		</if>
+	
 		ORDER BY CDATE DESC 
-		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY 
+		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
 	</select>
 
 	<!-- 페이징 -->
@@ -132,9 +136,25 @@
 	
 	<!-- 댓글 리스트 -->
 	<select id="selectCmtList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalCmt"> 
-		SELECT * FROM TOTAL_CMT 
-		ORDER BY CDATE DESC 
+		SELECT * 
+		FROM TOTAL_CMT
+		WHERE TOTAL_NO = #{totalNo}
 	</select>
+	
+	<!--댓글 수정-->
+	<update id="updateCmt" parameterType="hashmap">
+		UPDATE TOTAL_CMT
+		SET
+			CONTENTS = #{contents}
+		WHERE CMT_NO = #{cmtNo} 
+	</update>
+	
+	<!--댓글 삭제-->
+	<delete id="deleteCmt" parameterType="hashmap">
+		DELETE FROM TOTAL_CMT
+		WHERE CMT_NO = #{cmtNo}
+	</delete>
+	
 
 
 

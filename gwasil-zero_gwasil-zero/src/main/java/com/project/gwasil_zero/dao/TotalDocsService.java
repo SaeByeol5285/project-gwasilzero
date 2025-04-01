@@ -22,7 +22,13 @@ public class TotalDocsService {
 		try {
 			List<TotalDocs> list = totalDocsMapper.selectDocsList(map);
 			int count = totalDocsMapper.selectDocsCnt(map);
-			resultMap.put("list", list);
+			
+			for (TotalDocs doc : list) {
+			    int cmtCount = doc.getAnswerCount();
+			    doc.setAnswerStatus(cmtCount > 0 ? "답변완료" : "답변대기");
+			}
+			
+			resultMap.put("list", list);			
 			resultMap.put("count", count);
 			resultMap.put("result", "success");
 		} catch (Exception e) {
@@ -175,6 +181,31 @@ public class TotalDocsService {
 			resultMap.put("result", "success");
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;	}
+
+	//댓글 수정
+	public HashMap<String, Object> editCmt(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		int num = totalDocsMapper.updateCmt(map);
+		if (num > 0) {
+			resultMap.put("result", "success");
+		} else {
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
+
+	//댓글 삭제
+	public HashMap<String, Object> removeCmt(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		int num = totalDocsMapper.deleteCmt(map);
+		if (num > 0) {
+			resultMap.put("result", "success");
+		} else {
 			resultMap.put("result", "fail");
 		}
 		return resultMap;	}

@@ -1,69 +1,95 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    <!DOCTYPE html>
-    <html>
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
 
-    <head>
-        <meta charset="UTF-8">
-        <script src="https://code.jquery.com/jquery-3.7.1.js"
-            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-        <link rel="stylesheet" href="/css/header.css">
-        <link rel="stylesheet" href="/css/common.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
-        <title>header.jsp</title>
-    </head>
+    <!-- Vue, jQuery 등 라이브러리는 한 번만 로드 -->
+    <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+    <script src="/js/page-change.js"></script>
 
-    <body>
-        <div id="header">
-            <header>
-                <!-- 상단 로그인 / 고객센터 라인 -->
-                <div class="header-line">
-                    <a href="#">고객만족센터</a>
-                    <a v-if="sessionId == ''" href="/user/login.do">로그인 / 회원가입</a>
-                    <a v-else href="#">로그아웃</a>
-                    <a v-if="sessionId != ''" href="/mypage-home.do">마이페이지</a>
-                </div>
+    <div id="header">
+        <header>
+            <!-- 로그인 / 북마크 / 알림 -->
+            <div class="header-line">
+                <a v-if="sessionType === 'user'" href="javascript:void(0);" class="noti-link"
+                    @click="toggleNotification" ref="notiToggle">
+                    새 소식
+                    <span v-if="list.length > 0" class="noti-badge">{{ list.length > 9 ? '9+' : list.length }}</span>
 
-                <!-- 네비게이션 바 -->
-                <nav class="main-nav-wrapper">
-                    <div class="main-nav">
-                        <!-- 로고 -->
-                        <a href="/common/main.do" class="logo">
-                            <img src="/img/logo1.png" alt="로고 이미지">
-                        </a>
-
-                        <!-- 메뉴 -->
-                        <ul class="main-menu">
-                            <li class="menu-item" v-for="(item, index) in menuItems" :key="index">
-                                <a :href="item.url" class="menu-font">{{ item.name }}</a>
-                                <div class="dropdown" v-if="sections[index] && sections[index].length">
-                                    <ul>
-                                        <li v-for="(sub, i) in sections[index]" :key="i">
-                                            <a :href="sub.url">{{ sub.name }}</a>
-                                        </li>
-                                    </ul>
+                    <div v-if="showNotification" class="noti-popup" ref="notiPopup" @click.stop>
+                        <div class="noti-section">
+                            <h4>댓글 알림</h4>
+                            <div class="noti-list" v-if="commentNoti.length > 0">
+                                <div class="noti-item" v-for="item in commentNoti" :key="item.notiNo"
+                                    @click="markAsRead(item)">
+                                    {{ item.contents }}
+                                    <br><small>{{ item.createdAt }}</small>
                                 </div>
-                            </li>
-                            <li class="menu-item" v-if="sessionStatus == 'A'">
-                                <a href="/admin/main.do" class="menu-font">관리자 페이지</a>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-            </header>
-        </div>
-    </body>
+                            </div>
+                            <div v-else class="noti-empty">댓글 알림이 없습니다.</div>
+                        </div>
 
-    </html>
+                        <div class="noti-section">
+                            <h4>채팅 알림</h4>
+                            <div class="noti-list" v-if="messageNoti.length > 0">
+                                <div class="noti-item" v-for="item in messageNoti" :key="item.notiNo" @click="fnChat">
+                                    {{ item.contents }}
+                                    <br><small>{{ item.createdAt }}</small>
+                                </div>
+                            </div>
+                            <div v-else class="noti-empty">채팅 알림이 없습니다.</div>
+                        </div>
+                    </div>
+                </a>
+                <a v-if="sessionType === 'user'" href="/bookmark/list.do">북마크 목록</a>
+                <a href="#">고객만족센터</a>
+                <a v-if="sessionId === ''" href="/user/login.do">로그인 / 회원가입</a>
+                <a v-else href="/user/logout.do">로그아웃</a>
+                <a v-if="sessionId !== ''" href="fnMyPage()">마이페이지</a>
+            </div>
+
+            <!-- 네비게이션 -->
+            <nav class="main-nav-wrapper">
+                <div class="main-nav">
+                    <a href="/common/main.do" class="logo">
+                        <img src="/img/logo1.png" alt="로고 이미지">
+                    </a>
+
+                    <ul class="main-menu">
+                        <li class="menu-item" v-for="(item, index) in menuItems" :key="index">
+                            <a :href="item.url" class="menu-font">{{ item.name }}</a>
+                            <div class="dropdown" v-if="sections[index] && sections[index].length">
+                                <ul>
+                                    <li v-for="(sub, i) in sections[index]" :key="i">
+                                        <a :href="sub.url">{{ sub.name }}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="menu-item" v-if="sessionStatus === 'A'">
+                            <a href="/admin/main.do" class="menu-font">관리자 페이지</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+    </div>
+
 
     <script>
         const header = Vue.createApp({
             data() {
                 return {
-                    sessionId: "${sessionId}",//"juwon1234"
-                    sessionStatus: 'A',
+                    showNotification: false,
+                    sessionId: "${sessionScope.sessionId}",
+                    sessionType: "${sessionScope.sessionType}",
+                    sessionStatus: "${sessionScope.sessionStatus}", // 예: A, U 등
+                    list: [],
+                    commentNoti: [],
+                    messageNoti: [],
                     menuItems: [
                         { name: '회사 소개', url: '/common/introduce.do' },
                         { name: '패키지 소개', url: '/package/package.do' },
@@ -81,14 +107,110 @@
                         ],
                         [],
                         [
-                            { name: '공지사항' },
-                            { name: 'Q & A' },
-                            { name: '사건 종류 가이드' }
+                            { name: '공지사항', url: '#' },
+                            { name: 'Q & A', url: '#' },
+                            { name: '사건 종류 가이드', url: '#' }
                         ]
                     ]
+                };
+            },
+            methods: {
+                fnGetNotificationList() {
+                    const self = this;
+                    $.ajax({
+                        url: "/notification/list.dox",
+                        type: "POST",
+                        dataType: "json",
+                        data: { userId: self.sessionId },
+                        success(data) {
+                            if (data.result === "success") {
+                                self.list = data.list;
+                                self.commentNoti = data.list.filter(n => n.notiType === 'C');
+                                self.messageNoti = data.list.filter(n => n.notiType === 'M');
+                                console.log(self.list);
+                            } else {
+                                console.warn("알림 로딩 실패");
+                            }
+                        }
+                    });
+                },
+                toggleNotification() {
+                    this.showNotification = !this.showNotification;
+                    if (this.showNotification) {
+                        this.fnGetNotificationList();
+                    }
+                },
+                markAsRead(item) {
+                    let self = this;
+                    // 읽음처리
+                    if (!confirm("해당 게시글로 이동하시겠습니까?")) {
+                        return;
+                    }
+
+                    $.ajax({
+                        url: "/notification/read.dox",
+                        type: "POST",
+                        data: { notiNo: item.notiNo },
+                        success: () => {
+                            self.fnGetNotificationList();
+                            self.fnBoardView(item);
+                        }
+                    });
+                },
+                handleClickOutside(event) {
+                    const toggle = this.$refs.notiToggle;
+                    const popup = this.$refs.notiPopup;
+
+                    if (!toggle || !popup) return;
+
+                    if (
+                        !toggle.contains(event.target) &&
+                        !popup.contains(event.target)
+                    ) {
+                        this.showNotification = false;
+                    }
+                },
+                fnBoardView(item) {  // 읽음처리 후 해당보드로 넘어가기
+                    let self = this;
+                    pageChange("/board/view.do", { boardNo: item.boardNo });
+                },
+                fnChat() {
+                    let self = this;
+                    // 읽음처리
+                    if (!confirm("해당 게시글로 이동하시겠습니까?")) {
+                        return;
+                    }
+                    $.ajax({
+                        url: "/notification/read.dox",
+                        type: "POST",
+                        data: { notiNo: item.notiNo },
+                        success: () => {
+                            location.href = "/chat/chat/do";
+                        }
+                    });
+                },
+                fnMyPage() {
+                    if (this.sessionStatus === 'NORMAL') {
+                        return '/mypage/mypage-home.do';
+                    } else if (this.sessionStatus === 'I' || this.sessionStatus === 'P') {
+                        return '/mypage/lawyerMyPage.do';
+                    } else {
+                        return '#';
+                    }
                 }
             },
-            mounted() { }
+            mounted() {
+                let self = this;
+
+                if (self.sessionType === 'user') {
+                    self.fnGetNotificationList();
+                }
+
+                document.addEventListener('click', self.handleClickOutside);
+            },
+            beforeUnmount() {
+                document.removeEventListener('click', this.handleClickOutside);
+            },
         });
-        header.mount('#header');
+        header.mount("#header");
     </script>

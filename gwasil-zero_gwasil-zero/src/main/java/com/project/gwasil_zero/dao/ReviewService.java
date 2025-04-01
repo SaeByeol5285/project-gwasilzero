@@ -17,16 +17,20 @@ public class ReviewService {
 	ReviewMapper reviewMapper;
 
 
-	public HashMap<String, Object> getAvailableReviewList(HashMap<String, Object> map) {
+	public HashMap<String, Object> getReviewList(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<>();
 		try {
-			List<Review> list = reviewMapper.selectAvailableReviewList(map);
-			resultMap.put("list", list);
+			List<Review> availReviewList = reviewMapper.selectAvailableReviewList(map);
+			List<Review> writtenReviewList = reviewMapper.selectWrittenReviewList(map);			
+			resultMap.put("availReviewList", availReviewList);
+			resultMap.put("writtenReviewList", writtenReviewList);
 			resultMap.put("result", "success");
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultMap.put("result", "fail");
 		}
+		
 		return resultMap;
 	}
 
@@ -45,6 +49,44 @@ public class ReviewService {
 			resultMap.put("result", "error");
 		}
 		return resultMap;
+	}
+
+
+	public HashMap<String, Object> editReview(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<>();
+		try {
+			int num = reviewMapper.updateReview(map);
+			if(num > 0) {
+				resultMap.put("result", "success");
+			}else {
+				resultMap.put("result", "fail");				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("result", "error");
+		}
+		return resultMap;
+		
+	}
+
+
+	public HashMap<String, Object> removeReview(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<>();
+		try {
+			int num = reviewMapper.deleteReview(map);
+			if(num > 0) {
+				resultMap.put("result", "success");
+			}else {
+				resultMap.put("result", "fail");				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("result", "error");
+		}
+		return resultMap;
+		
 	}
 
 

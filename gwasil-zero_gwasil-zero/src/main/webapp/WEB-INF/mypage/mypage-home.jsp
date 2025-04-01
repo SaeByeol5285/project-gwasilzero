@@ -111,7 +111,7 @@
          }
 
          .review-textarea {
-            width: 100%;
+            width: 90%;
             min-height: 100px;
             margin-top: 10px;
             padding: 12px;
@@ -134,6 +134,10 @@
 
          .review-submit-btn:hover {
             background-color: #e65300;
+         }
+
+         .star {
+            cursor: pointer;
          }
       </style>
    </head>
@@ -164,23 +168,59 @@
             </div>
          </div>
 
-         <!-- 리뷰 작성 가능한 항목 -->
-         <div v-if="reviewList.length" class="section review-section">
-            <h3>리뷰 작성 가능한 항목</h3>
-            <div class="review-card" v-for="item in reviewList" :key="item.boardNo">
-               <p class="review-title"><strong>{{ item.boardTitle }}</strong></p>
-               <p class="review-lawyer">{{ item.lawyerId }}</p>
-               <div class="review-score">
-                  <label>별점:
-                     <select v-model="item.score">
-                        <option v-for="n in 5" :key="n" :value="n">{{ n }}</option>
-                     </select>
-                  </label>
+         <!-- 리뷰 작성 섹션 -->
+         <div v-if="availReviewList.length" class="section review-section">
+            <h3>📝 리뷰 작성 가능한 항목</h3>
+            <!-- 리뷰 작성 가능한 항목 -->
+            <div class="review-card" v-for="item in availReviewList" :key="item.boardNo">
+               <div>
+                  <span class="review-title"><strong>게시글 제목 : {{ item.boardTitle }}</strong></span>
                </div>
+               <div>
+                  <span class="review-lawyer">담당 변호사 : {{ item.lawyerId }}</span>
+               </div>
+               <p>평점 : 
+                  <span class="star" v-for="index in 5" :key="index" @click="item.score = index">
+                     <span v-if="index <= item.score">⭐</span>
+                     <span v-else>☆</span>
+                   </span>
+               </p>
                <textarea v-model="item.contents" placeholder="리뷰 내용을 입력해주세요" class="review-textarea"></textarea>
                <button class="btn btn-primary review-submit-btn" @click="fnWriteReview(item)">리뷰 등록</button>
             </div>
          </div>
+
+         <!-- 이미 작성한 리뷰 -->
+         <div class="review-card" v-for="item in writtenReviewList" :key="item.reviewNo">
+            <p class="review-title">{{ item.boardTitle }}</p>
+
+            <div v-if="item.isEditing">
+               <p>평점 : 
+                  <span class="star" v-for="index in 5" :key="index" @click="item.score = index">
+                     <span v-if="index <= item.score">⭐</span>
+                     <span v-else>☆</span>
+                   </span>
+               </p>
+               <textarea v-model="item.contents" class="review-textarea"></textarea>
+               <div>
+                  <button class="btn btn-primary review-submit-btn" @click="fnEditReview(item)">저장</button>
+                  <button class="btn btn-outline" @click="item.isEditing = false">취소</button>
+               </div>
+            </div>
+
+            <div v-else>
+               <div>
+                  <span class="review-lawyer">담당 변호사 : {{ item.lawyerId }}</span>
+               </div>
+               <p>평점 : 
+                  <span class="star" v-for="index in item.score" :key="index">⭐</span>
+               </p>               
+               <p>{{ item.contents }}</p>
+               <button class="btn btn-outline" @click="item.isEditing = true">수정</button>
+               <button class="btn btn-danger" @click="fnRemoveReview(item.reviewNo)">삭제</button>
+            </div>
+         </div>
+
 
          <div class="section chat-section">
             <h3>채팅 내역</h3>
@@ -234,8 +274,10 @@
                info: {},
                userId: "user_011",
                sessionId: "user_011",
-               reviewList: [],
-               contents: "",
+               availReviewList: [], // 작성할 수 있는 리뷰 리스트
+               writtenReviewList: [],   // 이미 작성한 리뷰 리스트
+               isEditing: false,  //true일 때만 수정 모드
+
             };
          },
          methods: {
@@ -251,24 +293,28 @@
             fnRemoveUser() {
                pageChange("/mypage/remove.do", { userId: this.userId });
             },
+            //리뷰리스트
             fnLoadReview() {
                const self = this;
                const params = {
                   userId: self.sessionId,
                };
                $.ajax({
-                  url: "/review/available.dox",
+                  url: "/review/list.dox",
                   type: "POST",
                   dataType: "json",
                   data: params,
                   success: function (data) {
                      console.log(data);
                      if (data.result == "success") {
-                        self.reviewList = data.list;
+                        self.availReviewList = data.availReviewList;
+                        self.writtenReviewList = data.writtenReviewList;
+                        self.isEditing = false;
                      }
                   }
                });
             },
+            //리뷰작성
             fnWriteReview(item) {
                const self = this;
                if (!item.contents?.trim()) {
@@ -298,6 +344,58 @@
                   }
                });
             },
+            //작성한 리뷰 수정
+            fnEditReview(item) {
+               const self = this;
+               if (!item.contents?.trim()) {
+                  alert("리뷰 내용을 입력해주세요.");
+                  return;
+               }
+               const params = {
+                  reviewNo: item.reviewNo,
+                  score: item.score,
+                  contents: item.contents,
+                  lawyerId: item.lawyerId,
+                  userId: self.sessionId
+               };
+
+               $.ajax({
+                  url: "/review/eidt.dox",
+                  type: "POST",
+                  dataType: "json",
+                  data: params,
+                  success: function (data) {
+                     if (data.result === "success") {
+                        alert("리뷰가 수정되었습니다.");
+                        self.fnLoadReview(); // 리스트 새로 불러오기
+                     } else {
+                        alert("리뷰 수정 실패");
+                     }
+                  }
+               });
+            },
+            //작성한 리뷰 삭제
+            fnRemoveReview(reviewNo) {
+               const self = this;
+               if (!confirm("정말 삭제하시겠습니까?")) return;
+
+               $.ajax({
+                  url: "/review/remove.dox",
+                  type: "POST",
+                  dataType: "json",
+                  data: { reviewNo: reviewNo },
+                  success: function (data) {
+                     if (data.result === "success") {
+                        alert("리뷰가 삭제되었습니다.");
+                        self.fnLoadReview(); // 리스트 새로 불러오기
+                     } else {
+                        alert("리뷰 삭제 실패");
+                     }
+                  }
+               });
+            },
+
+
 
          },
          mounted() {

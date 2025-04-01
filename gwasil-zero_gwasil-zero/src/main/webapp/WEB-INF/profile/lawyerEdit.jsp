@@ -222,85 +222,97 @@
                     }
                 });
             },
-            // fnEdit() {
-            //     const self = this;
+            fnEdit() {
+                const self = this;
 
-            //     const formData = new FormData();
-            //     formData.append("lawyerId", self.lawyerId);
-            //     formData.append("info", JSON.stringify(self.info));
-            //     formData.append("selectedBoards", JSON.stringify(self.selectedBoards));
+                const formData = new FormData();
+                formData.append("lawyerId", self.lawyerId);
+                formData.append("info", JSON.stringify(self.info));
+                formData.append("selectedBoards", JSON.stringify(self.selectedBoards));
 
-            //     let count = 0;
+                let count = 0;
 
-            //     for (let i = 0; i < self.license.length; i++) {
-            //         const item = self.license[i];
-                   
-            //         if (item._delete) continue;
-                    
-            //         if (item.licenseFile) {
-            //             if (!item.licenseName || !item.licenseName.trim()) {
-            //                 alert(`${i + 1}번째 자격증 이름이 비어 있습니다.`);
-            //                 return;
-            //             }
+                for (let i = 0; i < self.license.length; i++) {
+                    const item = self.license[i];
+                    if (item._delete) continue;
 
-            //             const nameKey = `licenseName_${count}`;
-            //             const fileKey = `licenseFile_${count}`;
-            //             formData.append(nameKey, item.licenseName);
-            //             formData.append(fileKey, item.licenseFile);
-            //             count++;
-            //         }
-            //     }
-            //     formData.append("licenseCount", count);
+                    const isNewFile = item.licenseFile instanceof File;
 
-            //     $.ajax({
-            //         url: "/profile/lawyerEdit.dox",
-            //         type: "POST",
-            //         data: formData,
-            //         contentType: false,
-            //         processData: false,
-            //         success(data) {
-            //             if (data.result === "success") {
-            //                 alert("수정되었습니다.");
-            //                 // location.href = "/profile/innerLawyer.do";
-            //             } else {
-            //                 alert("수정에 실패했습니다.");
-            //             }
-            //         },
-            //         error() {
-            //             alert("서버 오류가 발생했습니다.");
-            //         }
-            //     });
-            // },
-            // addLicense() {
-            //     this.license.push({
-            //         licenseName: '',
-            //         _delete: false,
-            //         licenseFile: null,
-            //         licensePreview: null
-            //     });
-            // },
-            // onFileChange(event, index) {
-            //     const file = event.target.files[0];
-            //     if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
-            //         if (file.size > 5 * 1024 * 1024) {
-            //             alert("5MB 이하의 파일만 업로드 가능합니다.");
-            //             return;
-            //         }
+                    if (isNewFile) {
+                        if (!item.licenseName || !item.licenseName.trim()) {
+                            alert(`${i + 1}번째 자격증 이름이 비어 있습니다.`);
+                            return;
+                        }
 
-            //         // 이전 미리보기 URL 제거
-            //         if (this.license[index].licensePreview) {
-            //             URL.revokeObjectURL(this.license[index].licensePreview);
-            //         }
+                        const nameKey = `licenseName_${count}`;
+                        const fileKey = `licenseFile_${count}`;
+                        formData.append(nameKey, item.licenseName);
+                        formData.append(fileKey, item.licenseFile);
+                        console.log("🧪", nameKey, ":", item.licenseName);
+                        console.log("🧪", fileKey, ":", item.licenseFile.name);
+                        count++;
+                    }
+                }
 
-            //         this.license[index].licenseFile = file;
-            //         this.license[index].licensePreview = URL.createObjectURL(file);
-            //     } else {
-            //         alert("JPG 또는 PNG 파일만 업로드 가능합니다.");
-            //         event.target.value = '';
-            //         this.license[index].licenseFile = null;
-            //         this.license[index].licensePreview = null;
-            //     }
-            // }
+                formData.append("licenseCount", count);
+                console.log("🧪 총 개수:", count);
+
+                // 마지막 체크: 전송 직전 FormData 내용 전체 로그
+                for (let pair of formData.entries()) {
+                    console.log("✅ 전송데이터", pair[0], pair[1]);
+                }
+
+                // 전송
+                $.ajax({
+                    url: "/profile/lawyerEdit.dox",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success(data) {
+                        if (data.result === "success") {
+                            alert("수정되었습니다.");
+                        } else {
+                            alert("수정에 실패했습니다.");
+                            console.log("🚨 서버 응답 실패:", data);
+                        }
+                    },
+                    error(err) {
+                        alert("서버 오류가 발생했습니다.");
+                        console.error(err);
+                    }
+                });
+            },
+            addLicense() {
+                this.license.push({
+                    licenseName: '',
+                    _delete: false,
+                    licenseFile: null,
+                    licensePreview: null
+                });
+            },
+            onFileChange(event, index) {
+                const file = event.target.files[0];
+                if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert("5MB 이하의 파일만 업로드 가능합니다.");
+                        return;
+                    }
+
+                    // 이전 미리보기 URL 제거
+                    if (this.license[index].licensePreview) {
+                        URL.revokeObjectURL(this.license[index].licensePreview);
+                    }
+
+                    this.license[index].licenseFile = file;
+                    this.license[index].licensePreview = URL.createObjectURL(file);
+                } else {
+                    alert("JPG 또는 PNG 파일만 업로드 가능합니다.");
+                    event.target.value = '';
+                    this.license[index].licenseFile = null;
+                    this.license[index].licensePreview = null;
+                }
+            }
         },
         mounted() {
             this.fnGetLawyerInfo();

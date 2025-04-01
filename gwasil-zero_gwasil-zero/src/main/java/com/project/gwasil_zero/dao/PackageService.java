@@ -40,7 +40,13 @@ public class PackageService {
 	public HashMap<String, Object> addPayment(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		packageMapper.insertPayment(map);
+		String role = (String) map.get("role");
+		 if ("user".equals(role))
+			packageMapper.insertPayment(map);
+
+		else if ("lawyer".equals(role))
+			packageMapper.insertPaymentLawyer(map);
+		
 		return resultMap;
 	}
 

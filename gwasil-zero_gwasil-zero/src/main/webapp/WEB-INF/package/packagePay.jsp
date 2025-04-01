@@ -89,7 +89,8 @@
                     packageName: "",
                     price: 0,
                     orderId: "",
-                    userId : "${sessionId}"
+                    sessionId : "${sessionId}",
+                    role : "${role}"
                 };
             },
             methods: {
@@ -117,8 +118,9 @@
                     var nparmap = {
                         orderId : merchant_uid,           // 받은 merchant_uid 그대로 저장
                         packageName : self.packageName,
-                        userId : self.userId ,
-                        price : self.price
+                        sessionId : self.sessionId ,
+                        price : self.price,
+                        role : self.role
                     };
 
                     $.ajax({

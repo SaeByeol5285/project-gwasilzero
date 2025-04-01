@@ -36,28 +36,33 @@
         margin-top: 10px;
         }
 
-        #app .info-details {
-        line-height: 1.8;
-        }
+      #app .info-details {
+      line-height: 1.8;
+      }
 
-        #app .info-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-        }
+      #app .info-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      }
 
-        .edit-btn {
-        background-color: #FF5722;
-        border: none;
-        border-radius: 8px;
-        padding: 6px 12px;
-        color: #fff;
-        font-weight: bold;
-        cursor: pointer;
-        }
+      .edit-btn,
+      .withdraw-btn {
+      background-color: #FF5722;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      }
 
-
+      .edit-btn:hover,
+      .withdraw-btn:hover {
+      background-color: #e64a19; /* 조금 더 어두운 색 */
+      }
 
       #app .post-section {
          display: flex;
@@ -91,6 +96,21 @@
          padding: 10px;
          text-align: center;
       }
+
+      .status-select {
+         padding: 8px 12px;
+         border: 1px solid #ccc;
+         border-radius: 8px;
+         font-size: 14px;
+         background-color: #fff;
+         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+         transition: border 0.2s ease-in-out;
+      }
+
+      .status-select:focus {
+         border-color: #FF5722;
+         outline: none;
+      }
    </style>
 
    <body>
@@ -98,6 +118,7 @@
       <div id="app">
          <h2>마이페이지</h2>
 
+         <!-- 내 정보 섹션 -->
          <div class="section">
             <div class="info-header">
               <h3>내 정보</h3>
@@ -105,31 +126,32 @@
             </div>
           
             <div class="info-section">
-              <!-- 변호사 사진 -->
-              <div>
-                <img :src="view.lawyerImg" alt="변호사 사진"
-                  style="width: 130px; height: 130px; border-radius: 10px; object-fit: cover; border: 1px solid #ccc;" />
-              </div>
-          
-              <!-- 정보 텍스트 및 상태 select -->
-              <div class="info-details" v-if="view.lawyerId">
-                <p>이름: {{ view.lawyerName }}</p>
-                <p>핸드폰 번호: {{ view.lawyerPhone }}</p>
-                <p>이메일: {{ view.lawyerEmail }}</p>
-          
-                <!-- 상담 상태 선택 -->
-                <div style="margin-top: 10px;">
-                  <label for="counselStatus" style="font-weight: bold; margin-right: 8px;">상담 상태</label>
-                  <select id="counselStatus" v-model="view.counsel" @change="fnUpdateStatus" class="select-box">
-                    <option value="now">상담 가능</option>
-                    <option value="delayed">상담 지연</option>
-                    <option value="disabled">상담 불가능</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+               <!-- 프로필 사진 -->
+               <div>
+                 <img :src="view.lawyerImg" alt="변호사 사진"
+                   style="width: 130px; height: 130px; border-radius: 10px; object-fit: cover; border: 1px solid #ccc;" />
+               </div>
+             
+               <!-- 텍스트 정보 + 상담 상태 -->
+               <div class="info-details" v-if="view.lawyerId" style="flex: 1;">
+                 <div style="display: flex; justify-content: space-between; align-items: center;">
+                   <p style="margin: 0;">이름: {{ view.lawyerName }}</p>
+                   <div>
+                     <label for="counselStatus" style="font-weight: bold; margin-right: 8px;">상담 상태</label>
+                     <select id="counselStatus" v-model="view.counsel" @change="fnUpdateStatus" class="status-select">
+                       <option value="">선택 안함</option>
+                       <option value="now">상담 가능</option>
+                       <option value="delayed">상담 지연</option>
+                       <option value="disabled">상담 불가능</option>
+                     </select>
+                   </div>
+                 </div>
+                 <p>핸드폰 번호: {{ view.lawyerPhone }}</p>
+                 <p>이메일: {{ view.lawyerEmail }}</p>
+               </div>
+             </div>
+             
           </div>
-          
           
 
          <div class="section">
@@ -181,8 +203,7 @@
          </div>
 
          <div style="text-align: center; margin-top: 20px;">
-            <button @click="fnRemoveUser"
-               style="background-color: #FF5722; border: none; border-radius: 8px; padding: 5px 10px; color: #ffffff;">
+            <button @click="fnRemoveUser" class="withdraw-btn">
                회원탈퇴
             </button>
          </div>
@@ -212,6 +233,10 @@
                   success: function (data) {
                      console.log(data);
                      self.view = data.view;
+
+                     if (!self.view.counsel) {
+                        self.view.counsel = '';
+                     }
                   }
                });
             },

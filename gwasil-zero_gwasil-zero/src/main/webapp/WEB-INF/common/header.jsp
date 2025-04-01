@@ -48,7 +48,7 @@
             <a href="#">고객만족센터</a>
             <a v-if="sessionId === ''" href="/user/login.do">로그인 / 회원가입</a>
             <a v-else href="/user/logout.do">로그아웃</a>
-            <a v-if="sessionId !== ''" href="/mypage-home.do">마이페이지</a>
+            <a v-if="sessionId !== ''" href="fnMyPage()">마이페이지</a>
         </div>
 
         <!-- 네비게이션 -->
@@ -188,7 +188,16 @@
 							location.href="/chat/chat/do";
 					}
 				});			
-			}
+			},
+			fnMyPage() {
+	           if (this.sessionStatus === 'NORMAL') {
+	                 return '/mypage/mypage-home.do';
+	            } else if (this.sessionStatus === 'I' || this.sessionStatus === 'P') {
+	                return '/mypage/lawyerMyPage.do';
+	            } else {
+	                return '#';
+	            }
+	        }
         },
         mounted() {
 			let self = this;

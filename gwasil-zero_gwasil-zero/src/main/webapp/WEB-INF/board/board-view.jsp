@@ -349,8 +349,8 @@
 				});
 			 },
 			 startContract(lawyerId) {
-			        // 계약하기 페이지로 이동 (예: contract.do?lawyerId=XXX)
-			        pageChange("/contract/start.do", { lawyerId: lawyerId });
+				let self = this;
+			        pageChange("/contract/newContract.do", { lawyerId: lawyerId, boardNo : self.boardNo, userId:self.makerId});
 			    },
 
 			    startChat(lawyerId) {

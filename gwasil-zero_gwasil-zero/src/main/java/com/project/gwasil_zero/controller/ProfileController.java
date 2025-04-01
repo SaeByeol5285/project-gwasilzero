@@ -92,38 +92,37 @@ public class ProfileController {
 	        String lawyerId = request.getParameter("lawyerId");
 	        String uploadPath = request.getServletContext().getRealPath("/license/");
 
-	        // info
+	        // info JSON → Map 변환
 	        String infoJson = request.getParameter("info");
 	        Gson gson = new Gson();
 	        Map<String, Object> infoMap = gson.fromJson(infoJson, Map.class);
 
-	        // selectedBoards
+	        // selectedBoards JSON → List<Integer>
 	        String selectedBoardsJson = request.getParameter("selectedBoards");
 	        List<Double> selectedBoardsDouble = gson.fromJson(selectedBoardsJson, List.class);
 	        List<Integer> selectedBoards = selectedBoardsDouble.stream()
 	                .map(Double::intValue)
 	                .collect(Collectors.toList());
 
-	        // licenseList
+	        // 신규 자격증 리스트 구성
 	        List<HashMap<String, Object>> licenseList = new ArrayList<>();
 	        int licenseCount = Integer.parseInt(request.getParameter("licenseCount"));
 	        for (int i = 0; i < licenseCount; i++) {
 	            String licenseName = request.getParameter("licenseName_" + i);
 	            MultipartFile licenseFile = request.getFile("licenseFile_" + i);
 
-	            // 유효성 체크 (trim + 파일 존재)
 	            if (licenseName != null && !licenseName.trim().isEmpty()
-	                && licenseFile != null && !licenseFile.isEmpty()) {
+	                    && licenseFile != null && !licenseFile.isEmpty()) {
 	                HashMap<String, Object> license = new HashMap<>();
 	                license.put("licenseName", licenseName.trim());
 	                license.put("licenseFile", licenseFile);
 	                licenseList.add(license);
 	            } else {
-	            	throw new Exception("[" + (licenseName != null ? licenseName : "이름 없음") + "] 자격증 항목이 누락되었습니다.");
+	                throw new Exception("[" + (licenseName != null ? licenseName : "이름 없음") + "] 자격증 항목이 누락되었습니다.");
 	            }
 	        }
 
-	        // map 구성
+	        // 전체 파라미터 Map 구성
 	        HashMap<String, Object> paramMap = new HashMap<>();
 	        paramMap.put("lawyerId", lawyerId);
 	        paramMap.put("lawyerInfo", infoMap.get("lawyerInfo"));
@@ -134,7 +133,6 @@ public class ProfileController {
 	        paramMap.put("licenseList", licenseList);
 	        paramMap.put("uploadPath", uploadPath);
 
-	        // 서비스 호출
 	        resultMap = profileService.editLawyer(paramMap);
 	        resultMap.put("result", "success");
 	    } catch (Exception e) {
@@ -144,4 +142,6 @@ public class ProfileController {
 
 	    return new Gson().toJson(resultMap);
 	}
+
+
 }

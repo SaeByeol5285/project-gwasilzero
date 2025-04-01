@@ -85,12 +85,11 @@ public class ProfileService {
 	    String lawyerCareer = (String) paramMap.get("lawyerCareer");
 	    String lawyerTask = (String) paramMap.get("lawyerTask");
 	    String lawyerEdu = (String) paramMap.get("lawyerEdu");
-
 	    List<Integer> selectedBoards = (List<Integer>) paramMap.get("selectedBoards");
 	    List<HashMap<String, Object>> licenseList = (List<HashMap<String, Object>>) paramMap.get("licenseList");
 	    String uploadPath = (String) paramMap.get("uploadPath");
 
-	    // 1. update lawyer
+	    // 1. LAWYER 테이블 수정
 	    HashMap<String, Object> param = new HashMap<>();
 	    param.put("lawyerId", lawyerId);
 	    param.put("lawyerInfo", lawyerInfo);
@@ -99,10 +98,10 @@ public class ProfileService {
 	    param.put("lawyerEdu", lawyerEdu);
 	    profileMapper.updateLawyer(param);
 
-	    // 2. delete old licenses
+	    // 2. LICENSE 삭제
 	    profileMapper.deleteLicenseByLawyerId(lawyerId);
 
-	    // 3. insert new licenses
+	    // 3. LICENSE 삽입 (신규 항목만)
 	    for (HashMap<String, Object> license : licenseList) {
 	        String licenseName = (String) license.get("licenseName");
 	        MultipartFile file = (MultipartFile) license.get("licenseFile");
@@ -124,7 +123,7 @@ public class ProfileService {
 	        }
 	    }
 
-	    // 4. update main cases
+	    // 4. 대표 사건 업데이트
 	    editMainCases(paramMap);
 
 	    resultMap.put("result", "success");

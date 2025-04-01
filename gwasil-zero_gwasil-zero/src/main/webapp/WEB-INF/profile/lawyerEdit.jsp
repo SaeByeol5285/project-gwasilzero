@@ -134,20 +134,28 @@
                                 v-show="!item._delete"
                             >
                                 <input type="checkbox" v-model="item._delete" />
-                                <textarea v-model="item.licenseName" rows="2" placeholder="자격증 이름 입력"></textarea>
-
-                                <!-- 이미지 첨부 -->
-                                <input 
-                                    type="file" 
-                                    accept="image/png, image/jpeg" 
-                                    @change="onFileChange($event, index)" 
-                                    :required="!item.licenseFile"
-                                />
-
-                                <!-- 미리보기 -->
-                                <div v-if="item.licensePreview">
-                                    <img :src="item.licensePreview" alt="미리보기" style="width: 80px; height: auto; border: 1px solid #ccc;" />
-                                </div>
+                    
+                                <!-- 등록된 자격증일 경우 -->
+                                <template v-if="item.isExisting">
+                                    <input type="text" v-model="item.licenseName" readonly style="background-color: #f0f0f0; font-weight: bold;" />
+                                    <span style="font-size: 12px; color: green;">(기존 등록됨)</span>
+                                    <div v-if="item.licensePreview">
+                                        <img :src="item.licensePreview" alt="미리보기" style="width: 80px; height: auto; border: 1px solid #ccc;" />
+                                    </div>
+                                </template>
+                    
+                                <!-- 새로 추가한 자격증일 경우 -->
+                                <template v-else>
+                                    <input type="text" v-model="item.licenseName" placeholder="자격증 이름 입력" />
+                                    <input 
+                                        type="file" 
+                                        accept="image/png, image/jpeg" 
+                                        @change="onFileChange($event, index)"
+                                    />
+                                    <div v-if="item.licensePreview">
+                                        <img :src="item.licensePreview" alt="미리보기" style="width: 80px; height: auto; border: 1px solid #ccc;" />
+                                    </div>
+                                </template>
                             </div>
                             <button type="button" @click="addLicense" class="add-license-btn">+ 자격 추가</button>
                         </td>
@@ -188,7 +196,6 @@
     <jsp:include page="../common/footer.jsp" />
 </body>
 </html>
-
 <script>
     const lawEditApp = Vue.createApp({
         data() {
@@ -215,9 +222,10 @@
                         self.boardList = data.boardList;
                         self.license = data.license.map(item => ({
                             ...item,
+                            isExisting: true,
                             _delete: false,
                             licenseFile: null,
-                            licensePreview: item.licenseFilePath ? item.licenseFilePath : null
+                            licensePreview: item.licenseFilePath || null
                         }));
                     }
                 });
@@ -233,21 +241,22 @@
                 let count = 0;
 
                 for (let i = 0; i < self.license.length; i++) {
-                    const item = self.license[i];
-                    if (item._delete) continue;
+                const item = self.license[i];
+                if (item._delete) continue;
 
-                    const isNewFile = item.licenseFile instanceof File;
+                // 새로 추가된 자격증만 업로드 대상
+                const isNew = !item.isExisting && item.licenseFile instanceof File;
 
-                    if (isNewFile) {
-                        if (!item.licenseName || !item.licenseName.trim()) {
-                            alert(`${i + 1}번째 자격증 이름이 비어 있습니다.`);
-                            return;
-                        }
+                if (isNew) {
+                    if (!item.licenseName || !item.licenseName.trim()) {
+                        alert(`${i + 1}번째 자격증 이름이 비어 있습니다.`);
+                        return;
+                    }
 
-                        const nameKey = `licenseName_${count}`;
-                        const fileKey = `licenseFile_${count}`;
-                        formData.append(nameKey, item.licenseName);
-                        formData.append(fileKey, item.licenseFile);
+                    const nameKey = `licenseName_${count}`;
+                    const fileKey = `licenseFile_${count}`;
+                    formData.append(nameKey, item.licenseName);
+                    formData.append(fileKey, item.licenseFile);
                         console.log("🧪", nameKey, ":", item.licenseName);
                         console.log("🧪", fileKey, ":", item.licenseFile.name);
                         count++;
@@ -272,6 +281,7 @@
                     success(data) {
                         if (data.result === "success") {
                             alert("수정되었습니다.");
+                            self.fnGetLawyerInfo(); // 수정 후 다시 불러오기 추후 다른 페이지 이동
                         } else {
                             alert("수정에 실패했습니다.");
                             console.log("🚨 서버 응답 실패:", data);
@@ -286,6 +296,7 @@
             addLicense() {
                 this.license.push({
                     licenseName: '',
+                    isExisting: false,
                     _delete: false,
                     licenseFile: null,
                     licensePreview: null

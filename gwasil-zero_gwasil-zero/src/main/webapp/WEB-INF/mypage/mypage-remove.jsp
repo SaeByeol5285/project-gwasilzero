@@ -4,7 +4,8 @@
 
     <head>
         <meta charset="UTF-8">
-        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <title>회원탈퇴</title>
         <style>
@@ -17,7 +18,7 @@
                 box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
                 text-align: center;
             }
-
+          
             input,
             select {
                 width: 100%;

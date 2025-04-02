@@ -3,16 +3,7 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.project.gwasil_zero.mapper.MypageMapper">
-	<select id="selectUser" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
-	    SELECT USER_NAME, USER_PHONE, USER_EMAIL
-	    FROM TBL_USER
-	    WHERE USER_ID = #{userId}
-	</select>
-	<delete id="deleteUser" parameterType="hashmap">
-	    DELETE FROM TBL_USER
-	    WHERE USER_ID = #{userId}
-	</delete>
-	
+  	
 	<select id="selectUserBoardList" parameterType="hashmap" resultType="hashmap">
 	    SELECT
 	        B.BOARD_NO AS boardNo,
@@ -58,6 +49,7 @@
 	    FROM TBL_USER
 	    WHERE USER_ID = #{userId}
 	</select>
+  
 	<update id="updateUserInfo" parameterType="hashmap">
 	    UPDATE TBL_USER
 	    SET
@@ -86,6 +78,70 @@
 	    SET USER_STATUS = 'OUT',
 	        CDATE = SYSDATE
 	    WHERE USER_ID = #{userId}
-	</update>
+	</update>   
+   
+   <select id="selectLawyerInfo" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+      SELECT *
+      FROM LAWYER
+      WHERE LAWYER_ID = #{sessionId}
+   </select>
+   
+   <update id="updateLawyer" parameterType="hashmap">
+      UPDATE LAWYER
+      SET
+         LAWYER_NAME = #{lawyerName},
+         LAWYER_PHONE = #{lawyerPhone},
+         LAWYER_EMAIL = #{lawyerEmail}
+      WHERE LAWYER_ID = #{sessionId}
+   </update>
+   
+   <update id="deleteLawyer" parameterType="hashmap">
+      UPDATE LAWYER
+      SET
+         LAWYER_STATUS = 'O'
+      WHERE LAWYER_ID = #{sessionId}
+   </update>
+   
+   <update id="updateCounsel" parameterType="hashmap">
+      UPDATE LAWYER
+      SET
+         COUNSEL = #{counsel}
+      WHERE LAWYER_ID = #{lawyerId}
+   </update>
+   
+   <select id="selectLawyerBoard" parameterType="hashmap" resultType="Board">
+	    SELECT B.*, U.USER_NAME
+	    FROM BOARD B
+	    INNER JOIN TBL_USER U ON B.USER_ID = U.USER_ID
+	    WHERE 1=1
+	    <if test="sessionId != null and sessionId != ''">
+	        AND B.LAWYER_ID = #{sessionId}
+	    </if>
+	    <if test="boardStatus != null and boardStatus != ''">
+	        AND B.BOARD_STATUS = #{boardStatus}
+	    </if>
+	    offset #{page} rows fetch next #{pageSize} rows only
+	</select>
 	
+	<select id="selectBoardCnt" parameterType="hashmap" resultType="int">
+	    SELECT COUNT(*)
+	    FROM BOARD B
+	    INNER JOIN TBL_USER U ON B.USER_ID = U.USER_ID
+	    WHERE 1=1
+	    <if test="sessionId != null and sessionId != ''">
+	        AND B.LAWYER_ID = #{sessionId}
+	    </if>
+	    <if test="boardStatus != null and boardStatus != ''">
+	        AND B.BOARD_STATUS = #{boardStatus}
+	    </if>
+	</select>
+
+	
+	<update id="updateBoardStatus" parameterType="hashmap">
+      UPDATE BOARD
+      SET
+         BOARD_STATUS = #{boardStatus}
+      WHERE BOARD_NO = #{boardNo}
+    </update>
+   
 </mapper>

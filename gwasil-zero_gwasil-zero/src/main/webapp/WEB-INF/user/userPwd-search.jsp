@@ -4,8 +4,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.21/vue.global.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.21/vue.global.min.js"></script>
   <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
   <title>비밀번호 찾기</title>
   <style>
@@ -16,7 +16,7 @@
       min-height: 70vh;
       padding: 20px;
     }
-
+    
     .form-section {
       width: 100%;
       max-width: 400px;

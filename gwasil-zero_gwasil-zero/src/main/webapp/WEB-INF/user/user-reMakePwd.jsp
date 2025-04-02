@@ -4,8 +4,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-  <title>비밀번호 재설정</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>  <title>비밀번호 재설정</title>
   <style>
     .form-section {
       width: 100%;
@@ -16,7 +16,7 @@
       border-radius: 15px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
-
+    
     input {
       width: 100%;
       padding: 12px;

@@ -9,5 +9,5 @@ public class Packages {
 	private int packagePrice;
 	private String packageInfo;
 	private String packageStatus;
-  
+
 }

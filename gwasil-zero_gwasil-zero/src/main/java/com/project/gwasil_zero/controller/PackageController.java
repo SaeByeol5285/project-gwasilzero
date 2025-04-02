@@ -14,11 +14,15 @@ import com.google.gson.Gson;
 import com.project.gwasil_zero.dao.PackageService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class PackageController {
 	@Autowired
 	PackageService packageService;
+	
+	@Autowired
+	HttpSession session;
 	
 	// 패키지 구매
 	@RequestMapping("/package/package.do")
@@ -53,4 +57,22 @@ public class PackageController {
 	      resultMap = packageService.addPayment(map);
 	      return new Gson().toJson(resultMap);
 	   }
+	
+	// 결제 내역 불러오기
+	@RequestMapping(value = "/package/purchased.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String payList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		 String sessionId = (String) session.getAttribute("sessionId");
+		 String role = (String) session.getAttribute("role");
+
+		 if ("user".equals(role)) {
+		     map.put("userId", sessionId);
+		 } else if ("lawyer".equals(role)) {
+		     map.put("lawyerId", sessionId);
+		 }
+		resultMap = packageService.getpayList(map);
+		return new Gson().toJson(resultMap);
+	}
+	
 }

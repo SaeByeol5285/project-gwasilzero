@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.project.gwasil_zero.mapper.MypageMapper;
@@ -16,6 +17,9 @@ public class MypageService {
 
 	@Autowired
 	MypageMapper mypageMapper;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	public HashMap<String, Object> getList(HashMap<String, Object> map) {
 	    if (map.get("sessionId") != null) {
@@ -35,21 +39,19 @@ public class MypageService {
 	public HashMap<String, Object> removeUser(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
 
-	    if (map.get("sessionId") != null) {
-	        map.put("userId", map.get("sessionId"));  // 🔥 핵심
-	    }
+	    // 사용자 정보 조회
+	    User user = mypageMapper.selectUserById(map);
 
-	    int deletedRows = mypageMapper.deleteUser(map);  // Mapper 호출
-	    System.out.println("🔎 삭제된 행 수: " + deletedRows);  // 추가
-
-	    if (deletedRows > 0) {
-	        resultMap.put("result", "success");
+	    // 비밀번호 비교
+	    String rawPassword = (String) map.get("password");
+	    if (user != null && passwordEncoder.matches(rawPassword, user.getUserPassword())) {
+	        int result = mypageMapper.deleteUserByAdmin(map);
+	        resultMap.put("result", result > 0 ? "success" : "fail");
 	    } else {
 	        resultMap.put("result", "fail");
-	        resultMap.put("message", "사용자 정보를 찾을 수 없습니다.");
+	        resultMap.put("message", "비밀번호가 일치하지 않습니다.");
 	    }
 
-	    System.out.println("🔎 Service 응답 데이터: " + resultMap);  // 추가
 	    return resultMap;
 	}
 	
@@ -88,21 +90,32 @@ public class MypageService {
 		
 	}
 
-	public Object selectMyChatList(HashMap<String, Object> map) {
-		// TODO Auto-generated method stub
-HashMap<String, Object> resultMap = new HashMap<>();
-	    
+	public HashMap<String, Object> selectMyChatList(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
 	    try {
-		    List<Chat> chatList = mypageMapper.selectUserChatList(map);
-		    resultMap.put("chatList", chatList);
-			resultMap.put("result", "success");		
-			
-		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println(e.getMessage()); //개발자 확인하기 위한 용도
-			resultMap.put("result", "fail");						
-		}
-		return null;
+	        List<Chat> chatList = mypageMapper.selectUserChatList(map);
+	        resultMap.put("chatList", chatList);
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+	    return resultMap;
+	}
+
+	public HashMap<String, Object> updateUser(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<>();
+	    int result = mypageMapper.updateUserInfo(map);
+	    resultMap.put("result", result > 0 ? "success" : "fail");
+	    return resultMap;
+	}
+	
+	public HashMap<String, Object> selectUserInfo(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    User user = mypageMapper.selectUserInfo(map);
+	    resultMap.put("info", user);
+	    return resultMap;
 	}
 	
 

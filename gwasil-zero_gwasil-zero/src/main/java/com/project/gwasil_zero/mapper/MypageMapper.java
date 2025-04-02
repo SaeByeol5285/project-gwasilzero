@@ -13,8 +13,6 @@ import com.project.gwasil_zero.model.User;
 public interface MypageMapper {
 
 	List<User> selectUser(HashMap<String, Object> map);
-
-	int deleteUser(HashMap<String, Object> map);
 	
 	List<Board> selectUserBoardList(HashMap<String, Object> map);
 
@@ -23,5 +21,15 @@ public interface MypageMapper {
 	List<User> selectUserForMypage(HashMap<String, Object> map);
 
 	List<Chat> selectUserChatList(HashMap<String, Object> map);
+
+	int updateUserInfo(HashMap<String, Object> map);
+	
+	User selectUserInfo(HashMap<String, Object> map);
+	
+	User selectUserById(HashMap<String, Object> map);
+
+	int deleteUserByAdmin(HashMap<String, Object> map);
+
+	
 
 }

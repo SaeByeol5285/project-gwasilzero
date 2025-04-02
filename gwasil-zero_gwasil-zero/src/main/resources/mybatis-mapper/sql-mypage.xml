@@ -27,15 +27,22 @@
 	    ORDER BY B.CDATE DESC
 	</select>
 	
-	<select id="selectMyChatList" parameterType="hashmap" resultType="hashmap">
-	    SELECT
-	        CM.CHAT_NO AS chatNo,
-	        CM.MESSAGE AS message,
-	        C.RECEIVER_ID AS receiverId
-	    FROM CHAT_MESSAGE CM
-	    JOIN CHAT C ON CM.CHAT_NO = C.CHAT_NO
-	    WHERE C.SENDER_ID = #{userId}
-	    ORDER BY CM.TIME DESC
+	<select id="selectUserChatList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Chat">
+	    SELECT 
+	        C.CHAT_NO            AS chatNo,
+	        L.LAWYER_NAME        AS lawyerName,
+	        M.MESSAGE            AS message,
+	        TO_CHAR(M.TIME, 'YYYY-MM-DD HH24:MI') AS chatTime
+	    FROM 
+	        CHAT C
+	    JOIN CHAT_MESSAGE M ON C.CHAT_NO = M.CHAT_NO
+	    JOIN LAWYER L ON C.RECEIVER_ID = L.LAWYER_ID
+	    WHERE 
+	        C.SENDER_ID = #{userId}
+	        AND M.TIME = (
+	            SELECT MAX(TIME) FROM CHAT_MESSAGE WHERE CHAT_NO = C.CHAT_NO
+	        )
+	    ORDER BY M.TIME DESC
 	</select>
 	
 	
@@ -51,5 +58,34 @@
 	    FROM TBL_USER
 	    WHERE USER_ID = #{userId}
 	</select>
+	<update id="updateUserInfo" parameterType="hashmap">
+	    UPDATE TBL_USER
+	    SET
+	        USER_NAME = #{userName},
+	        USER_PHONE = #{userPhone},
+	        USER_EMAIL = #{userEmail}
+	    WHERE USER_ID = #{userId}
+	</update>
+	
+	<select id="selectUserInfo" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+	    SELECT USER_ID, USER_NAME, USER_PHONE, USER_EMAIL
+	    FROM TBL_USER
+	    WHERE USER_ID = #{sessionId}
+	</select>
+	
+	<!-- 비밀번호 확인용 -->
+	<select id="selectUserById" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+	    SELECT *
+	    FROM TBL_USER
+	    WHERE USER_ID = #{userId}
+	</select>
+
+	<!-- 탈퇴 처리 (user_status 변경 or 삭제) -->
+	<update id="deleteUserByAdmin" parameterType="hashmap">
+	    UPDATE TBL_USER
+	    SET USER_STATUS = 'OUT',
+	        CDATE = SYSDATE
+	    WHERE USER_ID = #{userId}
+	</update>
 	
 </mapper>

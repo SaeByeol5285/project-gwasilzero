@@ -34,6 +34,12 @@ public class MypageController {
 
 		return "/mypage/mypage-remove";
 	}
+	@RequestMapping("/mypage-edit.do")
+	public String edit(Model model) throws Exception {
+
+		return "/mypage/mypage-edit";
+	}
+	
 	
 	@RequestMapping(value = "/mypage/mypage-list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
@@ -43,17 +49,29 @@ public class MypageController {
 	    return new Gson().toJson(resultMap);
 	}
 	
-	@RequestMapping(value = "/mypage/removeUser.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/mypage/mypage-remove.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String removeUser(@RequestParam HashMap<String, Object> map) throws Exception {
-	    HashMap<String, Object> resultMap = new HashMap<>();
-
-	    System.out.println("🔎 받은 데이터 (Controller): " + map);  // 추가
-	    resultMap = mypageService.removeUser(map);  // Service 호출
-
-	    System.out.println("🔎 Controller 응답 데이터: " + resultMap);  // 추가
-	    return new Gson().toJson(resultMap);  // 🔥 반환값 null 방지
+	    HashMap<String, Object> resultMap = mypageService.removeUser(map);
+	    return new Gson().toJson(resultMap);
 	}
+	
+	@RequestMapping(value = "/mypage/mypage-view.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getInfo(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = mypageService.selectUserInfo(map); // 이게 있어야 함
+	    return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/mypage/mypage-edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String editInfo(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = mypageService.updateUser(map); // 이게 있어야 함
+	    return new Gson().toJson(resultMap);
+	}
+	
 	
 	@RequestMapping(value = "/mypage/my-board-list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody

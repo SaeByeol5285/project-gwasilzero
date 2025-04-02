@@ -234,8 +234,9 @@
                <h3>채팅 내역</h3>
                <table>
                   <tr v-for="chat in chatList" :key="chat.chatNo">
+                     <td>{{ chat.lawyerName }}</td>
                      <td>{{ chat.message }}</td>
-                     <td>{{ chat.receiverId }}</td>
+                     <td>{{ chat.chatTime }}</td>
                   </tr>
                </table>
             </div>
@@ -278,9 +279,8 @@
          const app = Vue.createApp({
             data() {
                return {
-                  // sessionId: window.sessionId || "",
-                  userId: "user_011",
-                  sessionId: "user_011",
+                  sessionId: "${sessionId}",
+                  userId: "",
                   info: {},
                   boardList: [],
                   chatList: [],
@@ -332,7 +332,8 @@
                      data: nparmap,
                      dataType: "json",
                      success: function (data) {
-                        self.chatList = data.list || [];
+                        console.log("✅ 채팅 응답: ", data);
+                        self.chatList = data.list?.chatList || [];
                      }
                   });
                },
@@ -354,7 +355,7 @@
                },
 
                fnEdit() {
-                  location.href = "/join/edit.do";
+                  location.href = "/mypage-edit.do";
                },
                fnRemoveUser() {
                   location.href = "/mypage-remove.do";
@@ -462,6 +463,7 @@
                },
             },
             mounted() {
+               console.log("✅ 세션 ID:", this.sessionId); // 🔍 콘솔에서 확인
                this.fnGetUserInfo();
                this.fnGetBoardList();
                this.fnGetChatList();

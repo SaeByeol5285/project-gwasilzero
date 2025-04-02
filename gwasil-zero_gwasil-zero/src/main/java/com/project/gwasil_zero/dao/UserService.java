@@ -31,7 +31,7 @@ public class UserService {
 		boolean loginFlg = false;
 
 		if (user != null) {
-			if ("Out".equals(user.getUserStatus())) {
+			if ("OUT".equals(user.getUserStatus())) {
 				if (map.get("recover") != null && map.get("recover").equals("true")) {
 					int updateCount = userMapper.updateUserStatus(map); // 계정 복구
 					if (updateCount > 0) {

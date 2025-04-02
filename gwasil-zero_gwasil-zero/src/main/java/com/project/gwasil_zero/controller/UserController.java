@@ -1,6 +1,5 @@
 package com.project.gwasil_zero.controller;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,8 +44,8 @@ public class UserController {
 	// 로그인 페이지 이동
 	@RequestMapping("/user/login.do")
 	public String login(Model model) throws Exception {
-		String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + client_id +
-				"&redirect_uri=" + redirect_uri;
+		String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + client_id
+				+ "&redirect_uri=" + redirect_uri;
 		model.addAttribute("location", location);
 		return "/user/user-login";
 	}
@@ -142,7 +141,8 @@ public class UserController {
 		ResponseEntity<Map> response = restTemplate.postForEntity(tokenUrl, request, Map.class);
 
 		Map<String, Object> responseBody = response.getBody();
-		HashMap<String, Object> resultMap = (HashMap<String, Object>) getUserInfo((String) responseBody.get("access_token"));
+		HashMap<String, Object> resultMap = (HashMap<String, Object>) getUserInfo(
+				(String) responseBody.get("access_token"));
 		return new Gson().toJson(resultMap);
 	}
 
@@ -162,6 +162,18 @@ public class UserController {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@RequestMapping(value = "/user/naver-session.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public HashMap<String, Object> naverSession(@RequestParam HashMap<String, Object> map, HttpSession session) {
+		session.setAttribute("sessionId", map.get("email")); // 또는 map.get("id") 등
+		session.setAttribute("sessionName", map.get("name"));
+		session.setAttribute("role", "user"); // 권한도 설정해두면 좋음
+
+		HashMap<String, Object> result = new HashMap<>();
+		result.put("result", "success");
+		return result;
 	}
 
 }

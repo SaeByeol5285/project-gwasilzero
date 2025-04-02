@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class BoardCmt {
 
-	private String cmt_no;
+	private String cmtNo;
 	private String boardNo;
 	private String contents;
 	private String lawyerId;

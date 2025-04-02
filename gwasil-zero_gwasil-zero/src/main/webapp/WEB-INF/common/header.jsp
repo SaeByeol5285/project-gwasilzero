@@ -67,13 +67,10 @@
                     </div>
 
                 </a>
-
-
-
                 <a href="/totalDocs/list.do?kind=HELP">고객만족센터</a>
-                <a v-if="sessionId === ''" href="/user/login.do">로그인 / 회원가입</a>
-                <a v-else href="/user/logout.do">로그아웃</a>
-                <a v-if="sessionId !== ''" href="fnMyPage()">마이페이지</a>
+                <a v-if="!sessionId" href="/user/login.do">로그인 / 회원가입</a>
+                <a v-else @click="fnLogout">로그아웃</a>
+                <a v-if="sessionId != null" href="/mypage-home.do">마이페이지</a>
             </div>
 
             <!-- 네비게이션 -->
@@ -270,6 +267,26 @@
                             }
                         });
                     }
+                },
+                fnLogout() {
+                    var self = this;
+                    var nparmap = {
+                    };
+                    $.ajax({
+                        url: "/user/logout.dox",
+                        dataType: "json",
+                        type: "POST",
+                        data: nparmap,
+                        success: function (data) {
+                            if (data.result == "success") {
+                                console.log("sessionId =====> " + self.id);
+                                alert("로그아웃 되었습니다.");
+                                location.href = "/common/main.do"; // 로그아웃 후 이동할 페이지
+                            } else {
+                                alert("로그아웃 실패");
+                            }
+                        }
+                    });
                 }
 
             },
@@ -280,7 +297,7 @@
                     self.fnGetNotificationList();
                     self.fnGetBookmarkList();
                 }
-
+                console.log(self.sessionId);
                 document.addEventListener('click', self.handleClickOutside);
             },
             beforeUnmount() {

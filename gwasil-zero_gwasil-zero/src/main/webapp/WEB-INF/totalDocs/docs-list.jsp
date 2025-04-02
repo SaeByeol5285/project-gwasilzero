@@ -9,7 +9,8 @@
 		<script src="/js/page-change.js"></script>
 		<link rel="stylesheet" href="/css/common.css">
 		<link rel="stylesheet" href="/css/totalDocs.css">
-		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap"
+			rel="stylesheet">
 		<title>통합 자료실</title>
 		<style>
 			* {
@@ -91,7 +92,8 @@
 					</select>
 				</div>
 
-				<div class="card mb-20" v-for="item in list" :key="item.totalNo" @click="fnHelpView(item.totalNo)" style="cursor:pointer;">
+				<div class="card mb-20" v-for="item in list" :key="item.totalNo" @click="fnHelpView(item.totalNo)"
+					style="cursor:pointer;">
 					<h3>{{ item.totalTitle }}</h3>
 					<p>작성자: {{ item.userId }}</p>
 					<p>작성일: {{ item.cdate }}</p>
@@ -169,7 +171,7 @@
 					index: 0,
 					showScrollBtn: false, // 맨위로 버튼
 					currentTab: "notice", // 기본 탭,
-					kind: "${map.kind}", //글종류 : NOTICE, HELP, GUIDE
+					kind: "", //글종류 : NOTICE, HELP, GUIDE
 					sessionStatus: '',//"${sessionStatus}"
 					showGuide: true,
 					cards: [
@@ -436,13 +438,22 @@
 				}
 			},
 			mounted() {
-				if (this.kind === "NOTICE" || this.kind == '') {
+				const urlParams = new URLSearchParams(window.location.search);
+				const kindParam = urlParams.get("kind");
+				const fallbackKind = "${map.kind}" || "NOTICE";
+				this.kind = kindParam || fallbackKind;
+
+				// 탭 선택 및 초기 데이터 불러오기
+				if (this.kind === "NOTICE") {
 					this.currentTab = "notice";
 					this.fnNoticeList();
 				} else if (this.kind === "HELP") {
 					this.currentTab = "help";
 					this.fnHelpList();
+				} else if (this.kind === "GUIDE") {
+					this.currentTab = "guide";
 				}
+
 				window.addEventListener("scroll", this.handleScroll);
 			},
 			beforeUnmount() {

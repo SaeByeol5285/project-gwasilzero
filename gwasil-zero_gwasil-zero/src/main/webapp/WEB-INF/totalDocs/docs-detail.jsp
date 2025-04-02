@@ -68,7 +68,7 @@
 				</div>
 			</div>
 			<!-- 댓글 리스트 -->
-			<ul class="mt-20">
+			<ul class="mt-20" v-if="cmtList.length > 0">
 				<li v-for="(comment, idx) in cmtList" :key="idx" style="margin-bottom: 10px;">
 					<div v-if="editCmtId === comment.cmtNo">
 						<textarea v-model="editContents" rows="3" style="width: 100%; padding: 10px;"></textarea>
@@ -78,7 +78,7 @@
 						</div>
 					</div>
 					<div v-else>
-						<strong>[관리자 답변]</strong>: {{ comment.contents }}
+						<strong>[관리자 댓글]</strong>: {{ comment.contents }}
 						<small style="color: #aaa;">{{ comment.cdate }}</small>
 						<div style="margin-top: 5px;">
 							<button @click="fnEditCmt(comment)" class="btn btn-outline btn-sm">수정</button>
@@ -238,7 +238,7 @@
 						data: nparmap,
 						success(data) {
 							if (data.result == "success") {
-								alert("답변이 삭제되었습니다.");
+								alert("댓글이 삭제되었습니다.");
 								self.fnGetCmtList();
 							} else {
 								alert("삭제 실패");						
@@ -280,6 +280,7 @@
 				moveTo(no) {
 					this.totalNo = no;
 					this.fnDocsView();
+					this.fnGetCmtList();
 					window.scrollTo({ top: 0, behavior: 'smooth' });
 				},
 				goToListPage() {

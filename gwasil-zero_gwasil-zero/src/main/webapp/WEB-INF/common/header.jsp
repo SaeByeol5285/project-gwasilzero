@@ -1,4 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+
     <link rel="stylesheet" href="/css/header.css">
     <link rel="stylesheet" href="/css/common.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,8 +46,31 @@
                         </div>
                     </div>
                 </a>
-                <a v-if="sessionType === 'user'" href="/bookmark/list.do">북마크 목록</a>
-                <a href="#">고객만족센터</a>
+
+                <a v-if="sessionType === 'user'" href="javascript:void(0);" class="bookmark-link"
+                    @click="toggleBookmarkPopup" ref="bookmarkToggle">
+                    북마크 목록
+                    <!-- 북마크 팝업 -->
+                    <div v-if="showBookmarkPopup" class="noti-popup" ref="bookmarkPopup" @click.stop>
+                        <div class="noti-section">
+                            <h4>관심 변호사</h4>
+                            <div class="noti-list" v-if="bookmarkList.length > 0">
+                                <div class="noti-item" v-for="(bm, index) in bookmarkList" :key="index">
+                                    {{ bm.lawyerName }}
+                                    <img src="/img/selectedBookmark.png"
+                                        style="float: right; width: 18px; height: 18px; cursor: pointer;"
+                                        @click="confirmBookmarkDelete(bm.lawyerId)" />
+                                </div>
+                            </div>
+                            <div class="noti-empty" v-else>관심있는 변호사가 없습니다.</div>
+                        </div>
+                    </div>
+
+                </a>
+
+
+
+                <a href="/totalDocs/list.do?kind=HELP">고객만족센터</a>
                 <a v-if="sessionId === ''" href="/user/login.do">로그인 / 회원가입</a>
                 <a v-else href="/user/logout.do">로그아웃</a>
                 <a v-if="sessionId !== ''" href="fnMyPage()">마이페이지</a>
@@ -90,6 +115,8 @@
                     list: [],
                     commentNoti: [],
                     messageNoti: [],
+                    showBookmarkPopup: false,
+                    bookmarkList: [],
                     menuItems: [
                         { name: '회사 소개', url: '/common/introduce.do' },
                         { name: '패키지 소개', url: '/package/package.do' },
@@ -107,9 +134,9 @@
                         ],
                         [],
                         [
-                            { name: '공지사항', url: '#' },
-                            { name: 'Q & A', url: '#' },
-                            { name: '사건 종류 가이드', url: '#' }
+                            { name: '공지사항', url: '/totalDocs/list.do?kind=NOTICE' },
+                            { name: '이용문의', url: '/totalDocs/list.do?kind=HELP' },
+                            { name: '사건 종류 가이드', url: '/totalDocs/list.do?kind=GUIDE' }
                         ]
                     ]
                 };
@@ -160,14 +187,17 @@
                 handleClickOutside(event) {
                     const toggle = this.$refs.notiToggle;
                     const popup = this.$refs.notiPopup;
+                    const bmToggle = this.$refs.bookmarkToggle;
+                    const bmPopup = this.$refs.bookmarkPopup;
 
-                    if (!toggle || !popup) return;
+                    const clickedOutsideNoti = toggle && popup && !toggle.contains(event.target) && !popup.contains(event.target);
+                    const clickedOutsideBookmark = bmToggle && bmPopup && !bmToggle.contains(event.target) && !bmPopup.contains(event.target);
 
-                    if (
-                        !toggle.contains(event.target) &&
-                        !popup.contains(event.target)
-                    ) {
+                    if (clickedOutsideNoti) {
                         this.showNotification = false;
+                    }
+                    if (clickedOutsideBookmark) {
+                        this.showBookmarkPopup = false;
                     }
                 },
                 fnBoardView(item) {  // 읽음처리 후 해당보드로 넘어가기
@@ -197,13 +227,58 @@
                     } else {
                         return '#';
                     }
+                },
+                fnGetBookmarkList() {
+                    const self = this;
+                    $.ajax({
+                        url: "/bookmark/list.dox",
+                        type: "POST",
+                        dataType: "json",
+                        data: { sessionId: self.sessionId },
+                        success(data) {
+                            if (data.result === "success") {
+                                self.bookmarkList = data.list;
+                            } else {
+                                self.bookmarkList = [];
+                            }
+                        }
+                    });
+                },
+                toggleBookmarkPopup() {
+                    this.showBookmarkPopup = !this.showBookmarkPopup;
+                    if (this.showBookmarkPopup) {
+                        this.fnGetBookmarkList();
+                    }
+                },
+
+                confirmBookmarkDelete(lawyerId) {
+                    let self = this;
+                    if (confirm("정말 이 변호사를 관심목록에서 삭제하시겠습니까?")) {
+                        $.ajax({
+                            url: "/bookmark/remove.dox",
+                            type: "POST",
+                            data: {
+                                userId: self.sessionId,
+                                lawyerId: lawyerId
+                            },
+                            success: function (data) {
+                                alert("삭제되었습니다.");
+                                self.fnGetBookmarkList(); // 다시 목록 불러오기
+                            },
+                            error: function () {
+                                alert("삭제 중 오류가 발생했습니다.");
+                            }
+                        });
+                    }
                 }
+
             },
             mounted() {
                 let self = this;
 
                 if (self.sessionType === 'user') {
                     self.fnGetNotificationList();
+                    self.fnGetBookmarkList();
                 }
 
                 document.addEventListener('click', self.handleClickOutside);

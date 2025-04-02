@@ -13,5 +13,7 @@ public class TotalDocs {
 	private String userId;
 	private String kind;
 	private int cnt;
-
+	private int answerCount;
+	private String answerStatus;
+	
 }

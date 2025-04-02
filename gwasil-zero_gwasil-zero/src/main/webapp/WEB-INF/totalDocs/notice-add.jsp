@@ -1,121 +1,212 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-	<!DOCTYPE html>
-	<html>
+    <!DOCTYPE html>
+    <html>
 
-	<head>
-		<meta charset="UTF-8">
-		<title>공지사항 등록</title>
-		<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-		<link rel="stylesheet" href="/css/common.css">
-		<script src="/js/page-change.js"></script>
+    <head>
+        <meta charset="UTF-8">
+        <title>공지사항 등록</title>
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+        <script src="/js/page-change.js"></script>
+        <link rel="stylesheet" href="/css/common.css">
+        <!-- ✅ Quill 에디터 -->
+        <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    </head>
 
-	</head>
+    <body>
+        <jsp:include page="../common/header.jsp" />
+        <div id="app" class="container">
+            <div class="card">
+                <h2 class="section-title">공지사항 등록</h2>
 
-	<body>
-		<jsp:include page="../common/header.jsp" />
-		<div id="app" class="container">
-			<div class="card">
-				<h2 class="section-title">공지사항 등록</h2>
+                <div class="form-group mb-20">
+                    <label>제목</label>
+                    <input v-model="totalTitle" class="input-box" placeholder="제목을 입력하세요">
+                </div>
 
-				<div class="form-group mb-20">
-					<label>제목</label>
-					<input v-model="totalTitle" class="input-box" placeholder="제목을 입력하세요">
-				</div>
-				<div>
-					첨부파일 : <input type="file" id="file1" name="file1" accept=".jpg, .png" multiple>
-				</div>
+                <div class="form-group mb-20">
+                    <label>첨부파일</label>
+                    <input type="file" id="file1" name="file1" multiple>
+                </div>
 
-				<div class="form-group mb-20">
-					<label>내용</label>
-					<textarea v-model="totalContents" class="textarea-box" placeholder="내용을 입력하세요"></textarea>
-				</div>
+                <div class="form-group mb-20">
+                    <label>내용</label>
+                    <div id="quill-editor" style="height: 300px;"></div>
+                </div>
 
-				<div class="btn-area">
-					<button @click="fnAddNotice" class="btn btn-primary">등록</button>
-					<button @click="goToListPage" class="btn btn-primary">목록보기</button>
-				</div>
-			</div>
-		</div>
-		<jsp:include page="../common/footer.jsp" />
-	</body>
+                <div class="btn-area">
+                    <button @click="fnAddNotice" class="btn btn-primary" :disabled="isSubmitting">등록</button>
+                    <button @click="goToListPage" class="btn btn-outline">목록보기</button>
+                </div>
+            </div>
+        </div>
+        <jsp:include page="../common/footer.jsp" />
+    </body>
 
-	<script>
-		const app = Vue.createApp({
-			data() {
-				return {
-					totalTitle: "",
-					totalContents: "",
-					userId: "101", // 세션에서 받아오는 값으로 대체 가능
-					kind: "NOTICE"
-				};
-			},
-			methods: {
-				fnAddNotice() {
-					var self = this;
-					if (!self.totalTitle || !self.totalContents) {
-						alert("제목과 내용을 모두 입력해주세요.");
-						return;
-					}
-					var nparmap = {
-						totalTitle: self.totalTitle,
-						totalContents: self.totalContents,
-						userId: self.userId,
-						kind: self.kind
-					};
-					$.ajax({
-						url: "/notice/add.dox",
-						dataType: "json",
-						type: "POST",
-						data: nparmap,
-						success: function (data) {
-							if (data.result == "success") {
-								if ($("#file1")[0].files.length > 0) {
-                                    var form = new FormData();
-                                    for(let i=0; i<$("#file1")[0].files.length; i++){
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    totalTitle: "",
+                    userId: "101", // "${sessionId}"
+                    kind: "NOTICE",
+                    quill: null,
+                    sessionStatus: 'A',//"${sessionStatus}"
+                    isSubmitting: false // 중복 방지용 플래그
+
+                };
+            },
+            methods: {
+                fnAddNotice() {
+                    const self = this;
+
+                    if (self.isSubmitting) return; // 제출 중이면 막기
+                    self.isSubmitting = true;
+
+                    const content = self.quill.root.innerHTML;
+
+                    if (!self.totalTitle || !content || content === "<p><br></p>") {
+                        alert("제목과 내용을 모두 입력해주세요.");
+                        self.isSubmitting = false;
+                        return;
+                    }
+
+                    const nparmap = {
+                        totalTitle: self.totalTitle,
+                        totalContents: content,
+                        userId: self.userId,
+                        kind: self.kind
+                    };
+
+                    $.ajax({
+                        url: "/totalDocs/add.dox",
+                        dataType: "json",
+                        type: "POST",
+                        data: nparmap,
+                        success: function (data) {
+                            if (data.result === "forbidden") {
+                                alert(data.message || "권한이 없습니다.");
+                                pageChange("/totalDocs/list.do", { kind: "NOTICE" });
+                                return;
+                            }
+                            if (data.result === "success") {
+                                if ($("#file1")[0].files.length > 0) {
+                                    const form = new FormData();
+                                    for (let i = 0; i < $("#file1")[0].files.length; i++) {
                                         form.append("file1", $("#file1")[0].files[i]);
                                     }
-                                    form.append("totalNo", data.totalNo); // 임시 pk
+                                    form.append("totalNo", data.totalNo);
                                     self.upload(form);
-									
-                                } else{
-
+                                } else {
+                                    alert("글쓰기가 완료되었습니다.");
+                                    pageChange("/totalDocs/list.do", { kind: "NOTICE" });
                                 }
-                                
-							} else {
-								alert("글쓰기 실패!");
-							}
-						},
+                            } else {
+                                alert("글쓰기 실패!");
+                                self.isSubmitting = false;
+                            }
+                        },
                         error: function () {
                             alert("서버 오류가 발생했습니다.");
-                        }
-					});
-				},
-				goToListPage (){
-					pageChange("/notice/list.do", {});
-				},
-				// 파일 업로드
-                upload: function (form) {
-                    var self = this;
-                    $.ajax({
-                        url: "/fileUpload.dox"
-                        , type: "POST"
-                        , processData: false
-                        , contentType: false
-                        , data: form
-                        , success: function (data) {
-							if(data.result == "success"){
-								alert("글쓰기가 완료되었습니다.");
-								location.href="/notice/list.do"
-							} else {
-								alert("실패.");
-							}							
+                            self.isSubmitting = false;
                         }
                     });
-                }
-			}
-		});
-		app.mount("#app");
-	</script>
+                },
+                upload(form) {
+                    $.ajax({
+                        url: "/fileUpload.dox",
+                        type: "POST",
+                        processData: false,
+                        contentType: false,
+                        data: form,
+                        success: function (data) {
+                            if (data.result === "success") {
+                                alert("글쓰기가 완료되었습니다.");
+                                self.isSubmitting = false;
+                                pageChange("/totalDocs/list.do", { kind: "NOTICE" });
 
-	</html>
+                            } else {
+                                alert("파일 업로드 실패.");
+                                self.isSubmitting = false;
+
+                            }
+                        }
+                    });
+                },
+                goToListPage() {
+                    pageChange("/totalDocs/list.do", { kind: "NOTICE" });
+                },
+                initQuill() {
+                    const self = this;
+                    const toolbarOptions = [
+                        ['bold', 'italic', 'underline'],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                        ['image'],
+                        ['clean']
+                    ];
+
+                    self.quill = new Quill("#quill-editor", {
+                        theme: "snow",
+                        modules: {
+                            toolbar: {
+                                container: toolbarOptions,
+                                handlers: {
+                                    image: function () {
+                                        // 이미지 업로드 핸들러
+                                        const input = document.createElement("input");
+                                        input.setAttribute("type", "file");
+                                        input.setAttribute("accept", "image/*");
+                                        input.click();
+
+                                        input.onchange = async () => {
+                                            const file = input.files[0];
+                                            if (file) {
+                                                const formData = new FormData();
+                                                formData.append("image", file);
+
+                                                try {
+                                                    const response = await fetch("/upload/image.dox", {
+                                                        method: "POST",
+                                                        body: formData,
+                                                    });
+
+                                                    const result = await response.json();
+                                                    if (result.url) {
+                                                        const range = self.quill.getSelection();
+                                                        self.quill.insertEmbed(range.index, "image", result.url);
+                                                    } else {
+                                                        alert("이미지 업로드 실패");
+                                                    }
+                                                } catch (err) {
+                                                    console.error(err);
+                                                    alert("이미지 업로드 중 오류 발생");
+                                                }
+                                            }
+                                        };
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                },
+                checkAdmin(sessionStatus) {
+                    if (sessionStatus != 'A') {
+                        alert("관리자만 접근할 수 있습니다.");
+                        pageChange("/totalDocs/list.do", { kind: "NOTICE" });
+                        return false;
+                    }
+                    return true;
+                }
+            },
+            mounted() {
+                this.initQuill();
+                if (!this.checkAdmin(this.sessionStatus)) return;
+            }
+        });
+
+        app.mount("#app");
+    </script>
+
+    </html>

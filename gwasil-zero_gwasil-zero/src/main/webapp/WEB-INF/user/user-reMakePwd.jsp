@@ -1,52 +1,53 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+  <!DOCTYPE html>
+  <html>
 
-<head>
-  <meta charset="UTF-8">
-  <script src="https://code.jquery.com/jquery-3.7.1.js"
-            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>  <title>비밀번호 재설정</title>
-  <style>
-    .form-section {
-      width: 100%;
-      max-width: 400px;
-      margin: 100px auto;
-      padding: 30px;
-      background: #ffffff;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-    
-    input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 10px;
-      border: 2px solid #e5e7eb;
-      border-radius: 5px;
-    }
+  <head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+      integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <title>비밀번호 재설정</title>
+    <style>
+      .form-section {
+        width: 100%;
+        max-width: 400px;
+        margin: 100px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
 
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #FF5722;
-      color: #ffffff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  </style>
-</head>
+      input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 10px;
+        border: 2px solid #e5e7eb;
+        border-radius: 5px;
+      }
 
-<body>
-  <div class="form-section">
-    <h2>비밀번호 재설정</h2>
-    <input id="newPwd" type="password" placeholder="새 비밀번호 입력" />
-    <input id="confirmPwd" type="password" placeholder="비밀번호 확인" />
-    <button onclick="submitNewPassword()">변경하기</button>
-  </div>
-</body>
+      button {
+        width: 100%;
+        padding: 12px;
+        background-color: #FF5722;
+        color: #ffffff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
 
-</html>
+  <body>
+    <div class="form-section">
+      <h2>비밀번호 재설정</h2>
+      <input id="newPwd" type="password" placeholder="새 비밀번호 입력" />
+      <input id="confirmPwd" type="password" placeholder="비밀번호 확인" />
+      <button onclick="submitNewPassword()">변경하기</button>
+    </div>
+  </body>
+
+  </html>
   <script>
     const userId = sessionStorage.getItem("recoverUserId");
 
@@ -87,8 +88,8 @@
         },
         error: function () {
           alert("서버 통신 오류가 발생했습니다.");
+
         }
       });
     }
   </script>
-

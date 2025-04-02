@@ -63,7 +63,7 @@
     <body>
         <jsp:include page="../common/header.jsp" />
         <div id="app">
-           
+
             <div id="app">
                 <h2>회원탈퇴</h2>
 
@@ -86,7 +86,7 @@
                     <button class="cancel-btn" @click="fnCancel">취소</button>
                 </div>
             </div>
-            
+
         </div>
         <jsp:include page="../common/footer.jsp" />
     </body>
@@ -96,7 +96,7 @@
         const app = Vue.createApp({
             data() {
                 return {
-                    userId: "${map.userId}",
+                    sessionId: "${sessionId}",
                     info: {},
 
                 };
@@ -105,7 +105,7 @@
                 fnGetInfo() {
                     var self = this;
                     var nparmap = {
-                        userId: "juwon1234"
+                        sessionId: self.sessionId
                     };
                     $.ajax({
                         url: "/mypage/mypage-view.dox",
@@ -121,7 +121,7 @@
                 fnDeleteAccount: function () {
                     var self = this;
                     var nparmap = {
-                        userId: self.info.userId
+                        sessionId: self.info.sessionId
                     };
                     $.ajax({
                         url: "/mypage/mypage-remove.dox",

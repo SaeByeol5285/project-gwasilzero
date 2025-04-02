@@ -9,5 +9,4 @@ public class TotalFile {
 	private String filePath;
 	private String fileName;
 
-
 }

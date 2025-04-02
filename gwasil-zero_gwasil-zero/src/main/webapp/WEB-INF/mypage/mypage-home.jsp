@@ -4,8 +4,9 @@
 
    <head>
       <meta charset="UTF-8">
-      <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-      <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+      <script src="https://code.jquery.com/jquery-3.7.1.js"
+         integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
       <script src="/js/page-change.js"></script>
       <title>sample.jsp</title>
       <style>
@@ -277,7 +278,6 @@
                availReviewList: [], // 작성할 수 있는 리뷰 리스트
                writtenReviewList: [],   // 이미 작성한 리뷰 리스트
                isEditing: false,  //true일 때만 수정 모드
-
             };
          },
          methods: {
@@ -394,9 +394,6 @@
                   }
                });
             },
-
-
-
          },
          mounted() {
             this.fnGetList();

@@ -30,5 +30,15 @@ public interface BoardMapper {
 	List<BoardCmt> selectBoardCmttList(HashMap<String, Object> map);
 
 	void insertBoardCmt(HashMap<String, Object> map);
+	
+	void updateBoardStatus(HashMap<String, Object> map);
+
+	void updateBoard(HashMap<String, Object> map);
+	
+	void deleteBoardFile(HashMap<String, Object> map);
+
+	void markBoardAsDeleted(HashMap<String, Object> map);
+
+	void deleteBoardCmt(HashMap<String, Object> map);
 
 }

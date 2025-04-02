@@ -11,5 +11,4 @@ public class TotalCmt {
 	private String cdate;
 	private String udate;
 
-
 }

@@ -9,7 +9,8 @@
 		    b.board_title, 
 		    b.user_id, 
 		    b.cdate, 
-		    b.board_status, 
+		    b.board_status,
+		    m.user_name as userName, 
 		    l.lawyer_name,
 		    bf.file_path AS thumbnail_path
 		  FROM BOARD b
@@ -24,6 +25,7 @@
 		    INNER JOIN categories c ON b.board_no = c.board_no AND c.category = #{category}
 		  </if>
 		  where 1 = 1
+		  AND b.board_status != 'DELETE'
 		 <if test="searchOption != null and searchOption == 'all'">
 		  AND (
 		    b.BOARD_TITLE LIKE '%' || #{keyword} || '%' 
@@ -49,6 +51,7 @@
 		LEFT JOIN CATEGORIES C ON B.BOARD_NO = C.BOARD_NO
 		LEFT JOIN LAWYER l ON b.lawyer_id = l.lawyer_id
 		WHERE 1=1
+		AND b.board_status != 'DELETE'
 		<if test="category != null and category != 'all'">
 			AND C.CATEGORY = #{category}
 		</if>
@@ -81,7 +84,7 @@
 	<insert id="insertBoardFile" parameterType="hashmap">
     	insert into board_file values (
   	      #{boardNo},
-   	      #{filePath, jdbcType=VARCHAR},
+   	      #{filePath, jdbcType=VARCHAR}	
        	 #{fileName, jdbcType=VARCHAR},
      	   #{thumbnail, jdbcType=VARCHAR},
    	     #{fileRealName, jdbcType=VARCHAR}
@@ -89,7 +92,7 @@
 	</insert>
 	
 	<select id="selectBoard" parameterType="hashmap"  resultType="com.project.gwasil_zero.model.Board">
-		select b.*, lawyer_name  from board b left join lawyer l on l.lawyer_id = b.lawyer_id where b.board_no = #{boardNo}
+		select b.*,u.user_name , lawyer_name  from board b left join lawyer l on l.lawyer_id = b.lawyer_id inner join tbl_user u on u.user_id = b.user_id where b.board_no = #{boardNo}
 	</select>
 	
 	<select id="selectBoardFiles" parameterType="hashmap"  resultType="com.project.gwasil_zero.model.BoardFile">
@@ -97,10 +100,44 @@
 	</select>
 	
 	<select id="selectBoardCmttList" parameterType="hashmap"  resultType="com.project.gwasil_zero.model.BoardCmt">
-		select c.*, l.lawyer_name as lawyerName from board_cmt c inner join lawyer l on c.lawyer_id = l.lawyer_id where board_no = #{boardNo}
+		SELECT 
+	    TO_CHAR(c.cmt_no) AS cmtNo,
+	    c.board_no AS boardNo,
+	    c.lawyer_id AS lawyerId,
+	    c.contents,
+	    c.cdate,
+	    c.udate,
+	    l.lawyer_name AS lawyerName
+	FROM board_cmt c 
+	INNER JOIN lawyer l ON c.lawyer_id = l.lawyer_id 
+	WHERE board_no = #{boardNo}
 	</select>
 	
 	<insert id="insertBoardCmt" parameterType="hashmap" >
 		insert into board_cmt (cmt_no, board_no, lawyer_id, contents, cdate, udate) values(board_cmt_seq.nextval, #{boardNo}, #{lawyerId}, #{contents}, sysdate, sysdate)
 	</insert>
+	
+	<update id="updateBoardStatus" parameterType="hashmap">
+		update board set board_status = 'DOING', lawyer_id = #{lawyerId} where board_no = #{boardNo}
+	</update>
+	
+	<update id="updateBoard" parameterType="hashmap">
+	    UPDATE board 
+	    SET board_title = #{boardTitle}, contents = #{contents}, udate = SYSDATE 
+	    WHERE board_no = #{boardNo}
+	</update>
+	
+	<delete id="deleteBoardFile" parameterType="hashmap">
+	  DELETE FROM board_file WHERE board_no = #{boardNo} AND file_name = #{fileName}
+	</delete>
+	
+	<update id="markBoardAsDeleted" parameterType="hashmap">
+	    UPDATE board SET board_status = 'DELETE', udate = SYSDATE WHERE board_no = #{boardNo}
+	</update>
+	
+	<delete id="deleteBoardCmt" parameterType="hashmap">
+	  DELETE FROM board_cmt
+	  WHERE cmt_no = #{cmtNo} AND lawyer_id = #{lawyerId}
+	</delete>
+	
 </mapper>

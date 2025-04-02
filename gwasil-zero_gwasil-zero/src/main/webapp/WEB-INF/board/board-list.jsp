@@ -13,13 +13,13 @@
 </head>
 <style>
 	.card-container {
-	    width: 66%; /* 전체 화면의 2/3 */
-	    margin: 0 auto; /* 중앙 정렬 */
+	    width: 66%;
+	    margin: 0 auto; 
 	    padding: 40px 20px;
 	  }
 	.card-grid {
 	  display: grid;
-	  grid-template-columns: repeat(3, 1fr); /* 한 줄에 3개 */
+	  grid-template-columns: repeat(3, 1fr);
 	  gap: 24px;
 	  padding: 10px;
 	  margin-top: 30px;
@@ -218,6 +218,7 @@
         data() {
             return {
 				list : [],
+				sessionId : "${sessionScope.sessionId}",
 				categoryList: [
 					{ value: "all", label: "전체 사고 보기" },
 				  { value: "01", label: "신호위반 사고" },

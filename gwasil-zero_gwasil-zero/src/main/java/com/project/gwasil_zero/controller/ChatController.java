@@ -7,11 +7,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.project.gwasil_zero.dao.ChatService;
 import com.project.gwasil_zero.model.ChatFile;
 import com.project.gwasil_zero.model.ChatMessage;
@@ -24,6 +26,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,15 +52,7 @@ public class ChatController {
 	        chatService.enrichSenderName(msg); // 이름 조회
 	        wrapper.setPayload(msg); // 이름 담아서 다시 전송
 
-	    } else if ("file".equals(wrapper.getType())) {
-	        ChatFile file = new ObjectMapper().convertValue(wrapper.getPayload(), ChatFile.class);
-	        file.setTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-
-	        chatService.saveChatFile(file); // ID로 저장
-	        chatService.enrichSenderName(file); // 이름 조회
-	        wrapper.setPayload(file); // 이름 담아서 전송
 	    }
-
 	    return wrapper;
 	}
 	
@@ -104,5 +99,11 @@ public class ChatController {
 	    return savedPaths;
 	}
 
-
+	
+	@RequestMapping(value = "/chat/history.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getChatHistory(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = chatService.getChatHistory(map);
+	    return new Gson().toJson(resultMap);
+	}
 }

@@ -14,5 +14,4 @@ public class TotalDocs {
 	private String kind;
 	private int cnt;
 
-
 }

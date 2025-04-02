@@ -25,8 +25,4 @@ public interface ReviewMapper {
 	//리뷰 삭제
 	int deleteReview(HashMap<String, Object> map);
 
-	
-	
-	
-
 }

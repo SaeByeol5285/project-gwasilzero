@@ -30,5 +30,7 @@ public interface UserMapper {
 
 
 	int updateUserStatus(HashMap<String, Object> map);
+	
+	int updateUserPassword(HashMap<String, Object> map);
 
 }

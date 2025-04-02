@@ -1,95 +1,123 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    <!DOCTYPE html>
-    <html>
-
+<!DOCTYPE html>
+  <html>       
     <head>
-        <meta charset="UTF-8">
-        <script src="https://code.jquery.com/jquery-3.7.1.js"
-            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-        <title>sample.jsp</title>
-    </head>
-    <style>
-        
-    </style>
+            <meta charset="UTF-8">
+            <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+            <title>내 정보 수정</title>
+            <style>
+                #app {
+                    max-width: 500px;
+                    margin: 80px auto;
+                    font-family: Arial, sans-serif;
+                    font-size: 16px;
+                }
 
-    <body>
-        <div id="app">
-            <div>
-                이름 : <input v-model="info.userName">
-            </div>
-            <div>
-                핸드폰 번호 : <input v-model="info.userPhone">
-            </div>
-            <div>
-                이메일 : <input v-model="info.userEmail">
-            </div>
-            <div>
+                label {
+                    display: block;
+                    margin: 10px 0 5px;
+                }
+
+                input {
+                    width: 100%;
+                    padding: 10px;
+                    margin-bottom: 15px;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                }
+
+                button {
+                    width: 100%;
+                    padding: 12px;
+                    background-color: #FF5722;
+                    color: #fff;
+                    font-size: 16px;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                }
+
+                button:hover {
+                    background-color: #e64a00;
+                }
+            </style>
+        </head>
+
+        <body>
+            <jsp:include page="../common/header.jsp" />
+            <div id="app">
+                <h2>내 정보 수정</h2>
+                <div>
+                    <label>이름</label>
+                    <input v-model="info.userName">
+                </div>
+                <div>
+                    <label>핸드폰 번호</label>
+                    <input v-model="info.userPhone">
+                </div>
+                <div>
+                    <label>이메일</label>
+                    <input v-model="info.userEmail">
+                </div>
                 <button @click="fnSave">저장</button>
             </div>
-        </div>
-    </body>
+            <jsp:include page="../common/footer.jsp" />
+        </body>
 
-    </html>
-    <script>
-        const app = Vue.createApp({
-            data() {
-                return {
-                    userId: "${map.userId}",
-                    info: {},
-                   
-                };
-            },
-            methods: {
-                fnGetInfo() {
-                    var self = this;
-                    var nparmap = {
-                        sessionId: self.sessionId
+        </html>
+
+        <script>
+            const app = Vue.createApp({
+                data() {
+                    return {
+                        sessionId: "${sessionId}",
+                        info: {}
                     };
-                    $.ajax({
-                        url: "/mypage/mypage-view.dox",
-                        dataType: "json",
-                        type: "POST",
-                        data: nparmap,
-                        success: function (data) {
-                            console.log(data);
-                            self.info = data.info
-                        }
-                    });
                 },
-                fnSave: function () {
-                    var self = this;
-                    var nparmap = {
-                        userName : self.info.userName,
-                        userPhone : self.info.userPhone,
-                        userEmail : self.info.userEmail,
-                        userId : self.info.userId
-
-                    };
-                    $.ajax({
-                        url: "/mypage/mypage-edit.dox",
-                        dataType: "json",
-                        type: "POST",
-                        data: nparmap,
-                        success: function (data) {                         
-                            console.log(data);
-                            location.href = "/mypage-home.do"
-                            alert("수정되었습니다");
-                        //     if(data.result == "success"){
-                  // } else {
-                  //    alert("오류발생");
-                  // }
-
+                methods: {
+                    fnGetInfo() {
+                        const self = this;
+                        $.ajax({
+                            url: "/mypage/mypage-view.dox",
+                            type: "POST",
+                            data: { sessionId: self.sessionId },
+                            dataType: "json",
+                            success: function (data) {
+                                self.info = data.info;
+                            }
+                        });
+                    },
+                    fnSave() {
+                        const self = this;
+                        if (!self.info.userName || !self.info.userPhone || !self.info.userEmail) {
+                            alert("모든 항목을 입력해주세요.");
+                            return;
                         }
-                    });
+                        const nparmap = {
+                            userId: self.sessionId,
+                            userName: self.info.userName,
+                            userPhone: self.info.userPhone,
+                            userEmail: self.info.userEmail
+                        };
+                        $.ajax({
+                            url: "/mypage/mypage-edit.dox",
+                            type: "POST",
+                            data: nparmap,
+                            dataType: "json",
+                            success: function (data) {
+                                if (data.result === "success") {
+                                    alert("수정되었습니다!");
+                                    location.href = "/mypage-home.do";
+                                } else {
+                                    alert("수정 실패: " + data.message);
+                                }
+                            }
+                        });
+                    }
+                },
+                mounted() {
                 }
-            },
-            mounted() {
-                var self = this;
-                self.fnGetInfo();
-                console.log(self.userId);
-            }
-        });
-        app.mount('#app');
-    </script>
-    ​
+            });
+            app.mount("#app");
+        </script>

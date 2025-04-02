@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class Contract {
-	
+
 	private int contractNo;
 	private String userId;
 	private String lawyer_Id;

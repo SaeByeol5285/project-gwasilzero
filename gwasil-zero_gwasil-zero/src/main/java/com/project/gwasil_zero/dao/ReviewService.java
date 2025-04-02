@@ -13,9 +13,9 @@ import com.project.gwasil_zero.model.TotalDocs;
 
 @Service
 public class ReviewService {
+
 	@Autowired
 	ReviewMapper reviewMapper;
-
 
 	public HashMap<String, Object> getReviewList(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<>();
@@ -88,6 +88,5 @@ public class ReviewService {
 		return resultMap;
 		
 	}
-
 
 }

@@ -31,7 +31,7 @@ public class UserService {
 		boolean loginFlg = false;
 
 		if (user != null) {
-			if ("Out".equals(user.getUserStatus())) {
+			if ("OUT".equals(user.getUserStatus())) {
 				if (map.get("recover") != null && map.get("recover").equals("true")) {
 					int updateCount = userMapper.updateUserStatus(map); // 계정 복구
 					if (updateCount > 0) {
@@ -56,6 +56,8 @@ public class UserService {
 			session.setAttribute("sessionId", user.getUserId());
 			session.setAttribute("sessionName", user.getUserName());
 			session.setAttribute("sessionStatus", user.getUserStatus());
+			session.setAttribute("sessionType", "user");
+			session.setAttribute("role", "user");
 		} else if (lawyer != null && lawyer.getLawyerId() != null) {
 			loginFlg = passwordEncoder.matches(map.get("pwd").toString(), lawyer.getLawyerPwd());
 			if (loginFlg) {
@@ -64,6 +66,8 @@ public class UserService {
 				session.setAttribute("sessionId", lawyer.getLawyerId());
 				session.setAttribute("sessionName", lawyer.getLawyerName());
 				session.setAttribute("sessionStatus", lawyer.getLawyerStatus());
+				session.setAttribute("sessionType", "lawyer");
+				session.setAttribute("role", "lawyer");
 			}
 		}
 
@@ -126,5 +130,23 @@ public class UserService {
 		resultMap.put("result", "success");
 		return resultMap;
 	}
+	
+	public HashMap<String, Object> updateUserPassword(HashMap<String, Object> map) {
+        HashMap<String, Object> resultMap = new HashMap<>();
+
+        // 암호화
+        String rawPwd = (String) map.get("pwd");
+        String encodedPwd = passwordEncoder.encode(rawPwd);
+        map.put("pwd", encodedPwd);
+
+        int result = userMapper.updateUserPassword(map);
+        if (result > 0) {
+            resultMap.put("result", "success");
+        } else {
+            resultMap.put("result", "fail");
+            resultMap.put("message", "변경 실패");
+        }
+        return resultMap;
+    }
 
 }

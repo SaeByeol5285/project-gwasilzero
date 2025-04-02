@@ -3,7 +3,7 @@
 <button class="btn btn-outline">취소</button>
 
 ✅ 여백
-<div class="mt-20 mb-40"> ... </div>
+<div class="mt-20 mb-40"> ... </div>    
 
 ✅ 타이틀
 <h2 class="section-title">통합 자료실</h2>

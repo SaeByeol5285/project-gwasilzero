@@ -45,16 +45,17 @@
             .social-login {
                 display: flex;
                 justify-content: space-between;
+                gap: 10px;
                 margin-top: 20px;
             }
 
             .social-login a {
                 flex: 1;
-                margin: 0 5px;
+                max-width: 180px;
+                height: 40px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                height: 40px;
             }
 
             .social-login img {
@@ -66,6 +67,17 @@
                 margin-top: 10px;
                 font-size: 14px;
                 color: #888;
+                text-decoration: underline;
+            }
+
+            .extra-links {
+                margin-top: 20px;
+                font-size: 14px;
+            }
+
+            .extra-links a {
+                margin: 0 10px;
+                color: #555;
                 text-decoration: underline;
             }
         </style>
@@ -98,10 +110,14 @@
             </div>
 
             <div>
-                <a href="javascript:void(0);" @click="logoutNaver" class="naver-logout">네이버 계정 로그아웃</a>
+                <a href="https://nid.naver.com/nidlogin.logout" target="_blank" class="naver-logout">네이버 계정 로그아웃</a>
             </div>
 
-            <!-- 숨겨진 네이버 로그인 버튼 -->
+            <div class="extra-links">
+                <a href="/user/search.do">아이디/비밀번호 찾기</a>>
+                <a href="/join/select.do">회원가입</a>
+            </div>
+
             <a id="naverIdLogin_loginButton" href="javascript:void(0)" style="display: none;"></a>
         </div>
 
@@ -140,6 +156,7 @@
                     });
                 },
                 naverLoginClick() {
+                    console.log("함수실행");
                     document.getElementById("naverIdLogin_loginButton").click();
 
                     naverLogin.getLoginStatus(function (status) {
@@ -154,7 +171,7 @@
                                 naverLogin.reprompt();
                                 return;
                             }
-
+                            console.log("ajax통신전");
                             $.ajax({
                                 url: "/user/naver-session.dox",
                                 type: "POST",
@@ -173,27 +190,11 @@
                             });
                         }
                     });
-                },
-                logoutNaver() {
-                    const logoutWindow = window.open("https://nid.naver.com/nidlogin.logout", "네이버로그아웃", "width=1,height=1,top=-1000,left=-1000");
-                    setTimeout(() => {
-                        logoutWindow.close();
-                        sessionStorage.setItem("naverLoggedOut", "true");
-                        $.ajax({
-                            url: "/user/logout.do",
-                            type: "GET",
-                            success: function () {
-                                alert("로그아웃 되었습니다.");
-                                location.href = "/user/login.do";
-                            }
-                        });
-                    }, 1000);
                 }
             }
         });
         app.mount("#app");
 
-        // 네이버 로그인 초기화
         const naverLogin = new naver.LoginWithNaverId({
             clientId: "cHypMXQZj5CCSV0ShBQl",
             callbackUrl: "http://localhost:8080/user/login.do",

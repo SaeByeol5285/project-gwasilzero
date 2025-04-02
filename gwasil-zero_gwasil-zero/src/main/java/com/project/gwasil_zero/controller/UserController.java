@@ -49,7 +49,7 @@ public class UserController {
 		model.addAttribute("location", location);
 		return "/user/user-login";
 	}
-
+	
 	// 아이디/비밀번호 찾기 페이지 이동
 	@RequestMapping("/user/search.do")
 	public String search(Model model) throws Exception {
@@ -170,9 +170,10 @@ public class UserController {
 		session.setAttribute("sessionId", map.get("email")); // 또는 map.get("id") 등
 		session.setAttribute("sessionName", map.get("name"));
 		session.setAttribute("role", "user"); // 권한도 설정해두면 좋음
-
+		System.out.println(map.get("email") + ", " +map.get("name") );
 		HashMap<String, Object> result = new HashMap<>();
 		result.put("result", "success");
+		result.put("id",map.get("email"));
 		return result;
 	}
 

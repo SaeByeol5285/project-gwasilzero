@@ -56,6 +56,7 @@ public class UserService {
 			session.setAttribute("sessionId", user.getUserId());
 			session.setAttribute("sessionName", user.getUserName());
 			session.setAttribute("sessionStatus", user.getUserStatus());
+			session.setAttribute("sessionType", "user");
 			session.setAttribute("role", "user");
 		} else if (lawyer != null && lawyer.getLawyerId() != null) {
 			loginFlg = passwordEncoder.matches(map.get("pwd").toString(), lawyer.getLawyerPwd());
@@ -65,6 +66,7 @@ public class UserService {
 				session.setAttribute("sessionId", lawyer.getLawyerId());
 				session.setAttribute("sessionName", lawyer.getLawyerName());
 				session.setAttribute("sessionStatus", lawyer.getLawyerStatus());
+				session.setAttribute("sessionType", "lawyer");
 				session.setAttribute("role", "lawyer");
 			}
 		}

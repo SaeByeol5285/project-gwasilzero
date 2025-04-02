@@ -9,6 +9,7 @@ public class Bookmark {
    private String userId;
    private String lawyerId;
    private String createdAt;
+   private String lawyerName;
    
 }
 

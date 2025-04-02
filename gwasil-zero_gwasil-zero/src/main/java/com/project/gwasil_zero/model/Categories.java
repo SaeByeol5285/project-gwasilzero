@@ -7,4 +7,5 @@ public class Categories {
 	
 	private int boardNo;
 	private String category;
+	
 }

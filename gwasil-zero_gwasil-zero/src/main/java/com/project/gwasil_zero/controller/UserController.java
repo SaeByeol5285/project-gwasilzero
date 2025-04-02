@@ -82,7 +82,11 @@ public class UserController {
 	      return "/user/user-reMakePwd";
 	   }
 	   
-
+	   @RequestMapping("/user/logout.do")
+	   public String logout(HttpSession session) {
+	       session.invalidate(); // 세션 초기화
+	       return "redirect:/common/main.do"; // 메인 페이지로 이동
+	   }
 
 	   // 로그인
 	   @RequestMapping(value = "/user/user-login.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")

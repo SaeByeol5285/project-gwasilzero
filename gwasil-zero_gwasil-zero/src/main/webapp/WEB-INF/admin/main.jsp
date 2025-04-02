@@ -9,6 +9,7 @@
 	<title>관리자 메인</title>
 </head>
 <body>
+    <jsp:include page="../common/header.jsp" />
     <div id="mainApp">
         <div class="layout">
             <jsp:include page="layout.jsp" />
@@ -30,7 +31,12 @@
                         <tr v-for="newMem in newMemList">
                             <td>{{newMem.userName}}</td>
                             <td>{{newMem.userId}}</td>
-                            <td>{{newMem.userStatus}}</td>
+                            <td>
+                                <span v-if="newMem.userStatus === 'ADMIN'">관리자</span>
+                                <span v-else-if="newMem.userStatus === 'NORMAL'">일반 회원</span>
+                                <span v-else-if="newMem.userStatus === 'OUT'">탈퇴 회원</span>
+                                <span v-else>{{ newMem.userStatus }}</span>
+                            </td>
                             <td>{{newMem.cdate}}</td>
                         </tr>
                     </table>
@@ -60,7 +66,7 @@
                             <th>신고날짜</th>
                             <th>신고내용</th>
                         </tr>
-                        <tr v-for="report in repoList">
+                        <tr v-for="report in repoAdminList">
                             <td>{{report.userId}}</td>
                             <td>{{report.boardNo}}</td>
                             <td>{{report.reportStatus}}</td>
@@ -72,6 +78,7 @@
             </div>
         </div>
     </div>  
+    <jsp:include page="../common/footer.jsp" />
 </body>
 </html>
 <script>
@@ -79,7 +86,7 @@
         data() {
             return {
                 newMemList : [],
-                lawPassList : [],
+                lawAdminWaitList : [],
                 repoList : []
             };
         },
@@ -120,12 +127,12 @@
 					
 				};
 				$.ajax({
-					url:"/admin/repoList.dox",
+					url:"/admin/repoAdminList.dox",
 					dataType:"json",	
 					type : "POST", 
 					data : nparmap,
 					success : function(data) { 
-						self.repoList = data.repoList;
+						self.repoAdminList = data.repoAdminList;
 					}
 				});
             }   

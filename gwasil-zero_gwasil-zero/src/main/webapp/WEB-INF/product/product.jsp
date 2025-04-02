@@ -23,6 +23,7 @@
 		thead {
 			background-color: #f5f5f5;
 			font-weight: bold;
+			
 		}
 		.btn-area {
 			text-align: center;

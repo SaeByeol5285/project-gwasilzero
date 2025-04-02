@@ -146,17 +146,14 @@
 
 			<!-- 우측 하단 버튼 -->
 			<div class="fab-wrapper">
-				<<<<<<< HEAD <button class="fab-btn" v-if="currentTab !== 'guide'" @click="goToAddPage">＋ 글쓰기</button>
-					=======
-					<!-- 글쓰기 버튼: 조건부 렌더링 -->
-					<button class="fab-btn" v-if="(sessionStatus === 'A' && currentTab === 'notice') || 
+				<!-- 글쓰기 버튼: 조건부 렌더링 -->
+				<button class="fab-btn" v-if="(sessionStatus === 'A' && currentTab === 'notice') || 
 			 								(sessionStatus === '' && currentTab === 'help')" @click="goToAddPage">
-						＋ 글쓰기
-					</button>
+					＋ 글쓰기
+				</button>
 
-					<!-- 맨 위로 버튼 -->
-					>>>>>>> feature/totaldocs
-					<button class="fab-btn" v-show="showScrollBtn" @click="scrollToTop">↑ 맨 위로</button>
+				<!-- 맨 위로 버튼 -->
+				<button class="fab-btn" v-show="showScrollBtn" @click="scrollToTop">↑ 맨 위로</button>
 			</div>
 		</div>
 		<jsp:include page="../common/footer.jsp" />

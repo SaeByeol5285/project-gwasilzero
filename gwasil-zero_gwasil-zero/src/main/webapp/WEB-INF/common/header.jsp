@@ -108,7 +108,7 @@
                     showNotification: false,
                     sessionId: "${sessionScope.sessionId}",
                     sessionType: "${sessionScope.sessionType}",
-                    sessionStatus: "${sessionScope.sessionStatus}", // 예: A, U 등
+                    sessionStatus: "A", // 예: A, U 등 "${sessionScope.sessionStatus}"
                     list: [],
                     commentNoti: [],
                     messageNoti: [],
@@ -133,7 +133,7 @@
                         [
                             { name: '공지사항', url: '/totalDocs/list.do?kind=NOTICE' },
                             { name: '이용문의', url: '/totalDocs/list.do?kind=HELP' },
-                            { name: '사건 종류 가이드', url: '/totalDocs/list.do?kind=GUIDE' }
+                            { name: '사건 종류 가이드', url: '/totalDocs/guide.do' }
                         ]
                     ]
                 };

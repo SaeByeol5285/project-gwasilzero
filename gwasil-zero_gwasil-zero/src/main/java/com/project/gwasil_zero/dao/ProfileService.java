@@ -1,12 +1,15 @@
 package com.project.gwasil_zero.dao;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.project.gwasil_zero.mapper.ProfileMapper;
 import com.project.gwasil_zero.model.Board;
@@ -19,7 +22,7 @@ public class ProfileService {
 	
 	@Autowired
 	ProfileMapper profileMapper;
-
+	
 	public HashMap<String, Object> getInnerList(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -75,100 +78,101 @@ public class ProfileService {
 		return resultMap;
 	}
 
-	public HashMap<String, Object> editLawyer(HashMap<String, Object> map) {
-		// TODO Auto-generated method stub
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
-		try {
-			// 1. LAWYER 기본 정보 수정
-			profileMapper.updateLawyer(map);
-			
-			resultMap.put("result", "success");
-		} catch(Exception e) {
-			System.out.println(e.getMessage());
-			resultMap.put("result", "fail");
-		}
-		return resultMap;
-		
-	}
+	public HashMap<String, Object> editLawyer(HashMap<String, Object> paramMap) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
 
-	public HashMap<String, Object> editLicense(HashMap<String, Object> map) {
-		// TODO Auto-generated method stub
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
-		try {
-	        String lawyerId = (String) map.get("lawyerId");
-	        Object rawList = map.get("licenseList");
+	    String lawyerId = (String) paramMap.get("lawyerId");
+	    String lawyerInfo = (String) paramMap.get("lawyerInfo");
+	    String lawyerCareer = (String) paramMap.get("lawyerCareer");
+	    String lawyerTask = (String) paramMap.get("lawyerTask");
+	    String lawyerEdu = (String) paramMap.get("lawyerEdu");
+	    List<Integer> selectedBoards = (List<Integer>) paramMap.get("selectedBoards");
+	    List<HashMap<String, Object>> licenseList = (List<HashMap<String, Object>>) paramMap.get("licenseList");
+	    List<Map<String, String>> deletedLicenseList = (List<Map<String, String>>) paramMap.get("deletedLicenseList");
+	    String uploadPath = (String) paramMap.get("uploadPath");
 
-	        List<Map<String, Object>> licenseList = new ArrayList<>();
-	        
-	        // 디버깅용 데이타 확인
-//	        System.out.println("=== [editLicense] ===");
-//	        System.out.println("lawyerId: " + lawyerId);
-//	        System.out.println("rawList: " + rawList);
+	    // 1. LAWYER 테이블 업데이트
+	    HashMap<String, Object> param = new HashMap<>();
+	    param.put("lawyerId", lawyerId);
+	    param.put("lawyerInfo", lawyerInfo);
+	    param.put("lawyerCareer", lawyerCareer);
+	    param.put("lawyerTask", lawyerTask);
+	    param.put("lawyerEdu", lawyerEdu);
+	    profileMapper.updateLawyer(param);
 
-	        if (rawList instanceof List) {
-	            for (Object item : (List<?>) rawList) {
-	                if (item instanceof Map) {
-	                    Map<String, Object> licenseItem = (Map<String, Object>) item;
-
-	                    // 공백 체크 및 null 방지
-	                    String licenseName = (String) licenseItem.get("licenseName");
-	                    if (licenseName != null && !licenseName.trim().isEmpty()) {
-	                        licenseItem.put("lawyerId", lawyerId); // FK 설정
-	                        licenseList.add(licenseItem);
-	                    }
-	                }
-	            }
+	    // 2. 삭제할 LICENSE 항목 처리
+	    if (deletedLicenseList != null) {
+	        for (Map<String, String> del : deletedLicenseList) {
+	            String name = del.get("licenseName");
+	            String id = del.get("lawyerId");
+	            HashMap<String, Object> delMap = new HashMap<>();
+	            delMap.put("lawyerId", id);
+	            delMap.put("licenseName", name);
+	            profileMapper.deleteLicense(delMap);
 	        }
-
-	        // 디버깅 로그
-//	        System.out.println("=== [editLicense] lawyerId: " + lawyerId);
-//	        System.out.println("=== [editLicense] 최종 등록될 licenseList: " + licenseList);
-
-	        // 기존 삭제 후 삽입
-	        profileMapper.deleteLicenseByLawyerId(lawyerId);
-	        for (Map<String, Object> license : licenseList) {
-	            profileMapper.insertLicense(license);
-	        }
-
-	        resultMap.put("result", "success");
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        resultMap.put("result", "fail");
 	    }
 
+	    // 3. 신규 LICENSE 삽입
+	    for (HashMap<String, Object> license : licenseList) {
+	        String licenseName = (String) license.get("licenseName");
+	        MultipartFile file = (MultipartFile) license.get("licenseFile");
+
+	        if (file != null && !file.isEmpty()) {
+	            String savedName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+	            String savePath = uploadPath + File.separator + savedName;
+	            String webPath = "/license/" + savedName;
+
+	            //로그확인
+//	            System.out.println(">>> insertLicense: " + licenseName + ", " + webPath);
+	            try {
+	                file.transferTo(new File(savePath));
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	                throw new Exception("파일 저장 실패: " + e.getMessage());
+	            }
+
+	            HashMap<String, Object> fileMap = new HashMap<>();
+	            fileMap.put("lawyerId", lawyerId);
+	            fileMap.put("licenseName", licenseName);
+	            fileMap.put("licenseFilePath", webPath);
+	            
+	            // 로그 확인용
+//	            System.out.println(">> DB 저장 직전: " + fileMap);
+	    	            
+	            profileMapper.insertLicense(fileMap);
+	        } else {
+	            throw new Exception("[" + licenseName + "] 자격증 파일이 첨부되지 않았습니다.");
+	        }
+	    }
+
+	    // 4. 대표 사건 업데이트
+	    editMainCases(paramMap);
+
+	    resultMap.put("result", "success");
 	    return resultMap;
 	}
 
-	public void editMainCases(HashMap<String, Object> map) {
+	public void editMainCases(HashMap<String, Object> paramMap) {
 	    try {
-	        String lawyerId = (String) map.get("lawyerId");
-	        Object rawList = map.get("selectedBoards");
-
+	        String lawyerId = (String) paramMap.get("lawyerId");
+	        List<?> boardNoListRaw = (List<?>) paramMap.get("selectedBoards");
 	        List<Integer> boardNoList = new ArrayList<>();
-	        if (rawList instanceof List) {
-	            for (Object item : (List<?>) rawList) {
-	                try {
-	                    boardNoList.add(Integer.parseInt(String.valueOf(item)));
-	                } catch (Exception e) {
-	                    System.out.println("Invalid boardNo: " + item);
-	                }
+
+	        for (Object item : boardNoListRaw) {
+	            try {
+	                boardNoList.add(Integer.parseInt(String.valueOf(item)));
+	            } catch (Exception e) {
+	                System.out.println("Invalid boardNo: " + item);
 	            }
 	        }
 
-	        Integer case1 = boardNoList.size() > 0 ? boardNoList.get(0) : null;
-	        Integer case2 = boardNoList.size() > 1 ? boardNoList.get(1) : null;
-	        Integer case3 = boardNoList.size() > 2 ? boardNoList.get(2) : null;
-	       
 	        HashMap<String, Object> param = new HashMap<>();
 	        param.put("lawyerId", lawyerId);
-	        param.put("mainCase1No", case1);
-	        param.put("mainCase2No", case2);
-	        param.put("mainCase3No", case3);
+	        param.put("mainCase1No", boardNoList.size() > 0 ? boardNoList.get(0) : null);
+	        param.put("mainCase2No", boardNoList.size() > 1 ? boardNoList.get(1) : null);
+	        param.put("mainCase3No", boardNoList.size() > 2 ? boardNoList.get(2) : null);
 
 	        profileMapper.updateMainCases(param);
-
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }

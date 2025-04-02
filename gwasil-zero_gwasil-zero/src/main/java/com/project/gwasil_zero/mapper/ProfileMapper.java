@@ -28,16 +28,18 @@ public interface ProfileMapper {
     List<Board> lawyerBoardList(Map<String, Object> map);
     List<BoardFile> lawyerBoardFileList(Map<String, Object> map);
     
-    // 수정
-    void updateLawyer(Map<String, Object> map);
-
-    // 라이선스 갱신
-    void deleteLicenseByLawyerId(String lawyerId);
-    void insertLicense(Map<String, Object> license);
+    // 기본 프로필 수정
+    void updateLawyer(HashMap<String, Object> param);
     
-    // 대표사건 업데이트
-    void updateMainCases(Map<String, Object> map);
+    // 자격증 개별 삭제
+    void deleteLicense(HashMap<String, Object> delMap);
+    
+    // LICENSE 삽입
+    void insertLicense(HashMap<String, Object> fileMap);
+	
+    // 대표 사건 업데이트
+    void updateMainCases(HashMap<String, Object> param);
 	
 	
-	
+		
 }

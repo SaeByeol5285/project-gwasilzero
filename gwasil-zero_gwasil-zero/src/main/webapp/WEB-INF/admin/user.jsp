@@ -5,10 +5,11 @@
 <head>
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 	<title>관리자 회원관리</title>
 </head>
 <body>
+    <jsp:include page="../common/header.jsp" />
     <div id="userApp">
         <div class="layout">
             <jsp:include page="layout.jsp" />
@@ -30,7 +31,12 @@
                         <tr v-for="newMem in newMemList">
                             <td>{{newMem.userName}}</td>
                             <td>{{newMem.userId}}</td>
-                            <td>{{newMem.userStatus}}</td>
+                            <td>
+                                <span v-if="newMem.userStatus === 'ADMIN'">관리자</span>
+                                <span v-else-if="newMem.userStatus === 'NORMAL'">일반 회원</span>
+                                <span v-else-if="newMem.userStatus === 'OUT'">탈퇴 회원</span>
+                                <span v-else>{{ newMem.userStatus }}</span>
+                            </td>
                             <td>{{newMem.cdate}}</td>
                         </tr>
                     </table>
@@ -51,8 +57,11 @@
                             <option value="paid">유료회원</option>
                             <option value="free">무료회원</option>
                         </select>
-                        <input type="text" v-model="searchWord" @keyup.enter="fnUserList" placeholder="검색어 입력" />
+                        <input type="text" v-model="searchWord" @keyup.enter="fnUserList" placeholder="이름 혹은 패키지 검색" />
                         <button @click="fnUserList">검색</button>
+                        <span class="result-count">
+                            총 {{ userTotalCount }}명 검색됨
+                        </span>
                     </div>
                 
                     <!-- 결과 테이블 자리 -->
@@ -60,7 +69,7 @@
                         <tr>
                             <th>이름</th>
                             <th>아이디</th>
-                            <th>등급</th>
+                            <th>회원분류</th>
                             <th>신고회수</th>
                             <th>구매상품</th>
                             <th>가입일자</th>
@@ -68,7 +77,12 @@
                         <tr v-for="user in userList" :key="user.userId">
                             <td>{{ user.userName }}</td>
                             <td>{{ user.userId }}</td>
-                            <td>{{ user.userStatus }}</td>
+                            <td>
+                                <span v-if="user.userStatus === 'ADMIN'">관리자</span>
+                                <span v-else-if="user.userStatus === 'NORMAL'">일반 회원</span>
+                                <span v-else-if="user.userStatus === 'OUT'">탈퇴 회원</span>
+                                <span v-else>{{ user.userStatus }}</span>
+                            </td>
                             <td>{{ user.reportCnt }}</td>
                             <td>{{ user.packageName }}</td>
                             <td>{{ user.cdate }}</td>
@@ -83,7 +97,8 @@
                 </div>
             </div>
         </div>
-    </div>  
+    </div> 
+    <jsp:include page="../common/footer.jsp" /> 
 </body>
 </html>
 <script>
@@ -92,6 +107,7 @@
             return {
                 newMemList: [],
                 userList: [],
+                userTotalCount: 0,
                 searchPeriod: 'ALL', 
                 searchStatus: 'ALL',
                 searchWord: '',
@@ -132,7 +148,14 @@
 					data : nparmap,
 					success : function(data) {
                         self.userList = data.userList;
+                        self.userTotalCount = data.count;
                         self.userPageCount = Math.ceil(data.count / self.userPageSize);
+
+                        // 현재 페이지에 데이터가 하나만 있고 삭제된 경우 페이지 이동
+                        if (self.userList.length === 0 && self.userPage > 1) {
+                            self.userPage--;
+                            self.fnUserList(); // 다시 불러오기
+                        }
 					}
 				});
             },

@@ -3,9 +3,9 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>변호사 지도 보기</title>
+	<title>과실 ZERO - 교통사고 전문 법률 플랫폼</title>
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b58f49b3384edf05982d77a3259c7afb&libraries=services"></script>
 	<script src="/js/page-change.js"></script>
 	<style>
@@ -90,6 +90,7 @@
 			list-style: none;
 			padding: 0;
 		}
+		
 		.lawyer-list li {
 			padding: 10px;
 			border-bottom: 1px solid #ddd;
@@ -128,6 +129,26 @@
 		.find-me-btn:hover {
 			background-color: #a4d476;
 			color: white;
+		}
+
+		.status-badge {
+			font-size: 13px;
+			padding: 4px 10px;
+			border-radius: 12px;
+			color: white;
+			font-weight: bold;
+		}
+
+		.status-badge.now {
+			background-color: #4caf50;
+		}
+
+		.status-badge.delayed {
+			background-color: #ff9800;
+		}
+
+		.status-badge.disabled {
+			background-color: #f44336;
 		}
 
 
@@ -170,7 +191,7 @@
 
 	<!-- ✅ 근처 법률 사무소 버튼 -->
 	<div class="right-align">
-		<button class="find-me-btn" @click="geoFindMe">📍 근처 법률 사무소</button>
+		<button class="find-me-btn" @click="geoFindMe">📍 내 위치 보기</button>
 	</div>
 
 
@@ -178,13 +199,30 @@
 	<div id="map"></div>
 
 	<!-- ✅ 거리순 리스트 -->
-	<div class="lawyer-list" v-if="showNearbyList">
-		<h3>📋 법률 사무소 목록 (거리순)</h3>
-		<div class="lawyer-card" v-for="lawyer in sortedLawyers" :key="lawyer.lawyerId" @click="goToLawyerMarker(lawyer)">
-			<h4 style="margin: 0 0 6px;">{{ lawyer.lawyerName }}</h4>
-			<p style="margin: 0 0 2px; font-size: 14px;">{{ lawyer.lawyerAddr }}</p>
-			<p style="margin: 0; font-size: 13px; color: #888;" v-if="lawyer.distance">거리: {{ lawyer.distance.toFixed(2) }} km</p>
+	<div class="lawyer-list">
+		<h3>{{ listTitle }}</h3>
+		<!-- ✅ 상담 상태 필터 select 박스 -->
+		<div style="text-align: right; margin-bottom: 10px; display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+			<span style="font-weight: bold; font-size: 14px;">현재 상담 가능 여부</span>
+			<select v-model="filterStatus" class="select-box" style="width: 160px;">
+				<option value="">:: 상담 상태 선택 ::</option>
+				<option value="now">상담 가능</option>
+				<option value="delayed">상담 지연</option>
+				<option value="disabled">상담 불가능</option>
+			</select>
 		</div>
+
+		<div class="lawyer-card" v-for="lawyer in sortedLawyers" :key="lawyer.lawyerId" @click="goToLawyerMarker(lawyer)">
+			<div style="display: flex; justify-content: space-between; align-items: center;">
+				<h4 style="margin: 0 0 6px;">{{ lawyer.lawyerName }}</h4>
+				<span :class="['status-badge', lawyer.counsel]">
+					{{ $options.methods.getStatusText(lawyer.counsel) }}
+				</span>
+			</div>
+			<p style="margin: 0 0 2px; font-size: 14px;">{{ lawyer.lawyerAddr }}</p>
+			<p style="margin: 0; font-size: 13px; color: #888;" v-if="lawyer.distance != undefined">거리: {{ lawyer.distance.toFixed(2) }} km</p>
+		</div>
+		
 	</div>
 
 	
@@ -217,8 +255,7 @@ const mapApp = Vue.createApp({
 			lawyerList: [],
 			infowindowAnchor: null,
 			keyword : "",
-			showNearbyList: false
-
+			filterStatus: "",
 
 		};
 	},
@@ -229,6 +266,7 @@ const mapApp = Vue.createApp({
 
 			this.keyword = "";
 			this.showNearbyList = false;
+			this.filterStatus = "";
 
 			if (newTab === 'area') {
 				this.fnSi();
@@ -247,12 +285,35 @@ const mapApp = Vue.createApp({
 	},
 
 	computed: {
+		listTitle() {
+			return this.myLatitude && this.myLongitude
+				? "📋 법률 사무소 목록 (거리순)"
+				: "📋 법률 사무소 목록";
+		},
 		sortedLawyers() {
-			return this.lawyerList
-				.filter(lawyer => lawyer.distance !== undefined)
-				.sort((a, b) => a.distance - b.distance);
+			let filtered = [...this.lawyerList];
+
+			if (this.filterStatus) {
+				filtered = filtered.filter(lawyer => lawyer.counsel  === this.filterStatus);
+			}
+
+			// 거리 정렬 or 이름 정렬
+			if (this.myLatitude && this.myLongitude) {
+				filtered.sort((a, b) => {
+					if (a.distance != undefined && b.distance != undefined) {
+						return a.distance - b.distance;
+					}
+					return 0;
+				});
+			} else {
+				filtered.sort((a, b) => a.lawyerName.localeCompare(b.lawyerName));
+			}
+
+			return filtered;
 		}
+
 	},
+
 
 
 	methods: {
@@ -260,22 +321,24 @@ const mapApp = Vue.createApp({
 			let self = this;
 			$.post('/si.dox', {}, function(res) {
 				self.siList = res.siList;
-				self.guList = [];
-				self.dongList = [];
-				self.selectGu = '';
-				self.selectDong = '';
 			});
 		},
 		fnGu() {
 			let self = this;
+
+			self.selectGu = '';
+			self.selectDong = '';
+			self.guList = [];
+			self.dongList = [];
+
 			$.post('/gu.dox', { si: self.selectSi }, function(res) {
 				self.guList = res.guList;
-				self.dongList = [];
-				self.selectDong = '';
 			});
 		},
 		fnDong() {
 			let self = this;
+			self.selectDong = '';
+			self.dongList = [];
 			$.post('/dong.dox', { si: self.selectSi, gu: self.selectGu }, function(res) {
 				self.dongList = res.dongList;
 			});
@@ -292,6 +355,7 @@ const mapApp = Vue.createApp({
 				if (status === kakao.maps.services.Status.OK) {
 					let coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 					self.map.setCenter(coords);
+					self.map.setLevel(3);
 				} else {
 					alert("해당 주소를 찾을 수 없습니다.");
 				}
@@ -300,44 +364,62 @@ const mapApp = Vue.createApp({
 
 		geoFindMe() {
 			const self = this;
+
+			// ✅ 이미 위치를 가져온 적이 있으면 바로 처리
+			if (self.myLatitude && self.myLongitude) {
+				self.showMyLocation();  // 위치 마커만 다시 표시
+				return;
+			}
+
+			// ✅ 브라우저 위치 지원 여부
 			if (!navigator.geolocation) {
 				alert("브라우저가 위치 정보를 지원하지 않아요.");
 				return;
 			}
+
+			// ✅ localStorage에 동의 여부 저장
+			const alreadyAgreed = localStorage.getItem("geoPermission");
+
+			if (!alreadyAgreed) {
+				const agree = confirm("지도에서 사용자의 위치에 접근하도록 허용하겠습니까?");
+				if (!agree) return;
+				localStorage.setItem("geoPermission", "yes");
+			}
+
 			navigator.geolocation.getCurrentPosition((position) => {
-				const latitude = position.coords.latitude;
-				const longitude = position.coords.longitude;
+				self.myLatitude = position.coords.latitude;
+				self.myLongitude = position.coords.longitude;
 
-				self.myLatitude = latitude;
-				self.myLongitude = longitude;
-
-				const currentPos = new kakao.maps.LatLng(latitude, longitude);
-				self.map.setCenter(currentPos);
-
-				// 기존 마커 제거
-				if (self.myLocationMarker) self.myLocationMarker.setMap(null);
-				if (self.myLocationInfoWindow) self.myLocationInfoWindow.close();
-
-				// 내 위치 마커 표시
-				self.myLocationMarker = new kakao.maps.Marker({
-					map: self.map,
-					position: currentPos,
-					title: "내 위치"
-				});
-				self.myLocationInfoWindow = new kakao.maps.InfoWindow({
-					content: "<div style='padding:5px;'>📍 내 위치</div>"
-				});
-				self.myLocationInfoWindow.open(self.map, self.myLocationMarker);
-
-				// ✅ 거리 계산 다시 적용
-				self.calculateDistances();
-
-				// 리스트 보여주기
-				self.showNearbyList = true;
+				self.showMyLocation();  // 마커 띄우기 + 거리 계산
 
 			}, () => {
 				alert("현재 위치를 가져오지 못했습니다.");
 			});
+		},
+
+		showMyLocation() {
+			const self = this;
+			const currentPos = new kakao.maps.LatLng(self.myLatitude, self.myLongitude);
+			self.map.setCenter(currentPos);
+			self.map.setLevel(3);
+
+			// 기존 마커 제거
+			if (self.myLocationMarker) self.myLocationMarker.setMap(null);
+			if (self.myLocationInfoWindow) self.myLocationInfoWindow.close();
+
+			// 내 위치 마커 표시
+			self.myLocationMarker = new kakao.maps.Marker({
+				map: self.map,
+				position: currentPos,
+				title: "내 위치"
+			});
+			self.myLocationInfoWindow = new kakao.maps.InfoWindow({
+				content: "<div style='padding:5px;'>📍 내 위치</div>"
+			});
+			self.myLocationInfoWindow.open(self.map, self.myLocationMarker);
+
+			// 거리 다시 계산
+			self.calculateDistances();
 		},
 
 		loadLawyers(status) {
@@ -474,8 +556,6 @@ const mapApp = Vue.createApp({
 			});
 		},
 
-
-
 		// 거리 계산 공식 (Haversine)
 		getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
 			const R = 6371; // 지구 반지름 (km)
@@ -489,10 +569,19 @@ const mapApp = Vue.createApp({
 			const d = R * c;
 			return d;
 		},
+
 		deg2rad(deg) {
 			return deg * (Math.PI / 180);
 		},
 
+		getStatusText(status) {
+			switch(status) {
+				case 'now': return '상담 가능';
+				case 'delayed': return '상담 지연';
+				case 'disabled': return '상담 불가능';
+				default: return '';
+			}
+		},
 
 		removeMarkers() {
 			this.markers.forEach(marker => marker.setMap(null));
@@ -554,6 +643,7 @@ const mapApp = Vue.createApp({
 				if (status === kakao.maps.services.Status.OK) {
 					const coords = new kakao.maps.LatLng(data[0].y, data[0].x);
 					self.map.setCenter(coords);
+					self.map.setLevel(3); // 지도 확대 정도
 				} else {
 					alert("검색한 장소를 찾을 수 없습니다.");
 				}
@@ -572,9 +662,7 @@ const mapApp = Vue.createApp({
 		this.map = new kakao.maps.Map(container, options);
 		this.infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
 
-		if (this.currentTab === 'area') {
-			this.loadLawyers(null); // 전체 불러오기
-		}
+		this.loadLawyers(null);
 
 	}
 });

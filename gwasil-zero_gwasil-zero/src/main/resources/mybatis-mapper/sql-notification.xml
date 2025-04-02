@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.project.gwasil_zero.mapper.NotificationMapper">
+	<select id="selectNotificationList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Notification">
+		select * from notification where receiver_id = #{userId} and is_read = 'N'
+	</select>
+	
+	<insert id="insertNotification" parameterType="hashmap">
+		insert into notification values(notification_seq.nextval, #{receiverId}, #{notiType}, #{contents}, 'N', sysdate, #{senderId}, <if test="boardNo != null"> #{boardNo}</if> <if test="boardNo == null"> null</if>, null)
+	</insert>
+	
+	<insert id="insertNotificationToMessage" parameterType="hashmap">
+		insert into notification values(notification_seq.nextval, #{receiverId}, #{notiType}, #{contents}, 'N', sysdate, #{senderId},null, #{chatNo})
+	</insert>
+	
+	<delete id="deleteNotification" parameterType="hashmap">
+		delete from notification where is_read = 'Y'
+	</delete>
+	
+	<update id="updateNotification" parameterType="hashmap">
+		update notification set is_read = 'Y' where noti_no = #{notiNo}
+	</update>
+	
+	<select id="countUnreadNotificationByChatNo" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*) 
+    FROM notification 
+    WHERE is_read = 'N' 
+      AND chat_no = #{chatNo} 
+      AND receiver_id = #{receiverId}
+</select>
+</mapper>

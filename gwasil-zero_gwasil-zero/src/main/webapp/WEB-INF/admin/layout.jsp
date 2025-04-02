@@ -5,7 +5,7 @@
 <head>
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <script src="/js/page-change.js"></script>
 	<title>admin sider</title>
 	<link rel="stylesheet" href="/css/admin-style.css">
@@ -17,7 +17,7 @@
             <button onclick="fnPageMove('main')" class="${currentPage == 'main' ? 'active' : ''}">관리자 메인</button>
             <button onclick="fnPageMove('user')" class="${currentPage == 'user' ? 'active' : ''}">회원 관리</button>
             <button onclick="fnPageMove('lawyer')" class="${currentPage == 'lawyer' ? 'active' : ''}">변호사 관리</button>
-            <button onclick="fnPageMove('board')" class="${currentPage == 'board' ? 'active' : ''}">게시글 관리</button>
+            <button onclick="fnPageMove('report')" class="${currentPage == 'report' ? 'active' : ''}">게시글 관리</button>
             <button onclick="fnPageMove('chart')" class="${currentPage == 'chart' ? 'active' : ''}">통계</button>
             <button onclick="fnPageMove('product')" class="${currentPage == 'product' ? 'active' : ''}">상품 관리</button>
     

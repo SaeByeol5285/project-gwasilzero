@@ -1,154 +1,216 @@
-#app {
-    display: flex;
-    height: 100vh;
-}
-body {
-    font-family: Arial, sans-serif;
+/* =============================
+    공통
+============================= */
+body, html {
     margin: 0;
     padding: 0;
-    display: flex;
+    font-family: var(--font-main);
+    background-color: #f8f8f8;
+    color: #333;
 }
-.layout {
+
+#app, .layout {
     display: flex;
     height: 100vh;
 }
+
+/* =============================
+    사이드바
+============================= */
 .sidebar {
-    width: 300px;
-    padding: 10px;
-    background: #b0c4de;
+    width: 250px;
+    background: var(--main-color);
+    color: white;
     padding: 20px;
-    height: 900px;
-    margin-top: 10px;
-    margin-left: 10px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
 }
+
 .sidebar h2 {
     text-align: center;
+    margin-bottom: 30px;
+    font-size: 22px;
 }
+
 .sidebar button {
+    display: block;
     width: 100%;
-    padding: 10px;
-    margin: 5px 0;
-    border: none;
-    background: #f7f7f7;
-    cursor: pointer;
-}
-.sidebar button.active {
-	background-color: yellow;
-	font-weight: bold;
-}
-.logout {
-    margin-top: 20px;
-    width: 100%;
+    padding: 10px 16px;
+    margin-bottom: 10px;
     background: white;
-    border: 1px solid black;
+    color: var(--main-color);
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
 }
+
+.sidebar button:hover {
+    background-color: #ffe0cc;
+}
+
+.sidebar button.active {
+    background-color: #fff3e0;
+    border-left: 5px solid #ff8a33;
+}
+
+.logout {
+    margin-top: 30px;
+    background: transparent;
+    color: white;
+    border: 1px solid white;
+    font-weight: bold;
+}
+
+/* =============================
+    콘텐츠 영역
+============================= */
 .content {
-    width: 1500px;
     flex: 1;
-    padding: 20px;
-    margin-top: 10px;
-    background: #f0f0f0;
+    padding: 30px;
+    background-color: #f8f8f8;
+    overflow-y: auto;
 }
+
 .header {
-    background: #a0a0c0;
-    padding: 10px;
+    background: white;
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin-bottom: 30px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
-.box {
-    background: #d3d3d3;
-    padding: 20px;
-    margin: 10px 0;
-}
-.more {
-    text-align: right;
-    font-size: small;
-    color: blue;
-    cursor: pointer;
-}
+
+/* =============================
+    섹션 제목
+============================= */
 h3 {
-	margin-top: 30px;
-	margin-bottom: 10px;
-	font-size: 18px;
-	font-weight: bold;
-	border-left: 6px solid #6fa3ef;
-	padding-left: 10px;
-	color: #333;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    border-left: 6px solid var(--main-color);
+    padding-left: 12px;
+    margin: 40px 0 20px;
 }
 
-table {
-	width: 100%;
-	border-collapse: collapse;
-	background-color: white;
-	border: 1px solid #ccc;
-	margin-bottom: 30px;
-}
-
-th,
-td {
-	padding: 10px;
-	text-align: left;
-	border: 1px solid #ccc;
-	font-size: 14px;
-}
-
-th {
-	background-color: #e0e7ff;
-	color: #333;
-	font-weight: 600;
-}
-
-tr:nth-child(even) {
-	background-color: #f9f9f9;
-}
-
-tr:hover {
-	background-color: #f1f1f1;
-}
+/* =============================
+    필터 바
+============================= */
 .filter-bar {
-	display: flex;
-	gap: 10px;
-	align-items: center;
-	margin: 20px 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 30px;
 }
 
 .filter-bar select,
-.filter-bar input[type="text"] {
-	padding: 6px;
-	border: 1px solid #ccc;
-	border-radius: 5px;
-	font-size: 14px;
+.filter-bar input[type="text"],
+.filter-bar input[type="date"] {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
 }
 
 .filter-bar button {
-	padding: 6px 12px;
-	background-color: #a0a0c0;
-	color: white;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
+    background-color: var(--main-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 .filter-bar button:hover {
-	background-color: #8080b0;
+    background-color: #e65100;
 }
 
+/* =============================
+    테이블
+============================= */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    font-size: 14px;
+    margin-bottom: 40px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+th, td {
+    padding: 12px 14px;
+    border: 1px solid #e0e0e0;
+    text-align: left;
+}
+
+th {
+    background-color: #fff5ee;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #fdfdfd;
+}
+
+tr:hover {
+    background-color: #fff3e0;
+}
+
+/* =============================
+    박스 영역
+============================= */
+.box {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+/* =============================
+    페이지네이션
+============================= */
 .pagination {
-    margin-top: 20px;
+    margin-top: 30px;
     text-align: center;
 }
+
 .page-btn {
     display: inline-block;
-    margin: 0 5px;
+    margin: 0 4px;
     padding: 6px 12px;
-    background: #fff;
     border: 1px solid #ccc;
+    border-radius: 5px;
+    background: white;
     color: #333;
     cursor: pointer;
-    border-radius: 5px;
 }
+
 .page-btn.active {
-    background: #a0a0c0;
-    color: #fff;
+    background: var(--main-color);
+    color: white;
     font-weight: bold;
+}
+
+/* =============================
+    결과 카운트
+============================= */
+.result-count {
+    font-size: 14px;
+    color: #666;
+    margin-top: 10px;
+}
+
+/* =============================
+    기타
+============================= */
+.more {
+    text-align: right;
+    font-size: 13px;
+    color: var(--main-color);
+    cursor: pointer;
 }

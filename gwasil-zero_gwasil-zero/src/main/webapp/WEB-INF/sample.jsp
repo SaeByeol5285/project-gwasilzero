@@ -13,6 +13,7 @@
 <body>
 	<div id="app">
 		{{list}}
+		
 	</div>
 </body>
 </html>

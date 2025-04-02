@@ -1,272 +1,297 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>채팅</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-	<style>
-	    body {
-	        font-family: 'Segoe UI', sans-serif;
-	        background-color: #f5f5f5;
-	        margin: 0;
-	        padding: 0;
-	        display: flex;
-	        flex-direction: column;
-	        height: 100vh;
-	    }
+  <meta charset="UTF-8">
+  <title>채팅</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
 
-	    h2 {
-	        text-align: center;
-	        margin: 20px 0 10px;
-	        color: #333;
-	    }
+    .chat-wrapper {
+      width: 80%;
+      max-width: 800px;
+      margin: 0 auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      box-sizing: border-box;
+    }
 
-	    .chat-wrapper {
-	        width: 80%;
-	        max-width: 800px;
-	        margin: 0 auto;
-	        flex: 1;
-	        display: flex;
-	        flex-direction: column;
-	        padding: 10px;
-	        box-sizing: border-box;
-	    }
+    #chatBox {
+      height: 70vh;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      margin-bottom: 15px;
+    }
 
-	    #chatBox {
-	        flex: 1;
-	        border: 1px solid #ccc;
-	        border-radius: 10px;
-	        padding: 15px;
-	        overflow-y: auto;
-	        background-color: #ffffff;
-	        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-	        margin-bottom: 15px;
-	    }
+    .input-area {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
 
-	    .input-area {
-	        display: flex;
-	        flex-wrap: wrap;
-	        justify-content: center;
-	        gap: 10px;
-	        margin-bottom: 20px;
-	    }
+    input[type="text"],
+    input[type="file"] {
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
 
-	    input[type="text"],
-	    input[type="file"] {
-	        padding: 10px;
-	        font-size: 14px;
-	        border: 1px solid #ccc;
-	        border-radius: 6px;
-	    }
+    input[type="text"] {
+      flex: 1;
+      min-width: 60%;
+    }
 
-	    input[type="text"] {
-	        flex: 1;
-	        min-width: 60%;
-	    }
+    button {
+      padding: 10px 18px;
+      font-size: 14px;
+      background-color: #FF8A65;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
 
-	    button {
-	        padding: 10px 18px;
-	        font-size: 14px;
-	        background-color: #FF8A65;
-	        color: white;
-	        border: none;
-	        border-radius: 6px;
-	        cursor: pointer;
-	        transition: background-color 0.2s ease-in-out;
-	    }
+    button:hover {
+      background-color: #ff7043;
+    }
 
-	    button:hover {
-	        background-color: #ff7043;
-	    }
+    .bubble-container {
+      display: flex;
+      justify-content: flex-start;
+      margin: 10px 0;
+    }
 
-	    .bubble-container {
-	        display: flex;
-	        justify-content: flex-start;
-	        margin: 10px 0;
-	    }
+    .bubble {
+      max-width: 40%;
+      background-color: #FFAB91;
+      color: #333;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 14px;
+      line-height: 1.5;
+      word-wrap: break-word;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    }
 
-	    .bubble {
-	        max-width: 40%;
-	        background-color: #FFAB91;
-	        color: #333;
-	        border-radius: 12px;
-	        padding: 10px 14px;
-	        position: relative;
-	        font-size: 14px;
-	        line-height: 1.5;
-	        box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-	        word-wrap: break-word;
-	    }
+    .bubble img,
+    .bubble video {
+      max-width: 100%;
+      max-height: 200px;
+      margin-top: 8px;
+      border-radius: 8px;
+    }
 
-	    .bubble::after {
-	        content: "";
-	        position: absolute;
-	        top: 10px;
-	        left: -8px;
-	        width: 0;
-	        height: 0;
-	        border: 8px solid transparent;
-	        border-right-color: #FFAB91;
-	    }
-
-	    .bubble img,
-	    .bubble video {
-	        max-width: 100%;
-	        max-height: 200px;
-	        width: auto;
-	        height: auto;
-	        border-radius: 8px;
-	        margin-top: 8px;
-	        object-fit: contain;
-	    }
-
-	    .sender-name {
-	        font-weight: bold;
-	        margin-bottom: 6px;
-	        display: block;
-	    }
-	</style>
+    .sender-name {
+      font-weight: bold;
+      margin-bottom: 6px;
+      display: block;
+    }
+  </style>
 </head>
 <body>
-	<h2 id="chatTitle">사용자1님과의 채팅</h2>
-	<div class="chat-wrapper">
-	    <div id="chatBox"></div>
+	<jsp:include page="../common/header.jsp"/>
+  <div id="app">
+    <div class="chat-wrapper">
+      <div id="chatBox">
+        <div
+          v-for="(msg, index) in messages"
+          :key="index"
+          class="bubble-container"
+          :style="{ justifyContent: msg.senderId === senderId ? 'flex-end' : 'flex-start' }"
+        >
+          <div class="bubble">
+            <span class="sender-name">{{ msg.senderName }}</span>
+            <span v-if="msg.type === 'text'">{{ msg.message }}</span>
+            <img v-if="msg.type === 'file' && isImage(msg.filePath)" :src="msg.filePath" />
+            <video v-if="msg.type === 'file' && isVideo(msg.filePath)" controls>
+              <source :src="msg.filePath" type="video/mp4" />
+            </video>
+            <span v-if="msg.type === 'file' && !isImage(msg.filePath) && !isVideo(msg.filePath)">
+              [파일] <a :href="msg.filePath" target="_blank">{{ msg.filePath }}</a>
+            </span>
+          </div>
+        </div>
+      </div>
 
-	    <div class="input-area">
-	        <input type="text" id="message" placeholder="메시지를 입력하세요..." />
-	        <input type="file" id="chatFile" multiple />
-	        <button onclick="handleSend()">전송</button>
-	    </div>
-	</div>
-    <script>
-        let stompClient = null;
-		const chatNo = 1;
-		const senderId = "user_1";
-        // WebSocket 연결 함수
-        function connect() {
-            let socket = new SockJS('/ws-chat'); // WebSocket 엔드포인트
-            stompClient = Stomp.over(socket);
-            stompClient.connect({}, function (frame) {
-                console.log("WebSocket 연결 성공: " + frame);
+      <div class="input-area">
+        <input type="text" v-model="message" placeholder="메시지를 입력하세요..." />
+        <input type="file" id="chatFile" multiple @change="handleFileChange" />
+        <button @click="handleSend">전송</button>
+      </div>
+    </div>
+  </div>
+  <jsp:include page="../common/footer.jsp"/>
+  <script>
+  const app = Vue.createApp({
+    data() {
+      return {
+        senderId: "${sessionScope.sessionId}",
+        chatNo: 1,
+        stompClient: null,
+        message: "",
+        files: [],
+        messages: []
+      };
+    },
+    methods: {
+      connect() {
+        const socket = new SockJS('/ws-chat');
+        this.stompClient = Stomp.over(socket);
+        this.stompClient.connect({}, (frame) => {
+          console.log("WebSocket 연결 성공");
+          this.stompClient.subscribe('/topic/public', (message) => {
+            this.showMessage(JSON.parse(message.body));
+          });
+        }, (error) => {
+          console.error("WebSocket 연결 실패", error);
+        });
+      },
+      handleSend() {
+        const trimmedMsg = this.message.trim();
 
-                // 서버에서 메시지를 받을 구독 설정
-                stompClient.subscribe('/topic/public', function (message) {
-                    showMessage(JSON.parse(message.body));
-                });
-            }, function (error) {
-                console.error("WebSocket 연결 실패: ", error);
-            });
-        }
-
-		function handleSend() {
-		    const message = document.getElementById("message").value.trim();
-		    const fileInput = document.getElementById("chatFile");
-		    const files = fileInput.files;
-
-		    if (message) {
-		        const chatTextMsg = {
-		            type: "text",
-		            payload: {
-		                chatNo: chatNo,
-		                senderId: senderId,
-		                message: message
-		            }
-		        };
-		        stompClient.send("/app/sendMessage", {}, JSON.stringify(chatTextMsg));
-		        document.getElementById("message").value = "";
-		    }
-
-		    if (files.length > 0) {
-		        const formData = new FormData();
-		        for (let i = 0; i < files.length; i++) {
-		            formData.append("files", files[i]);
-		        }
-		        formData.append("chatNo", chatNo);
-		        formData.append("senderId", senderId);
-
-		        $.ajax({
-		            url: "/chat/uploadFiles",
-		            type: "POST",
-		            data: formData,
-		            processData: false,
-		            contentType: false,
-		            success: function(filePaths) {
-		                filePaths.forEach(path => {
-		                    const chatFileMsg = {
-		                        type: "file",
-		                        payload: {
-		                            chatNo: chatNo,
-		                            senderId: senderId,
-		                            chatFilePath: path
-		                        }
-		                    };
-		                    stompClient.send("/app/sendMessage", {}, JSON.stringify(chatFileMsg));
-		                });
-		                fileInput.value = "";
-		            }
-		        });
-		    }
-
-		    if (!message && files.length === 0) {
-		        alert("메시지를 입력하거나 파일을 첨부하세요.");
-		    }
-		}
-
-
-        // 메시지 출력 함수
-		function showMessage(message) {
-		    const chatBox = document.getElementById("chatBox");
-		    const msg = message.payload;
-
-		    const container = document.createElement("div");
-		    container.className = "bubble-container";
-
-		    const bubble = document.createElement("div");
-		    bubble.className = "bubble";
-
-		    let content = "<span class='sender-name'>" + msg.senderName + "</span>";
-
-		    if (message.type === "text") {
-		        content += "<span>" + msg.message + "</span>";
-		    } else if (message.type === "file") {
-		        const ext = msg.chatFilePath.split('.').pop().toLowerCase();
-
-		        if (["jpg", "jpeg", "png", "gif", "jfif"].includes(ext)) {
-		            content += "<img src='" + msg.chatFilePath + "'>";
-		        } else if (["mp4", "mov", "avi"].includes(ext)) {
-		            content += `<video controls>
-		                            <source src="${msg.chatFilePath}" type="video/mp4">
-		                            브라우저가 video 태그를 지원하지 않습니다.
-		                        </video>`;
-		        } else {
-		            content += "<span>[파일 링크] <a href='" + msg.chatFilePath + "' target='_blank'>" + msg.chatFilePath + "</a></span>";
-		        }
-		    }
-
-		    bubble.innerHTML = content;
-		    container.appendChild(bubble);
-		    chatBox.appendChild(container);
-		    chatBox.scrollTop = chatBox.scrollHeight;
-		}
-
-
-
-
-
-        // 엔터 키로 메시지 전송
-        function handleKeyPress(event) {
-            if (event.key === "Enter") {
-                sendMessage();
+        if (trimmedMsg) {
+          const chatTextMsg = {
+            type: "text",
+            payload: {
+              chatNo: this.chatNo,
+              senderId: this.senderId,
+              message: trimmedMsg
             }
+          };
+          this.stompClient.send("/app/sendMessage", {}, JSON.stringify(chatTextMsg));
+          this.message = "";
         }
 
-        // 페이지 로드 시 WebSocket 연결
-        window.onload = connect;
-    </script>
+        if (this.files.length > 0) {
+          const formData = new FormData();
+          this.files.forEach(file => formData.append("files", file));
+          formData.append("chatNo", this.chatNo);
+          formData.append("senderId", this.senderId);
+
+          $.ajax({
+            url: "/chat/uploadFiles",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: (filePaths) => {
+              filePaths.forEach(path => {
+                const chatFileMsg = {
+                  type: "file",
+                  payload: {
+                    chatNo: this.chatNo,
+                    senderId: this.senderId,
+                    chatFilePath: path
+                  }
+                };
+                this.stompClient.send("/app/sendMessage", {}, JSON.stringify(chatFileMsg));
+              });
+              this.files = [];
+              document.getElementById("chatFile").value = "";
+            }
+          });
+        }
+
+        if (!trimmedMsg && this.files.length === 0) {
+          alert("메시지를 입력하거나 파일을 첨부하세요.");
+        }
+      },
+      handleFileChange(event) {
+        this.files = Array.from(event.target.files);
+      },
+      isImage(path) {
+        return /\.(jpg|jpeg|png|gif|jfif)$/i.test(path);
+      },
+      isVideo(path) {
+        return /\.(mp4|mov|avi)$/i.test(path);
+      },
+      showMessage(message) {
+        const msg = message.payload;
+        this.messages.push({
+          type: message.type,
+          senderId: msg.senderId,
+          senderName: msg.senderName,
+          message: msg.message,
+          filePath: msg.chatFilePath
+        });
+        this.scrollToBottom();
+      },
+      scrollToBottom() {
+        this.$nextTick(() => {
+          const chatBox = document.getElementById("chatBox");
+          if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+          }
+        });
+      },
+	  loadChatHistory() {
+	    $.ajax({
+	      url: "/chat/history.dox",
+	      type: "POST",
+	      data: { chatNo: this.chatNo },
+	      success: (data) => {
+	        this.messages = [];
+
+	        data.history.forEach(item => {
+	          if (item.message) {
+	            this.messages.push({
+	              type: "text",
+	              senderId: item.senderId,
+	              senderName: item.senderName,
+	              message: item.message,
+	              filePath: null
+	            });
+	          } else if (item.chatFilePath) {
+	            this.messages.push({
+	              type: "file",
+	              senderId: item.senderId,
+	              senderName: item.senderName,
+	              message: null,
+	              filePath: item.chatFilePath
+	            });
+	          }
+	        });
+
+	        this.$nextTick(() => {
+	          setTimeout(() => {
+	            const chatBox = document.getElementById("chatBox");
+	            if (chatBox) {
+	              chatBox.scrollTop = chatBox.scrollHeight;
+	            }
+	          }, 100); 
+	        });
+	      }
+	    });
+	  }
+
+    },
+    mounted() {
+      this.connect();
+      this.loadChatHistory();
+    }
+  });
+
+  app.mount("#app");
+  </script>
 </body>
 </html>

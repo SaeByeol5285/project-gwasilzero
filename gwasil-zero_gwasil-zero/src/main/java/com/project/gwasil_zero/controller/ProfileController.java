@@ -91,28 +91,41 @@ public class ProfileController {
 	    try {
 	        String lawyerId = request.getParameter("lawyerId");
 	        String uploadPath = request.getServletContext().getRealPath("/license/");
-
-	        // info JSON → Map 변환
-	        String infoJson = request.getParameter("info");
 	        Gson gson = new Gson();
+	        
+	        // 이미지 경로 로그
+//	        System.out.println("UploadPath: " + uploadPath);
+
+	        // info
+	        String infoJson = request.getParameter("info");
 	        Map<String, Object> infoMap = gson.fromJson(infoJson, Map.class);
 
-	        // selectedBoards JSON → List<Integer>
+	        // 대표 사건
 	        String selectedBoardsJson = request.getParameter("selectedBoards");
 	        List<Double> selectedBoardsDouble = gson.fromJson(selectedBoardsJson, List.class);
 	        List<Integer> selectedBoards = selectedBoardsDouble.stream()
 	                .map(Double::intValue)
 	                .collect(Collectors.toList());
 
-	        // 신규 자격증 리스트 구성
+	        // 삭제할 자격증
+	        String deletedLicenseJson = request.getParameter("deletedLicenseIds");
+	        List<Map<String, Object>> deletedLicenseList = new ArrayList<>();
+	        if (deletedLicenseJson != null && !deletedLicenseJson.isEmpty()) {
+	            deletedLicenseList = gson.fromJson(deletedLicenseJson, List.class);
+	        }
+
+	        // 신규 자격증 목록
 	        List<HashMap<String, Object>> licenseList = new ArrayList<>();
 	        int licenseCount = Integer.parseInt(request.getParameter("licenseCount"));
 	        for (int i = 0; i < licenseCount; i++) {
 	            String licenseName = request.getParameter("licenseName_" + i);
 	            MultipartFile licenseFile = request.getFile("licenseFile_" + i);
+	            // 로그 확인
+//	            System.out.println(">>> licenseName_" + i + ": " + licenseName);
+//	            System.out.println(">>> licenseFile_" + i + ": " + (licenseFile != null ? licenseFile.getOriginalFilename() : "null"));
 
-	            if (licenseName != null && !licenseName.trim().isEmpty()
-	                    && licenseFile != null && !licenseFile.isEmpty()) {
+
+	            if (licenseName != null && !licenseName.trim().isEmpty() && licenseFile != null && !licenseFile.isEmpty()) {
 	                HashMap<String, Object> license = new HashMap<>();
 	                license.put("licenseName", licenseName.trim());
 	                license.put("licenseFile", licenseFile);
@@ -122,7 +135,7 @@ public class ProfileController {
 	            }
 	        }
 
-	        // 전체 파라미터 Map 구성
+	        // 최종 파라미터 맵 구성
 	        HashMap<String, Object> paramMap = new HashMap<>();
 	        paramMap.put("lawyerId", lawyerId);
 	        paramMap.put("lawyerInfo", infoMap.get("lawyerInfo"));
@@ -131,6 +144,7 @@ public class ProfileController {
 	        paramMap.put("lawyerEdu", infoMap.get("lawyerEdu"));
 	        paramMap.put("selectedBoards", selectedBoards);
 	        paramMap.put("licenseList", licenseList);
+	        paramMap.put("deletedLicenseList", deletedLicenseList);
 	        paramMap.put("uploadPath", uploadPath);
 
 	        resultMap = profileService.editLawyer(paramMap);
@@ -142,6 +156,5 @@ public class ProfileController {
 
 	    return new Gson().toJson(resultMap);
 	}
-
 
 }

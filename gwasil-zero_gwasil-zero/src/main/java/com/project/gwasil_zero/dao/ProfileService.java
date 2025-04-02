@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,9 +88,10 @@ public class ProfileService {
 	    String lawyerEdu = (String) paramMap.get("lawyerEdu");
 	    List<Integer> selectedBoards = (List<Integer>) paramMap.get("selectedBoards");
 	    List<HashMap<String, Object>> licenseList = (List<HashMap<String, Object>>) paramMap.get("licenseList");
+	    List<Map<String, String>> deletedLicenseList = (List<Map<String, String>>) paramMap.get("deletedLicenseList");
 	    String uploadPath = (String) paramMap.get("uploadPath");
 
-	    // 1. LAWYER 테이블 수정
+	    // 1. LAWYER 테이블 업데이트
 	    HashMap<String, Object> param = new HashMap<>();
 	    param.put("lawyerId", lawyerId);
 	    param.put("lawyerInfo", lawyerInfo);
@@ -98,10 +100,19 @@ public class ProfileService {
 	    param.put("lawyerEdu", lawyerEdu);
 	    profileMapper.updateLawyer(param);
 
-	    // 2. LICENSE 삭제
-	    profileMapper.deleteLicenseByLawyerId(lawyerId);
+	    // 2. 삭제할 LICENSE 항목 처리
+	    if (deletedLicenseList != null) {
+	        for (Map<String, String> del : deletedLicenseList) {
+	            String name = del.get("licenseName");
+	            String id = del.get("lawyerId");
+	            HashMap<String, Object> delMap = new HashMap<>();
+	            delMap.put("lawyerId", id);
+	            delMap.put("licenseName", name);
+	            profileMapper.deleteLicense(delMap);
+	        }
+	    }
 
-	    // 3. LICENSE 삽입 (신규 항목만)
+	    // 3. 신규 LICENSE 삽입
 	    for (HashMap<String, Object> license : licenseList) {
 	        String licenseName = (String) license.get("licenseName");
 	        MultipartFile file = (MultipartFile) license.get("licenseFile");
@@ -111,12 +122,23 @@ public class ProfileService {
 	            String savePath = uploadPath + File.separator + savedName;
 	            String webPath = "/license/" + savedName;
 
-	            file.transferTo(new File(savePath));
+	            //로그확인
+//	            System.out.println(">>> insertLicense: " + licenseName + ", " + webPath);
+	            try {
+	                file.transferTo(new File(savePath));
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	                throw new Exception("파일 저장 실패: " + e.getMessage());
+	            }
 
 	            HashMap<String, Object> fileMap = new HashMap<>();
 	            fileMap.put("lawyerId", lawyerId);
 	            fileMap.put("licenseName", licenseName);
 	            fileMap.put("licenseFilePath", webPath);
+	            
+	            // 로그 확인용
+//	            System.out.println(">> DB 저장 직전: " + fileMap);
+	    	            
 	            profileMapper.insertLicense(fileMap);
 	        } else {
 	            throw new Exception("[" + licenseName + "] 자격증 파일이 첨부되지 않았습니다.");
@@ -155,4 +177,5 @@ public class ProfileService {
 	        e.printStackTrace();
 	    }
 	}
+
 }

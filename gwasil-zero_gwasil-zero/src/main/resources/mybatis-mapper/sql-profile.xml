@@ -107,38 +107,33 @@
 		WHERE LAWYER_ID = #{lawyerId}
 	</select>
 	
-	<update id="updateLawyer">
-		UPDATE LAWYER
-		SET
-			LAWYER_INFO = #{lawyerInfo, jdbcType=VARCHAR},
-			LAWYER_CAREER = #{lawyerCareer, jdbcType=VARCHAR},
-			LAWYER_TASK = #{lawyerTask, jdbcType=VARCHAR},
-			LAWYER_EDU = #{lawyerEdu, jdbcType=VARCHAR}
-		WHERE LAWYER_ID = #{lawyerId, jdbcType=VARCHAR}	
-	</update>
-	
-	<delete id="deleteLicenseByLawyerId" parameterType="string">
-		DELETE FROM LICENSE 
-		WHERE LAWYER_ID = #{lawyerId}
-	</delete>
-	
-	<insert id="insertLicense" parameterType="hashmap">
-	    INSERT INTO LICENSE (LAWYER_ID, LICENSE_NAME, LICENSE_FILEPATH)
-	    VALUES (#{lawyerId}, #{licenseName}, #{licenseFilePath})
-	</insert>
-	
-	<update id="updateMainCases" parameterType="hashmap">
-	    UPDATE LAWYER
-	    SET MAIN_CASE1_NO = #{mainCase1No, jdbcType=INTEGER},
+	<update id="updateLawyer" parameterType="hashmap">
+        UPDATE LAWYER
+        SET LAWYER_INFO = #{lawyerInfo},
+            LAWYER_CAREER = #{lawyerCareer},
+            LAWYER_TASK = #{lawyerTask},
+            LAWYER_EDU = #{lawyerEdu}
+        WHERE lawyer_id = #{lawyerId}
+    </update>
+    
+    <delete id="deleteLicense" parameterType="hashmap">
+        DELETE FROM LICENSE
+        WHERE LAWYER_ID = #{lawyerId}
+        AND LICENSE_NAME = #{licenseName}
+    </delete>
+    
+    <insert id="insertLicense" parameterType="hashmap">
+        INSERT INTO LICENSE (LAWYER_ID, LICENSE_NAME, LICENSE_FILEPATH)
+        VALUES (#{lawyerId}, #{licenseName}, #{licenseFilePath})
+    </insert>
+    
+    <update id="updateMainCases" parameterType="hashmap">
+        UPDATE LAWYER
+        SET 
+        	MAIN_CASE1_NO = #{mainCase1No, jdbcType=INTEGER},
 	        MAIN_CASE2_NO = #{mainCase2No, jdbcType=INTEGER},
 	        MAIN_CASE3_NO = #{mainCase3No, jdbcType=INTEGER}
-	    WHERE LAWYER_ID = #{lawyerId}
-	</update>
-	
-	
-	
+        WHERE LAWYER_ID = #{lawyerId}
+    </update>
+    
 </mapper>
-
-
-
-

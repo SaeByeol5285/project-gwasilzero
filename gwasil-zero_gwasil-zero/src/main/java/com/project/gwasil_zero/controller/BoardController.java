@@ -53,6 +53,7 @@ public class BoardController {
 			request.setAttribute("map", map);
 			return "/board/board-edit";
 	   }
+	 
 	@RequestMapping(value = "/board/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String board_list(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
@@ -77,8 +78,27 @@ public class BoardController {
 		return new Gson().toJson(resultMap);
 	}
 	
+	@RequestMapping(value = "/board/changeBoardStatus.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String changeBoardStatus(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = boardService.changeBoardStatus(map);
+		return new Gson().toJson(resultMap);
+	}
 	
-	
+	@RequestMapping(value = "/board/delete.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String deleteBoard(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = boardService.markBoardAsDeleted(map);
+	    return new Gson().toJson(resultMap);
+	}
+
+	@RequestMapping(value = "/board/commentDelete.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String deleteComment(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = boardService.deleteBoardCmt(map);
+	    return new Gson().toJson(resultMap);
+	}
 	
 	@RequestMapping("/board/fileUpload.dox")
 	@ResponseBody
@@ -207,7 +227,97 @@ public class BoardController {
 	    }
 	}
 
+	@RequestMapping(value = "/board/edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String boardEdit(@RequestParam("boardNo") int boardNo,
+	                        @RequestParam("boardTitle") String boardTitle,
+	                        @RequestParam("contents") String contents,
+	                        @RequestParam(value = "files", required = false) List<MultipartFile> files,
+	                        @RequestParam(value = "deletedFiles", required = false) List<String> deletedFiles,
+	                        HttpServletRequest request) throws Exception {
 
+	    String path2 = System.getProperty("user.dir");
+	    String originPath = path2 + "\\src\\main\\webapp\\img\\originVedio";
+	    String cutPathDir = path2 + "\\src\\main\\webapp\\img\\cutVedio";
+	    String mosaicPathDir = path2 + "\\src\\main\\webapp\\img\\mosaicVedio";
+	    String pythonExec = "C:\\pixelizer_env\\Scripts\\python.exe";
+	    String scriptPath = "C:\\pixelizer\\pixelizer.py";
+
+	    HashMap<String, Object> resultMap = new HashMap<>();
+
+	    try {
+	        // 1. 제목 및 내용 수정
+	        HashMap<String, Object> paramMap = new HashMap<>();
+	        paramMap.put("boardNo", boardNo);
+	        paramMap.put("boardTitle", boardTitle);
+	        paramMap.put("contents", contents);
+	        boardService.editBoard(paramMap);
+
+	        // 2. 삭제된 파일 처리
+	        if (deletedFiles != null) {
+	            for (String fileName : deletedFiles) {
+	                HashMap<String, Object> delMap = new HashMap<>();
+	                delMap.put("boardNo", boardNo);
+	                delMap.put("fileName", fileName);
+	                boardService.deleteBoardFile(delMap);
+	            }
+	        }
+
+	        // 3. 새로운 파일 업로드 및 모자이크 처리
+	        if (files != null) {
+	            for (MultipartFile multi : files) {
+	                if (!multi.isEmpty()) {
+	                    String originFilename = multi.getOriginalFilename();
+	                    String extName = originFilename.substring(originFilename.lastIndexOf("."));
+	                    String saveFileName = genSaveFileName(extName);
+	                    File savedFile = new File(originPath, saveFileName);
+	                    multi.transferTo(savedFile);
+
+	                    // ffmpeg + pixelizer 처리
+	                    String inputPath = savedFile.getAbsolutePath();
+	                    String cutPath = cutPathDir + "\\cut_" + saveFileName;
+	                    String mosaicPath = mosaicPathDir + "\\mosaic_" + saveFileName;
+
+	                    String fullCommand = String.join(" && ",
+	                        "del \"" + mosaicPath + "\"",
+	                        "ffmpeg -y -i \"" + inputPath + "\" -t 40 -vf scale=800:600 \"" + cutPath + "\"",
+	                        "\"" + pythonExec + "\" \"" + scriptPath + "\" \"" + cutPath + "\" \"" + mosaicPath + "\""
+	                    );
+
+	                    ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", fullCommand);
+	                    pb.redirectErrorStream(true);
+	                    pb.directory(new File("C:\\pixelizer"));
+	                    Process process = pb.start();
+
+	                    BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+	                    String line;
+	                    while ((line = in.readLine()) != null) {
+	                        System.out.println("[EDIT CMD] " + line);
+	                    }
+	                    process.waitFor();
+
+	                    // DB에 저장
+	                    HashMap<String, Object> fileMap = new HashMap<>();
+	                    fileMap.put("boardNo", boardNo);
+	                    fileMap.put("filePath", "../img/mosaicVedio/mosaic_" + saveFileName);
+	                    fileMap.put("fileName", "mosaic_" + saveFileName);
+	                    fileMap.put("fileRealName", originFilename);
+	                    fileMap.put("thumbnail", "N");
+	                    boardService.saveBoardFile(fileMap);
+	                }
+	            }
+	        }
+
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "failed");
+	    }
+
+	    return new Gson().toJson(resultMap);
+	}
+
+	
 	
 	private String genSaveFileName(String extName) {
 		String fileName = "";

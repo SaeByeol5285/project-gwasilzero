@@ -117,4 +117,76 @@ public class BoardService {
 		
 		return resultMap;
 	}
+	public HashMap<String, Object> changeBoardStatus(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			boardMapper.updateBoardStatus(map);
+			resultMap.put("result","success");
+			
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result","failed");
+		}
+		
+		return resultMap;
+	}
+	public HashMap<String, Object> editBoard(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	        // 제목/내용 수정만 처리 (컨트롤러에서 분기)
+	        if (map.containsKey("boardTitle") && map.containsKey("contents")) {
+	            boardMapper.updateBoard(map); // 이 메서드를 새로 추가해야 함
+	        }
+
+	        // 파일이 있다면 board_file 테이블에 추가 (컨트롤러에서 처리)
+	        if (map.containsKey("fileList")) {
+	            List<HashMap<String, Object>> fileList = (List<HashMap<String, Object>>) map.get("fileList");
+	            for (HashMap<String, Object> fileMap : fileList) {
+	                boardMapper.insertBoardFile(fileMap);
+	            }
+	        }
+
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "failed");
+	    }
+	    return resultMap;
+	}
+
+	public HashMap<String, Object> deleteBoardFile(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	        boardMapper.deleteBoardFile(map);  // 이걸 매퍼에 추가해야 함
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "failed");
+	    }
+	    return resultMap;
+	}
+	
+	public HashMap<String, Object> markBoardAsDeleted(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	        boardMapper.markBoardAsDeleted(map);
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "failed");
+	    }
+	    return resultMap;
+	}
+	
+	public HashMap<String, Object> deleteBoardCmt(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	        boardMapper.deleteBoardCmt(map);
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "failed");
+	    }
+	    return resultMap;
+	}
 }

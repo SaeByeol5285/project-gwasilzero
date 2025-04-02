@@ -147,7 +147,7 @@
                     data: nparmap,
                     success: function(data) {
                         alert("계약이 체결되었습니다.");
-						
+						fnChangeBoardStatus();			
                         location.href = "/board/list.do";
                     },
                     error: function(err) {
@@ -156,6 +156,27 @@
                     }
                 });
             },
+			fnChangeBoardStatus() {
+			               let self = this;
+			               const nparmap = {
+			                   userId: self.userId,
+			                   lawyerId: self.lawyerId,
+			                   boardNo: self.boardNo
+			               };
+
+			               $.ajax({
+			                   url: "/board/changeBoardStatus.dox",
+			                   type: "POST",
+			                   dataType: "json",
+			                   data: nparmap,
+			                   success: function(data) {
+			                   },
+			                   error: function(err) {
+			                       alert("게시물 상태 변경 실패");
+			                       console.error(err);
+			                   }
+			               });
+			           },
             fnGetLawyerInfo() {
                 let self = this;
                 const nparmap = {

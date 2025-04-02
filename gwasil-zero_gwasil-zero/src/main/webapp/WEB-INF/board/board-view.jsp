@@ -165,7 +165,13 @@
 		    <div class="comment-item" v-for="(cmt, index) in comments" :key="index">
 		      <div class="comment-meta">
 		        {{ cmt.lawyerName }} | {{ cmt.cdate }}
-		        
+				<button
+				      v-if="sessionType === 'lawyer' && cmt.lawyerId === sessionId"
+				      @click="deleteComment(cmt.cmtNo)"
+				      style="margin-left: 10px; background: none; border: none; color: red; cursor: pointer;"
+				    >
+				      삭제
+				 </button>
 		        <!-- 북마크 아이콘 -->
 				<img
 				  v-if="sessionType === 'user'"
@@ -285,7 +291,7 @@
 			   },
 			EditBoard: function(){
 				let self = this;
-				pageChange("/board/edit.do", {boardNo : self.boardNo})
+				pageChange("/board/edit.do", {boardNo : self.boardNo, userId : self.sessionId});
 			},
 			isBookmarked(lawyerId) {
 			   return this.bookmarkList.some(bm => bm.lawyerId === lawyerId);
@@ -356,7 +362,29 @@
 			    startChat(lawyerId) {
 			        // 채팅방으로 이동 (예: chat.do?lawyerId=XXX)
 			        pageChange("/chat/chat.do", { lawyerId: lawyerId });
-			    }
+			    },
+				deleteComment(cmtNo) {
+				  const self = this;
+				  if (!confirm("댓글을 삭제하시겠습니까?")) return;
+					console.log(cmtNo);
+				  $.ajax({
+				    url: "/board/commentDelete.dox",
+				    type: "POST",
+				    data: {
+				      cmtNo: Number(cmtNo),
+				      lawyerId: self.sessionId
+				    },
+				    success: function (res) {
+				      if (res.result === "success") {
+				        alert("댓글이 삭제되었습니다.");
+				        self.fnGetBoard(); // 댓글 목록 새로고침
+				      } else {
+				        alert("댓글 삭제 실패");
+				      }
+				    }
+				  });
+				}
+
 	    },
 	    mounted() {
 			let self = this;

@@ -3,7 +3,7 @@
 											
 <mapper namespace="com.project.gwasil_zero.mapper.BookmarkMapper">
 	<select id="selectBookmarkList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Bookmark">
-		select * from bookmark where user_id = #{sessionId}
+		select b.*, l.lawyer_name as lawyerName from bookmark b inner join lawyer l on b.lawyer_id = l.lawyer_id where user_id = #{sessionId}
 	</select>
 	
 	<insert id="insertBookmark"  parameterType="hashmap">

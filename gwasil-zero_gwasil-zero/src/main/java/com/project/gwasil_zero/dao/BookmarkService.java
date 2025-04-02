@@ -1,11 +1,13 @@
 package com.project.gwasil_zero.dao;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.gwasil_zero.mapper.BookmarkMapper;
+import com.project.gwasil_zero.model.Bookmark;
 
 @Service
 public class BookmarkService {
@@ -16,7 +18,8 @@ public class BookmarkService {
 	public HashMap<String, Object> getBookmarkList(HashMap<String, Object> map){
 		HashMap<String, Object> resultMap = new HashMap<>();
 		try {
-			resultMap.put("list", bookmarkMapper.selectBookmarkList(map));
+			List<Bookmark> bm = bookmarkMapper.selectBookmarkList(map);
+			resultMap.put("list", bm);
 			resultMap.put("result","success");
 		}catch(Exception e) {
 			System.out.println(e.getMessage());

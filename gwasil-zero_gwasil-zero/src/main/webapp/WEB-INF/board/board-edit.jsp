@@ -2,12 +2,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-    <script src="/js/page-change.js"></script>
-    <title>게시글 수정</title>
-	<style>
+  <meta charset="UTF-8">
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+  <script src="/js/page-change.js"></script>
+  <title>게시글 수정</title>
+  <style>
 	    body {
 	        font-family: 'Arial', sans-serif;
 	        background-color: #f5f5f5;

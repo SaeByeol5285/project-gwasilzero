@@ -53,4 +53,39 @@
       WHERE LAWYER_ID = #{lawyerId}
    </update>
    
+   <select id="selectLawyerBoard" parameterType="hashmap" resultType="Board">
+	    SELECT B.*, U.USER_NAME
+	    FROM BOARD B
+	    INNER JOIN TBL_USER U ON B.USER_ID = U.USER_ID
+	    WHERE 1=1
+	    <if test="sessionId != null and sessionId != ''">
+	        AND B.LAWYER_ID = #{sessionId}
+	    </if>
+	    <if test="boardStatus != null and boardStatus != ''">
+	        AND B.BOARD_STATUS = #{boardStatus}
+	    </if>
+	    offset #{page} rows fetch next #{pageSize} rows only
+	</select>
+	
+	<select id="selectBoardCnt" parameterType="hashmap" resultType="int">
+	    SELECT COUNT(*)
+	    FROM BOARD B
+	    INNER JOIN TBL_USER U ON B.USER_ID = U.USER_ID
+	    WHERE 1=1
+	    <if test="sessionId != null and sessionId != ''">
+	        AND B.LAWYER_ID = #{sessionId}
+	    </if>
+	    <if test="boardStatus != null and boardStatus != ''">
+	        AND B.BOARD_STATUS = #{boardStatus}
+	    </if>
+	</select>
+
+	
+	<update id="updateBoardStatus" parameterType="hashmap">
+      UPDATE BOARD
+      SET
+         BOARD_STATUS = #{boardStatus}
+      WHERE BOARD_NO = #{boardNo}
+    </update>
+   
 </mapper>

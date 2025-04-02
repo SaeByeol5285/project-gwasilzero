@@ -28,13 +28,6 @@ public class MypageController {
       model.addAttribute("map", map);
       return "/mypage/mypage-home"; // 뷰 이름 반환
    }
-   
-   // 변호사 마이페이지
-   @RequestMapping("/mypage/lawyerMyPage.do")
-   public String lawyerMyPage(@RequestParam Map<String, Object> map, Model model) throws Exception {
-      model.addAttribute("map", map);
-      return "/mypage/lawyerMyPage"; 
-   }
 
    // 정보수정
    @RequestMapping("/mypage/edit.do")
@@ -76,6 +69,14 @@ public class MypageController {
       return new Gson().toJson(resultMap);
    }
    
+   
+   // 변호사 마이페이지
+   @RequestMapping("/mypage/lawyerMyPage.do")
+   public String lawyerMyPage(@RequestParam Map<String, Object> map, Model model) throws Exception {
+      model.addAttribute("map", map);
+      return "/mypage/lawyerMyPage"; 
+   }
+   
    // 변호사 마이페이지 정보 보기
    @RequestMapping(value = "/lawyerMyPage/view.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
    @ResponseBody
@@ -106,7 +107,6 @@ public class MypageController {
    }
    
    // 변호사 상담 상태 
-   
    @RequestMapping(value = "/lawyerMyPage/updateStatus.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
    @ResponseBody
    public String lawyerCounsel(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
@@ -115,5 +115,25 @@ public class MypageController {
       resultMap = mypageService.counselUpdate(map);
       return new Gson().toJson(resultMap);
    }
+   
+   // 변호사가 맡은 사건 게시글 가져오기
+   @RequestMapping(value = "/lawyerMyPage/board.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   @ResponseBody
+   public String lawyerBoard(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+       HashMap<String, Object> resultMap = new HashMap<String, Object>();
+       resultMap = mypageService.getLawyerBoard(map);
+       return new Gson().toJson(resultMap);
+   }
+   
+   // 변호사가 맡은 사건 상태 변경
+   @RequestMapping(value = "/lawyerMyPage/updateBoardStatus.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   @ResponseBody
+   public String updateBoardStatus(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+      HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
+      resultMap = mypageService.boardUpdate(map);
+      return new Gson().toJson(resultMap);
+   }
+   
+   
 }

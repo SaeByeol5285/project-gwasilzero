@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<title>게시글 등록</title>
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 
 	<style>
 		.board-form-wrapper {
@@ -146,7 +146,8 @@ const app = Vue.createApp({
 				{ value: "08", label: "고속도로 또는 자동차 전용도로에서 후진 사고" },
 				{ value: "09", label: "우천 시 감속운행 위반 사고" },
 			],
-			selectedCategory: ""
+			selectedCategory: "",
+			sessionId : "${sessionScope.sessionId}"
 		};
 	},
 	methods: {
@@ -173,6 +174,8 @@ const app = Vue.createApp({
 			form.append("title", self.title);
 			form.append("contents", self.contents);
 			form.append("category", self.selectedCategory);
+			form.append("sessionId", self.sessionId);
+
 			self.isLoading = true;
 			self.statusMessage = "업로드 및 모자이크 처리 중입니다... 잠시만 기다려주세요";
 			self.upload(form);
@@ -188,6 +191,7 @@ const app = Vue.createApp({
 				success: function (response) {
 					self.statusMessage = "모자이크 처리가 완료되었습니다!";
 					self.isLoading = false;
+					location.href="/board/list.do";
 				},
 				error: function () {
 					self.statusMessage = "업로드 실패.";

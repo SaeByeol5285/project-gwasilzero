@@ -74,6 +74,7 @@
         <div class="info">🧾 주문번호 : <strong>{{ orderId }}</strong></div>
         <div class="info">📦 패키지명 : <strong>{{ packageName }}</strong></div>
         <div class="info">💰 금액 : <strong>{{ price.toLocaleString() }} 원</strong></div>
+        <p>세션 아이디 확인: ${sessionId}</p>
 
         <button class="pay-btn" @click="fnPay">결제하기</button>
     </div>
@@ -88,14 +89,15 @@
                     packageName: "",
                     price: 0,
                     orderId: "",
-                    // userId : 
+                    sessionId : "${sessionId}",
+                    role : "${role}"
                 };
             },
             methods: {
                 fnPay() {
                     const self = this;
                     IMP.request_pay({
-                        pg: "html5_inicis",
+                        pg: "kakaopay",
                         pay_method: "card",
                         merchant_uid: self.orderId,
                         name: self.packageName,
@@ -116,8 +118,9 @@
                     var nparmap = {
                         orderId : merchant_uid,           // 받은 merchant_uid 그대로 저장
                         packageName : self.packageName,
-                        packagePrice : self.price
-                        // userId : self.userId (로그인 정보 있으면 추가)
+                        sessionId : self.sessionId ,
+                        price : self.price,
+                        role : self.role
                     };
 
                     $.ajax({

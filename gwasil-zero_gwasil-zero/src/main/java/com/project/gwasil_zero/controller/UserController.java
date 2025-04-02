@@ -3,6 +3,7 @@ package com.project.gwasil_zero.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -47,6 +48,13 @@ public class UserController {
 	      model.addAttribute("location", location);
 
 	      return "/user/user-login";
+	   }
+	   
+	   // 로그아웃
+	   @RequestMapping("/logout.do")
+	   public String logout(HttpSession session) {
+	       session.invalidate(); // 세션 정보 제거
+	       return "redirect:/common/main.do"; 
 	   }
 
 	   // 아이디 비밀번호 찾기

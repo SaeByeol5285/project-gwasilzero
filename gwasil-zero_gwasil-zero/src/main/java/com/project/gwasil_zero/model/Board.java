@@ -18,5 +18,5 @@ public class Board {
 	private String thumbnailPath;
 	private String lawyerName;
 	private String userName;
-	
+
 }

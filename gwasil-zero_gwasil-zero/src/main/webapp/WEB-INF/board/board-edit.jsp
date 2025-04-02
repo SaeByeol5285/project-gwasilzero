@@ -166,7 +166,6 @@
 	        font-size: 14px;
 	    }
 	</style>
-
 </head>
 <body>
 <jsp:include page="../common/header.jsp"/>

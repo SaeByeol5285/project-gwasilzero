@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class Notification {
-	
+
 	private int notiNo;
 	private String receiverId;
 	private String notiType;

@@ -216,7 +216,7 @@
 			<div style="display: flex; justify-content: space-between; align-items: center;">
 				<h4 style="margin: 0 0 6px;">{{ lawyer.lawyerName }}</h4>
 				<span :class="['status-badge', lawyer.counsel]">
-					{{ getStatusText(lawyer.counsel) }} 
+					{{ $options.methods.getStatusText(lawyer.counsel) }}
 				</span>
 			</div>
 			<p style="margin: 0 0 2px; font-size: 14px;">{{ lawyer.lawyerAddr }}</p>
@@ -266,7 +266,7 @@ const mapApp = Vue.createApp({
 
 			this.keyword = "";
 			this.showNearbyList = false;
-			this. filterStatus = "";
+			this.filterStatus = "";
 
 			if (newTab === 'area') {
 				this.fnSi();

@@ -81,7 +81,7 @@
          <div class="section info-section">
             <div>
                <h3>내 정보</h3>
-               <div class="info-details" v-if="info && info.userName">
+               <div v-if="info.userName">
                   이름: {{ info.userName }}<br>
                   핸드폰 번호: {{ info.userPhone }}<br>
                   이메일: {{ info.userEmail }}
@@ -156,16 +156,14 @@
          data() {
             return {
                info: {},
-               userId: "${map.userId}"
-
+               sessionId: "${sessionId}" // JSP에서 받은 userId 그대로 할당
             };
          },
          methods: {
             fnGetList() {
                var self = this;
-               var nparmap = {
-                  userId: "juwon1234"
-               };
+               console.log(self.userId);  // 값 확인용 로그
+               var nparmap = { sessionId: self.sessionId };
                $.ajax({
                   url: "/mypage/mypage-view.dox",
                   dataType: "json",
@@ -173,24 +171,22 @@
                   data: nparmap,
                   success: function (data) {
                      console.log(data);
-                     self.info = data.info
+                     self.info = data.info;
                   }
                });
             },
-            fnEdit: function () {
-               pageChange("/mypage/edit.do", { userId: this.userId });
+            fnEdit() {
+               pageChange("/mypage/edit.do", { sessionId: this.sessionId });
             },
-            fnRemoveUser : function(){
-               pageChange("/mypage/remove.do", {userId : this.userId});
+            fnRemoveUser() {
+               pageChange("/mypage/remove.do", { sessionId: this.sessionId });
             }
-
          },
          mounted() {
-            var self = this;
-            self.fnGetList();
+            this.fnGetList();
          }
       });
       app.mount('#app');
    </script>
+
    ​
-   

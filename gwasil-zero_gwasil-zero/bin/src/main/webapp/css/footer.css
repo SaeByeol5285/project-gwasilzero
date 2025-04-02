@@ -1,0 +1,118 @@
+#footer{
+	width: 100%;
+}
+.footer-container {
+	width: 100%;
+	clear: both;
+
+	background-color: #f8f9fa;
+	color: #333;
+	border-top: 1px solid #ddd;
+	padding: 40px 20px;
+	font-size: 14px;
+}
+
+.footer-inner {
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.footer-top {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin-bottom: 20px;
+}
+
+.footer-logo {
+	height: 40px;
+	margin-bottom: 10px;
+}
+
+.footer-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.footer-links a {
+	color: #333;
+	text-decoration: none;
+}
+
+.footer-links .highlight {
+	color: #0d47a1;
+	font-weight: bold;
+}
+
+.footer-info {
+	margin-top: 20px;
+	line-height: 1.6;
+}
+
+.footer-bottom {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 30px;
+}
+
+.sns-icons a img {
+	height: 24px;
+	margin-right: 12px;
+}
+
+.brochure-buttons {
+	display: flex;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.brochure-btn {
+	padding: 8px 16px;
+	border: 1px solid #aaa;
+	border-radius: 999px;
+	background-color: #fff;
+	text-decoration: none;
+	color: #333;
+	font-weight: 500;
+	transition: background-color 0.2s;
+}
+
+.brochure-btn:hover {
+	background-color: #f0f0f0;
+}
+
+.footer-cert img {
+	height: 64px;
+	margin-top: 20px;
+}
+
+/* Quick Menu */
+.quick-menu {
+	position: fixed;
+	bottom: 80px;
+	right: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	z-index: 1000;
+}
+
+.quick-menu a {
+	display: block;
+	background-color: white;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+	padding: 12px 16px;
+	border-radius: 999px;
+	font-size: 14px;
+	text-decoration: none;
+	color: #333;
+	transition: background-color 0.2s;
+}
+
+.quick-menu a:hover {
+	background-color: #f1f1f1;
+}

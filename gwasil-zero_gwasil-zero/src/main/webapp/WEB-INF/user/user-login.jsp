@@ -128,8 +128,10 @@
                 <input v-model="pwd" type="password" placeholder="비밀번호를 입력해주세요">
             </div>
             <div>
-                <button @click="fnLogin">로그인</button>
+                <button v-if="!sessionId" @click="fnLogin">로그인</button>
+                <a v-else href="javascript:void(0);" @click="fnLogout">로그아웃</a>
             </div>
+
             <div class="link-container">
                 <a @click="fnJoin">회원가입</a>
                 <a @click="searchUser">아이디/비밀번호 찾기</a>
@@ -153,8 +155,10 @@
         const app = Vue.createApp({
             data() {
                 return {
+                    sessionId: "${sessionId}",
                     id: "",
                     pwd: "",
+                    userStatus: "",
                     location: "${location}"
                 };
             },
@@ -163,10 +167,11 @@
                     var self = this;
                     var nparmap = {
                         id: self.id,
-                        pwd: self.pwd
+                        pwd: self.pwd,
+                        userStatus: self.userStatus
                     };
                     $.ajax({
-                        url: "/user/user-login.dox",
+                        url: "/user/user-login.dox", // 기존 로그인 요청을 활용
                         dataType: "json",
                         type: "POST",
                         data: nparmap,
@@ -174,13 +179,41 @@
                             console.log(data);
                             if (data.result == "success") {
                                 alert("로그인 성공");
-                                location.href = "/common/main.do"
+                                location.href = "/common/main.do";
+                            } else if (data.message === "탈퇴한 계정입니다. 계정을 복구하시겠습니까?") {
+                                if (confirm("탈퇴한 계정입니다. 계정을 복구하시겠습니까?")) {
+                                    self.fnRecoverAccount(self.id); // 계정 복구 요청
+                                }
                             } else {
-                                alert("아이디/비밀번호 확인해주세요");
+                                alert("아이디/비밀번호를 확인해주세요");
                             }
                         }
                     });
                 },
+
+                fnRecoverAccount(userId) {
+                    var self = this;
+                    $.ajax({
+                        url: "/user/user-login.dox", // 같은 로그인 URL 사용
+                        dataType: "json",
+                        type: "POST",
+                        data: {
+                            id: userId,
+                            recover: true // 복구 요청을 구분하기 위한 추가 데이터
+                        },
+                        success: function (data) {
+                            if (data.result == "success") {
+                                alert("계정이 복구되었습니다. 다시 로그인해주세요.");
+                                // 계정 복구 후, 인풋 박스를 초기화
+                                self.id = "";
+                                self.pwd = "";
+                            } else {
+                                alert("계정 복구에 실패했습니다. 관리자에게 문의하세요.");
+                            }
+                        }
+                    });
+                },
+
                 fnJoin() {
                     location.href = "/join/select.do";
                 },
@@ -190,7 +223,7 @@
             },
             mounted() {
                 var self = this;
-                console.log(this.location);
+                console.log("sessionId" + this.sessionId);
             }
         });
         app.mount('#app');

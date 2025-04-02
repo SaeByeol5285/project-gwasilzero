@@ -1,192 +1,165 @@
-/* 기본적인 스타일 초기화 */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #fff9e6; /* 부드러운 노란색 배경 */
-}
-
-/* 헤더 스타일 */
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 30px;
-    background-color: #d4edb2; /* 밝은 연두색 */
-    color: black;
-    height: 100px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.header-title {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    color: black; /* 제목 검은색 */
-}
-
-#header {
-    width: 100%;
-}
-
-.logo img {
-    width: 150px;
-    height: auto;
-}
-
-/* 네비게이션 스타일 */
-nav {
-    display: flex;
-    align-items: center;
-}
-
-nav ul {
-    display: flex;
-    gap: 60px;
-    list-style: none;
-}
-
-nav li {
-    position: relative;
-}
-
-nav a {
-    color: black; /* 메뉴 기본 글씨 검은색 */
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: 600;
-    transition: color 0.3s ease;
-}
-
-nav a:hover {
-    color: #ff4500; /* 메뉴 hover 시 진한 오렌지 */
-}
-
-/* 드롭다운 스타일 */
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: #4caf50; /* 초록색 */
-    padding: 10px 0;
-    list-style: none;
-    display: none;
-    border-radius: 5px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    min-width: 150px;
-    z-index: 100;
-}
-
-.dropdown:hover .dropdown-menu,
-.dropdown-menu:hover {
-    display: block;
-}
-
-.dropdown-menu li a {
-    padding: 12px 25px;
-    font-size: 16px;
-    color: white;
-    display: block;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.dropdown-menu li a:hover {
-    background-color: #388e3c; /* 더 진한 녹색 */
-}
-
-/* 검색창 스타일 */
-.search-bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.search-bar input {
-    padding: 8px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    outline: none;
-    transition: border-color 0.3s ease;
-}
-
-.search-bar input:focus {
-    border-color: #ff4500;
-}
-
-.search-bar button {
-    padding: 8px 15px;
-    background-color: #ffa500; /* 밝은 오렌지색 */
-    color: white;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.search-bar button:hover {
-    background-color: #ff8c00; /* 더 진한 오렌지 */
-}
-
-/* 로그인 버튼 스타일 */
-.login-btn {
-    display: flex;
-    align-items: center;
-}
-
-.login-btn button {
-    padding: 8px 20px;
-    background-color: #ffa500; /* 밝은 오렌지 */
-    color: white;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-.login-btn button:hover {
-    background-color: #ff8c00;
-}
-
-.link {
-    color: black;
-    font-size: 20px;
-}
-
-/* 슬라이더 스타일 */
-.swiper-container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    overflow: hidden;
-    text-align: center;
-}
-
-.swiper-slide img {
-    width: 100px;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-}
-
-.swiper-button-next,
-.swiper-button-prev {
-    display: none !important;
-}
-
-.swiper-pagination {
-    position: absolute;
-    bottom: 10px;
-}
+/* =============================
+   기본 스타일
+============================= */
+.menu-font {
+	font-weight: 700;
+  }
+  
+  .light-font {
+	font-weight: 600;
+  }
+  
+  /* =============================
+	 상단 로그인/회원가입 라인
+  ============================= */
+  .header-line {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 10px 40px;
+	text-align: right;
+	font-size: 14px;
+	background-color: #fff;
+	border-bottom: 1px solid #f1f1f1;
+  }
+  
+  .header-line a {
+	margin-left: 20px;
+	text-decoration: none;
+	color: #FF5722;
+	font-weight: 600;
+  }
+  
+  /* =============================
+	 네비게이션 영역
+  ============================= */
+  .main-nav-wrapper {
+	background-color: white;
+	border-bottom: 2px solid #FF5722;
+  }
+  
+  .main-nav {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 40px;
+  
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 80px;
+  }
+  
+  .logo {
+	display: block;
+	width: 120px;
+  }
+  
+  .logo img {
+	width: 100%;
+	height: auto;
+  }
+  
+  /* =============================
+	 메뉴
+  ============================= */
+  .main-menu {
+	list-style: none;
+	display: flex;
+	gap: 100px;
+	margin: 0;
+	padding: 0;
+	align-items: center;
+  }
+  
+  .menu-item {
+	position: relative;
+	font-size: 20px;
+  }
+  
+  .menu-item > a {
+	text-decoration: none;
+	color: black;
+	transition: color 0.3s;
+  }
+  
+  .menu-item:hover > a {
+	color: #FF5722;
+  }
+  
+  /* =============================
+	 드롭다운
+  ============================= */
+  .dropdown {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	background-color: rgba(255, 87, 34, 0.9);
+	padding: 20px;
+	min-width: 150px;
+	display: none;
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+	z-index: 1000;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(10px);
+	transition: all 0.3s ease;
+  }
+  
+  .menu-item:hover .dropdown {
+	display: block;
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0);
+  }
+  
+  .dropdown ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+  }
+  
+  .dropdown ul li {
+	margin: 8px 0;
+	text-align: left;
+  }
+  
+  .dropdown ul li a {
+	color: white;
+	text-decoration: none;
+	font-size: 17px;
+  }
+  
+  .dropdown ul li a:hover {
+	color: black;
+	font-weight: 700;
+  }
+  
+  /* =============================
+	 반응형 대응
+  ============================= */
+  @media screen and (max-width: 768px) {
+	.main-menu {
+	  flex-direction: column;
+	  align-items: flex-start;
+	  gap: 0;
+	}
+  
+	.menu-item {
+	  width: 100%;
+	  border-top: 1px solid #ddd;
+	}
+  
+	.menu-item:first-child {
+	  border-top: none;
+	}
+  
+	.dropdown {
+	  position: static;
+	  display: block;
+	  width: 100%;
+	  padding: 15px;
+	  opacity: 1 !important;
+	  visibility: visible !important;
+	  transform: none !important;
+	}
+  }
+  

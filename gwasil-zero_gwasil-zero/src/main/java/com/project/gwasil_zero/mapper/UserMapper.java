@@ -28,4 +28,7 @@ public interface UserMapper {
 
 	void selectUserPwd(HashMap<String, Object> map);
 
+
+	int updateUserStatus(HashMap<String, Object> map);
+
 }

@@ -17,7 +17,7 @@
 	.card-container {
 	    width: 66%;
 	    margin: 0 auto; 
-	    padding: 40px 20px;
+	    padding: 1px 20px;
 	  }
 	.card-grid {
 	  display: grid;
@@ -45,6 +45,30 @@
 	  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); 
 	}
 
+	.box h3 {
+		margin-bottom: 10px;
+		font-size: 18px;
+		font-weight: 700;
+		color: #222;
+	}
+
+	.box p {
+		margin: 4px 0;
+		font-size: 14px;
+		color: #666;
+	}
+
+	.box p:first-of-type {
+		font-weight: 500;
+		color: #444;
+	}
+
+	.box p:last-of-type {
+		font-style: italic;
+		color: #999;
+	}
+
+
 	.thumbnail {
 	  width: 100%;
 	  height: 180px;
@@ -55,7 +79,7 @@
 
 	.category-wrap {
 		width: 66%;
-		margin: 20px auto; /* 중앙 정렬 + 위아래 여백 */
+		margin: 30px auto; /* 중앙 정렬 + 위아래 여백 */
 		display: flex;
 		flex-wrap: wrap;
 		gap: 12px; /* 버튼 간 간격 */
@@ -84,86 +108,92 @@
 	}
 
 	.search-bar {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			gap: 10px;
-			margin: 20px auto;
-			width: 66%;
-			flex-wrap: wrap;
-		}
-
-		.search-select {
-			padding: 8px 12px;
-			font-size: 14px;
-			border: 1px solid #ccc;
-			border-radius: 6px;
-		}
-
-		.search-input {
-			flex: 1;
-			min-width: 200px;
-			padding: 8px 12px;
-			border: 1px solid #ccc;
-			border-radius: 6px;
-			font-size: 14px;
-		}
-
-		.btn {
-			padding: 8px 16px;
-			border-radius: 6px;
-			cursor: pointer;
-			font-size: 14px;
-			font-weight: 500;
-			border: none;
-		}
-
-		.btn-primary {
-			background-color: var(--main-color);
-			color: #fff;
-		}
-
-		.btn-outline {
-			background-color: #fff;
-			color: var(--main-color);
-			border: 1px solid var(--main-color);
-		}
-
-		.btn-primary:hover {
-			background-color: #e55300;
-		}
-
-		.btn-outline:hover {
-			background-color: #fff3e0;
-		}
-
-		.slogan-slider {
-			width: 100%;
-			max-width: 1000px;
-			margin: 0 auto 30px;
-			background-color: #f3f3f3;
-			border-radius: 12px;
-			padding: 24px 16px;
-			text-align: center;
-		}
-
-		.slogan-slide {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			gap: 12px;
-		}
-
-		/* 슬라이드 자체 스타일 */
-	.swiper-slide {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		transition: transform 0.8s ease;
+		gap: 10px;
+		margin: 20px auto;
+		width: 66%;
+		flex-wrap: wrap;
+	}
+
+	.search-select,
+	.search-input,
+	.btn {
+		height: 40px;             /* ✅ 높이 통일 */
+		padding: 0 12px;          /* ✅ 좌우 여백 통일 */
+		font-size: 14px;
+		border-radius: 6px;
+		border: 1px solid #ccc;
+		box-sizing: border-box;
+	}
+
+	.search-select {
+		min-width: 120px;
+	}
+
+	.search-input {
+		flex: 1;
+		min-width: 200px;
+	}
+
+	.btn {
+		border: none;
+		cursor: pointer;
+		font-weight: 500;
+	}
+
+	.btn-primary {
+		background-color: #FF5722;
+		color: #fff;
+	}
+
+	.btn-outline {
+		background-color: #fff;
+		color: #FF5722;
+		border: 1px solid #FF5722;
+	}
+
+	.btn-primary:hover {
+		background-color: #e55300;
+	}
+
+	.btn-outline:hover {
+		background-color: #fff3e0;
+	}
+
+	.slogan-slider {
+		width: 100%;
+		max-width: 1100px;
+		margin: 0 auto 30px;
+		background-color: #f3f3f3;
+		border-radius: 12px;
+		padding: 0;                   /* 패딩 제거 (중앙 정렬 깨지지 않음) */
+		text-align: center;
+		overflow: hidden;            /* 👈 위아래 잘리는 부분 숨김 */
+		height: 60px;                /* 👈 정확히 슬라이드 높이와 일치 */
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.swiper-slide {
+		height: 80px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.slogan-slide {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 12px;
 	}
 
 	/* 슬라이드 컨테이너에 입체 회전 느낌 */
 	.swiper-container {
+		margin-top: 30px;
 		perspective: 1000px;
 	}
 
@@ -173,21 +203,58 @@
 
 	/* 텍스트와 아이콘 */
 	.slogan-text {
-		font-size: 22px;
+		font-size: 20px;
 		font-weight: bold;
 		color: #333;
 	}
 
 	.slogan-icon {
-		font-size: 28px;
-		margin-right: 10px;
+		font-size: 20px;
+		margin-right: 8px;
 	}
 
 
-		@keyframes fadeIn {
-			from { opacity: 0; transform: translateY(20px); }
-			to { opacity: 1; transform: translateY(0); }
-		}
+	@keyframes fadeIn {
+		from { opacity: 0; transform: translateY(20px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+
+	.pagination-container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-top: 40px;
+		gap: 6px;
+	}
+
+	.page-btn {
+		padding: 8px 14px;
+		margin-bottom: 10px;
+		border: none;
+		border-radius: 8px;
+		background-color: #f2f2f2;
+		color: #444;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.page-btn:hover {
+		background-color: #ffe6db;
+		color: #ff5722;
+	}
+
+	.page-btn.active {
+		background-color: #ff5722;
+		color: white;
+		font-weight: bold;
+		box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	}
+
+	.page-btn:disabled {
+		opacity: 0.4;
+		cursor: default;
+	}
 
 </style>
 <body>
@@ -199,7 +266,7 @@
 			<div class="swiper-wrapper">
 				<div class="swiper-slide">
 					<span class="slogan-icon">💬</span>
-					<span class="slogan-text">당신의 억울함을 대신 말해줄 전문가들을 기다리고 있어요</span>
+					<span class="slogan-text">당신의 억울함을 대신 말해줄 전문가들이 기다리고 있어요</span>
 				</div>
 				<div class="swiper-slide">
 					<span class="slogan-icon">📢</span>
@@ -257,29 +324,20 @@
 		  </div>
 		</div>
 
-		<div style="text-align: center; margin-top: 40px;">
-		  <button @click="prevPage" :disabled="page === 1">〈</button>
-		  
-		  <button 
-		    v-for="n in index" 
-		    :key="n" 
-		    @click="goToPage(n)" 
-		    :style="{ 
-		      margin: '0 4px', 
-		      fontWeight: page === n ? 'bold' : 'normal',
-		      backgroundColor: page === n ? '#007bff' : '#fff',
-		      color: page === n ? '#fff' : '#000',
-		      border: '1px solid #ccc',
-		      borderRadius: '4px',
-		      padding: '4px 8px',
-			  cursor : 'pointer'
-		    }"
-		  >
-		    {{ n }}
-		  </button>
-		  
-		  <button @click="nextPage" :disabled="page === index">〉</button>
-		</div>		
+		<div class="pagination-container">
+			<button class="page-btn" @click="prevPage" :disabled="page === 1">〈 이전</button>
+		
+			<button 
+				v-for="n in index" 
+				:key="n" 
+				@click="goToPage(n)" 
+				:class="['page-btn', page === n ? 'active' : '']"
+			>
+				{{ n }}
+			</button>
+		
+			<button class="page-btn" @click="nextPage" :disabled="page === index">다음 〉</button>
+		</div>				
 		
 	</div>
 	<jsp:include page="../common/footer.jsp"/>
@@ -289,13 +347,15 @@
 	window.addEventListener('load', function () {
 		const swiper = new Swiper('.swiper-container', {
 			loop: true,
-			effect: 'flip',
+			direction: 'vertical', // 👈 위로 올라가는 전환
 			autoplay: {
-				delay: 3000,
+				delay: 2500, // 정지 시간
 			},
-			allowTouchMove: false,
+			speed: 1000, // 전환 속도 (천천히)
+			allowTouchMove: false
 		});
 	});
+
     const app = Vue.createApp({
         data() {
             return {

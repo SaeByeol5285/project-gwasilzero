@@ -24,6 +24,7 @@ public class Lawyer {
 	private String boardTitle;
 	private String lawyerAddr;
 	private int boardNo; 
+	private String counsel;
 	private String birth; 
 	private String lawyerNumber; 
 	private String passYears; 

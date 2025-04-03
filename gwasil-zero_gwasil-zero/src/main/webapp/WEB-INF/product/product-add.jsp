@@ -96,49 +96,51 @@
 	</style>
 </head>
 <body>
-<div id="productApp" class="layout">
-	<jsp:include page="../admin/layout.jsp" />
+	<jsp:include page="../common/header.jsp" />
+	<div id="productApp" class="layout">
+		<jsp:include page="../admin/layout.jsp" />
 
-	<div class="content">
-		<div class="header">
-			<div>상품 등록</div>
-			<div>Admin님</div>
-		</div>
-
-		<div class="form-wrapper">
-			<div class="form-title">패키지 정보 입력</div>
-
-			<div class="form-group">
-				<label>패키지 명</label>
-				<input type="text" v-model="packageName" class="input-box">
+		<div class="content">
+			<div class="header">
+				<div>상품 등록</div>
+				<div>Admin님</div>
 			</div>
 
-			<div class="form-group">
-				<label>패키지 설명</label>
-				<textarea v-model="packageInfo" rows="3" class="input-box textarea-box"></textarea>
-			</div>
+			<div class="form-wrapper">
+				<div class="form-title">패키지 정보 입력</div>
 
-			<div class="form-group">
-				<label>패키지 가격</label>
-				<input type="text" v-model="packagePrice" class="input-box">
-			</div>
+				<div class="form-group">
+					<label>패키지 명</label>
+					<input type="text" v-model="packageName" class="input-box">
+				</div>
 
-			<div class="form-group">
-				<label>사용자</label>
-				<select v-model="packageStatus" class="input-box">
-					<option value="U">일반 사용자용</option>
-					<option value="L">변호사용</option>
-				</select>
-			</div>
+				<div class="form-group">
+					<label>패키지 설명</label>
+					<textarea v-model="packageInfo" rows="3" class="input-box textarea-box"></textarea>
+				</div>
 
-			<div class="btn-area">
-				<button @click="fnSave" class="btn-submit">등록</button>
-				<button @click="fnBack" class="btn-cancel">뒤로가기</button>
+				<div class="form-group">
+					<label>패키지 가격</label>
+					<input type="text" v-model="packagePrice" class="input-box">
+				</div>
+
+				<div class="form-group">
+					<label>사용자</label>
+					<select v-model="packageStatus" class="input-box">
+						<option value="U">일반 사용자용</option>
+						<option value="L">변호사용</option>
+					</select>
+				</div>
+
+				<div class="btn-area">
+					<button @click="fnSave" class="btn-submit">등록</button>
+					<button @click="fnBack" class="btn-cancel">뒤로가기</button>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
-
+	<jsp:include page="../common/footer.jsp" />
+</body>
 <script>
 	const productApp = Vue.createApp({
 		data() {
@@ -199,5 +201,4 @@
 	});
 	productApp.mount('#productApp');
 </script>
-</body>
 </html>

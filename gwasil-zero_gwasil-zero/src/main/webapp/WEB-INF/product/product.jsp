@@ -51,6 +51,7 @@
 	</style>
 </head>
 <body>
+    <jsp:include page="../common/header.jsp" />
     <div id="mainApp">
         <div class="layout">
             <jsp:include page="../admin/layout.jsp" />
@@ -94,6 +95,7 @@
             </div>
         </div>
     </div>  
+    <jsp:include page="../common/footer.jsp" />
 </body>
 </html>
 

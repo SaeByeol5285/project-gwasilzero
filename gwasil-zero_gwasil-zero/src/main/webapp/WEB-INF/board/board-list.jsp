@@ -8,6 +8,8 @@
 	            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 	<script src="/js/page-change.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
+	<script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
 	<title>board-list</title>
 	
 </head>
@@ -135,11 +137,81 @@
 			background-color: #fff3e0;
 		}
 
+		.slogan-slider {
+			width: 100%;
+			max-width: 1000px;
+			margin: 0 auto 30px;
+			background-color: #f3f3f3;
+			border-radius: 12px;
+			padding: 24px 16px;
+			text-align: center;
+		}
+
+		.slogan-slide {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 12px;
+		}
+
+		/* 슬라이드 자체 스타일 */
+	.swiper-slide {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		transition: transform 0.8s ease;
+	}
+
+	/* 슬라이드 컨테이너에 입체 회전 느낌 */
+	.swiper-container {
+		perspective: 1000px;
+	}
+
+	.slogan-slider .swiper-slide {
+		transform-style: preserve-3d;
+	}
+
+	/* 텍스트와 아이콘 */
+	.slogan-text {
+		font-size: 22px;
+		font-weight: bold;
+		color: #333;
+	}
+
+	.slogan-icon {
+		font-size: 28px;
+		margin-right: 10px;
+	}
+
+
+		@keyframes fadeIn {
+			from { opacity: 0; transform: translateY(20px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
 
 </style>
 <body>
 	<jsp:include page="../common/header.jsp"/>
 	<div id="app">
+
+		<!-- 👇 슬라이더 멘트 영역 -->
+		<div class="swiper-container slogan-slider">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide">
+					<span class="slogan-icon">💬</span>
+					<span class="slogan-text">당신의 억울함을 대신 말해줄 전문가들을 기다리고 있어요</span>
+				</div>
+				<div class="swiper-slide">
+					<span class="slogan-icon">📢</span>
+					<span class="slogan-text">교통사고, 이제 혼자 고민하지 마세요</span>
+				</div>
+				<div class="swiper-slide">
+					<span class="slogan-icon">🧑‍⚖️</span>
+					<span class="slogan-text">전문 변호사와 함께 억울함을 해결하세요</span>
+				</div>
+			</div>
+		</div>
+
 		<div class="category-wrap">
 		  <button 
 		    v-for="cat in categoryList" 
@@ -214,6 +286,16 @@
 </body>
 </html>
 <script>
+	window.addEventListener('load', function () {
+		const swiper = new Swiper('.swiper-container', {
+			loop: true,
+			effect: 'flip',
+			autoplay: {
+				delay: 3000,
+			},
+			allowTouchMove: false,
+		});
+	});
     const app = Vue.createApp({
         data() {
             return {

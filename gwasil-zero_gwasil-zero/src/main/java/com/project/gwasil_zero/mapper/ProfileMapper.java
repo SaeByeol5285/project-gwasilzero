@@ -26,7 +26,7 @@ public interface ProfileMapper {
     Lawyer selectLawyer(Map<String, Object> map);
     List<License> lawyerLicenseList(Map<String, Object> map);
     List<Board> lawyerBoardList(Map<String, Object> map);
-    List<HashMap<String, Object>> selectMainCaseList(HashMap<String, Object> map);
+    List<BoardFile> lawyerBoardFileList(Map<String, Object> map);
     
     // 기본 프로필 수정
     void updateLawyer(HashMap<String, Object> param);
@@ -39,5 +39,7 @@ public interface ProfileMapper {
 	
     // 대표 사건 업데이트
     void updateMainCases(HashMap<String, Object> param);
+	
+	
 		
 }

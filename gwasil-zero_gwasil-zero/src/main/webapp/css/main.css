@@ -15,5 +15,20 @@
 .question-list {
     list-style: none;
     padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 550px);
+    justify-content: space-between;
+    gap: 24px;
+    max-width: 600px;
 }
 
+.cut-letter {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 80%;
+}
+.orange {
+    color: #FF5722;
+    font-weight: bold;
+}

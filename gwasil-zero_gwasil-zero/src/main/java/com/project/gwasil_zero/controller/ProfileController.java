@@ -62,7 +62,7 @@ public class ProfileController {
 		return new Gson().toJson(resultMap);
 	}
 	
-	// 소속 변호사 목록 시작
+	// 소속 변호사 목록 시작dfsdf
 	@RequestMapping(value = "/profile/personalLawyer.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String personalList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {

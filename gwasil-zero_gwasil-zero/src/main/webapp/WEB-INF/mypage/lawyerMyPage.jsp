@@ -198,7 +198,7 @@
                 </div>
             </div>
          
-            <div class="card-grid">
+            <div class="card-grid" v-if="boardList.length > 0">
                <div class="box" v-for="item in boardList" :key="item.boardNo" @click="fnBoardView(item.boardNo)">
                   <img 
                      v-if="item.thumbnailPath" 
@@ -225,6 +225,11 @@
                   <p>작성자: {{ item.userName }}</p>
                </div>
             </div>
+
+            <div v-else style="text-align: center; color: #888; margin-top: 30px;" >
+               내용이 없습니다.
+             </div>
+
             <div style="text-align: center; margin-top: 20px;">
                <a v-if="page > 1" href="javascript:;" @click="fnPageMove('prev')">◀</a>
                <a

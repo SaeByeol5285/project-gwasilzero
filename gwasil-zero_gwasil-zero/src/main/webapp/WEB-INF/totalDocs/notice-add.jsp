@@ -49,10 +49,10 @@
             data() {
                 return {
                     totalTitle: "",
-                    userId: "101", // "${sessionId}"
+                    userId: "${sessionId}", // 
                     kind: "NOTICE",
                     quill: null,
-                    sessionStatus: 'A',//"${sessionStatus}"
+                    sessionStatus: "${sessionStatus}",//
                     isSubmitting: false // 중복 방지용 플래그
 
                 };
@@ -100,7 +100,7 @@
                                     self.upload(form);
                                 } else {
                                     alert("글쓰기가 완료되었습니다.");
-                                    pageChange("/totalDocs/list.do", { kind: "NOTICE" });
+                                    location.href = "/totalDocs/list.do?kind=NOTICE";
                                 }
                             } else {
                                 alert("글쓰기 실패!");
@@ -192,7 +192,7 @@
 
                 },
                 checkAdmin(sessionStatus) {
-                    if (sessionStatus != 'A') {
+                    if (sessionStatus != 'ADMIN') {
                         alert("관리자만 접근할 수 있습니다.");
                         pageChange("/totalDocs/list.do", { kind: "NOTICE" });
                         return false;

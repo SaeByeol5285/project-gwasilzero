@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class Lawyer {
-  
+
 	private String lawyerId;
 	private String lawyerPwd;
 	private String lawyerName;
@@ -24,6 +24,13 @@ public class Lawyer {
 	private String boardTitle;
 	private String lawyerAddr;
 	private int boardNo; 
-	private String counsel; 
-
+	private String counsel;
+	private String birth; 
+	private String lawyerNumber; 
+	private String passYears; 
+	private String lawyerLiscensName; 
+	private String lawyerLiscensPath; 
+	private String officproofName; 
+	private String officproofPath;
+  
 }

@@ -187,4 +187,16 @@ public class BoardService {
 	    }
 	    return resultMap;
 	}
+	public HashMap<String, Object> updateBoardCmt(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	        boardMapper.updateBoardCmt(map);
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "failed");
+	    }
+	    return resultMap;
+	}
+	
 }

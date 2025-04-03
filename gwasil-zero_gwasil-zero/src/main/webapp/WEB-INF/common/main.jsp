@@ -13,14 +13,16 @@
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
 
 		<title>main.jsp</title>
+
+		<style>
+			
+			
+		</style>
 	</head>
-	<style>
-	</style>
 
 	<body>
 		<jsp:include page="../common/header.jsp" />
 		<div id="app">
-
 			<div class="container">
 				<section class="mt-40 mb-40">
 					<div class="section-title">변호사 소개</div>
@@ -69,25 +71,18 @@
 						<div class="swiper-pagination"></div>
 					</div>
 				</section>
-
-
 				<section class="question-board">
-					<div class="section-title flex-between">
-						최근 질문
-						<button class="btn btn-outline"><a href="/board/list.do">질문하러 가기</a></button>
+					<div class="flex-between">
+						<span class="section-title">최근 질문</span>
+						<a class="btn btn-outline" href="/board/list.do">질문하러 가기</a>
 					</div>
-					<ul class="question-list mt-40 mb-40">
-						<li class="card mb-20">
-							<h3>[형사] 블랙박스 영상에 잡힌 사고, 과실이 있을까요?</h3>
-							<p>2025.03.23</p>
-						</li>
-						<li class="card mb-20">
-							<h3>[민사] 차량 파손 보상을 받으려면 어떻게 해야 하나요?</h3>
-							<p>2025.03.22</p>
-						</li>
-						<li class="card mb-20">
-							<h3>[민사] 보험사에 2:8을 주장해요. 근거가 있나요? </h3>
-							<p>2025.03.21</p>
+					<ul class="question-list mt-40 mb-40" >
+						<li class="card mb-20" v-for="board in boardList" :key="board.boardNo">
+							<div class="orange">{{board.category}}</div>
+							<h3>{{board.boardTitle}}</h3>
+							<div class="cut-letter">{{board.contents}}</div>
+							<p>{{board.cdate}}</p>
+							<div>변호사 답변 : {{}}개</div>
 						</li>
 					</ul>
 				</section>
@@ -102,11 +97,54 @@
 		const app = Vue.createApp({
 			data() {
 				return {
-					list: []
-
+					boardList: [],
 				};
 			},
 			methods: {
+				fnGetBoardList() {
+					const self = this;
+					const nparmap = {
+					};
+					$.ajax({
+						url: "/common/boardList.dox",
+						dataType: "json",
+						type: "POST",
+						data: nparmap,
+						success: function (data) {
+							if (data.result === "success") {
+								console.log(data);
+								self.boardList = data.list;
+							} else {
+								alert("board불러오기 실패");
+							}
+						},
+
+					});
+				},
+				fnGetCmt() {
+					const self = this;
+					const nparmap = {
+					};
+					$.ajax({
+						url: "/common/boardList.dox",
+						dataType: "json",
+						type: "POST",
+						data: nparmap,
+						success: function (data) {
+							if (data.result === "success") {
+								console.log(data);
+								self.boardList = data.list;
+
+							} else {
+								alert("board불러오기 실패");
+							}
+						},
+
+					});
+				},
+
+
+
 
 			},
 			mounted() {
@@ -128,8 +166,10 @@
 						prevEl: '.swiper-button-prev',
 					},
 				});
+				self.fnGetBoardList();
 			}
 		});
+
 		app.mount('#app');
 	</script>
 	​

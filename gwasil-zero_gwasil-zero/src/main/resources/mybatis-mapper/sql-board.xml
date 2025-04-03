@@ -140,4 +140,7 @@
 	  WHERE cmt_no = #{cmtNo} AND lawyer_id = #{lawyerId}
 	</delete>
 	
+	<update id="updateBoardCmt" parameterType="hashmap">
+		update board_cmt set contents = #{contents}, udate = sysdate where cmt_no = #{cmtNo} 
+	</update>
 </mapper>

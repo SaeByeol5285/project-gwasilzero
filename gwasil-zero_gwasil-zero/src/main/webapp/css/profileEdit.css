@@ -1,124 +1,204 @@
+/* 20250403 css 수정 */
+body {
+  font-family: '맑은 고딕', sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.layout {
+  padding: 40px 20px;
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.title-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ff5c00;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.title-area h2 {
+  margin: 0;
+}
+
 /* =============================
-   Profile Page 스타일
+ Profile Page 스타일
 ============================= */
 
 .profile-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 40px 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  margin-top: 30px;
+  gap: 30px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .profile-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
 }
 
 .profile-table th,
 .profile-table td {
-    padding: 12px;
-    text-align: left;
-    vertical-align: top;
-    border: 1px solid #ccc;
-    font-size: 14px;
+  padding: 12px;
+  text-align: left;
+  vertical-align: top;
+  border: 1px solid #ccc;
+  font-size: 14px;
 }
+
 /* 컬러 변경할것 주황색으로 */
-.profile-table th {  
-    background-color: #e0e7ff;
-    color: #333;
-    font-weight: bold;
-    width: 160px;
+.profile-table th {
+  background-color: #ff5c002b;
+  color: #333;
+  font-weight: bold;
+  width: 160px;
 }
 
 .profile-table td {
-    background-color: #f9f9f9;
+  background-color: #f9f9f9;
 }
 
 /* 자격증 섹션 */
 .license-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .readonly-input {
-    background-color: #f1f1f1;
-    border: 1px solid #ccc;
-    padding: 6px;
-    border-radius: 5px;
-    width: 200px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  padding: 6px;
+  border-radius: 5px;
+  width: 200px;
 }
 
 .badge-existing {
-    font-size: 12px;
-    color: green;
-    margin-top: 6px;
+  font-size: 12px;
+  color: green;
+  margin-top: 6px;
 }
 
 .preview-img {
-	border: 1px solid #ccc;
-	width: 100px;
-	height: auto;
-	border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 100px;
+  height: auto;
+  border-radius: 4px;
 }
 
 .add-license-btn,
 .delete-license-btn {
-	height: 32px;
-	padding: 6px 10px;
-	background-color: #ff5c00;
-	color: white;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
+  height: 32px;
+  padding: 6px 10px;
+  background-color: #ff5c00;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .add-license-btn:hover,
 .delete-license-btn:hover {
-    background-color: #e04e00;
+  background-color: #e04e00;
 }
 
 /* 사건 테이블 */
 .case-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
 }
 
 .case-table th,
 .case-table td {
-    padding: 10px;
-    border: 1px solid #ccc;
-    font-size: 14px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
 }
 
 .case-table th {
-    background-color: #e0e7ff;
-    color: #333;
-    font-weight: 600;
+  background-color: #ff5c002b;
+  color: #333;
+  font-weight: 600;
 }
 
 .case-table tr:nth-child(even) {
-    background-color: #f9f9f9;
+  background-color: #f9f9f9;
 }
 
 /* 안내 텍스트 */
 .board-note {
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 10px;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 10px;
 }
-/* quill style */
+
+/* ===== Quill 에디터 스타일 ===== */
 .quill-editor {
-	height: 250px;         
-	background: white;
-	margin-bottom: 20px;   
-	border-radius: 6px;
-	border: 1px solid #ccc;
-	padding: 10px;
+  background: white;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  padding: 0;
+  overflow: hidden;
+  font-family: '맑은 고딕', sans-serif;
+}
+
+.quill-editor .ql-toolbar {
+  border-bottom: 1px solid #ccc;
+  border-radius: 6px 6px 0 0;
+}
+
+.quill-editor .ql-container {
+  height: 500px !important;
+  border: none !important;
+  font-size: 14px;
+  font-family: inherit;
+  background-color: #fff;
+}
+
+.quill-editor .ql-editor {
+  height: 100% !important;
+  padding: 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  overflow-y: auto;
+}
+
+#editor-info.ql-container {
+  height: 200px !important;
+}
+
+#editor-career.ql-container {
+  height: 250px !important;
+}
+
+#editor-task.ql-container {
+  height: 250px !important;
+}
+
+#editor-edu.ql-container {
+  height: 200px !important;
+}
+
+.no-data {
+  color: #999;
+  font-style: italic;
+  font-size: 14px;
+  padding: 6px 0;
 }

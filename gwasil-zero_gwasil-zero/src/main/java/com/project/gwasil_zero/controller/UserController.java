@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.project.gwasil_zero.dao.UserService;
+import com.project.gwasil_zero.model.User;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -94,8 +95,15 @@ public class UserController {
 	@RequestMapping(value = "/user/userId-search.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String findId(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-		HashMap<String, Object> resultMap = userService.selectUserId(map);
-		return new Gson().toJson(resultMap);
+	    HashMap<String, Object> resultMap = userService.searchUser(map); // ✅ 이걸로 변경
+
+	    if ((int) resultMap.get("count") == 0) {
+	        resultMap.put("result", "fail");
+	    } else {
+	        resultMap.put("result", "success");
+	    }
+
+	    return new Gson().toJson(resultMap);
 	}
 
 	// 비밀번호 찾기
@@ -177,5 +185,12 @@ public class UserController {
 		result.put("id",map.get("email"));
 		return result;
 	}
+	
+	@RequestMapping(value = "/user/userId-check.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String checkUserId(@RequestParam HashMap<String, Object> map) {
+		return new Gson().toJson(userService.checkUserIdExist(map));
+	}
+	
 
 }

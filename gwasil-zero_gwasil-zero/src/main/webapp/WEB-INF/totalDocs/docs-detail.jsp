@@ -39,8 +39,8 @@
 
 				<div class="button-wrap" style="display: flex; justify-content: space-between; margin-top: 20px;">
 					<div class="left-buttons">
-						<button class="btn btn-outline">수정</button>
-						<button class="btn btn-outline">삭제</button>
+						<button class="btn btn-outline" v-if="info.userId == sessionId" @click="fnEdit(info.totalNo)">수정</button>
+						<button class="btn btn-outline" v-if="info.userId == sessionId || sessionStatus == 'ADMIN'" @click="fnRemove(info.totalNo)">삭제</button>
 					</div>
 					<div class="right-buttons">
 						<button @click="goToListPage" class="btn btn-primary">목록보기</button>
@@ -48,16 +48,9 @@
 				</div>
 			</div>
 
-			<div class="mt-40 pt-10" style="border-top: 1px solid #eee;">
-				<div v-if="prev" class="mb-10">
-					⬅️ 이전글: <a href="javascript:void(0)" @click="moveTo(prev.totalNo)">{{ prev.totalTitle }}</a>
-				</div>
-				<div v-if="next">
-					➡️ 다음글: <a href="javascript:void(0)" @click="moveTo(next.totalNo)">{{ next.totalTitle }}</a>
-				</div>
-			</div>
+		
 			<!-- 댓글 영역: 관리자만 보임 -->
-			<div class="mt-40" v-if="sessionStatus == 'A'">
+			<div class="mt-40" v-if="sessionStatus == 'ADMIN'">
 				<h3 class="section-title">관리자 댓글</h3>
 				<div class="form-group mb-10">
 					<textarea v-model="cmtContents" rows="3" placeholder="댓글을 입력하세요"
@@ -70,17 +63,17 @@
 			<!-- 댓글 리스트 -->
 			<ul class="mt-20" v-if="cmtList.length > 0">
 				<li v-for="(comment, idx) in cmtList" :key="idx" style="margin-bottom: 10px;">
-					<div v-if="editCmtId === comment.cmtNo">
+					<div v-if="editCmtNo === comment.cmtNo">
 						<textarea v-model="editContents" rows="3" style="width: 100%; padding: 10px;"></textarea>
 						<div style="margin-top: 5px;">
 							<button @click="fnSaveCmt(comment.cmtNo)" class="btn btn-outline">수정 완료</button>
-							<button @click="editCmtId = null" class="btn btn-danger">취소</button>
+							<button @click="editCmtNo = null" class="btn btn-danger">취소</button>
 						</div>
 					</div>
 					<div v-else>
 						<strong>[관리자 댓글]</strong>: {{ comment.contents }}
 						<small style="color: #aaa;">{{ comment.cdate }}</small>
-						<div style="margin-top: 5px;">
+						<div style="margin-top: 5px;" v-if="sessionStatus == 'ADMIN'">
 							<button @click="fnEditCmt(comment)" class="btn btn-outline btn-sm">수정</button>
 							<button @click="fnRemoveCmt(comment.cmtNo)" class="btn btn-danger btn-sm">삭제</button>
 						</div>
@@ -88,6 +81,14 @@
 				</li>
 			</ul>
 			<p v-else class="mt-20" style="color: #888;">아직 등록된 댓글이 없습니다.</p>
+			<div class="mt-40 pt-10" style="border-top: 1px solid #eee;">
+				<div v-if="prev" class="mb-10">
+					⬅️ 이전글: <a href="javascript:void(0)" @click="moveTo(prev.totalNo)">{{ prev.totalTitle }}</a>
+				</div>
+				<div v-if="next">
+					➡️ 다음글: <a href="javascript:void(0)" @click="moveTo(next.totalNo)">{{ next.totalTitle }}</a>
+				</div>
+			</div>
 
 		</div>
 		<jsp:include page="../common/footer.jsp" />
@@ -99,19 +100,19 @@
 		const app = Vue.createApp({
 			data() {
 				return {
+					sessionStatus: "${sessionStatus}",
+					sessionId: "${sessionId}",
 					totalNo: "${map.totalNo}",
-					kind: "${map.kind}",
-					info: {},
-					fileList: [],
+					kind: "${map.kind}", //NOTICE,HELP
+					info: {}, //글
+					fileList: [], //글첨부파일
 					prev: null,
 					next: null,
-					sessionStatus: "A",
-					sessionId: "101", //"${sessionId}"
-					cmtContents: "",
 					cmtList: [], //댓글리스트
-					isSubmitting: false,
-					editCmtId: null,
-					editContents: '',
+					cmtContents: "", //기존 댓글내용
+					editCmtNo: null, //글 수정시 댓글번호
+					editContents: '',//글 수정시 댓글내용
+					isSubmitting: false, //중복방지
 				};
 			},
 			methods: {
@@ -199,7 +200,7 @@
 					});
 				},
 				fnEditCmt(comment) {
-					this.editCmtId = comment.cmtNo;
+					this.editCmtNo = comment.cmtNo;
 					this.editContents = comment.contents;
 				},
 				fnSaveCmt(cmtNo) {
@@ -216,7 +217,7 @@
 						data: nparmap,
 						success(data) {
 							if (data.result == "success") {
-								self.editCmtId = null;
+								self.editCmtNo = null;
 								self.editContents = '';
 								self.fnGetCmtList();
 							} else {

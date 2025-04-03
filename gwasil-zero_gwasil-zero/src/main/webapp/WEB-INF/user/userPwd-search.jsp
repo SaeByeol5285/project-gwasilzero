@@ -4,8 +4,7 @@
 
   <head>
     <meta charset="UTF-8">
-    <script src="https://code.jquery.com/jquery-3.7.1.js"
-      integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.21/vue.global.min.js"></script>
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
     <title>비밀번호 찾기</title>
@@ -65,6 +64,7 @@
   </body>
 
   </html>
+
   <script>
     IMP.init("imp29272276");
 
@@ -93,8 +93,25 @@
           });
         },
         fnSearchPwd() {
-          sessionStorage.setItem("recoverUserId", this.user.userId);
-          location.href = "/user/reMakePwd.do";
+          const self = this;
+          $.ajax({
+            url: "/user/userId-check.dox",
+            type: "POST",
+            data: {
+              userId: self.user.userId
+            },
+            success: function (data) {
+              if (data.count === 1) {
+                sessionStorage.setItem("recoverUserId", self.user.userId);
+                location.href = "/user/reMakePwd.do";
+              } else {
+                alert("❌ 존재하지 않는 아이디입니다.");
+              }
+            },
+            error: function () {
+              alert("서버 통신 오류가 발생했습니다.");
+            }
+          });
         }
       },
       mounted() {

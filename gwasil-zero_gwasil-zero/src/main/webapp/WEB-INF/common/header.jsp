@@ -34,14 +34,13 @@
                         </div>
                         <div class="noti-empty" v-else>댓글 알림이 없습니다.</div>
                     </div>
-
-                    <!-- 채팅 알림은 사용자/변호사 모두 표시 -->
-                    <div class="noti-section">
-                        <h4>채팅 알림</h4>
-                        <div class="noti-list" v-if="messageNoti.length > 0">
-                            <div class="noti-item" v-for="item in messageNoti" :key="item.notiNo" @click="fnChat(item)">
-                                {{ item.contents }}
-                                <br><small>{{ item.createdAt }}</small>
+                        <div class="noti-section">
+                            <h4>채팅 알림</h4>
+                            <div class="noti-list" v-if="messageNoti.length > 0">
+                                <div class="noti-item" v-for="item in messageNoti" :key="item.notiNo" @click="fnChat(item)">
+                                    {{ item.contents }}
+                                    <br><small>{{ item.createdAt }}</small>
+                                </div>
                             </div>
                         </div>
                         <div class="noti-empty" v-else>채팅 알림이 없습니다.</div>
@@ -93,7 +92,7 @@
                                 </ul>
                             </div>
                         </li>
-                        <li class="menu-item" v-if="sessionStatus === 'A'">
+                        <li class="menu-item" v-if="sessionStatus === 'ADMIN'">
                             <a href="/admin/main.do" class="menu-font">관리자 페이지</a>
                         </li>
                     </ul>
@@ -135,7 +134,7 @@
                         [
                             { name: '공지사항', url: '/totalDocs/list.do?kind=NOTICE' },
                             { name: '이용문의', url: '/totalDocs/list.do?kind=HELP' },
-                            { name: '사건 종류 가이드', url: '/totalDocs/guide.do' }
+                            { name: '사건 종류 가이드', url: '/totalDocs/list.do?kind=GUIDE' }                        
                         ]
                     ]
                 };

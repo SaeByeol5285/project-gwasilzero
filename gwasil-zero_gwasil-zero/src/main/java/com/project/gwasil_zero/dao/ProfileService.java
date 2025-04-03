@@ -56,29 +56,26 @@ public class ProfileService {
 		}
 		return resultMap;
 	}
-	
-	// 변호사 상세보기 기본정보
+
 	public HashMap<String, Object> getLawyer(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			Lawyer info = profileMapper.selectLawyer(map);
 			List<License> license = profileMapper.lawyerLicenseList(map);
 			List<Board> boardList = profileMapper.lawyerBoardList(map);
-
+			List<BoardFile> boardFileList = profileMapper.lawyerBoardFileList(map);
+			
 			resultMap.put("info", info);
 			resultMap.put("license", license);
 			resultMap.put("boardList", boardList); 
+			resultMap.put("boardFileList", boardFileList);
 			resultMap.put("result", "success");
 		} catch(Exception e) {
 			System.out.println(e.getMessage());
 			resultMap.put("result", "fail");
 		}
 		return resultMap;
-	}
-	
-	// 변호사 대표목록 불러오기
-	public List<HashMap<String, Object>> getMainCaseList(HashMap<String, Object> map) {
-		return profileMapper.selectMainCaseList(map); 
 	}
 
 	public HashMap<String, Object> editLawyer(HashMap<String, Object> paramMap) throws Exception {

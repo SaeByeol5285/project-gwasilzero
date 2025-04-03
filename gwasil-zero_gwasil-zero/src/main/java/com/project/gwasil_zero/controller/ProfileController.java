@@ -62,7 +62,7 @@ public class ProfileController {
 		return new Gson().toJson(resultMap);
 	}
 	
-	// 소속 변호사 목록 시작dfsdf
+	// 소속 변호사 목록 시작
 	@RequestMapping(value = "/profile/personalLawyer.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String personalList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
@@ -77,8 +77,14 @@ public class ProfileController {
 	@ResponseBody
 	public String lawyerInfo(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
+
+		// 1. 변호사 기본 정보 + 자격증
 		resultMap = profileService.getLawyer(map);
+
+		// 2. 대표 사건 목록 추가
+		List<HashMap<String, Object>> mainCaseList = profileService.getMainCaseList(map); // <-- 새로 추가된 service
+		resultMap.put("mainCaseList", mainCaseList);
+
 		return new Gson().toJson(resultMap);
 	}
 	

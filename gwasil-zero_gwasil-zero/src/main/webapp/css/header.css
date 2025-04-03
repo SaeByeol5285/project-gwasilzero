@@ -238,7 +238,26 @@
 	  text-align: center;
       padding: 6px 0;
   }
-  
+  .noti-item.read {
+      color: #999;
+  }
+
+  .noti-delete {
+      float: right;
+      color: #ccc;
+      cursor: pointer;
+      font-size: 12px;
+  }
+
+  .noti-delete:hover {
+      color: red;
+  }
+
+
+  .read {
+    background-color: #f0f0f0;
+    color: #888;
+  }
   
   /* 북마크용 */
   .bookmark-link {
@@ -258,3 +277,5 @@
     width: 220px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   }
+
+  

@@ -111,5 +111,13 @@ public class ChatService {
         return resultMap;
     }
 
-
+    public int findOrCreateChat(HashMap<String, Object> map) {
+        Integer chatNo = chatMapper.findChatNoByParticipants(map);
+        if (chatNo != null) {
+            return chatNo;
+        } else {
+            chatMapper.createChat(map);
+            return (Integer) map.get("chatNo"); // INSERT 후 selectKey로 반환
+        }
+    }
 }

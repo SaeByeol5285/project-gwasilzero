@@ -64,12 +64,23 @@
 	</select>
 	
 	<select id="selectReceiverIdFromChat" parameterType="hashmap" resultType="string">
-    SELECT 
-        CASE 
-            WHEN sender_id = #{senderId} THEN receiver_id 
-            ELSE sender_id 
-        END AS receiver_id
-    FROM chat
-    WHERE chat_no = #{chatNo}
-</select>
+	    SELECT 
+	        CASE 
+	            WHEN sender_id = #{senderId} THEN receiver_id 
+	            ELSE sender_id 
+	        END AS receiver_id
+	    FROM chat
+	    WHERE chat_no = #{chatNo}
+	</select>
+	<select id="findChatNoByParticipants" parameterType="hashmap" resultType="int">
+	    SELECT chat_no 
+	    FROM chat 
+	    WHERE (sender_id = #{userId} AND receiver_id = #{lawyerId})
+	       OR (sender_id = #{lawyerId} AND receiver_id = #{userId})
+	</select>
+	
+	<insert id="createChat" parameterType="hashmap" useGeneratedKeys="true" keyColumn="chat_no" keyProperty="chatNo">
+	    INSERT INTO chat (chat_no, sender_id, receiver_id)
+	    VALUES (chat_seq.nextval,#{userId}, #{lawyerId})
+	</insert>
 </mapper>

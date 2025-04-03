@@ -4,8 +4,12 @@
 	
 <mapper namespace="com.project.gwasil_zero.mapper.NotificationMapper">
 	<select id="selectNotificationList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Notification">
-		select * from notification where receiver_id = #{userId} and is_read = 'N'
-	</select>
+    SELECT * 
+    FROM notification 
+    WHERE receiver_id = #{userId} 
+      AND is_read = 'N'
+</select>
+
 	
 	<insert id="insertNotification" parameterType="hashmap">
 		insert into notification values(notification_seq.nextval, #{receiverId}, #{notiType}, #{contents}, 'N', sysdate, #{senderId}, <if test="boardNo != null"> #{boardNo}</if> <if test="boardNo == null"> null</if>, null)
@@ -16,18 +20,18 @@
 	</insert>
 	
 	<delete id="deleteNotification" parameterType="hashmap">
-		delete from notification where is_read = 'Y'
+	    delete from notification where noti_no = #{notiNo}
 	</delete>
 	
 	<update id="updateNotification" parameterType="hashmap">
-		update notification set is_read = 'Y' where noti_no = #{notiNo}
+		update notification set is_read = 'Y' where noti_no = #{notiNo, jdbcType=NUMERIC}
 	</update>
 	
 	<select id="countUnreadNotificationByChatNo" parameterType="hashmap" resultType="int">
-    SELECT COUNT(*) 
-    FROM notification 
-    WHERE is_read = 'N' 
-      AND chat_no = #{chatNo} 
-      AND receiver_id = #{receiverId}
-</select>
+	    SELECT COUNT(*) 
+	    FROM notification 
+	    WHERE is_read = 'N' 
+	      AND chat_no = #{chatNo} 
+	      AND receiver_id = #{receiverId}
+	</select>
 </mapper>

@@ -95,7 +95,7 @@
             </div>
             <div>
                 <label>비밀번호</label>
-                <input v-model="pwd" type="password" placeholder="비밀번호 입력">
+                <input v-model="pwd" type="password" placeholder="비밀번호 입력" @keyup.enter="fnLogin">
             </div>
             <div>
                 <button @click="fnLogin">로그인</button>

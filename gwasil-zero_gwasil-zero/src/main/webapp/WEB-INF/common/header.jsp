@@ -16,24 +16,24 @@
         <header>
             <!-- 로그인 / 북마크 / 알림 -->
             <div class="header-line">
-                <a v-if="sessionType === 'user'" href="javascript:void(0);" class="noti-link"
-                    @click="toggleNotification" ref="notiToggle">
-                    새 소식
-                    <span v-if="list.length > 0" class="noti-badge">{{ list.length > 9 ? '9+' : list.length }}</span>
+            <a v-if="sessionType === 'user' || sessionType === 'lawyer'" href="javascript:void(0);" class="noti-link"
+                @click="toggleNotification" ref="notiToggle">
+                새 소식
+                <span v-if="list.length > 0" class="noti-badge">{{ list.length > 9 ? '9+' : list.length }}</span>
 
-                    <div v-if="showNotification" class="noti-popup" ref="notiPopup" @click.stop>
-                        <div class="noti-section">
-                            <h4>댓글 알림</h4>
-                            <div class="noti-list" v-if="commentNoti.length > 0">
-                                <div class="noti-item" v-for="item in commentNoti" :key="item.notiNo"
-                                    @click="markAsRead(item)">
-                                    {{ item.contents }}
-                                    <br><small>{{ item.createdAt }}</small>
-                                </div>
+                <div v-if="showNotification" class="noti-popup" ref="notiPopup" @click.stop>
+                    <!-- 댓글 알림은 사용자만 표시 -->
+                    <div class="noti-section" v-if="sessionType === 'user'">
+                        <h4>댓글 알림</h4>
+                        <div class="noti-list" v-if="commentNoti.length > 0">
+                            <div class="noti-item" v-for="item in commentNoti" :key="item.notiNo"
+                                @click="markAsRead(item)">
+                                {{ item.contents }}
+                                <br><small>{{ item.createdAt }}</small>
                             </div>
-                            <div v-else class="noti-empty">댓글 알림이 없습니다.</div>
                         </div>
-
+                        <div class="noti-empty" v-else>댓글 알림이 없습니다.</div>
+                    </div>
                         <div class="noti-section">
                             <h4>채팅 알림</h4>
                             <div class="noti-list" v-if="messageNoti.length > 0">
@@ -42,10 +42,11 @@
                                     <br><small>{{ item.createdAt }}</small>
                                 </div>
                             </div>
-                            <div v-else class="noti-empty">채팅 알림이 없습니다.</div>
                         </div>
+                        <div class="noti-empty" v-else>채팅 알림이 없습니다.</div>
                     </div>
-                </a>
+                </div>
+            </a>
 
                 <a v-if="sessionType === 'user'" href="javascript:void(0);" class="bookmark-link"
                     @click="toggleBookmarkPopup" ref="bookmarkToggle">
@@ -296,12 +297,11 @@
             },
             mounted() {
                 let self = this;
-
+            self.fnGetNotificationList();
                 if (self.sessionType === 'user') {
-                    self.fnGetNotificationList();
+                    
                     self.fnGetBookmarkList();
                 }
-                console.log(self.sessionId);
                 document.addEventListener('click', self.handleClickOutside);
             },
             beforeUnmount() {

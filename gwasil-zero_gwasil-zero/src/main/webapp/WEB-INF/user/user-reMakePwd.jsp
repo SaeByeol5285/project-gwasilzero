@@ -48,6 +48,7 @@
   </body>
 
   </html>
+
   <script>
     const userId = sessionStorage.getItem("recoverUserId");
 
@@ -74,7 +75,7 @@
         url: "/user/user-reMakePwd.dox",
         type: "POST",
         data: {
-          userId: userId,
+          id: userId,  // ✅ 여기 수정됨
           pwd: pwd
         },
         success: function (data) {
@@ -88,7 +89,6 @@
         },
         error: function () {
           alert("서버 통신 오류가 발생했습니다.");
-
         }
       });
     }

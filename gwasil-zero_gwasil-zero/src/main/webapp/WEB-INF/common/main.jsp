@@ -15,8 +15,8 @@
 		<title>main.jsp</title>
 
 		<style>
-			
-			
+
+
 		</style>
 	</head>
 
@@ -76,13 +76,16 @@
 						<span class="section-title">최근 질문</span>
 						<a class="btn btn-outline" href="/board/list.do">질문하러 가기</a>
 					</div>
-					<ul class="question-list mt-40 mb-40" >
+					<ul class="question-list mt-40 mb-40">
 						<li class="card mb-20" v-for="board in boardList" :key="board.boardNo">
 							<div class="orange">{{board.category}}</div>
 							<h3>{{board.boardTitle}}</h3>
 							<div class="cut-letter">{{board.contents}}</div>
 							<p>{{board.cdate}}</p>
-							<div>변호사 답변 : {{}}개</div>
+							<div>변호사 답변 : {{board.cmtCount}}개</div>
+							<div class="mt-10">
+								<a class="btn btn-outline" @click="fnView(board.boardNo)">자세히 보기</a>
+							</div>
 						</li>
 					</ul>
 				</section>
@@ -121,30 +124,9 @@
 
 					});
 				},
-				fnGetCmt() {
-					const self = this;
-					const nparmap = {
-					};
-					$.ajax({
-						url: "/common/boardList.dox",
-						dataType: "json",
-						type: "POST",
-						data: nparmap,
-						success: function (data) {
-							if (data.result === "success") {
-								console.log(data);
-								self.boardList = data.list;
-
-							} else {
-								alert("board불러오기 실패");
-							}
-						},
-
-					});
-				},
-
-
-
+				fnView(boardNo){
+					location.href = "/board/view.do?boardNo=" + boardNo;
+				}
 
 			},
 			mounted() {
@@ -154,7 +136,7 @@
 					spaceBetween: 30,
 					loop: true,
 					autoplay: {
-						delay: 2000, // 3초마다 자동으로 전환
+						delay: 3000, // 3초마다 자동으로 전환
 						disableOnInteraction: false, // 사용자가 슬라이드를 조작해도 자동 전환 유지
 					},
 					pagination: {

@@ -27,12 +27,19 @@
       WHERE lawyer_id = #{id}
    </select>
    
-   <select id = "CheckUser" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
-      SELECT *
-      FROM TBL_USER
-      WHERE USER_ID = #{userId}
-   </select>
-   
+	<select id="CheckUser" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+	  SELECT * 
+	  FROM TBL_USER
+	  WHERE USER_NAME = #{userName}
+	    AND USER_PHONE = #{userPhone}
+	</select>
+	
+	<select id="CheckLawyer" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+	  SELECT * 
+	  FROM LAWYER
+	  WHERE LAWYER_NAME = #{userName}
+	    AND LAWYER_PHONE = #{userPhone}
+	</select>   
    <select id="selectUserId" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
        SELECT *
        FROM TBL_USER
@@ -57,9 +64,17 @@
 	</update>
 	
 	<update id="updateUserPassword" parameterType="hashmap">
-	   UPDATE TBL_USER
-	   SET USER_PASSWORD = #{pwd}
-	   WHERE USER_ID = #{userId}
+		UPDATE TBL_USER 
+		SET 
+			  USER_PASSWORD = #{pwd} 
+		WHERE USER_ID = #{id}
+	</update>
+
+	<update id="updateLawyerPassword" parameterType="hashmap">
+		UPDATE LAWYER 
+		SET 
+			  LAWYER_PWD = #{pwd} 
+		WHERE LAWYER_ID = #{id}
 	</update>
 	
 </mapper>

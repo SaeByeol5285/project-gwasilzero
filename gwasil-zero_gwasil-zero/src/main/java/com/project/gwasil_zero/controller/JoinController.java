@@ -21,10 +21,12 @@ public class JoinController {
 
 	// 일반 유저 / 변호사 유저 선택
 	@RequestMapping("/join/select.do")
-	public String search(Model model) throws Exception {
+	public String select(Model model) throws Exception {
 
 		return "/join/user-select";
 	}
+	
+	
 
 	// 일반 유저 회원가입
 	@RequestMapping("/join/user-join.do")
@@ -32,12 +34,15 @@ public class JoinController {
 
 		return "/join/user-join";
 	}
-
-	// 변호사 회원가입
+	 // 변호사 유형 선택 페이지
+	@RequestMapping("/join/lawyer-select.do")
+	public String lawyerSelect(Model model) throws Exception {
+	    return "/join/lawyer-select";
+	}
+	 // 변호사 회원가입
 	@RequestMapping("/join/lawyer-join.do")
 	public String lawyerJoin(Model model) throws Exception {
-
-		return "/join/lawyer-join";
+	    return "/join/lawyer-join";
 	}
 
 	// 일반 유저 정보수정
@@ -93,4 +98,6 @@ public class JoinController {
 		resultMap = joinService.editUser(map);
 		return new Gson().toJson(resultMap);
 	}
+	//
+	
 }

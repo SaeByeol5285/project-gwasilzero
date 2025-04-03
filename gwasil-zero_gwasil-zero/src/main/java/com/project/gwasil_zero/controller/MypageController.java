@@ -20,7 +20,7 @@ public class MypageController {
 	@Autowired
 	MypageService mypageService;
 
-	// 유저 마이페이지
+	// 유저 마이페이지\
 	@RequestMapping("/mypage-home.do")
 	public String userMyPage(@RequestParam Map<String, Object> map, Model model) throws Exception {
 		model.addAttribute("map", map);

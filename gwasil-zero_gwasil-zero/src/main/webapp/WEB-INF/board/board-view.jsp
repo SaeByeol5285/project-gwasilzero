@@ -142,7 +142,17 @@
         border-radius: 4px;
         cursor: pointer;
     }
-
+	
+	.btn-green {
+	        padding: 6px 12px;
+	        font-size: 14px;
+	        background-color: #28a745;
+	        color: white;
+	        border: none;
+	        border-radius: 4px;
+	        cursor: pointer;
+	    }
+		
     .btn-orange:hover {
         background-color: #e64a19;
     }
@@ -153,6 +163,15 @@
         justify-content: flex-end;
         gap: 6px;
     }
+	
+	.text-green {
+	    color: #28a745;
+	    font-weight: 500;
+	    cursor: pointer;
+	}
+	.text-green:hover {
+	    text-decoration: underline;
+	}
 </style>
 
 
@@ -204,7 +223,7 @@
             <div class="comment-meta">
               {{ cmt.lawyerName }} | {{ cmt.cdate }}
               <div class="comment-actions" v-if="sessionType === 'lawyer' && cmt.lawyerId === sessionId">
-                <span @click="updateComment(cmt.cmtNo)">수정</span>
+                <span class="text-green" @click="updateComment(cmt.cmtNo)">수정</span>
                 <span @click="deleteComment(cmt.cmtNo)">삭제</span>
               </div>
 
@@ -238,7 +257,7 @@
              <div v-if="editingCommentNo === cmt.cmtNo">
                <textarea v-model="editedComment" rows="3"></textarea>
                <div style="margin-top: 5px;">
-                 <button class="btn-orange" @click="saveUpdatedComment(cmt.cmtNo)">저장</button>
+                 <button class="btn-green" @click="saveUpdatedComment(cmt.cmtNo)">저장</button>
                  <button class="btn-orange" @click="cancelUpdate" style="margin-left: 5px;">취소</button>
                </div>
              </div>
@@ -480,5 +499,3 @@
    });
    app.mount("#app");
 </script>
-
-​

@@ -99,6 +99,12 @@ public class BoardController {
 	    HashMap<String, Object> resultMap = boardService.deleteBoardCmt(map);
 	    return new Gson().toJson(resultMap);
 	}
+	@RequestMapping(value = "/board/commentUpdate.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String commenUpdate(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = boardService.updateBoardCmt(map);
+	    return new Gson().toJson(resultMap);
+	}
 	
 	@RequestMapping("/board/fileUpload.dox")
 	@ResponseBody

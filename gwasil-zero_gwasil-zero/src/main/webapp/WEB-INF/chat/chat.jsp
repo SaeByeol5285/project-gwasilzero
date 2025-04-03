@@ -146,7 +146,7 @@
     data() {
       return {
         senderId: "${sessionScope.sessionId}",
-        chatNo: 1,
+        chatNo: Number("${param.chatNo}"),
         stompClient: null,
         message: "",
         files: [],
@@ -159,63 +159,86 @@
         this.stompClient = Stomp.over(socket);
         this.stompClient.connect({}, (frame) => {
           console.log("WebSocket 연결 성공");
-          this.stompClient.subscribe('/topic/public', (message) => {
-            this.showMessage(JSON.parse(message.body));
-          });
+		  
+		  //chatNo로 연결
+		  this.stompClient.subscribe('/topic/chat/' + this.chatNo, (message) => {
+		        this.showMessage(JSON.parse(message.body));
+		      });
         }, (error) => {
           console.error("WebSocket 연결 실패", error);
         });
       },
-      handleSend() {
-        const trimmedMsg = this.message.trim();
+	  handleSend() {
+	    const trimmedMsg = this.message.trim();
 
-        if (trimmedMsg) {
-          const chatTextMsg = {
-            type: "text",
-            payload: {
-              chatNo: this.chatNo,
-              senderId: this.senderId,
-              message: trimmedMsg
-            }
-          };
-          this.stompClient.send("/app/sendMessage", {}, JSON.stringify(chatTextMsg));
-          this.message = "";
-        }
+	    if (trimmedMsg) {
+	      const chatTextMsg = {
+	        type: "text",
+	        payload: {
+	          chatNo: this.chatNo,
+	          senderId: this.senderId,
+	          message: trimmedMsg
+	        }
+	      };
+	      this.stompClient.send("/app/sendMessage", {}, JSON.stringify(chatTextMsg));
 
-        if (this.files.length > 0) {
-          const formData = new FormData();
-          this.files.forEach(file => formData.append("files", file));
-          formData.append("chatNo", this.chatNo);
-          formData.append("senderId", this.senderId);
+	      // 바로 표시
+	      this.showMessage({
+	        type: "text",
+	        payload: {
+	          senderId: this.senderId,
+	          senderName: "나", // 혹은 본인 이름 변수 있으면 그걸 사용
+	          message: trimmedMsg
+	        }
+	      });
 
-          $.ajax({
-            url: "/chat/uploadFiles",
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: (filePaths) => {
-              filePaths.forEach(path => {
-                const chatFileMsg = {
-                  type: "file",
-                  payload: {
-                    chatNo: this.chatNo,
-                    senderId: this.senderId,
-                    chatFilePath: path
-                  }
-                };
-                this.stompClient.send("/app/sendMessage", {}, JSON.stringify(chatFileMsg));
-              });
-              this.files = [];
-              document.getElementById("chatFile").value = "";
-            }
-          });
-        }
+	      this.message = "";
+	    }
 
-        if (!trimmedMsg && this.files.length === 0) {
-          alert("메시지를 입력하거나 파일을 첨부하세요.");
-        }
-      },
+	    if (this.files.length > 0) {
+	      const formData = new FormData();
+	      this.files.forEach(file => formData.append("files", file));
+	      formData.append("chatNo", this.chatNo);
+	      formData.append("senderId", this.senderId);
+
+	      $.ajax({
+	        url: "/chat/uploadFiles",
+	        type: "POST",
+	        data: formData,
+	        processData: false,
+	        contentType: false,
+	        success: (filePaths) => {
+	          filePaths.forEach(path => {
+	            const chatFileMsg = {
+	              type: "file",
+	              payload: {
+	                chatNo: this.chatNo,
+	                senderId: this.senderId,
+	                chatFilePath: path
+	              }
+	            };
+	            this.stompClient.send("/app/sendMessage", {}, JSON.stringify(chatFileMsg));
+
+	            // 바로 표시
+	            this.showMessage({
+	              type: "file",
+	              payload: {
+	                senderId: this.senderId,
+	                senderName: "나", // 마찬가지로 실제 이름 가능
+	                chatFilePath: path
+	              }
+	            });
+	          });
+	          this.files = [];
+	          document.getElementById("chatFile").value = "";
+	        }
+	      });
+	    }
+
+	    if (!trimmedMsg && this.files.length === 0) {
+	      alert("메시지를 입력하거나 파일을 첨부하세요.");
+	    }
+	  },
       handleFileChange(event) {
         this.files = Array.from(event.target.files);
       },
@@ -225,17 +248,17 @@
       isVideo(path) {
         return /\.(mp4|mov|avi)$/i.test(path);
       },
-      showMessage(message) {
-        const msg = message.payload;
-        this.messages.push({
-          type: message.type,
-          senderId: msg.senderId,
-          senderName: msg.senderName,
-          message: msg.message,
-          filePath: msg.chatFilePath
-        });
-        this.scrollToBottom();
-      },
+	  showMessage(message) {
+	    const msg = message.payload;
+	    this.messages.push({
+	      type: message.type,
+	      senderId: msg.senderId,
+	      senderName: msg.senderId === this.senderId ? "나" : msg.senderName,
+	      message: msg.message,
+	      filePath: msg.chatFilePath
+	    });
+	    this.scrollToBottom();
+	  },
       scrollToBottom() {
         this.$nextTick(() => {
           const chatBox = document.getElementById("chatBox");
@@ -253,23 +276,16 @@
 	        this.messages = [];
 
 	        data.history.forEach(item => {
-	          if (item.message) {
-	            this.messages.push({
-	              type: "text",
-	              senderId: item.senderId,
-	              senderName: item.senderName,
-	              message: item.message,
-	              filePath: null
-	            });
-	          } else if (item.chatFilePath) {
-	            this.messages.push({
-	              type: "file",
-	              senderId: item.senderId,
-	              senderName: item.senderName,
-	              message: null,
-	              filePath: item.chatFilePath
-	            });
-	          }
+	          const isMe = item.senderId === this.senderId;
+	          const baseMessage = {
+	            type: item.message ? "text" : "file",
+	            senderId: item.senderId,
+	            senderName: isMe ? "나" : item.senderName,
+	            message: item.message || null,
+	            filePath: item.chatFilePath || null
+	          };
+
+	          this.messages.push(baseMessage);
 	        });
 
 	        this.$nextTick(() => {
@@ -278,7 +294,7 @@
 	            if (chatBox) {
 	              chatBox.scrollTop = chatBox.scrollHeight;
 	            }
-	          }, 100); 
+	          }, 100);
 	        });
 	      }
 	    });

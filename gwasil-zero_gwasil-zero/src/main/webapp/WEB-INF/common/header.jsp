@@ -34,13 +34,14 @@
                         </div>
                         <div class="noti-empty" v-else>댓글 알림이 없습니다.</div>
                     </div>
-                        <div class="noti-section">
-                            <h4>채팅 알림</h4>
-                            <div class="noti-list" v-if="messageNoti.length > 0">
-                                <div class="noti-item" v-for="item in messageNoti" :key="item.notiNo" @click="fnChat(item)">
-                                    {{ item.contents }}
-                                    <br><small>{{ item.createdAt }}</small>
-                                </div>
+
+                    <!-- 채팅 알림은 사용자/변호사 모두 표시 -->
+                    <div class="noti-section">
+                        <h4>채팅 알림</h4>
+                        <div class="noti-list" v-if="messageNoti.length > 0">
+                            <div class="noti-item" v-for="item in messageNoti" :key="item.notiNo" @click="fnChat(item)">
+                                {{ item.contents }}
+                                <br><small>{{ item.createdAt }}</small>
                             </div>
                         </div>
                         <div class="noti-empty" v-else>채팅 알림이 없습니다.</div>

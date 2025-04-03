@@ -3,6 +3,7 @@ package com.project.gwasil_zero.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,9 @@ public class ChatController {
 	
 	@Autowired
 	ChatService chatService;
+	
+	@Autowired
+	private SimpMessagingTemplate messagingTemplate;
 	
 	@RequestMapping("/chat/chat.do") 
     public String chat(Model model) throws Exception{
@@ -105,5 +109,14 @@ public class ChatController {
 	public String getChatHistory(@RequestParam HashMap<String, Object> map) throws Exception {
 	    HashMap<String, Object> resultMap = chatService.getChatHistory(map);
 	    return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/chat/findOrCreate.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public HashMap<String, Object> findOrCreateChat(@RequestParam HashMap<String, Object> map) throws Exception {
+	    int chatNo = chatService.findOrCreateChat(map);
+	    HashMap<String, Object> result = new HashMap<>();
+	    result.put("chatNo", chatNo);
+	    return result;
 	}
 }

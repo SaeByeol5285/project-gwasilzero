@@ -40,5 +40,7 @@ public interface BoardMapper {
 	void markBoardAsDeleted(HashMap<String, Object> map);
 
 	void deleteBoardCmt(HashMap<String, Object> map);
+	
+	void updateBoardCmt(HashMap<String, Object> map);
 
 }

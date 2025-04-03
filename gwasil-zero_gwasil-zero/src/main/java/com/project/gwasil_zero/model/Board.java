@@ -18,5 +18,6 @@ public class Board {
 	private String thumbnailPath;
 	private String lawyerName;
 	private String userName;
+	private String category;
 
 }

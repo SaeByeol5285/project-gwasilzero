@@ -9,7 +9,6 @@
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <script src="/js/page-change.js"></script>
         <link rel="stylesheet" href="/css/common.css">
-        <!-- ✅ Quill 에디터 -->
         <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
         <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     </head>
@@ -49,7 +48,7 @@
             data() {
                 return {
                     totalTitle: "",
-                    userId: "101", // "${sessionId}"
+                    userId: "${sessionId}",
                     kind: "HELP",
                     quill: null,
                     isSubmitting: false // 중복 방지용 플래그

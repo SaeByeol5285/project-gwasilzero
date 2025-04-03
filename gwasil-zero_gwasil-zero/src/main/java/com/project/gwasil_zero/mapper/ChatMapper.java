@@ -22,4 +22,8 @@ public interface ChatMapper {
 	  List<ChatFile> selectChatFiles(HashMap<String, Object> map);
 	
 	  String selectReceiverIdFromChat(HashMap<String, Object> map);
+
+	  Integer findChatNoByParticipants(HashMap<String, Object> map);
+
+	  void createChat(HashMap<String, Object> map);
 }

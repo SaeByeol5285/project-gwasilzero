@@ -104,7 +104,7 @@
                     location.href = "/join/user-join.do";
                 },
                 fnLawyerJoin() {
-                    location.href = "/join/lawyer-join.do";
+                    location.href = "/join/lawyer-select.do";
                 }
             }
         });

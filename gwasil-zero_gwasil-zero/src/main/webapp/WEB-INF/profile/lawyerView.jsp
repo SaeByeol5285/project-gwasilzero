@@ -8,7 +8,6 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <title>변호사 상세보기</title>
-
         <style>
             body {
                 font-family: '맑은 고딕', sans-serif;
@@ -28,29 +27,43 @@
 
             .profile-container {
                 display: flex;
-                background-color: #e8e8e8;
+                background-color: #fff;
                 padding: 30px;
                 border-radius: 12px;
                 margin-top: 30px;
+                gap: 30px;
+                background-color: #fff;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             }
 
+            /* 프로필 이미지 + 이름 */
             .profile-photo {
-                width: 200px;
-                height: 200px;
-                background-color: #f88;
-                border-radius: 50%;
-                overflow: hidden;
-                margin-right: 30px;
-                flex-shrink: 0;
                 display: flex;
+                flex-direction: column;
                 align-items: center;
-                justify-content: center;
+                gap: 10px;
+                width: 200px;
+                flex-shrink: 0;
             }
 
             .profile-photo img {
-                width: 100%;
-                height: 100%;
+                width: 160px;
+                height: 160px;
                 object-fit: cover;
+                border-radius: 12px;
+                border: 2px solid #ff5c00;
+            }
+
+            .lawyer-name {
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+                text-align: center;
+            }
+
+            /* 정보 상세 영역 */
+            .profile-detail {
+                flex: 1;
             }
 
             .profile-info {
@@ -58,49 +71,159 @@
             }
 
             .section {
-                margin-bottom: 20px;
+                margin-bottom: 30px;
             }
 
             .section h3 {
+                font-size: 17px;
+                color: #ff5c00;
                 margin-bottom: 8px;
-                font-size: 18px;
-                border-bottom: 1px solid #ccc;
                 padding-bottom: 4px;
+                border-bottom: 1px solid #ddd;
             }
 
-            ul {
-                margin: 0;
+            .section ul {
                 padding-left: 20px;
+                margin: 0;
             }
 
+            .section span {
+                font-size: 14px;
+                color: #444;
+                line-height: 1.6;
+            }
+
+            /* 라이센스 스타일 */
+            .license-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                margin-top: 10px;
+            }
+
+            .license-card {
+                background-color: #fff7f7;
+                border: 1px solid #fbb;
+                border-radius: 8px;
+                padding: 12px;
+                width: 200px;
+                text-align: center;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            }
+
+            .license-name {
+                font-weight: bold;
+                margin-bottom: 8px;
+                font-size: 14px;
+            }
+
+            .license-card img {
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                border-radius: 6px;
+                border: 1px solid #ccc;
+            }
+
+            /* === 대표 사건 카드 스타일 === */
             .case-list {
                 display: flex;
+                flex-wrap: wrap;
                 gap: 20px;
                 margin-top: 15px;
-                flex-wrap: wrap;
+                justify-content: flex-start;
             }
 
             .case-card {
                 flex: 1;
                 min-width: 180px;
                 max-width: 220px;
-                background-color: #fdd;
+                background-color: #fff7f7;
+                border: 1px solid #fbb;
                 border-radius: 8px;
-                padding: 10px;
+                padding: 12px;
                 text-align: center;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
             }
 
+            .case-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            .preview-img {
+                border: 1px solid #ccc;
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                border-radius: 4px;
+                display: block;
+                margin: 0 auto 8px;
+                background-color: #f5f5f5;
+            }
+
+            .preview-img.no-thumbnail {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #888;
+                font-size: 13px;
+                border: 1px dashed #ccc;
+                background-color: #fafafa;
+            }
+
+            /* 제목, 내용 스타일 */
             .case-title {
                 font-weight: bold;
                 margin-top: 10px;
             }
 
             .case-desc {
-                background-color: #efe;
+                background-color: white;
                 padding: 10px;
                 border-radius: 6px;
                 font-size: 14px;
                 min-height: 50px;
+            }
+
+            .lawyer-meta {
+                margin-top: 12px;
+                text-align: center;
+            }
+
+            .lawyer-name {
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 6px;
+            }
+
+            .lawyer-phone,
+            .lawyer-email {
+                font-size: 14px;
+                color: #666;
+                line-height: 1.4;
+                word-break: break-word;
+            }
+
+            .title-area {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid #ff5c00;
+                padding-bottom: 10px;
+                margin-bottom: 20px;
+            }
+
+            .title-area h2 {
+                margin: 0;
+            }
+
+            .no-data {
+                color: #999;
+                font-style: italic;
+                font-size: 14px;
+                padding: 6px 0;
             }
         </style>
     </head>
@@ -110,53 +233,62 @@
         <div id="lawInfoApp">
             <div class="layout">
                 <div class="content">
+                    <div class="title-area">
+                        <h2>변호사 상세보기</h2>
+                    </div>
                     <div class="profile-container">
                         <div class="profile-photo">
                             <img src="../../img/66432819ad4f841ac7c5d8a7-original-1715677210341.jpg" alt="프로필 사진">
-                        </div>
-                        <div class="profile-info">
-                            <div class="section">
-                                <h3>이름</h3>
-                                <ul>
-                                    <li>{{info.lawyerName}}</li>
-                                </ul>
+                            <div class="lawyer-meta">
+                                <div class="lawyer-name">{{ info.lawyerName }}</div>
+                                <div class="lawyer-phone">Tel : {{ info.lawyerPhone }}</div>
+                                <div class="lawyer-email">Email : {{ info.lawyerEmail }}</div>
                             </div>
+                        </div>
+                        <div class="profile-detail">
                             <div class="section">
                                 <h3>소개</h3>
-                                <ul>
-                                    <li>{{info.lawyerInfo}}</li>
-                                </ul>
+                                <div v-if="info.lawyerInfo" v-html="info.lawyerInfo"></div>
+                                <div v-else class="no-data">작성된 소개가 없습니다.</div>
                             </div>
                             <div class="section">
                                 <h3>경력</h3>
-                                <ul>
-                                    <li>{{info.lawyerCareer}}</li>
-                                </ul>
+                                <div v-if="info.lawyerCareer" v-html="info.lawyerCareer"></div>
+                                <div v-else class="no-data">작성된 경력이 없습니다.</div>
                             </div>
                             <div class="section">
                                 <h3>주요 업무사례</h3>
-                                <ul>
-                                    <li>{{info.lawyerTask}}</li>
-                                </ul>
+                                <div v-if="info.lawyerTask" v-html="info.lawyerTask"></div>
+                                <div v-else class="no-data">작성된 업무사례가 없습니다.</div>
                             </div>
                             <div class="section">
                                 <h3>학력</h3>
-                                <ul>
-                                    <li>{{info.lawyerEdu}}</li>
-                                </ul>
+                                <div v-if="info.lawyerEdu" v-html="info.lawyerEdu"></div>
+                                <div v-else class="no-data">작성된 학력이 없습니다.</div>
                             </div>
                             <div class="section">
                                 <h3>자격 취득</h3>
-                                <p v-for="item in license">{{item.licenseName}}</p>
+                                <div v-if="license.length > 0" class="license-list">
+                                    <div class="license-card" v-for="item in license" :key="item.licenseName">
+                                        <div class="license-name">{{ item.licenseName }}</div>
+                                        <img v-if="item.licenseFilePath" :src="item.licenseFilePath" alt="자격증 이미지" />
+                                        <div v-else style="font-size: 12px; color: #aaa;">이미지 없음</div>
+                                    </div>
+                                </div>
+                                <div v-else class="no-data">등록된 자격증이 없습니다.</div>
                             </div>
                             <div class="section">
                                 <h3>대표 사건 목록</h3>
-                                <div class="case-list">
-                                    <div class="case-card" v-for="file in boardFileList">
-                                        <div class="case-desc">{{file.fileName}}</div>
-                                        <div class="case-title">{{file.boardTitle}}</div>
+                                <div v-if="validCaseList.length > 0" class="case-list">
+                                    <div class="case-card" v-for="caseItem in validCaseList" :key="caseItem.BOARD_NO">
+                                        <img v-if="caseItem.thumbnailPath" :src="caseItem.thumbnailPath"
+                                            class="preview-img" />
+                                        <div v-else class="preview-img no-thumbnail">썸네일 없음</div>
+                                        <div class="case-title">{{ caseItem.BOARD_TITLE }}</div>
+                                        <div class="case-desc">{{ caseItem.CONTENTS }}</div>
                                     </div>
                                 </div>
+                                <div v-else class="no-data">대표 사건 사례가 등록되지 않았습니다.</div>
                             </div>
                         </div>
                     </div>
@@ -174,35 +306,35 @@
                     lawyerId: "${map.lawyerId}",
                     info: {},
                     sessionId: "${sessionId}",
-                    boardFileList: [],
-                    license: []
+                    license: [],
+                    mainCaseList: []
                 };
+            },
+            computed: {
+                validCaseList() {
+                    return this.mainCaseList.filter(item => item != null);
+                }
             },
             methods: {
                 fnGetLawyerInfo() {
-                    var self = this;
-                    var nparmap = {
-                        lawyerId: self.lawyerId
-                    };
+                    const self = this;
                     $.ajax({
                         url: "/profile/info.dox",
                         dataType: "json",
                         type: "POST",
-                        data: nparmap,
+                        data: { lawyerId: self.lawyerId },
                         success: function (data) {
-                            // console.log(data.boardFileList);
+                            // console.log(data. info);
                             self.info = data.info;
-                            self.boardFileList = data.boardFileList;
                             self.license = data.license;
+                            self.mainCaseList = data.mainCaseList || [];
                         }
                     });
                 }
             },
             mounted() {
-                var self = this;
-                self.fnGetLawyerInfo();
+                this.fnGetLawyerInfo();
             }
         });
         lawInfoApp.mount('#lawInfoApp');
     </script>
-    ​

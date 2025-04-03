@@ -11,108 +11,115 @@
         <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" />
         <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
         <title>프로필 수정</title>
-        <style>
-            body {
-                font-family: '맑은 고딕', sans-serif;
-                background-color: #f0f0f0;
-                padding: 40px;
-            }
-        </style>
     </head>
 
     <body>
         <jsp:include page="../common/header.jsp" />
+        <div id="lawEditApp">
+            <div class="layout">
+                <div class="content">
+                    <div class="title-area">
+                        <h2>변호사 프로필 수정</h2>
+                    </div>
+                    <div class="profile-container">
+                        <form id="lawyerEditForm" @submit.prevent>
+                            <table class="profile-table">
+                                <tr>
+                                    <th>소개</th>
+                                    <td>
+                                        <div id="editor-info" class="quill-editor"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>경력</th>
+                                    <td>
+                                        <div id="editor-career" class="quill-editor"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>주요 업무 사례</th>
+                                    <td>
+                                        <div id="editor-task" class="quill-editor"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>학력</th>
+                                    <td>
+                                        <div id="editor-edu" class="quill-editor"></div>
+                                    </td>
+                                </tr>
 
-        <div id="lawEditApp" class="profile-container">
-            <h3 class="section-title">변호사 프로필 수정</h3>
-            <form id="lawyerEditForm" @submit.prevent>
-                <table class="profile-table">
-                    <tr>
-                        <th>소개</th>
-                        <td>
-                            <div id="editor-info" class="quill-editor"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>경력</th>
-                        <td>
-                            <div id="editor-career" class="quill-editor"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>주요 업무 사례</th>
-                        <td>
-                            <div id="editor-task" class="quill-editor"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>학력</th>
-                        <td>
-                            <div id="editor-edu" class="quill-editor"></div>
-                        </td>
-                    </tr>
+                                <!-- 자격증 -->
+                                <tr>
+                                    <th>자격 취득</th>
+                                    <td>
+                                        <div v-if="license.length > 0">
+                                            <div v-for="(item, index) in license" :key="index" class="license-item">
+                                                <template v-if="item.isExisting">
+                                                    <input type="text" v-model="item.licenseName" class="readonly-input"
+                                                        readonly />
+                                                    <span class="badge-existing">(등록됨)</span>
+                                                    <img v-if="item.licensePreview" :src="item.licensePreview"
+                                                        alt="자격증 이미지" class="preview-img" />
+                                                    <button type="button" @click="removeExistingLicense(item, index)"
+                                                        class="delete-license-btn">삭제</button>
+                                                </template>
+                                                <template v-else>
+                                                    <input type="text" v-model="item.licenseName"
+                                                        placeholder="자격증 이름 입력" />
+                                                    <input type="file" accept="image/png, image/jpeg"
+                                                        @change="onFileChange($event, index)" />
+                                                    <img v-if="item.licensePreview" :src="item.licensePreview"
+                                                        class="preview-img" />
+                                                </template>
+                                            </div>
+                                        </div>
+                                        <div v-else class="no-data">등록된 자격증이 없습니다.</div>
+                                        <div style="margin-top: 10px;">
+                                            <button type="button" @click="addLicense" class="add-license-btn">+ 자격
+                                                추가</button>
+                                        </div>
+                                    </td>
+                                </tr>
 
-                    <!-- 자격증 -->
-                    <tr>
-                        <th>자격 취득</th>
-                        <td>
-                            <div v-for="(item, index) in license" :key="index" class="license-item">
-                                <!-- 기존 자격증 -->
-                                <template v-if="item.isExisting">
-                                    <input type="text" v-model="item.licenseName" class="readonly-input" readonly />
-                                    <span class="badge-existing">(등록됨)</span>
-                                    <img v-if="item.licensePreview" :src="item.licensePreview" alt="자격증 이미지"
-                                        class="preview-img" />
-                                    <button type="button" @click="removeExistingLicense(item, index)"
-                                        class="delete-license-btn">삭제</button>
-                                </template>
-
-                                <!-- 신규 자격증 -->
-                                <template v-else>
-                                    <input type="text" v-model="item.licenseName" placeholder="자격증 이름 입력" />
-                                    <input type="file" accept="image/png, image/jpeg"
-                                        @change="onFileChange($event, index)" />
-                                    <img v-if="item.licensePreview" :src="item.licensePreview" class="preview-img" />
-                                </template>
-                            </div>
-                            <button type="button" @click="addLicense" class="add-license-btn">+ 자격 추가</button>
-                        </td>
-                    </tr>
-
-                    <!-- 대표 사건 -->
-                    <tr>
-                        <th>대표 사건 사례</th>
-                        <td>
-                            <p class="board-note">{{ selectedBoards.length }}개 선택됨 (최대 3개)</p>
-                            <table class="case-table">
-                                <thead>
-                                    <tr>
-                                        <th>선택</th>
-                                        <th>번호</th>
-                                        <th>제목</th>
-                                        <th>내용</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="board in boardList" :key="board.boardNo">
-                                        <td>
-                                            <input type="checkbox" :value="board.boardNo" v-model="selectedBoards"
-                                                :disabled="selectedBoards.length >= 3 && !selectedBoards.includes(board.boardNo)" />
-                                        </td>
-                                        <td>{{ board.boardNo }}</td>
-                                        <td>{{ board.boardTitle }}</td>
-                                        <td>{{ board.contents }}</td>
-                                    </tr>
-                                </tbody>
+                                <!-- 대표 사건 -->
+                                <tr>
+                                    <th>대표 사건 사례</th>
+                                    <td>
+                                        <p class="board-note">{{ selectedBoards.length }}개 선택됨 (최대 3개)</p>
+                                        <table class="case-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>선택</th>
+                                                    <th>번호</th>
+                                                    <th>제목</th>
+                                                    <th>내용</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="board in safeBoardList" :key="board.boardNo">
+                                                    <td>
+                                                        <input type="checkbox" :value="board.boardNo"
+                                                            v-model="selectedBoards"
+                                                            :disabled="selectedBoards.length >= 3 && !selectedBoards.includes(board.boardNo)" />
+                                                    </td>
+                                                    <td>{{ board.boardNo }}</td>
+                                                    <td>{{ board.boardTitle }}</td>
+                                                    <td>{{ board.contents }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
                             </table>
-                        </td>
-                    </tr>
-                </table>
 
-                <div class="mt-20 flex-center">
-                    <button type="button" @click="fnEdit" class="add-license-btn">수정하기</button>
+                            <div class="mt-20 flex-center">
+                                <button type="button" @click="fnEdit" class="add-license-btn">수정하기</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </form>
+            </div>
         </div>
         <jsp:include page="../common/footer.jsp" />
     </body>
@@ -123,13 +130,18 @@
             data() {
                 return {
                     // lawyerId : "${sessionId}",
-                    lawyerId: "lawyer_2", // 실제 적용 시 세션에서 가져오기
+                    lawyerId: "lawyer_2",
                     info: {},
                     boardList: [],
                     license: [],
                     selectedBoards: [],
                     deletedLicenseIds: []
                 };
+            },
+            computed: {
+                safeBoardList() {
+                    return this.boardList.filter(item => item != null);
+                }
             },
             methods: {
                 fnGetLawyerInfo() {
@@ -148,7 +160,7 @@
                             quillTask.root.innerHTML = self.info.lawyerTask || '';
                             quillEdu.root.innerHTML = self.info.lawyerEdu || '';
 
-                            self.boardList = data.boardList;
+                            self.boardList = (data.boardList || []).filter(item => item != null);
                             self.license = data.license.map(item => ({
                                 ...item,
                                 isExisting: true,
@@ -156,6 +168,12 @@
                                 licensePreview: item.licenseFilePath || null,
                                 lawyerId: self.lawyerId
                             }));
+
+                            // 대표 사건 선택 초기화
+                            self.selectedBoards = [];
+                            if (self.info.mainCase1No) self.selectedBoards.push(self.info.mainCase1No);
+                            if (self.info.mainCase2No) self.selectedBoards.push(self.info.mainCase2No);
+                            if (self.info.mainCase3No) self.selectedBoards.push(self.info.mainCase3No);
                         }
                     });
                 },
@@ -208,8 +226,8 @@
                         success(data) {
                             if (data.result === "success") {
                                 alert("수정되었습니다.");
-                                self.fnGetLawyerInfo(); // 수정 후 다시 불러오기 추후 다른 페이지 이동
                                 self.deletedLicenseIds = [];
+                                location.href = "/common/main.do"
                             } else {
                                 alert("수정에 실패했습니다.");
                                 // console.log("🚨 서버 응답 실패:", data);
@@ -261,6 +279,12 @@
                 }
             },
             mounted() {
+                // if (!this.lawyerId || this.lawyerId === "") {
+                //     alert("로그인이 필요합니다.");
+                //     location.href = "/user/login.do"; 
+                //     return;
+                // } 🚨 로그인 없이 접근 불가. 마지막에 추가할것!!! 🚨
+
                 this.fnGetLawyerInfo();
 
                 // Quill 초기화

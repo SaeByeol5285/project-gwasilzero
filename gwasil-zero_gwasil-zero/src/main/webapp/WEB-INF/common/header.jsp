@@ -16,38 +16,39 @@
         <header>
             <!-- 로그인 / 북마크 / 알림 -->
             <div class="header-line">
-            <a v-if="sessionType === 'user' || sessionType === 'lawyer'" href="javascript:void(0);" class="noti-link"
-                @click="toggleNotification" ref="notiToggle">
-                새 소식
-                <span v-if="list.length > 0" class="noti-badge">{{ list.length > 9 ? '9+' : list.length }}</span>
+                <a v-if="sessionType === 'user' || sessionType === 'lawyer'" href="javascript:void(0);"
+                    class="noti-link" @click="toggleNotification" ref="notiToggle">
+                    새 소식
+                    <span v-if="list.length > 0" class="noti-badge">{{ list.length > 9 ? '9+' : list.length }}</span>
 
-                <div v-if="showNotification" class="noti-popup" ref="notiPopup" @click.stop>
-                    <!-- 댓글 알림은 사용자만 표시 -->
-                    <div class="noti-section" v-if="sessionType === 'user'">
-                        <h4>댓글 알림</h4>
-                        <div class="noti-list" v-if="commentNoti.length > 0">
-                            <div class="noti-item" v-for="item in commentNoti" :key="item.notiNo"
-                                @click="markAsRead(item)">
-                                {{ item.contents }}
-                                <br><small>{{ item.createdAt }}</small>
+                    <div v-if="showNotification" class="noti-popup" ref="notiPopup" @click.stop>
+                        <!-- 댓글 알림은 사용자만 표시 -->
+                        <div class="noti-section" v-if="sessionType === 'user'">
+                            <h4>댓글 알림</h4>
+                            <div class="noti-list" v-if="commentNoti.length > 0">
+                                <div class="noti-item" v-for="item in commentNoti" :key="item.notiNo"
+                                    @click="markAsRead(item)">
+                                    {{ item.contents }}
+                                    <br><small>{{ item.createdAt }}</small>
+                                </div>
                             </div>
+                            <div class="noti-empty" v-else>댓글 알림이 없습니다.</div>
                         </div>
-                        <div class="noti-empty" v-else>댓글 알림이 없습니다.</div>
-                    </div>
 
-                    <!-- 채팅 알림은 사용자/변호사 모두 표시 -->
-                    <div class="noti-section">
-                        <h4>채팅 알림</h4>
-                        <div class="noti-list" v-if="messageNoti.length > 0">
-                            <div class="noti-item" v-for="item in messageNoti" :key="item.notiNo" @click="fnChat(item)">
-                                {{ item.contents }}
-                                <br><small>{{ item.createdAt }}</small>
+                        <!-- 채팅 알림은 사용자/변호사 모두 표시 -->
+                        <div class="noti-section">
+                            <h4>채팅 알림</h4>
+                            <div class="noti-list" v-if="messageNoti.length > 0">
+                                <div class="noti-item" v-for="item in messageNoti" :key="item.notiNo"
+                                    @click="fnChat(item)">
+                                    {{ item.contents }}
+                                    <br><small>{{ item.createdAt }}</small>
+                                </div>
                             </div>
+                            <div class="noti-empty" v-else>채팅 알림이 없습니다.</div>
                         </div>
-                        <div class="noti-empty" v-else>채팅 알림이 없습니다.</div>
                     </div>
-                </div>
-            </a>
+                </a>
 
                 <a v-if="sessionType === 'user'" href="javascript:void(0);" class="bookmark-link"
                     @click="toggleBookmarkPopup" ref="bookmarkToggle">
@@ -71,7 +72,7 @@
                 </a>
                 <a href="/totalDocs/list.do?kind=HELP">고객만족센터</a>
                 <a v-if="!sessionId" href="/user/login.do">로그인 / 회원가입</a>
-                <a v-else @click="fnLogout">로그아웃</a>
+                <a v-else @click="fnLogout" href="#">로그아웃</a>
                 <a v-if="sessionId != null" href="/mypage-home.do">마이페이지</a>
             </div>
 
@@ -108,9 +109,9 @@
             data() {
                 return {
                     showNotification: false,
-                    sessionId: "${sessionScope.sessionId}",
-                    sessionType: "${sessionScope.sessionType}",
-                    sessionStatus: "A", // 예: A, U 등 "${sessionScope.sessionStatus}"
+                    sessionId: "${sessionId}",
+                    sessionType: "${sessionType}",
+                    sessionStatus: "${sessionStatus}", //ADMIN
                     list: [],
                     commentNoti: [],
                     messageNoti: [],
@@ -135,7 +136,7 @@
                         [
                             { name: '공지사항', url: '/totalDocs/list.do?kind=NOTICE' },
                             { name: '이용문의', url: '/totalDocs/list.do?kind=HELP' },
-                            { name: '사건 종류 가이드', url: '/totalDocs/list.do?kind=GUIDE' }                        
+                            { name: '사건 종류 가이드', url: '/totalDocs/list.do?kind=GUIDE' }
                         ]
                     ]
                 };
@@ -203,25 +204,25 @@
                     let self = this;
                     pageChange("/board/view.do", { boardNo: item.boardNo });
                 },
-            fnChat(item) {
-                let self = this;
+                fnChat(item) {
+                    let self = this;
 
-                if (!confirm("채팅방으로 이동하시겠습니까?")) return;
+                    if (!confirm("채팅방으로 이동하시겠습니까?")) return;
 
-                // 읽음 처리 후 바로 이동
-                $.ajax({
-                    url: "/notification/read.dox",
-                    type: "POST",
-                    data: { notiNo: item.notiNo },
-                    success: () => {
-                        if (item.chatNo) {
-                            location.href = "/chat/chat.do?chatNo=" + item.chatNo;
-                        } else {
-                            alert("채팅방 정보가 없습니다.");
+                    // 읽음 처리 후 바로 이동
+                    $.ajax({
+                        url: "/notification/read.dox",
+                        type: "POST",
+                        data: { notiNo: item.notiNo },
+                        success: () => {
+                            if (item.chatNo) {
+                                location.href = "/chat/chat.do?chatNo=" + item.chatNo;
+                            } else {
+                                alert("채팅방 정보가 없습니다.");
+                            }
                         }
-                    }
-                });
-            },
+                    });
+                },
                 fnMyPage() {
                     if (this.sessionStatus === 'NORMAL') {
                         return '/mypage/mypage-home.do';
@@ -298,9 +299,9 @@
             },
             mounted() {
                 let self = this;
-            self.fnGetNotificationList();
+                self.fnGetNotificationList();
                 if (self.sessionType === 'user') {
-                    
+
                     self.fnGetBookmarkList();
                 }
                 document.addEventListener('click', self.handleClickOutside);

@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <!DOCTYPE html>
     <html>
-
     <head>
         <meta charset="UTF-8">
         <script src="https://code.jquery.com/jquery-3.7.1.js"
@@ -9,9 +8,8 @@
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <script src="/js/page-change.js"></script>
         <title>개인 변호사</title>
-        <link rel="stylesheet" href="../css/profile.css">
+        <link rel="stylesheet" href="/css/profile.css">
     </head>
-
     <body>
         <jsp:include page="../common/header.jsp" />
         <div id="perLawApp">
@@ -22,18 +20,16 @@
                             <h2>개인 변호사</h2>
                             <a href="javascript:;" @click="fnMove">소속 변호사 &gt;</a>
                         </div>
-
-                        <div class="search-area">
+                        <div class="filter-bar">
                             <label>변호사 찾기</label>
-                            <select v-model="searchOption" class="select-box">
+                            <select v-model="searchOption">
                                 <option value="all">::전체::</option>
                                 <option value="name">이름</option>
                                 <option value="txt">키워드</option>
                             </select>
-                            <input v-model="keyword" @keyup.enter="fnGetList" placeholder="검색어" class="input-box">
+                            <input type="text" v-model="keyword" @keyup.enter="fnGetList" placeholder="검색어">
                             <button @click="fnGetList" class="btn">검색</button>
                         </div>
-
                         <div class="lawyer-list">
                             <div class="lawyer-card" v-for="item in list" :key="item.lawyerId"
                                 @click="fnView(item.lawyerId)">
@@ -42,14 +38,14 @@
                                         alt="프로필 사진">
                                 </div>
                                 <div class="lawyer-name">{{item.lawyerName}}</div>
-                                <div class="intro">소개 : {{item.lawyerInfo}}</div>
+                                <div class="intro">소개 : <span v-html="item.lawyerInfo"></span></div>
                             </div>
                         </div>
-
                         <div class="pagination">
-                            <a v-if="page != 1" href="javascript:;" @click="fnPageMove('prev')">&lt;</a>
-                            <a href="javascript:;" v-for="num in index" @click="fnPage(num)">{{num}}</a>
-                            <a v-if="page != index" href="javascript:;" @click="fnPageMove('next')">&gt;</a>
+                            <a v-if="page != 1" href="javascript:;" @click="fnPageMove('prev')" class="page-btn">&lt;</a>
+                            <a href="javascript:;" v-for="num in index" @click="fnPage(num)"
+                            :class="{'active': page == num}" class="page-btn">{{num}}</a>
+                            <a v-if="page != index" href="javascript:;" @click="fnPageMove('next')" class="page-btn">&gt;</a>
                         </div>
                     </div>
                 </div>
@@ -57,7 +53,6 @@
         </div>
         <jsp:include page="../common/footer.jsp" />
     </body>
-
     </html>
     <script>
         const perLawApp = Vue.createApp({
@@ -117,4 +112,3 @@
         });
         perLawApp.mount('#perLawApp');
     </script>
-    ​

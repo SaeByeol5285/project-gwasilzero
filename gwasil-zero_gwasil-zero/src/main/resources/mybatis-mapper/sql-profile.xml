@@ -82,8 +82,14 @@
 	
 	<select id="selectLawyer" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
 		SELECT *  
-		FROM LAWYER L
-		WHERE L.LAWYER_ID = #{lawyerId} 
+		FROM LAWYER
+		WHERE LAWYER_ID = #{lawyerId} 
+	</select>
+	
+	<select id="lawyerLicenseList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.License">
+		SELECT *  
+		FROM LICENSE 
+		WHERE LAWYER_ID = #{lawyerId}
 	</select>
 	
 	<select id="lawyerBoardList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Board">
@@ -93,27 +99,29 @@
 		WHERE L.LAWYER_ID = #{lawyerId}
 	</select>
 	
-	<select id="lawyerBoardFileList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.BoardFile">
-		SELECT *  
-		FROM LAWYER L
-		LEFT JOIN BOARD B ON L.LAWYER_ID = B.LAWYER_ID
-		INNER JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO
-		WHERE L.LAWYER_ID = #{lawyerId} AND THUMBNAIL = 'Y'
+	<select id="selectMainCaseList" parameterType="hashmap" resultType="hashmap">
+	    SELECT 
+	        B.BOARD_NO,
+	        B.BOARD_TITLE,
+	        B.CONTENTS,
+	        F.FILE_PATH AS thumbnailPath
+	    FROM 
+	        LAWYER L
+	    LEFT JOIN BOARD B 
+	        ON B.BOARD_NO IN (L.MAIN_CASE1_NO, L.MAIN_CASE2_NO, L.MAIN_CASE3_NO)
+	    LEFT JOIN BOARD_FILE F 
+	        ON F.BOARD_NO = B.BOARD_NO AND F.THUMBNAIL = 'Y'
+	    WHERE 
+	        L.LAWYER_ID = #{lawyerId}
 	</select>
-	
-	<select id="lawyerLicenseList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.License">
-		SELECT *  
-		FROM LICENSE 
-		WHERE LAWYER_ID = #{lawyerId}
-	</select>
-	
+			
 	<update id="updateLawyer" parameterType="hashmap">
         UPDATE LAWYER
         SET LAWYER_INFO = #{lawyerInfo},
             LAWYER_CAREER = #{lawyerCareer},
             LAWYER_TASK = #{lawyerTask},
             LAWYER_EDU = #{lawyerEdu}
-        WHERE lawyer_id = #{lawyerId}
+        WHERE LAWYER_ID = #{lawyerId}
     </update>
     
     <delete id="deleteLicense" parameterType="hashmap">

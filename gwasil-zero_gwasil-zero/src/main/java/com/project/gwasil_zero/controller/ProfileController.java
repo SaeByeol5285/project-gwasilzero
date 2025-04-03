@@ -77,8 +77,14 @@ public class ProfileController {
 	@ResponseBody
 	public String lawyerInfo(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
+
+		// 1. 변호사 기본 정보 + 자격증
 		resultMap = profileService.getLawyer(map);
+
+		// 2. 대표 사건 목록 추가
+		List<HashMap<String, Object>> mainCaseList = profileService.getMainCaseList(map); // <-- 새로 추가된 service
+		resultMap.put("mainCaseList", mainCaseList);
+
 		return new Gson().toJson(resultMap);
 	}
 	

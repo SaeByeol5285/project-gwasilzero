@@ -8,24 +8,37 @@
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b58f49b3384edf05982d77a3259c7afb&libraries=services"></script>
 	<script src="/js/page-change.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
 	<style>
-		.container { max-width: 900px; margin: 40px auto; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: #fff; }
+		.container { max-width: 900px; margin: 40px auto; padding: 30px; }
 		.tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-		.tab-btn {
-			padding: 10px 20px;
-			border: none;
-			background-color: #eee;
-			color: #444;
-			border-radius: 8px 8px 0 0;
-			font-weight: 500;
-			cursor: pointer;
-			margin-right: 5px;
-			transition: background-color 0.3s ease;
+		* {
+		font-family: 'Noto Sans KR', sans-serif;
 		}
+
+		.tab-btn {
+			padding: 12px 24px;
+			border: none;
+			border-radius: 999px;
+			background-color: #f6f6f6;
+			font-size: 16px;
+			font-weight: 500;
+			color: #444;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			box-shadow: inset 0 0 0 1px #ddd;
+		}
+
+		.tab-btn:hover {
+			background-color: #ffece1;
+			color: #ff5c00;
+		}
+
 		.tab-btn.active {
-			background-color: #b6e388; 
-			color: white;          
-			font-weight: bold;
+			background-color: #ff5c00;
+			color: #fff;
+			font-weight: 600;
+			box-shadow: none;
 		}
 		.select-row {
 			display: flex;
@@ -41,8 +54,8 @@
 		}
 		.btn-search {
 			padding: 8px 16px;
-			background-color: #b6e388; 
-			color: #333;
+			background-color: #f6f6f6; 
+			color: #444;
 			border: none;
 			border-radius: 6px;
 			font-weight: bold;
@@ -50,7 +63,7 @@
 			transition: background-color 0.2s;
 		}
 		.btn-search:hover {
-			background-color: #a4d476; 
+			background-color: #ff5c00; 
 			color: white;
 		}
 		.section-subtitle {
@@ -68,7 +81,7 @@
 			position: absolute;
 			left: 50%;
 			transform: translateX(-50%);
-			bottom: 0;
+			bottom: -8px;
 			width: 60px;
 			height: 3px;
 			background-color: #FF5722;
@@ -115,9 +128,9 @@
 		}
 
 		.find-me-btn {
-			background-color: #b6e388;
+			background-color: #f6f6f6;
 			margin-bottom: 20px;
-			color: #222;
+			color: #444;
 			border: none;
 			padding: 10px 20px;
 			border-radius: 8px;
@@ -127,7 +140,7 @@
 		}
 
 		.find-me-btn:hover {
-			background-color: #a4d476;
+			background-color: #ff5c00;
 			color: white;
 		}
 
@@ -161,10 +174,11 @@
 	
 	<!-- ✅ 탭 -->
 	<div class="tabs">
-		<button class="tab-btn" :class="{active: currentTab==='area'}" @click="currentTab='area'">지역별</button>
-		<button class="tab-btn" :class="{active: currentTab==='inner'}" @click="currentTab='inner'">소속 변호사</button>
-		<button class="tab-btn" :class="{active: currentTab==='personal'}" @click="currentTab='personal'">개인 변호사</button>
+		<a href="?tab=area"><button class="tab-btn" :class="{active: currentTab==='area'}">지역별</button></a>
+		<a href="?tab=inner"><button class="tab-btn" :class="{active: currentTab==='inner'}">소속 변호사</button></a>
+		<a href="?tab=personal"><button class="tab-btn" :class="{active: currentTab==='personal'}">개인 변호사</button></a>
 	</div>
+	
 
 	<!-- ✅ 검색창  -->
 	<div class="select-row" v-if="currentTab !== 'area'" style="margin-top: 10px;">
@@ -212,16 +226,42 @@
 			</select>
 		</div>
 
-		<div class="lawyer-card" v-for="lawyer in sortedLawyers" :key="lawyer.lawyerId" @click="goToLawyerMarker(lawyer)">
-			<div style="display: flex; justify-content: space-between; align-items: center;">
-				<h4 style="margin: 0 0 6px;">{{ lawyer.lawyerName }}</h4>
-				<span :class="['status-badge', lawyer.counsel]">
-					{{ $options.methods.getStatusText(lawyer.counsel) }}
-				</span>
+		<div class="lawyer-card" v-for="lawyer in sortedLawyers" :key="lawyer.lawyerId">
+			<div style="display: flex; justify-content: space-between; align-items: flex-start;">
+			  
+			  <!-- 왼쪽: 사진 + 텍스트 -->
+			  <div style="display: flex; gap: 16px; align-items: flex-start;">
+				<!-- 변호사 사진 -->
+				<img :src="lawyer.lawyerImg || '/img/common/profile_default.png'" alt="변호사 사진"
+				  style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;" />
+		  
+				<!-- 텍스트 영역 -->
+				<div>
+				  <div style="display: flex; align-items: center; gap: 8px;">
+					<h4 style="margin: 0;">{{ lawyer.lawyerName }}</h4>
+					<span :class="['status-badge', lawyer.counsel]">
+					  {{ getStatusText(lawyer.counsel) }}
+					</span>
+				  </div>
+		  
+				  <p style="margin: 4px 0; font-size: 14px;">{{ lawyer.lawyerAddr }}</p>
+				  <p v-if="lawyer.distance !== undefined" style="margin: 0; font-size: 13px; color: #888;">
+					거리: {{ lawyer.distance.toFixed(2) }} km
+				  </p>
+				</div>
+			  </div>
+		  
+			  <!-- 오른쪽: 북마크 아이콘 -->
+			  <div style="display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; height: 100%;">
+				<img
+				  :src="isBookmarked(lawyer.lawyerId) ? '/img/selectedBookmark.png' : '/img/Bookmark.png'"
+				  @click.stop="toggleBookmark(lawyer.lawyerId)"
+				  alt="북마크"
+				  style="width: 24px; height: 24px; cursor: pointer; margin-top: 8px;" />
+			  </div>
+			  
 			</div>
-			<p style="margin: 0 0 2px; font-size: 14px;">{{ lawyer.lawyerAddr }}</p>
-			<p style="margin: 0; font-size: 13px; color: #888;" v-if="lawyer.distance != undefined">거리: {{ lawyer.distance.toFixed(2) }} km</p>
-		</div>
+		</div>		 	
 		
 	</div>
 
@@ -256,6 +296,10 @@ const mapApp = Vue.createApp({
 			infowindowAnchor: null,
 			keyword : "",
 			filterStatus: "",
+			sessionId : "${sessionId}",
+			sessionType : "${sessionType}",
+			bookmarkList : [],
+			laweyrId : ""
 
 		};
 	},
@@ -345,11 +389,17 @@ const mapApp = Vue.createApp({
 		},
 		fnSearchArea() {
 			let self = this;
-			if (!self.selectSi || !self.selectGu || !self.selectDong) {
-				alert("시/구/동을 모두 선택해주세요.");
+
+			let fullAddr = '';
+			if (self.selectSi) fullAddr += self.selectSi;
+			if (self.selectGu) fullAddr += ' ' + self.selectGu;
+			if (self.selectDong) fullAddr += ' ' + self.selectDong;
+
+			if (!fullAddr) {
+				alert("검색할 지역을 선택해 주세요.");
 				return;
 			}
-			let fullAddr = self.selectSi + " " + self.selectGu + " " + self.selectDong;
+
 			let geocoder = new kakao.maps.services.Geocoder();
 			geocoder.addressSearch(fullAddr, function(result, status) {
 				if (status === kakao.maps.services.Status.OK) {
@@ -361,6 +411,7 @@ const mapApp = Vue.createApp({
 				}
 			});
 		},
+
 
 		geoFindMe() {
 			const self = this;
@@ -595,6 +646,11 @@ const mapApp = Vue.createApp({
 
 		goToLawyerMarker(lawyer) {
 			const self = this;
+
+			self.selectSi = '';
+			self.selectGu = '';
+			self.selectDong = '';
+
 			if (!lawyer._lat || !lawyer._lng) return;
 
 			const position = new kakao.maps.LatLng(lawyer._lat, lawyer._lng);
@@ -623,6 +679,9 @@ const mapApp = Vue.createApp({
 			self.infowindow.setContent(contentHtml);
 			self.infowindow.open(self.map, self.findMarkerByLawyer(lawyer));
 			self.infowindowAnchor = self.findMarkerByLawyer(lawyer);
+
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+
 		},
 
 		findMarkerByLawyer(lawyer) {
@@ -648,11 +707,68 @@ const mapApp = Vue.createApp({
 					alert("검색한 장소를 찾을 수 없습니다.");
 				}
 			});
-		}
+		},
+
+		fetchBookmarks() {
+			const self = this;
+
+			if (!self.sessionId || self.sessionType !== 'user') return;
+
+			$.post("/bookmark/list.dox", { sessionId: self.sessionId }, function (res) {
+				self.bookmarkList = res.list;
+			});
+		},
+
+
+		isBookmarked(lawyerId) {
+			   return this.bookmarkList.some(bm => bm.lawyerId === lawyerId);
+		},
+
+		toggleBookmark(lawyerId) {
+			   const self = this;
+
+			   if (!self.sessionId) {
+			     alert("로그인이 필요합니다.");
+			     return;
+			   }
+
+			   const isMarked = self.isBookmarked(lawyerId);
+			   const url = isMarked ? "/bookmark/remove.dox" : "/bookmark/add.dox";
+
+			   $.ajax({
+			     url: url,
+			     type: "POST",
+			     data: {
+			       userId: self.sessionId,
+			       lawyerId: lawyerId
+			     },
+			     success: function (data) {
+			       if (isMarked) {
+			         self.bookmarkList = self.bookmarkList.filter(b => b.lawyerId !== lawyerId);
+					 alert(data.result);
+			       } else {
+			         self.bookmarkList.push({ lawyerId: lawyerId });
+					 alert(data.result);
+			       }
+			     },
+			     error: function () {
+			       alert("북마크 처리 중 오류가 발생했습니다.");
+			     }
+			   });
+			 },
 
 
 	},
 	mounted() {
+
+		const urlParams = new URLSearchParams(window.location.search);
+		const tab = urlParams.get("tab");
+		if (tab === "inner" || tab === "personal" || tab === "area") {
+			this.currentTab = tab;
+		}
+
+		this.fetchBookmarks();
+
 		this.fnSi();
 		let container = document.getElementById('map');
 		let options = {

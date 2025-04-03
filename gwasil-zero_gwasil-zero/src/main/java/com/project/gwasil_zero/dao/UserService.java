@@ -78,50 +78,27 @@ public class UserService {
 	}
 
 	public HashMap<String, Object> searchUser(HashMap<String, Object> map) {
-		// TODO Auto-generated method stub
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		User user = userMapper.CheckUser(map);
-		int count = user != null ? 1 : 0;
-		resultMap.put("count", count);
-		return resultMap;
+	    HashMap<String, Object> resultMap = new HashMap<>();
+
+	    User user = userMapper.CheckUser(map); // 일반 유저 조회
+	    Lawyer lawyer = userMapper.CheckLawyer(map); // 변호사 조회
+
+	    int count = (user != null || lawyer != null) ? 1 : 0;
+
+	    if (user != null) {
+	        resultMap.put("userId", user.getUserId());
+	        resultMap.put("userName", user.getUserName());
+	        resultMap.put("userType", "user");
+	    } else if (lawyer != null) {
+	        resultMap.put("userId", lawyer.getLawyerId());
+	        resultMap.put("userName", lawyer.getLawyerName());
+	        resultMap.put("userType", "lawyer");
+	    }
+
+	    resultMap.put("count", count);
+	    return resultMap;
 	}
 
-	public HashMap<String, Object> selectUserId(HashMap<String, Object> map) {
-		HashMap<String, Object> resultMap = new HashMap<>();
-		String role = (String) map.get("role");
-
-		System.out.println("요청 받은 role: " + role);
-
-		if ("user".equals(role)) {
-			User user = userMapper.selectUserId(map);
-			System.out.println("조회된 user: " + user);
-			if (user != null) {
-				System.out.println("userId: " + user.getUserId());
-				System.out.println("userName: " + user.getUserName());
-				resultMap.put("userId", user.getUserId());
-				resultMap.put("userName", user.getUserName());
-				resultMap.put("result", "success");
-			} else {
-				System.out.println("일반 사용자 정보 없음");
-				resultMap.put("result", "fail");
-			}
-		} else if ("lawyer".equals(role)) {
-			Lawyer lawyer = userMapper.selectLawyerId(map);
-			System.out.println("조회된 lawyer: " + lawyer);
-			if (lawyer != null) {
-				System.out.println("lawyerId: " + lawyer.getLawyerId());
-				System.out.println("lawyerName: " + lawyer.getLawyerName());
-				resultMap.put("userId", lawyer.getLawyerId());
-				resultMap.put("userName", lawyer.getLawyerName());
-				resultMap.put("result", "success");
-			} else {
-				System.out.println("변호사 정보 없음");
-				resultMap.put("result", "fail");
-			}
-		}
-
-		return resultMap;
-	}
 
 	public HashMap<String, Object> selectUserPwd(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -132,21 +109,42 @@ public class UserService {
 	}
 	
 	public HashMap<String, Object> updateUserPassword(HashMap<String, Object> map) {
-        HashMap<String, Object> resultMap = new HashMap<>();
+		HashMap<String, Object> resultMap = new HashMap<>();
 
-        // 암호화
-        String rawPwd = (String) map.get("pwd");
-        String encodedPwd = passwordEncoder.encode(rawPwd);
-        map.put("pwd", encodedPwd);
+		String id = (String) map.get("id");
+		String rawPwd = (String) map.get("pwd");
+		String encodedPwd = passwordEncoder.encode(rawPwd);
+		map.put("pwd", encodedPwd);
+		map.put("id", id);
 
-        int result = userMapper.updateUserPassword(map);
-        if (result > 0) {
-            resultMap.put("result", "success");
-        } else {
-            resultMap.put("result", "fail");
-            resultMap.put("message", "변경 실패");
-        }
-        return resultMap;
-    }
+		User user = userMapper.searchUser(map);
+		if (user != null) {
+			int result = userMapper.updateUserPassword(map);
+			resultMap.put("result", result > 0 ? "success" : "fail");
+			return resultMap;
+		}
+
+		Lawyer lawyer = userMapper.searchLawyer(map);
+		if (lawyer != null) {
+			int result = userMapper.updateLawyerPassword(map);
+			resultMap.put("result", result > 0 ? "success" : "fail");
+			return resultMap;
+		}
+
+		resultMap.put("result", "fail");
+		resultMap.put("message", "사용자 정보 없음");
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> checkUserIdExist(HashMap<String, Object> map) {
+		map.put("id", map.get("userId"));
+		User user = userMapper.searchUser(map);
+		Lawyer lawyer = userMapper.searchLawyer(map);
+
+		HashMap<String, Object> result = new HashMap<>();
+		result.put("count", (user != null || lawyer != null) ? 1 : 0);
+		return result;
+	}
+	
 
 }

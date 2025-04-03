@@ -12,8 +12,7 @@
 </style>
 <body>
 	<div id="app">
-		{{list}}
-		
+		{{list}}      		
 	</div>
 </body>
 </html>

@@ -98,49 +98,52 @@
     </style>
 </head>
 <body>
-<div id="editApp" class="layout">
-    <jsp:include page="../admin/layout.jsp" />
-    <div class="content">
-        <div class="header">
-            <div>관리자페이지</div>
-            <div>Admin님</div>
-        </div>
+    <jsp:include page="../common/header.jsp" />
+    <div id="editApp" class="layout">
+        <jsp:include page="../admin/layout.jsp" />
+        <div class="content">
+            <div class="header">
+                <div>관리자페이지</div>
+                <div>Admin님</div>
+            </div>
 
-        <div class="form-wrapper">
-            <div class="form-title">패키지 수정</div>
-            <table class="form-table">
-                <tr>
-                    <th>패키지명</th>
-                    <td><input type="text" v-model="info.packageName" class="input-box" readonly></td>
-                </tr>
-                <tr>
-                    <th>패키지 설명</th>
-                    <td>
-                        <textarea v-model="info.packageInfo" class="input-box textarea-box" rows="4"></textarea>
-                    </td>
-                </tr>
-                <tr>
-                    <th>패키지 가격</th>
-                    <td><input type="number" v-model="info.packagePrice" class="input-box"></td>
-                </tr>
-                <tr>
-                    <th>사용자</th>
-                    <td>
-                        <select v-model="info.packageStatus" class="input-box">
-                            <option value="U">일반 사용자</option>
-                            <option value="L">변호사</option>
-                        </select>
-                    </td>
-                </tr>
-            </table>
+            <div class="form-wrapper">
+                <div class="form-title">패키지 수정</div>
+                <table class="form-table">
+                    <tr>
+                        <th>패키지명</th>
+                        <td><input type="text" v-model="info.packageName" class="input-box" readonly></td>
+                    </tr>
+                    <tr>
+                        <th>패키지 설명</th>
+                        <td>
+                            <textarea v-model="info.packageInfo" class="input-box textarea-box" rows="4"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>패키지 가격</th>
+                        <td><input type="number" v-model="info.packagePrice" class="input-box"></td>
+                    </tr>
+                    <tr>
+                        <th>사용자</th>
+                        <td>
+                            <select v-model="info.packageStatus" class="input-box">
+                                <option value="U">일반 사용자</option>
+                                <option value="L">변호사</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
 
-            <div class="btn-area">
-                <button class="btn btn-save" @click="fnSave">저장</button>
-                <button class="btn btn-cancel" @click="fnBack">뒤로가기</button>
+                <div class="btn-area">
+                    <button class="btn btn-save" @click="fnSave">저장</button>
+                    <button class="btn btn-cancel" @click="fnBack">뒤로가기</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+    <jsp:include page="../common/footer.jsp" />
+</body>
 
 <script>
 const editApp = Vue.createApp({
@@ -211,5 +214,4 @@ const editApp = Vue.createApp({
 });
 editApp.mount('#editApp');
 </script>
-</body>
 </html>

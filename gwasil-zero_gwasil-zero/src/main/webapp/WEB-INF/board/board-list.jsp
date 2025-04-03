@@ -255,6 +255,17 @@
       cursor: default;
    }
 
+	.page-btn.active {
+		background-color: #ff5722;
+		color: white;
+		font-weight: bold;
+		box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	}
+
+	.page-btn:disabled {
+		opacity: 0.4;
+		cursor: default;
+	}
 
 </style>
 <body>

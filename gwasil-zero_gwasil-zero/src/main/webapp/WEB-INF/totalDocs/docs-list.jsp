@@ -147,8 +147,8 @@
 			<!-- 우측 하단 버튼 -->
 			<div class="fab-wrapper">
 				<!-- 글쓰기 버튼: 조건부 렌더링 -->
-				<button class="fab-btn" v-if="(sessionStatus === 'A' && currentTab === 'notice') || 
-			 								(sessionStatus === '' && currentTab === 'help')" @click="goToAddPage">
+				<button class="fab-btn" v-if="(sessionStatus === 'ADMIN' && currentTab === 'notice') || 
+			 								(sessionStatus === 'NORMAL' && currentTab === 'help')" @click="goToAddPage">
 					＋ 글쓰기
 				</button>
 
@@ -163,6 +163,8 @@
 		const app = Vue.createApp({
 			data() {
 				return {
+					sessionId: "${sessionId}",
+					sessionStatus: "${sessionStatus}", //ADMIN, NORMAL
 					list: [],
 					keyword: "",
 					searchOption: "all",
@@ -172,7 +174,6 @@
 					showScrollBtn: false, // 맨위로 버튼
 					currentTab: "notice", // 기본 탭,
 					kind: "", //글종류 : NOTICE, HELP, GUIDE
-					sessionStatus: '',//"${sessionStatus}"
 					showGuide: true,
 					cards: [
 						{
@@ -448,6 +449,8 @@
 					this.currentTab = "notice";
 				} else if (this.kind === "HELP") {
 					this.currentTab = "help";
+				} else if (this.kind === "GUIDE") {
+					this.currentTab = "guide";
 				}
 
 				// 탭에 따라 초기 데이터 로딩
@@ -455,9 +458,7 @@
 					this.fnNoticeList();
 				} else if (this.currentTab === "help") {
 					this.fnHelpList();
-				} else if (this.kind === "GUIDE") {
-					this.currentTab = "guide";
-				}
+				} 
 				window.addEventListener("scroll", this.handleScroll);
 			}
 		});

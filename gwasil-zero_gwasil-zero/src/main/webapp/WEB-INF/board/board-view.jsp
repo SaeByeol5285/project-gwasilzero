@@ -499,5 +499,3 @@
    });
    app.mount("#app");
 </script>
-
-​

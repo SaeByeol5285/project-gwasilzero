@@ -28,9 +28,12 @@ public interface UserMapper {
 
 	void selectUserPwd(HashMap<String, Object> map);
 
-
 	int updateUserStatus(HashMap<String, Object> map);
 	
 	int updateUserPassword(HashMap<String, Object> map);
+
+	Lawyer CheckLawyer(HashMap<String, Object> map);
+
+	int updateLawyerPassword(HashMap<String, Object> map);
 
 }

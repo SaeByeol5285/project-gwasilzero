@@ -39,7 +39,7 @@ public class TotalDocsController {
 		return "/totalDocs/docs-detail";
 	}
 
-	// 공지사항 수정
+	// 글수정
 	@RequestMapping("/totalDocs/edit.do")
 	public String docsEdit(@RequestParam Map<String, Object> map, Model model) throws Exception {
 		model.addAttribute("map", map);
@@ -58,7 +58,7 @@ public class TotalDocsController {
 		return "/totalDocs/help-add";
 	}
 	
-	// 가이드라인 리스트
+	// 가이드라인 전체
 	@RequestMapping("/totalDocs/guide.do")
 	public String guideList(Model model) throws Exception {
 		return "/totalDocs/guide-list";
@@ -159,11 +159,10 @@ public class TotalDocsController {
 
 	    // 임시로 관리자 권한 부여
 	    String sessionStatus = (String) session.getAttribute("sessionStatus");
-//	    String sessionStatus = "A"; // ← 하드코딩된 관리자 권한 (테스트용)	    
 	    String kind = (String) map.get("kind");
 
 	    //공지사항은 관리자만 작성 가능
-	    if ("NOTICE".equals(kind) && !"A".equals(sessionStatus)) {
+	    if ("NOTICE".equals(kind) && !"ADMIN".equals(sessionStatus)) {
 	        resultMap.put("result", "forbidden");
 	        resultMap.put("message", "관리자만 공지사항을 등록할 수 있습니다.");
 	        return new Gson().toJson(resultMap);

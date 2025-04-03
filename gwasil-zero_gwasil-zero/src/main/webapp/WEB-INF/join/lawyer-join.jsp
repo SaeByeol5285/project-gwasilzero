@@ -1,168 +1,288 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<!DOCTYPE html>
-<html>
+    <!DOCTYPE html>
+    <html>
 
-<head>
-    <meta charset="UTF-8">
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-    <link rel="stylesheet" href="/css/common.css">
-    <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
-    <title>sample.jsp</title>
-    <style>
-        #app {
-            width: 100%;
-            max-width: 400px;
-            background: #fff;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            text-align: center;
-            margin: 20px auto;
-        }
-
-        #app input, #app select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        #app button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background-color: #FF5722;
-            color: #fff;
-        }
-
-        #app button:hover {
-            background-color: #FF7043;
-        }
-
-        .error-text {
-            color: red;
-            font-size: 0.9rem;
-        }
-    </style>
-</head>
-
-<body>
-    <jsp:include page="../common/header.jsp" />
-    <div id="app">
-        <h1>사용자 회원가입</h1>
-        <div>이름</div>
-        <input v-model="lawyer.lawyerName" placeholder="이름 입력">
-        <div>아이디 (8글자 이상)</div>
-        <input v-model="lawyer.lawyerId" placeholder="아이디 입력">
-        <button @click="fnIdCheck" style="margin-bottom: 10px;">중복체크</button>
-        <div>비밀번호 (12자리 이상)</div>
-        <input v-model="lawyer.pwd" type="password" placeholder="비밀번호 입력">
-        <div v-if="lawyer.pwd.length > 0 && lawyer.pwd.length < 12" class="error-text">비밀번호는 12자 이상이어야 합니다.</div>
-        <div>비밀번호 확인</div>
-        <input v-model="lawyer.pwd2" type="password" placeholder="비밀번호 확인">
-        <div v-if="lawyer.pwd !== lawyer.pwd2 && lawyer.pwd2" class="error-text">비밀번호 불일치</div>
-        <div>이메일</div>
-        <input v-model="lawyer.lawyerEmail" placeholder="이메일 입력">
-        <div>휴대폰 (11자리)</div>
-        <input v-model="lawyer.lawyerPhone" placeholder="휴대폰 번호 입력">
-        <div v-if="lawyer.lawyerPhone.length > 11" class="error-text">휴대폰 번호는 11자리를 초과할 수 없습니다.</div>
-        <button @click="fnJoin">회원가입</button>
-    </div>
-    <jsp:include page="../common/footer.jsp" />
-</body>
-
-</html>
-<script>
-    const app = Vue.createApp({
-        data() {
-            return {
-                lawyer: {
-                    lawyerName: "",
-                    lawyerId: "",
-                    pwd: "",
-                    pwd2: "",
-                    lawyerEmail: "",
-                    lawyerPhone: ""
-                }
-            };
-        },
-        methods: {
-            fnJoin() {
-                if (!this.lawyer.lawyerName.trim()) {
-                    alert("이름을 입력하세요.");
-                    return;
-                }
-
-                if (this.lawyer.lawyerId.length < 8) {
-                    alert("아이디는 8자 이상이어야 합니다.");
-                    return;
-                }
-
-                if (this.lawyer.pwd.length < 12) {
-                    alert("비밀번호는 12자 이상이어야 합니다.");
-                    return;
-                }
-
-                if (this.lawyer.pwd !== this.lawyer.pwd2) {
-                    alert("비밀번호가 일치하지 않습니다.");
-                    return;
-                }
-
-                if (!this.lawyer.lawyerEmail.trim()) {
-                    alert("이메일을 입력하세요.");
-                    return;
-                }
-
-                if (this.lawyer.lawyerPhone.length !== 11 || !/^[0-9]+$/.test(this.lawyer.lawyerPhone)) {
-                    alert("휴대폰 번호는 11자리의 숫자여야 합니다.");
-                    return;
-                }
-
-                const nparmap = {
-                    lawyerName: this.lawyer.lawyerName,
-                    lawyerId: this.lawyer.lawyerId,
-                    pwd: this.lawyer.pwd,
-                    lawyerEmail: this.lawyer.lawyerEmail,
-                    lawyerPhone: this.lawyer.lawyerPhone
-                };
-
-                $.ajax({
-                    url: "/join/lawyer-add.dox",
-                    dataType: "json",
-                    type: "POST",
-                    data: nparmap,
-                    success: function (data) {
-                        alert("회원가입 완료되었습니다.");
-                        location.href = "/user/login.do";
-                    },
-                    error: function () {
-                        alert("회원가입 중 오류가 발생했습니다.");
-                    }
-                });
-            },
-            fnIdCheck() {
-                if (this.lawyer.lawyerId === "") {
-                    alert("아이디 입력하셈");
-                    return;
-                }
-                $.ajax({
-                    url: "/join/checkLawyer.dox",
-                    dataType: "json",
-                    type: "POST",
-                    data: { lawyerId: this.lawyer.lawyerId },
-                    success: function (data) {
-                        alert(data.count == 0 ? "사용 가능" : "사용 불가능");
-                    }
-                });
+    <head>
+        <meta charset="UTF-8">
+        <title>변호사 회원가입</title>
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+        <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+        <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+        <link rel="stylesheet" href="/css/common.css">
+        <style>
+            #app {
+                width: 100%;
+                max-width: 400px;
+                background: #fff;
+                border-radius: 15px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                text-align: center;
+                margin: 20px auto;
             }
-        }
-    });
-    app.mount('#app');
-</script>
+
+            input {
+                width: 90%;
+                max-width: 350px;
+                padding: 10px;
+                margin-bottom: 15px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            button {
+                width: 90%;
+                max-width: 350px;
+                padding: 10px;
+                margin-top: 10px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                background-color: #FF5722;
+                color: #fff;
+            }
+
+            button:hover {
+                background-color: #FF7043;
+            }
+
+            .error-text {
+                color: red;
+                font-size: 0.9rem;
+            }
+
+            .license-box {
+                background-color: #f9f9f9;
+                padding: 15px;
+                margin-top: 20px;
+                border-radius: 10px;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+
+            .form-group {
+                margin-bottom: 12px;
+            }
+
+            .form-group label {
+                display: block;
+                font-weight: bold;
+                margin-bottom: 6px;
+            }
+
+            .file-name {
+                font-size: 0.9rem;
+                color: #555;
+            }
+        </style>
+    </head>
+
+    <body>
+        <jsp:include page="../common/header.jsp" />
+        <div id="app">
+            <h1>변호사 회원가입</h1>
+
+            <div>이름</div>
+            <input v-model="lawyer.lawyerName" placeholder="이름 입력">
+
+            <div>아이디 (5자 이상)</div>
+            <input v-model="lawyer.lawyerId" placeholder="아이디 입력">
+            <button @click="fnIdCheck">중복 체크</button>
+
+            <div>비밀번호 (8자 이상)</div>
+            <input type="password" v-model="lawyer.pwd" placeholder="비밀번호 입력">
+            <div v-if="lawyer.pwd.length > 0 && lawyer.pwd.length < 8" class="error-text">비밀번호는 8자 이상이어야 합니다.</div>
+
+            <div>비밀번호 확인</div>
+            <input type="password" v-model="lawyer.pwd2" placeholder="비밀번호 확인">
+            <div v-if="lawyer.pwd !== lawyer.pwd2 && lawyer.pwd2" class="error-text">비밀번호가 일치하지 않습니다.</div>
+
+            <div>이메일</div>
+            <input v-model="lawyer.lawyerEmail" placeholder="이메일 입력">
+
+            <div>휴대폰 번호 (11자리)</div>
+            <input v-model="lawyer.lawyerPhone" placeholder="휴대폰 번호 입력">
+            <div v-if="lawyer.lawyerPhone.length > 11" class="error-text">휴대폰 번호는 11자리를 초과할 수 없습니다.</div>
+
+            <div>주소</div>
+            <input type="text" v-model="address" placeholder="주소" readonly @click="execDaumPostcode">
+            <input type="text" v-model="detailAddress" placeholder="상세주소">
+
+            <input type="hidden" :value="lawyer.lawyerStatus">
+
+            <div class="license-box">
+                <h3>변호사 자격 정보</h3>
+
+                <div class="form-group">
+                    <label>생년월일 (선택)</label>
+                    <input type="date" v-model="license.BIRTH" />
+                </div>
+
+                <div class="form-group">
+                    <label>대한변협 등록번호</label>
+                    <input v-model="license.LAWYER_NUMBER" placeholder="등록번호 입력" />
+                </div>
+
+                <div class="form-group">
+                    <label>합격 연도</label>
+                    <input type="text" v-model="license.PASS_YEARS" placeholder="예: 2023" />
+                </div>
+
+                <div class="form-group">
+                    <label>변호사 자격증 사본</label>
+                    <input type="file" @change="handleLicenseFile" />
+                    <p class="file-name" v-if="licenseFileName">📎 {{ licenseFileName }}</p>
+                </div>
+
+                <div class="form-group" v-if="lawyer.lawyerStatus === 'P'">
+                    <label>사무실 재직증명서</label>
+                    <input type="file" @change="handleOfficeProofFile" />
+                    <p class="file-name" v-if="officeProofFileName">📎 {{ officeProofFileName }}</p>
+                </div>
+            </div>
+
+            <button @click="requestCert">📱 본인인증</button>
+            <button @click="fnJoin" :disabled="!isAuthenticated">회원가입</button>
+        </div>
+        <jsp:include page="../common/footer.jsp" />
+    </body>
+
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    lawyer: {
+                        lawyerName: "",
+                        lawyerId: "",
+                        pwd: "",
+                        pwd2: "",
+                        lawyerEmail: "",
+                        lawyerPhone: "",
+                        lawyerAddr: "",
+                        lawyerStatus: ""
+                    },
+                    address: "",
+                    detailAddress: "",
+                    license: {
+                        BIRTH: "",
+                        LAWYER_NUMBER: "",
+                        PASS_YEARS: ""
+                    },
+                    licenseFile: null,
+                    licenseFileName: "",
+                    officeProofFile: null,
+                    officeProofFileName: "",
+                    isAuthenticated: false
+                };
+            },
+            methods: {
+                fnJoin() {
+                    if (!this.isAuthenticated) return alert("본인인증을 먼저 해주세요.");
+                    if (!this.lawyer.lawyerName.trim()) return alert("이름을 입력하세요.");
+                    if (this.lawyer.lawyerId.length < 5) return alert("아이디는 5자 이상이어야 합니다.");
+                    if (this.lawyer.pwd.length < 8) return alert("비밀번호는 8자 이상이어야 합니다.");
+                    if (this.lawyer.pwd !== this.lawyer.pwd2) return alert("비밀번호가 일치하지 않습니다.");
+                    if (!this.lawyer.lawyerEmail.trim()) return alert("이메일을 입력하세요.");
+                    if (this.lawyer.lawyerPhone.length !== 11 || !/^[0-9]+$/.test(this.lawyer.lawyerPhone)) return alert("휴대폰 번호는 11자리 숫자여야 합니다.");
+
+                    this.lawyer.lawyerAddr = this.address + " " + this.detailAddress;
+
+                    const formData = new FormData();
+                    Object.entries(this.lawyer).forEach(([key, val]) => formData.append(key, val));
+                    Object.entries(this.license).forEach(([key, val]) => formData.append(key, val));
+
+                    // ✅ 자격증 파일
+                    if (this.licenseFile) {
+                        formData.append("LAWYER_LICENS_NAME", this.licenseFile.name);
+                        formData.append("LAWYER_LICENS_PATH", this.licenseFile.name);  // or 실제 업로드 경로 설정된 값
+                        formData.append("licenseFile", this.licenseFile);
+                    } else {
+                        formData.append("LAWYER_LICENS_NAME", "");
+                        formData.append("LAWYER_LICENS_PATH", "");
+                    }
+
+                    // ✅ 재직증명서 파일
+                    if (this.officeProofFile) {
+                        formData.append("OFFICEPROOF_NAME", this.officeProofFile.name);
+                        formData.append("OFFICEPROOF_PATH", this.officeProofFile.name);  // or 실제 업로드 경로 설정된 값
+                        formData.append("officeProofFile", this.officeProofFile);
+                    } else {
+                        formData.append("OFFICEPROOF_NAME", "");
+                        formData.append("OFFICEPROOF_PATH", "");
+                    }
+
+                    $.ajax({
+                        url: "/join/lawyer-add.dox",
+                        type: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function () {
+                            alert("회원가입 완료되었습니다.");
+                            location.href = "/user/login.do";
+                        },
+                        error: function () {
+                            alert("회원가입 실패. 다시 시도해주세요.");
+                        }
+                    });
+                },
+                fnIdCheck() {
+                    if (this.lawyer.lawyerId === "") return alert("아이디를 입력하세요.");
+                    $.ajax({
+                        url: "/join/checkLawyer.dox",
+                        type: "POST",
+                        dataType: "json",
+                        data: { lawyerId: this.lawyer.lawyerId },
+                        success: function (data) {
+                            alert(data.count == 0 ? "사용 가능한 아이디입니다." : "이미 사용 중인 아이디입니다.");
+                        }
+                    });
+                },
+                execDaumPostcode() {
+                    new daum.Postcode({
+                        oncomplete: (data) => {
+                            let fullAddr = data.roadAddress || data.jibunAddress;
+                            this.address = fullAddr;
+                            this.detailAddress = "";
+                            this.$nextTick(() => {
+                                document.querySelector("input[placeholder='상세주소']").focus();
+                            });
+                        }
+                    }).open();
+                },
+                handleLicenseFile(event) {
+                    const file = event.target.files[0];
+                    this.licenseFile = file;
+                    this.licenseFileName = file ? file.name : "";
+                },
+                handleOfficeProofFile(event) {
+                    const file = event.target.files[0];
+                    this.officeProofFile = file;
+                    this.officeProofFileName = file ? file.name : "";
+                },
+                requestCert() {
+                    const self = this;
+                    IMP.init("imp29272276");
+                    IMP.certification({
+                        merchant_uid: "lawyer_cert_" + new Date().getTime()
+                    }, function (rsp) {
+                        if (rsp.success) {
+                            self.isAuthenticated = true;
+                            alert("✅ 본인 인증 성공");
+                        } else {
+                            alert("❌ 인증 실패: " + rsp.error_msg);
+                        }
+                    });
+                }
+            },
+            mounted() {
+                const statusFromUrl = new URLSearchParams(location.search).get("status");
+                this.lawyer.lawyerStatus = statusFromUrl;
+            }
+        });
+
+        app.mount('#app');
+    </script>
+
+    </html>

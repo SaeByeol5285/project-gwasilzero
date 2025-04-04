@@ -176,58 +176,77 @@
                   </div>
                </div>
             </div>
-            <!-- 리뷰 작성 섹션 -->
-            <div v-if="availReviewList.length" class="section review-section">
-               <h3>📝 리뷰 작성 가능한 항목</h3>
-               <!-- 리뷰 작성 가능한 항목 -->
-               <div class="review-card" v-for="item in availReviewList" :key="item.boardNo">
-                  <div>
-                     <span class="review-title"><strong>게시글 제목 : {{ item.boardTitle }}</strong></span>
+
+
+            <!-- 리뷰 -->
+            <div class="section">
+               <h3>리뷰</h3>
+
+
+               <!-- 리뷰 작성 섹션 -->
+               <div v-if="availReviewList.length > 0" class="section review-section">
+                  <h3>📝 리뷰 작성 가능한 항목</h3>
+                  <div class="review-card" v-for="item in availReviewList" :key="item.boardNo">
+                     <div>
+                        <span class="review-title"><strong>게시글 제목 : {{ item.boardTitle }}</strong></span>
+                     </div>
+                     <div>
+                        <span class="review-lawyer">담당 변호사 : {{ item.lawyerId }}</span>
+                     </div>
+                     <p>평점 :
+                        <span class="star" v-for="index in 5" :key="index" @click="item.score = index">
+                           <span v-if="index <= item.score">⭐</span>
+                           <span v-else>☆</span>
+                        </span>
+                     </p>
+                     <textarea v-model="item.contents" placeholder="리뷰 내용을 입력해주세요" class="review-textarea"></textarea>
+                     <button class="btn btn-primary review-submit-btn" @click="fnWriteReview(item)">리뷰 등록</button>
                   </div>
+               </div>
+               <div v-else class="section review-section">
+                  <h3>📝 리뷰 작성 가능한 항목</h3>
                   <div>
-                     <span class="review-lawyer">담당 변호사 : {{ item.lawyerId }}</span>
+                     작성 가능한 리뷰가 없습니다.
                   </div>
-                  <p>평점 :
-                     <span class="star" v-for="index in 5" :key="index" @click="item.score = index">
-                        <span v-if="index <= item.score">⭐</span>
-                        <span v-else>☆</span>
-                     </span>
-                  </p>
-                  <textarea v-model="item.contents" placeholder="리뷰 내용을 입력해주세요" class="review-textarea"></textarea>
-                  <button class="btn btn-primary review-submit-btn" @click="fnWriteReview(item)">리뷰 등록</button>
+               </div>
+
+               <div v-if="writtenReviewList.length > 0" class="section review-section">
+                  <h3>📝 내가 작성한 리뷰</h3>
+                  <div class="review-card" v-for="item in writtenReviewList" :key="item.reviewNo">
+                     <p class="review-title">{{ item.boardTitle }}</p>
+                     <div v-if="item.isEditing">
+                        <p>평점 :
+                           <span class="star" v-for="index in 5" :key="index" @click="item.score = index">
+                              <span v-if="index <= item.score">⭐</span>
+                              <span v-else>☆</span>
+                           </span>
+                        </p>
+                        <textarea v-model="item.contents" class="review-textarea"></textarea>
+                        <div>
+                           <button class="btn btn-primary review-submit-btn" @click="fnEditReview(item)">저장</button>
+                           <button class="btn btn-outline" @click="item.isEditing = false">취소</button>
+                        </div>
+                     </div>
+                     <div v-else>
+                        <div>
+                           <span class="review-lawyer">담당 변호사 : {{ item.lawyerId }}</span>
+                        </div>
+                        <p>평점 :
+                           <span class="star" v-for="index in item.score" :key="index">⭐</span>
+                        </p>
+                        <p>{{ item.contents }}</p>
+                        <button class="btn btn-outline" @click="item.isEditing = true">수정</button>
+                        <button class="btn btn-danger" @click="fnRemoveReview(item.reviewNo)">삭제</button>
+                     </div>
+                  </div>
+               </div>
+               <div v-else class="section review-section">
+                  <h3>📝 내가 작성한 리뷰</h3>
+                  <div> 작성한 리뷰가 없습니다.</div>
+
                </div>
             </div>
 
-            <!-- 이미 작성한 리뷰 -->
-            <div class="review-card" v-for="item in writtenReviewList" :key="item.reviewNo">
-               <p class="review-title">{{ item.boardTitle }}</p>
-
-               <div v-if="item.isEditing">
-                  <p>평점 :
-                     <span class="star" v-for="index in 5" :key="index" @click="item.score = index">
-                        <span v-if="index <= item.score">⭐</span>
-                        <span v-else>☆</span>
-                     </span>
-                  </p>
-                  <textarea v-model="item.contents" class="review-textarea"></textarea>
-                  <div>
-                     <button class="btn btn-primary review-submit-btn" @click="fnEditReview(item)">저장</button>
-                     <button class="btn btn-outline" @click="item.isEditing = false">취소</button>
-                  </div>
-               </div>
-
-               <div v-else>
-                  <div>
-                     <span class="review-lawyer">담당 변호사 : {{ item.lawyerId }}</span>
-                  </div>
-                  <p>평점 :
-                     <span class="star" v-for="index in item.score" :key="index">⭐</span>
-                  </p>
-                  <p>{{ item.contents }}</p>
-                  <button class="btn btn-outline" @click="item.isEditing = true">수정</button>
-                  <button class="btn btn-danger" @click="fnRemoveReview(item.reviewNo)">삭제</button>
-               </div>
-            </div>
 
             <!-- 채팅 내역 -->
             <div class="section">
@@ -415,7 +434,7 @@
                fnEditReview(item) {
                   const self = this;
                   if (!item.contents?.trim()) {
-                     alert("리뷰 내용을     입력해주세요.");
+                     alert("리뷰 내용을 입력해주세요.");
                      return;
                   }
                   const params = {

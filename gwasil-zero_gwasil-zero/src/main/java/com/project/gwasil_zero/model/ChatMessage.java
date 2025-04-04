@@ -10,5 +10,6 @@ public class ChatMessage {
 	private String message;
 	private String senderId;
 	private String senderName;
+	private String partnerName;
 
 }

@@ -73,7 +73,6 @@
                 <a v-else @click="fnLogout" href="#">로그아웃</a>
                 <a v-if="sessionId != '' && sessionType == 'user'" href="/mypage-home.do">마이페이지</a>
                 <a v-if="sessionId != '' && sessionType == 'lawyer'" href="/mypage/lawyerMyPage.do">마이페이지</a>
-
             </div>
 
             <!-- 네비게이션 -->

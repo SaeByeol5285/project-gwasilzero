@@ -87,25 +87,31 @@
    }
 
    .category-btn {
-      border: 1px solid var(--main-color); /* 기존 #ccc → 주황색 변수 */
-      border-radius: 999px;
-      padding: 8px 18px;
-      background-color: white;
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.2s ease;
-      color: gray;
-   }
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  background-color: #fdfdfd;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
 
-   .category-btn:hover {
-      background-color: #f0f0f0;
-   }
+.category-btn:hover {
+  transform: translateY(-2px);
+  background-color: #fff8f5;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
 
-   .category-btn.active {
-      background-color: #FF5722;
-      color: white;
-      border-color: #FF5722;
-   }
+.category-btn.active {
+  background-color: #ff5c00;
+  color: #fff;
+  border-color: #ff5c00;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
 
    .search-bar {
          display: flex;
@@ -127,6 +133,7 @@
       .search-input {
          flex: 1;
          min-width: 200px;
+         height: 20px;
          padding: 8px 12px;
          border: 1px solid #ccc;
          border-radius: 6px;
@@ -222,13 +229,15 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-top: 40px;
+      margin-top: 30px;
+      margin-bottom: 20px;
       gap: 6px;
    }
 
-   .page-btn {
-      padding: 8px 14px;
-      margin-bottom: 10px;
+   .btn {
+      padding: 10px 18px;
+      /* margin-bottom: 10px; */
+      font-size: 15px;
       border: none;
       border-radius: 8px;
       background-color: #f2f2f2;
@@ -238,34 +247,47 @@
       transition: all 0.2s ease;
    }
 
-   .page-btn:hover {
+   .btn:hover {
       background-color: #ffe6db;
-      color: #ff5722;
+      color: #ff5c00;
    }
 
-   .page-btn.active {
-      background-color: #ff5722;
+   .btn.active {
+      background-color: #ff5c00;
       color: white;
       font-weight: bold;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
    }
 
-   .page-btn:disabled {
+   .btn:disabled {
       opacity: 0.4;
       cursor: default;
    }
 
-	.page-btn.active {
-		background-color: #ff5722;
+	.btn.active {
+		background-color: #ff5c00;
 		color: white;
 		font-weight: bold;
 		box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 	}
 
-	.page-btn:disabled {
+	.btn:disabled {
 		opacity: 0.4;
 		cursor: default;
 	}
+
+   .btn-write {
+      background-color: #ffece4;
+      color: #ff5c00;
+      font-weight: 600;
+      border: 1px solid #ffd3c1;
+   }
+
+   .btn-write:hover {
+      background-color: #ff6b1a; /* 더 진한 주황 */
+      color: #fff;
+   }
+
 
 </style>
 <body>
@@ -307,8 +329,8 @@
             <option value="name">변호사</option>
          </select>
          <input v-model="keyword" @keyup.enter="fnBoardList" class="search-input" placeholder="검색어를 입력하세요">
-         <button @click="fnBoardList" class="btn btn-primary">검색</button>
-         <button @click="goToAddPage" class="btn btn-outline">글 작성</button>
+         <button @click="fnBoardList" class="btn">검색</button>
+         <button @click="goToAddPage" class="btn btn-write">글 작성</button>
       </div>
       
       <div class="card-container">
@@ -336,18 +358,18 @@
       </div>
 
       <div class="pagination-container">
-         <button class="page-btn" @click="prevPage" :disabled="page === 1">〈 이전</button>
+         <button class="btn" @click="prevPage" :disabled="page === 1">〈 이전</button>
       
          <button 
             v-for="n in index" 
             :key="n" 
             @click="goToPage(n)" 
-            :class="['page-btn', page === n ? 'active' : '']"
+            :class="['btn', page === n ? 'active' : '']"
          >
             {{ n }}
          </button>
       
-         <button class="page-btn" @click="nextPage" :disabled="page === index">다음 〉</button>
+         <button class="btn" @click="nextPage" :disabled="page === index">다음 〉</button>
       </div>            
       
    </div>
@@ -411,7 +433,7 @@
                success : function(data) { 
                   console.log(data);
                   self.list = data.list;
-                  self.index = Math.ceil(data.count / self.pageSize); 
+                  self.index = Math.ceil(data.count / self.pageSize);
                }
             });
             

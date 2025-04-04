@@ -10,6 +10,7 @@
          <meta charset="UTF-8">
          <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
          <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+         <script src="/js/page-change.js"></script>
          <title>마이페이지</title>
          <style>
             #app {
@@ -34,26 +35,35 @@
                line-height: 2;
             }
 
-            .post-section {
-               display: flex;
-               gap: 20px;
-               justify-content: center;
-               flex-wrap: wrap;
+            .card-grid {
+               display: grid;
+               grid-template-columns: repeat(3, 1fr);
+               gap: 24px;
+               margin-top: 20px;
             }
 
-            .post-card {
-               width: 30%;
-               border: 1px solid #ddd;
+            .thumbnail {
+               width: 100%;
+               height: 180px;
+               object-fit: cover;
                border-radius: 8px;
-               padding: 15px;
-               text-align: left;
-               background-color: #f9f9f9;
-               box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+               margin-bottom: 10px;
             }
 
-            .post-title {
-               font-weight: bold;
-               margin-bottom: 8px;
+            .box {
+               background-color: white;
+               border-radius: 10px;
+               box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+               padding: 16px;
+               text-align: center;
+               border: 1px solid #eee;
+               transition: all 0.2s ease;
+               cursor: default;
+            }
+
+            .box:hover {
+               transform: translateY(-4px);
+               box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
             }
 
             table {
@@ -145,128 +155,202 @@
             .star {
                cursor: pointer;
             }
+
+            .payment-table thead {
+               background-color: #f2f2f2;
+            }
+
+            .payment-table th {
+               font-weight: bold;
+               color: #333;
+               font-size: 15px;
+               padding: 12px;
+            }
+
+            .payment-table td {
+               font-size: 14px;
+               padding: 10px 12px;
+               background-color: #fff;
+            }
+
+            .payment-table tr:nth-child(even) td {
+               background-color: #f9f9f9;
+            }
+
+            .payment-table {
+               border-radius: 8px;
+               overflow: hidden;
+               box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            }
+
+            .section-subtitle {
+               font-size: 28px;
+               font-weight: bold;
+               margin-bottom: 30px;
+               text-align: center;
+               color: #222;
+               position: relative;
+               display: inline-block;
+               padding-bottom: 10px;
+
+               display: block;
+               text-align: center;
+               margin-left: auto;
+               margin-right: auto;
+            }
+
+            .section-subtitle::after {
+               content: "";
+               position: absolute;
+               left: 50%;
+               transform: translateX(-50%);
+               bottom: 0;
+               width: 60px;
+               height: 3px;
+               background-color: #FF5722; /* 주황색 */
+               border-radius: 2px;
+            }
+
+            .message {
+               text-decoration: none;
+               color: #333;
+            }
+
+            .message:hover {
+               color: #e64a19;
+            }
          </style>
       </head>
 
       <body>
          <jsp:include page="../common/header.jsp" />
          <div id="app">
-            <h2>마이페이지</h2>
+            <h2 class="section-subtitle">마이페이지</h2>
 
-            <!-- 내 정보 -->
-            <div class="section info-section">
-               <div>
-                  <h3>내 정보</h3>
-                  <div class="info-details" v-if="info && info.userName">
-                     이름: {{ info.userName }}<br>
-                     핸드폰 번호: {{ info.userPhone }}<br>
-                     이메일: {{ info.userEmail }}
-                  </div>
-               </div>
-               <button @click="fnEdit">정보 수정</button>
-            </div>
-
-            <!-- 내가 쓴 글 -->
-            <div class="section">
-               <h3>내가 쓴 글</h3>
-               <div class="post-section">
-                  <div v-for="post in boardList" :key="post.boardNo" class="post-card">
-                     <div class="post-title">{{ post.BOARDTITLE }}</div>
-                     <div>{{ post.CONTENTS }}</div>
-                  </div>
-               </div>
-            </div>
-            <!-- 리뷰 작성 섹션 -->
-            <div v-if="availReviewList.length" class="section review-section">
-               <h3>📝 리뷰 작성 가능한 항목</h3>
-               <!-- 리뷰 작성 가능한 항목 -->
-               <div class="review-card" v-for="item in availReviewList" :key="item.boardNo">
+               <!-- 내 정보 -->
+               <div class="section">
+                  <div class="info-section">
                   <div>
-                     <span class="review-title"><strong>게시글 제목 : {{ item.boardTitle }}</strong></span>
+                     <h3>내 정보</h3>
+                     <div class="info-details" v-if="info && info.userName">
+                        이름: {{ info.userName }}<br>
+                        핸드폰 번호: {{ info.userPhone }}<br>
+                        이메일: {{ info.userEmail }}
+                     </div>
                   </div>
-                  <div>
-                     <span class="review-lawyer">담당 변호사 : {{ item.lawyerId }}</span>
-                  </div>
-                  <p>평점 :
-                     <span class="star" v-for="index in 5" :key="index" @click="item.score = index">
-                        <span v-if="index <= item.score">⭐</span>
-                        <span v-else>☆</span>
-                     </span>
-                  </p>
-                  <textarea v-model="item.contents" placeholder="리뷰 내용을 입력해주세요" class="review-textarea"></textarea>
-                  <button class="btn btn-primary review-submit-btn" @click="fnWriteReview(item)">리뷰 등록</button>
-               </div>
-            </div>
-
-            <!-- 이미 작성한 리뷰 -->
-            <div class="review-card" v-for="item in writtenReviewList" :key="item.reviewNo">
-               <p class="review-title">{{ item.boardTitle }}</p>
-
-               <div v-if="item.isEditing">
-                  <p>평점 :
-                     <span class="star" v-for="index in 5" :key="index" @click="item.score = index">
-                        <span v-if="index <= item.score">⭐</span>
-                        <span v-else>☆</span>
-                     </span>
-                  </p>
-                  <textarea v-model="item.contents" class="review-textarea"></textarea>
-                  <div>
-                     <button class="btn btn-primary review-submit-btn" @click="fnEditReview(item)">저장</button>
-                     <button class="btn btn-outline" @click="item.isEditing = false">취소</button>
+                  <button @click="fnEdit">정보 수정</button>
                   </div>
                </div>
 
-               <div v-else>
-                  <div>
-                     <span class="review-lawyer">담당 변호사 : {{ item.lawyerId }}</span>
+               <div class="section">
+                  <h3>내가 쓴 글</h3>
+                  <!-- 내가 쓴 글 -->
+                  <div class="card-grid" v-if="boardList.length > 0">
+                     <div class="box" v-for="item in boardList" :key="item.boardNo" @click="fnBoardView(item.boardNo)">
+                        <img 
+                           v-if="item.thumbnailPath" 
+                           :src="item.thumbnailPath.replace('../', '/')" 
+                           alt="썸네일" 
+                           class="thumbnail"
+                           @error="e => e.target.src='/img/common/image_not_exist.jpg'" 
+                        />
+                        <img 
+                           v-else 
+                           src="/img/common/image_not_exist.jpg" 
+                           alt="기본 썸네일" 
+                           class="thumbnail" 
+                        />
+                        <h3>{{ item.boardTitle }}</h3>
+                        <p>사건 진행 상태: {{ item.boardStatus === 'DOING' ? '진행중' : item.boardStatus === 'END' ? '완료' : '미정' }}</p>
+                        <p>담당 변호사: {{ item.lawyerName || '미정' }}</p>
+                     </div>
                   </div>
-                  <p>평점 :
-                     <span class="star" v-for="index in item.score" :key="index">⭐</span>
-                  </p>
-                  <p>{{ item.contents }}</p>
-                  <button class="btn btn-outline" @click="item.isEditing = true">수정</button>
-                  <button class="btn btn-danger" @click="fnRemoveReview(item.reviewNo)">삭제</button>
+                  <div v-else style="text-align: center; color: #888; margin-top: 30px;" >
+                     내용이 없습니다.
+                  </div>
+
+                  <!-- 페이징 영역 -->
+                  <div style="text-align: center; margin-top: 20px;">
+                     <a v-if="page > 1" href="javascript:;" @click="fnPageMove('prev')">◀</a>
+                     <a
+                     v-for="num in index"
+                     :key="num"
+                     href="javascript:;"
+                     @click="fnPage(num)"
+                     >
+                     <span
+                        v-if="page === num"
+                        style="margin: 0 5px; font-weight: bold; color: blue;"
+                     >{{ num }}</span>
+                     <span v-else style="margin: 0 5px;">{{ num }}</span>
+                     </a>
+                     <a v-if="page < index" href="javascript:;" @click="fnPageMove('next')">▶</a>
+                  </div>
+ 
                </div>
-            </div>
+   
+               <!-- 채팅 내역 -->
+               <div class="section chat-section">
+                  <h3>채팅 내역</h3>
+                  <table class="payment-table">
+                     <colgroup>
+                        <col style="width: 75%;"> <!-- 메시지 열 넓게 -->
+                        <col style="width: 25%;"> <!-- 상대방 열 좁게 -->
+                     </colgroup>
+                    <thead>
+                      <tr>
+                        <th>메시지</th>
+                        <th>변호사</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-if="chatList.length" v-for="chat in chatList" :key="chat.chatNo">
+                        <td><a href="javascript:;" @click="fnChat(chat.chatNo)" class="message">{{ chat.message }}</a></td>
+                        <td>{{ chat.partnerName }}</td>
+                      </tr>
+                      <tr v-else>
+                        <td colspan="2" style="text-align: center; color: #999;">채팅 내역이 없습니다.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
 
-            <!-- 채팅 내역 -->
-            <div class="section">
-               <h3>채팅 내역</h3>
-               <table>
-                  <tr v-for="chat in chatList" :key="chat.chatNo">
-                     <td>{{ chat.lawyerName }}</td>
-                     <td>{{ chat.message }}</td>
-                     <td>{{ chat.chatTime }}</td>
-                  </tr>
-               </table>
-            </div>
-
-            <!-- 결제 내역 (단일 결제) -->
-            <div class="section">
-               <h3>최근 결제 내역</h3>
-               <table>
+               <!-- 결제 내역 -->
+               <div class="section">
+                  <h3>최근 결제 내역</h3>
+                  <table class="payment-table">
                   <thead>
                      <tr>
                         <th>날짜</th>
                         <th>제품명</th>
                         <th>가격</th>
+                        <th>상태</th>
+                        <th>요청</th>
                      </tr>
                   </thead>
                   <tbody>
-                     <tr v-if="payList && payList.length" v-for="pay in payList">
+                     <tr v-if="payList && payList.length" v-for="pay in payList" :key="pay.orderId">
                         <td>{{ pay.payTime }}</td>
                         <td>{{ pay.packageName }}</td>
-                        <td>{{ pay.price }}</td>
+                        <td>{{ pay.price.toLocaleString() }} 원</td>
+                        <td>{{ getPayStatusText(pay.payStatus) }}</td>
+                        <td>
+                        <button v-if="pay.payStatus === 'PAID'" @click="fnRequestRefund(pay.orderId)" class="edit-btn">환불 요청</button>
+                        <button v-else-if="pay.payStatus === 'REQUEST'" @click="fnCancelRefund(pay.orderId)" class="withdraw-btn">환불 요청 취소</button>
+                        <span v-else>-</span>
+                        </td>
                      </tr>
                      <tr v-else>
-                        <td colspan="3">결제 내역이 없습니다.</td>
+                        <td colspan="5" style="text-align: center;">결제 내역이 없습니다.</td>
                      </tr>
                   </tbody>
-               </table>
-            </div>
+                  </table>
+               </div>
+ 
 
-            <div style="text-align: center; margin-top: 20px;">
-               <button @click="fnRemoveUser">회원탈퇴</button>
+               <!-- 회원탈퇴 -->
+               <div style="text-align: center; margin-top: 20px;">
+               <button class="withdraw-btn" @click="fnRemoveUser">회원탈퇴</button>
             </div>
 
          </div>
@@ -287,7 +371,10 @@
                   payList: [],
                   availReviewList: [], // 작성할 수 있는 리뷰 리스트
                   writtenReviewList: [],   // 이미 작성한 리뷰 리스트
-                  isEditing: false,  //true일 때만 수정 모드
+                  isEditing: false,  //true일 때만 수정 모드'
+                  page: 1,
+                  pageSize: 3,  // 글 3개씩
+                  index: 0,
                };
             },
             methods: {
@@ -308,7 +395,9 @@
                fnGetBoardList() {
                   var self = this;
                   var nparmap = {
-                     userId: self.sessionId
+                     userId: self.sessionId,
+                     page: (self.page - 1) * self.pageSize,
+                     pageSize: self.pageSize
                   };
                   $.ajax({
                      url: "/mypage/my-board-list.dox",
@@ -318,13 +407,32 @@
                      success: function (data) {
                         console.log("✅ 글 : ", data);
                         self.boardList = data.boardList;
+                        self.index = Math.ceil(data.cnt / self.pageSize);
                      }
                   });
                },
+
+               fnPage(num) {
+                  this.page = num;
+                  this.fnGetBoardList();
+               },
+               fnPageMove(dir) {
+                  if (dir === "next" && this.page < this.index) {
+                     this.page++;
+                  } else if (dir === "prev" && this.page > 1) {
+                     this.page--;
+                  }
+                  this.fnGetBoardList();
+               },
+
+               fnBoardView(boardNo) {
+                  pageChange("/board/view.do", { boardNo: boardNo });
+               },
+
                fnGetChatList() {
                   var self = this;
                   var nparmap = {
-                     userId: self.sessionId
+                     sessionId: self.sessionId
                   };
                   $.ajax({
                      url: "/mypage/my-chat-list.dox",
@@ -333,14 +441,14 @@
                      dataType: "json",
                      success: function (data) {
                         console.log("✅ 채팅 응답: ", data);
-                        self.chatList = data.list?.chatList || [];
+                        self.chatList = data.chatList || [];
                      }
                   });
                },
                fnGetPayList() {
                   var self = this;
                   var nparmap = {
-                     userId: self.sessionId
+                     sessionId: self.sessionId
                   };
                   $.ajax({
                      url: "/mypage/my-pay-list.dox",
@@ -352,6 +460,48 @@
                         self.payList = data.payList || [];
                      }
                   });
+               },
+
+               fnRequestRefund(orderId) {
+                  const self = this;
+                  if (!confirm("해당 결제 건에 대해 환불을 요청하시겠습니까?")) return;
+
+                  $.ajax({
+                     url: "/mypage/Refund.dox",
+                     type: "POST",
+                     data: { orderId: orderId },
+                     success: function() {
+                     alert("환불 요청이 접수되었습니다.");
+                     const pay = self.payList.find(p => p.orderId === orderId);
+                     if (pay) pay.payStatus = "REQUEST";
+                     }
+                  });
+               },
+
+               fnCancelRefund(orderId) {
+                  const self = this;
+                  if (!confirm("환불 요청을 취소하시겠습니까?")) return;
+
+                  $.ajax({
+                     url: "/mypage/RefundCancel.dox",
+                     type: "POST",
+                     data: { orderId: orderId },
+                     success: function() {
+                     alert("환불 요청이 취소되었습니다.");
+                     const pay = self.payList.find(p => p.orderId === orderId);
+                     if (pay) pay.payStatus = "PAID";
+                     }
+                  });
+               },
+
+               getPayStatusText(status) {
+                  switch (status) {
+                     case "PAID": return "결제 완료";
+                     case "REQUEST": return "환불 요청";
+                     case "REFUNDED": return "환불 완료";
+                     case "CANCELLED_REFUND": return "환불 취소";
+                     default: return status;
+                  }
                },
 
                fnEdit() {

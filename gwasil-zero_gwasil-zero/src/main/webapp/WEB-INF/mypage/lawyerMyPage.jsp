@@ -170,12 +170,48 @@
          box-shadow: 0 2px 6px rgba(0,0,0,0.05);
       }
 
+      .section-subtitle {
+         font-size: 28px;
+         font-weight: bold;
+         margin-bottom: 30px;
+         text-align: center;
+         color: #222;
+         position: relative;
+         display: inline-block;
+         padding-bottom: 10px;
+
+         display: block;
+         text-align: center;
+         margin-left: auto;
+         margin-right: auto;
+      }
+
+      .section-subtitle::after {
+         content: "";
+         position: absolute;
+         left: 50%;
+         transform: translateX(-50%);
+         bottom: 0;
+         width: 60px;
+         height: 3px;
+         background-color: #FF5722; /* 주황색 */
+         border-radius: 2px;
+      }
+
+      .message {
+         text-decoration: none;
+         color: #333;
+      }
+
+      .message:hover {
+         color: #e64a19;
+      }
    </style>
 
    <body>
       <jsp:include page="../common/header.jsp" />
       <div id="app">
-         <h2>마이페이지</h2>
+         <h2 class="section-subtitle">마이페이지</h2>
 
          <!-- 내 정보 섹션 -->
          <div class="section">
@@ -279,6 +315,10 @@
          <div class="section chat-section">
             <h3>채팅 내역</h3>
             <table class="payment-table">
+               <colgroup>
+                  <col style="width: 75%;"> <!-- 메시지 열 넓게 -->
+                  <col style="width: 25%;"> <!-- 상대방 열 좁게 -->
+               </colgroup>
               <thead>
                 <tr>
                   <th>메시지</th>
@@ -286,8 +326,8 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-if="chatList.length" v-for="chat in chatList" :key="chat.chatId">
-                  <td>{{ chat.message }}</td>
+                <tr v-if="chatList.length" v-for="chat in chatList" :key="chat.chatNo">
+                  <td><a href="javascript:;" @click="fnChat(chat.chatNo)" class="message">{{ chat.message }}</a></td>
                   <td>{{ chat.partnerName }}</td>
                 </tr>
                 <tr v-else>
@@ -513,12 +553,17 @@
                   data: { sessionId: self.sessionId },
                   dataType: "json",
                   success: function(data) {
+                     console.log(data);
                      self.chatList = data && data.chatList ? data.chatList : [];
                   },
                   error: function() {
                      alert("채팅 내역을 불러오는 중 오류가 발생했습니다.");
                   }
                });
+            },
+
+            fnChat(chatNo) {
+               pageChange("/chat/chat.do", {chatNo : chatNo});
             },
 
             getPayStatusText(status) {
@@ -541,7 +586,7 @@
                this.fnLawyerBoard();
             },
             
-               fnPageMove(dir) {
+            fnPageMove(dir) {
                if (dir === "next" && this.page < this.index) {
                   this.page++;
                } else if (dir === "prev" && this.page > 1) {

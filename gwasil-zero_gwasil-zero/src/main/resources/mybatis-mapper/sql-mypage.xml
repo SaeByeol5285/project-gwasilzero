@@ -4,43 +4,74 @@
 
 <mapper namespace="com.project.gwasil_zero.mapper.MypageMapper">
   	
-	<select id="selectUserBoardList" parameterType="hashmap" resultType="hashmap">
+	<select id="selectUserBoardList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Board">
 	    SELECT
-	        B.BOARD_NO AS boardNo,
-	        B.BOARD_TITLE AS boardTitle,
-	        B.CONTENTS AS contents,
-	        F.FILE_PATH || '/' || F.FILE_REALNAME AS thumb
+	        B.*,
+	        F.FILE_PATH || '/' || F.FILE_REALNAME AS thumb,
+	       	L.LAWYER_NAME
 	    FROM
 	        BOARD B
 	    LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
+	    INNER JOIN LAWYER L ON L.LAWYER_ID = B.LAWYER_ID
+	    WHERE
+	        B.USER_ID = #{userId}
+	    ORDER BY B.CDATE DESC
+	    offset #{page} rows fetch next #{pageSize} rows only
+	</select>
+	
+	<select id="selectBoardCount" parameterType="hashmap" resultType="int">
+	    SELECT COUNT(*)
+	    FROM
+	        BOARD B
+	    LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
+	    INNER JOIN LAWYER L ON L.LAWYER_ID = B.LAWYER_ID
 	    WHERE
 	        B.USER_ID = #{userId}
 	    ORDER BY B.CDATE DESC
 	</select>
 	
-	<select id="selectUserChatList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Chat">
-	    SELECT 
-	        C.CHAT_NO            AS chatNo,
-	        L.LAWYER_NAME        AS lawyerName,
-	        M.MESSAGE            AS message,
-	        TO_CHAR(M.TIME, 'YYYY-MM-DD HH24:MI') AS chatTime
-	    FROM 
-	        CHAT C
-	    JOIN CHAT_MESSAGE M ON C.CHAT_NO = M.CHAT_NO
-	    JOIN LAWYER L ON C.RECEIVER_ID = L.LAWYER_ID
-	    WHERE 
-	        C.SENDER_ID = #{userId}
-	        AND M.TIME = (
-	            SELECT MAX(TIME) FROM CHAT_MESSAGE WHERE CHAT_NO = C.CHAT_NO
-	        )
-	    ORDER BY M.TIME DESC
+	<select id="selectUserChatList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
+	    SELECT
+		    cm.chat_no,
+		    cm.sender_id,
+		    cm.message,
+		    TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
+		
+		    CASE 
+		        WHEN c.sender_id = #{sessionId} THEN l2.lawyer_name
+		        ELSE l1.lawyer_name
+		    END AS partner_name
+		
+		FROM chat_message cm
+		
+		JOIN (
+		    SELECT chat_no, MAX(time) AS max_time
+		    FROM chat_message
+		    WHERE chat_no IN (
+		        SELECT chat_no
+		        FROM chat
+		        WHERE sender_id = #{sessionId}
+		           OR receiver_id = #{sessionId}
+		    )
+		    GROUP BY chat_no
+		) latest 
+		    ON cm.chat_no = latest.chat_no 
+		   AND cm.time = latest.max_time
+		
+		JOIN chat c ON cm.chat_no = c.chat_no
+		
+		LEFT JOIN lawyer l1 ON c.sender_id = l1.lawyer_id
+		LEFT JOIN lawyer l2 ON c.receiver_id = l2.lawyer_id
+		
+		ORDER BY cm.time DESC
+
 	</select>
 	
 	
 	<select id="selectMyPayList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
 	    SELECT *
 	    FROM PAY
-	   	WHERE USER_ID = #{userId}
+	   	WHERE USER_ID = #{sessionId}
 	    
 	</select>
 	
@@ -164,17 +195,20 @@
     </update>
     
     <select id="selectLastChat" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
-	    SELECT cm.chat_no,
-	           cm.sender_id,
-	           u.user_name AS sender_name,
-	           cm.message,
-	           TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
+	    SELECT
+	        cm.chat_no,
+	        cm.sender_id,
+	        su.user_name AS sender_name,
+	        cm.message,
+	        TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
 	
-	           CASE 
-	               WHEN c.sender_id = #{sessionId} THEN u2.user_name
-	               ELSE u1.user_name
-	           END AS partner_name
+	        CASE 
+	            WHEN c.sender_id = #{sessionId} THEN ru.user_name
+	            ELSE su2.user_name
+	        END AS partner_name
+	
 	    FROM chat_message cm
+	
 	    JOIN (
 	        SELECT chat_no, MAX(time) AS max_time
 	        FROM chat_message
@@ -186,12 +220,15 @@
 	        )
 	        GROUP BY chat_no
 	    ) latest ON cm.chat_no = latest.chat_no AND cm.time = latest.max_time
+	
 	    JOIN chat c ON cm.chat_no = c.chat_no
-	    LEFT JOIN tbl_user u ON cm.sender_id = u.user_id
-	    LEFT JOIN tbl_user u1 ON c.sender_id = u1.user_id
-	    LEFT JOIN tbl_user u2 ON c.receiver_id = u2.user_id
+	
+	    LEFT JOIN tbl_user su ON cm.sender_id = su.user_id
+	
+	    LEFT JOIN tbl_user su2 ON c.sender_id = su2.user_id
+	    LEFT JOIN tbl_user ru ON c.receiver_id = ru.user_id
+	
 	    ORDER BY cm.time DESC
 	</select>
-
     
 </mapper>

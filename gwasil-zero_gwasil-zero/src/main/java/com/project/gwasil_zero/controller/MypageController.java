@@ -97,7 +97,7 @@ public class MypageController {
 	@ResponseBody
 	public String myChatList(@RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<>();
-		resultMap.put("list", mypageService.selectMyChatList(map));
+		resultMap = mypageService.selectMyChatList(map);
 		return new Gson().toJson(resultMap);
 	}
 

@@ -20,7 +20,7 @@ public interface MypageMapper {
 	
 	List<User> selectUserForMypage(HashMap<String, Object> map);
 
-	List<Chat> selectUserChatList(HashMap<String, Object> map);
+	List<ChatMessage> selectUserChatList(HashMap<String, Object> map);
 
 	int updateUserInfo(HashMap<String, Object> map);
 	
@@ -51,5 +51,7 @@ public interface MypageMapper {
 	void updateCancel(HashMap<String, Object> map);
 
 	List<ChatMessage> selectLastChat(HashMap<String, Object> map);
+
+	int selectBoardCount(HashMap<String, Object> map);
 
 }

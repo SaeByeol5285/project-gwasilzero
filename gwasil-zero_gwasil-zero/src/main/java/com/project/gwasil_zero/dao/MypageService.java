@@ -63,6 +63,10 @@ public class MypageService {
 	    try {
 		    List<Board> boardList = mypageMapper.selectUserBoardList(map);
 		    resultMap.put("boardList", boardList);
+		    
+		    int cnt = mypageMapper.selectBoardCount(map);
+			resultMap.put("cnt", cnt);
+		    
 			resultMap.put("result", "success");		
 			
 		} catch (Exception e) {
@@ -95,7 +99,7 @@ public class MypageService {
 	public HashMap<String, Object> selectMyChatList(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
 	    try {
-	        List<Chat> chatList = mypageMapper.selectUserChatList(map);
+	        List<ChatMessage> chatList = mypageMapper.selectUserChatList(map);
 	        resultMap.put("chatList", chatList);
 	        resultMap.put("result", "success");
 	    } catch (Exception e) {
@@ -206,21 +210,11 @@ public class MypageService {
 	public HashMap<String, Object> getChatList(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-	    
-		//chatlist는 해당 사용자의 id를 조회하여 해당 사용자가 있는 1ㄷ1채팅방의 채팅방번호들의 리스트
 		List<ChatMessage> chatList = mypageMapper.selectLastChat(map);
 		resultMap.put("chatList", chatList);
-//	    
-//		//채팅방번호들 가지고 chat_massage테이블 조회해서. 가장 늦게 올린 chat_massage를 받아오면 되겠지
-//	    List<ChatMessage> lastMessageList = new 
-//	    for() {
-//	    	ChatMessage cm = chatMapper.asdasdasd();
-//	    	lastMessageList.put("");
-//	    }
-	    
 	    
 	    resultMap.put("result", "success");
-	    return null;
+	    return resultMap;
 	}
 
    

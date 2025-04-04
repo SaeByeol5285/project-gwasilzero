@@ -21,7 +21,6 @@
         data() {
             return {
 				list : []
-				
             };
         },
         methods: {

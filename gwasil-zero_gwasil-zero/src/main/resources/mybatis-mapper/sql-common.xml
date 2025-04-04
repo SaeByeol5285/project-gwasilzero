@@ -18,6 +18,14 @@
 		LEFT JOIN CATEGORIES CT ON T.BOARD_NO = CT.BOARD_NO
         INNER JOIN CATEGORIES_MASTER M ON CT.CATEGORY = M.CATEGORY_NO
 	</select>
+	
+	<select id="selectLawyerList" resultType="com.project.gwasil_zero.model.Lawyer">
+		SELECT *
+		FROM LAWYER
+		WHERE COUNSEL = 'now'
+		ORDER BY DBMS_RANDOM.VALUE
+		OFFSET 0 ROWS FETCH NEXT 6 ROWS ONLY
+	</select>
 
 
 </mapper>

@@ -272,7 +272,7 @@
                                     <div class="license-card" v-for="item in license" :key="item.licenseName">
                                         <div class="license-name">{{ item.licenseName }}</div>
                                         <img v-if="item.licenseFilePath" :src="item.licenseFilePath" alt="자격증 이미지" />
-                                        <div v-else style="font-size: 12px; color: #aaa;">이미지 없음</div>
+                                        <div v-else class="no-data">이미지 없음</div>
                                     </div>
                                 </div>
                                 <div v-else class="no-data">등록된 자격증이 없습니다.</div>
@@ -324,7 +324,7 @@
                         type: "POST",
                         data: { lawyerId: self.lawyerId },
                         success: function (data) {
-                            // console.log(data. info);
+                            // console.log(data. license);
                             self.info = data.info;
                             self.license = data.license;
                             self.mainCaseList = data.mainCaseList || [];

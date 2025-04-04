@@ -90,7 +90,7 @@
                                 </ul>
                             </div>
                         </li>
-                        <li class="menu-item" v-if="sessionStatus === 'A'">
+                        <li class="menu-item" v-if="sessionStatus === 'ADMIN'">
                             <a href="/admin/main.do" class="menu-font">관리자 페이지</a>
                         </li>
                     </ul>
@@ -105,9 +105,9 @@
             data() {
                 return {
                     showNotification: false,
-                    sessionId: "${sessionScope.sessionId}",
-                    sessionType: "${sessionScope.sessionType}",
-                    sessionStatus: "A", // 예: A, U 등 "${sessionScope.sessionStatus}"
+                    sessionId: "${sessionId}",
+                    sessionType: "${sessionType}",
+                    sessionStatus: "${sessionStatus}", // ADMIN
                     list: [],
                     commentNoti: [],
                     messageNoti: [],

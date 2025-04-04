@@ -22,7 +22,6 @@
 		<jsp:include page="../common/header.jsp" />
 		<div id="app">
 			<div class="container">
-
 				<!-- 변호사 소개 영역 -->
 				<section>
 					<div class="section-title">변호사 소개</div>
@@ -117,8 +116,6 @@
 							if (data.result === "success") {
 								console.log(data);
 								self.lawyerList = data.list;
-
-								// ✅ 이게 핵심!
 								self.$nextTick(() => {
 									self.initSwiper();
 								});
@@ -146,7 +143,7 @@
 							prevEl: '.swiper-button-prev',
 						},
 						centeredSlides: false,
-						grabCursor: true,           // ✅ 마우스로 끌기 UX
+						grabCursor: true,
 					});
 				}
 			},

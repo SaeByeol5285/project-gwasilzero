@@ -415,7 +415,7 @@
                fnEditReview(item) {
                   const self = this;
                   if (!item.contents?.trim()) {
-                     alert("리뷰 내용을 입력해주세요.");
+                     alert("리뷰 내용을     입력해주세요.");
                      return;
                   }
                   const params = {

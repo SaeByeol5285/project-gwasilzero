@@ -58,6 +58,8 @@ public interface AdminMapper {
 
 	List<HashMap<String, Object>> selectStatUserLine(HashMap<String, Object> map);
 
+	List<HashMap<String, Object>> selectStatLawyerLine(HashMap<String, Object> map);
+
 	
 	
 }

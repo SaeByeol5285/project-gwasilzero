@@ -12,5 +12,6 @@ public class Pay {
 	private String lawyerId;
 	private String payStatus;
 	private String price;
+	private String refundTime;
 
 }

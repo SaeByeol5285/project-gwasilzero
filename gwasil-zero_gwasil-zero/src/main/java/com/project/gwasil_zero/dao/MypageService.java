@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.project.gwasil_zero.mapper.MypageMapper;
 import com.project.gwasil_zero.model.Board;
 import com.project.gwasil_zero.model.Chat;
+import com.project.gwasil_zero.model.ChatMessage;
 import com.project.gwasil_zero.model.Pay;
 import com.project.gwasil_zero.model.Lawyer;
 import com.project.gwasil_zero.model.User;
@@ -62,6 +63,10 @@ public class MypageService {
 	    try {
 		    List<Board> boardList = mypageMapper.selectUserBoardList(map);
 		    resultMap.put("boardList", boardList);
+		    
+		    int cnt = mypageMapper.selectBoardCount(map);
+			resultMap.put("cnt", cnt);
+		    
 			resultMap.put("result", "success");		
 			
 		} catch (Exception e) {
@@ -94,7 +99,7 @@ public class MypageService {
 	public HashMap<String, Object> selectMyChatList(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
 	    try {
-	        List<Chat> chatList = mypageMapper.selectUserChatList(map);
+	        List<ChatMessage> chatList = mypageMapper.selectUserChatList(map);
 	        resultMap.put("chatList", chatList);
 	        resultMap.put("result", "success");
 	    } catch (Exception e) {
@@ -169,6 +174,46 @@ public class MypageService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 	    mypageMapper.updateBoardStatus(map);
 	    resultMap.put("result", "success");      
+	    return resultMap;
+	}
+
+	public HashMap<String, Object> getLawyerPay(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<>();
+		    try {
+		        List<Pay> lawyerPayList = mypageMapper.selectLawyerPay(map);
+		        resultMap.put("lawyerPayList", lawyerPayList);
+		        resultMap.put("result", "success");
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        resultMap.put("result", "fail");
+		    }
+		    return resultMap;
+	}
+
+	public HashMap<String, Object> payStatusUpdate(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+	    mypageMapper.updatePayStatus(map);
+	    resultMap.put("result", "success");      
+	    return resultMap;
+	}
+
+	public HashMap<String, Object> cancelUpdate(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+	    mypageMapper.updateCancel(map);
+	    resultMap.put("result", "success");      
+	    return resultMap;
+	}
+
+	public HashMap<String, Object> getChatList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		List<ChatMessage> chatList = mypageMapper.selectLastChat(map);
+		resultMap.put("chatList", chatList);
+	    
+	    resultMap.put("result", "success");
 	    return resultMap;
 	}
 

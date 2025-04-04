@@ -46,7 +46,7 @@
 							<option value="writer">작성자</option>
 						</select>
 						<input v-model="keyword" @keyup.enter="fnNoticeList" class="search-input" placeholder="검색어 입력">
-						<button @click="fnNoticeList" class="btn btn-primary">검색</button>
+						<button @click="resetPage = true; fnNoticeList" class="btn btn-primary">검색</button>
 					</div>
 					<select v-model="pageSize" @change="fnNoticeList" class="search-select" style="min-width: 100px;">
 						<option value="5">5개씩</option>
@@ -82,7 +82,7 @@
 						</select>
 						<input v-model="keyword" @keyup.enter="fnHelpList" class="search-input" placeholder="검색어 입력">
 						<button v-if="keyword" @click="keyword = ''" class="btn btn-small">×</button>
-						<button @click="fnHelpList" class="btn btn-primary">검색</button>
+						<button @click="resetPage = true; fnHelpList" class="btn btn-primary">검색</button>
 					</div>
 					<select v-model="pageSize" @change="fnHelpList" class="search-select" style="min-width: 100px;">
 						<option value="5">5개씩</option>
@@ -175,6 +175,7 @@
 					currentTab: "notice", // 기본 탭,
 					kind: "", //글종류 : NOTICE, HELP, GUIDE
 					showGuide: true,
+					resetPage: false,
 					cards: [
 						{
 							title: "1. 신호 위반",
@@ -347,7 +348,11 @@
 						success: function (data) {
 							self.list = data.list;
 							self.index = Math.ceil(data.count / self.pageSize);
-							self.page = 1;
+							//초기 진입일 때만 페이지 1로
+							if (self.resetPage) {
+								self.page = 1;
+								self.resetPage = false;
+							}
 						}
 					});
 				},
@@ -369,8 +374,11 @@
 							console.log(data);
 							self.list = data.list;
 							self.index = Math.ceil(data.count / self.pageSize);
-							self.page = 1;
-
+							//초기 진입일 때만 페이지 1로
+							if (self.resetPage) {
+								self.page = 1;
+								self.resetPage = false;
+							}
 						}
 					});
 				},
@@ -431,6 +439,7 @@
 			},
 			watch: {
 				currentTab(newVal) {
+					this.page = 1;
 					if (newVal === 'notice') {
 						this.fnNoticeList();
 					} else if (newVal === 'help') {
@@ -454,11 +463,12 @@
 				}
 
 				// 탭에 따라 초기 데이터 로딩
+				this.resetPage = true;
 				if (this.currentTab === "notice") {
 					this.fnNoticeList();
 				} else if (this.currentTab === "help") {
 					this.fnHelpList();
-				} 
+				}
 				window.addEventListener("scroll", this.handleScroll);
 			}
 		});

@@ -2,12 +2,14 @@ package com.project.gwasil_zero.mapper;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
 import com.project.gwasil_zero.model.Board;
 import com.project.gwasil_zero.model.BoardCmt;
 import com.project.gwasil_zero.model.BoardFile;
+import com.project.gwasil_zero.model.Lawyer;
 
 @Mapper
 public interface BoardMapper {
@@ -42,5 +44,7 @@ public interface BoardMapper {
 	void deleteBoardCmt(HashMap<String, Object> map);
 	
 	void updateBoardCmt(HashMap<String, Object> map);
+	
+	Lawyer checkLawyerStatus(HashMap<String, Object> map);
 
 }

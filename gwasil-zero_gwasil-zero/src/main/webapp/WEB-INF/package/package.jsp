@@ -12,14 +12,18 @@
 
 	<title>package.jsp</title>
 	<style>
-		.package-section-title {
+		.package-section-title::before {
+			content: "📦 ";
 			font-size: 20px;
-			font-weight: bold;
-			color: var(--main-color);
-			text-align: center;
-			margin-bottom: 10px;
 		}
-	
+		.package-section-title {
+			font-size: 22px;
+			font-weight: bold;
+			color: #FF5722;
+			text-align: center;
+			margin: 40px auto 20px auto;
+		}
+
 		.package-container,
 		.lawyer-package-container {
 			display: flex;

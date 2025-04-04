@@ -19,80 +19,83 @@
                     <div>관리자페이지</div>
                     <div>Admin님</div>
                 </div>
-                <div>
-                    <h3>최근 가입 회원</h3>
-                    <table>
-                        <tr>
-                            <th>이름</th>
-                            <th>아이디</th>
-                            <th>등급</th>
-                            <th>가입일자</th>
-                        </tr>
-                        <tr v-for="newMem in newMemList">
-                            <td>{{newMem.userName}}</td>
-                            <td>{{newMem.userId}}</td>
-                            <td>
-                                <span v-if="newMem.userStatus === 'ADMIN'">관리자</span>
-                                <span v-else-if="newMem.userStatus === 'NORMAL'">일반 회원</span>
-                                <span v-else-if="newMem.userStatus === 'OUT'">탈퇴 회원</span>
-                                <span v-else>{{ newMem.userStatus }}</span>
-                            </td>
-                            <td>{{newMem.cdate}}</td>
-                        </tr>
-                    </table>
-                </div>
-                <div>
-                    <h3>회원 목록</h3>
-                    <div class="filter-bar">
-                        <select v-model="searchPeriod">
-                            <option value="ALL">기간설정</option>
-                            <option value="WEEK">1주</option>
-                            <option value="MONTH">1달</option>
-                            <option value="YEAR">1년</option>
-                        </select>
-
-                        <select v-model="searchStatus">
-                            <option value="ALL">회원 분류</option>
-                            <option value="Out">탈퇴</option>
-                            <option value="paid">유료회원</option>
-                            <option value="free">무료회원</option>
-                        </select>
-                        <input type="text" v-model="searchWord" @keyup.enter="fnUserList" placeholder="이름 혹은 패키지 검색" />
-                        <button @click="fnUserList">검색</button>
-                        <span class="result-count">
-                            총 {{ userTotalCount }}명 검색됨
-                        </span>
+                <h2>회원 관리</h2>
+                <div class="content-container">
+                    <div>
+                        <h3>최근 가입 회원</h3>
+                        <table>
+                            <tr>
+                                <th>이름</th>
+                                <th>아이디</th>
+                                <th>등급</th>
+                                <th>가입일자</th>
+                            </tr>
+                            <tr v-for="newMem in newMemList">
+                                <td>{{newMem.userName}}</td>
+                                <td>{{newMem.userId}}</td>
+                                <td>
+                                    <span v-if="newMem.userStatus === 'ADMIN'">관리자</span>
+                                    <span v-else-if="newMem.userStatus === 'NORMAL'">일반 회원</span>
+                                    <span v-else-if="newMem.userStatus === 'OUT'">탈퇴 회원</span>
+                                    <span v-else>{{ newMem.userStatus }}</span>
+                                </td>
+                                <td>{{newMem.cdate}}</td>
+                            </tr>
+                        </table>
                     </div>
-                
-                    <!-- 결과 테이블 자리 -->
-                    <table>
-                        <tr>
-                            <th>이름</th>
-                            <th>아이디</th>
-                            <th>회원분류</th>
-                            <th>신고회수</th>
-                            <th>구매상품</th>
-                            <th>가입일자</th>
-                        </tr>
-                        <tr v-for="user in userList" :key="user.userId">
-                            <td>{{ user.userName }}</td>
-                            <td>{{ user.userId }}</td>
-                            <td>
-                                <span v-if="user.userStatus === 'ADMIN'">관리자</span>
-                                <span v-else-if="user.userStatus === 'NORMAL'">일반 회원</span>
-                                <span v-else-if="user.userStatus === 'OUT'">탈퇴 회원</span>
-                                <span v-else>{{ user.userStatus }}</span>
-                            </td>
-                            <td>{{ user.reportCnt }}</td>
-                            <td>{{ user.packageName }}</td>
-                            <td>{{ user.cdate }}</td>
-                        </tr>
-                    </table>
-                    <div class="pagination">
-                        <a v-if="userPage != 1" href="javascript:;" @click="fnUserPageMove('prev')" class="page-btn">&lt;</a>
-                        <a href="javascript:;" v-for="num in userPageCount" @click="fnUserPage(num)" 
-                           :class="{'active': userPage == num}" class="page-btn">{{num}}</a>
-                        <a v-if="userPage != userPageCount" href="javascript:;" @click="fnUserPageMove('next')" class="page-btn">&gt;</a>
+                    <div>
+                        <h3>회원 목록</h3>
+                        <div class="filter-bar">
+                            <select v-model="searchPeriod">
+                                <option value="ALL">기간설정</option>
+                                <option value="WEEK">1주</option>
+                                <option value="MONTH">1달</option>
+                                <option value="YEAR">1년</option>
+                            </select>
+    
+                            <select v-model="searchStatus">
+                                <option value="ALL">회원 분류</option>
+                                <option value="Out">탈퇴</option>
+                                <option value="paid">유료회원</option>
+                                <option value="free">무료회원</option>
+                            </select>
+                            <input type="text" v-model="searchWord" @keyup.enter="fnUserList" placeholder="이름 혹은 패키지 검색" />
+                            <button @click="fnUserList">검색</button>
+                            <span class="result-count">
+                                총 {{ userTotalCount }}명 검색됨
+                            </span>
+                        </div>
+                    
+                        <!-- 결과 테이블 자리 -->
+                        <table>
+                            <tr>
+                                <th>이름</th>
+                                <th>아이디</th>
+                                <th>회원분류</th>
+                                <th>신고회수</th>
+                                <th>구매상품</th>
+                                <th>가입일자</th>
+                            </tr>
+                            <tr v-for="user in userList" :key="user.userId">
+                                <td>{{ user.userName }}</td>
+                                <td>{{ user.userId }}</td>
+                                <td>
+                                    <span v-if="user.userStatus === 'ADMIN'">관리자</span>
+                                    <span v-else-if="user.userStatus === 'NORMAL'">일반 회원</span>
+                                    <span v-else-if="user.userStatus === 'OUT'">탈퇴 회원</span>
+                                    <span v-else>{{ user.userStatus }}</span>
+                                </td>
+                                <td>{{ user.reportCnt }}</td>
+                                <td>{{ user.packageName }}</td>
+                                <td>{{ user.cdate }}</td>
+                            </tr>
+                        </table>
+                        <div class="pagination">
+                            <a v-if="userPage != 1" href="javascript:;" @click="fnUserPageMove('prev')" class="page-btn">&lt;</a>
+                            <a href="javascript:;" v-for="num in userPageCount" @click="fnUserPage(num)" 
+                               :class="{'active': userPage == num}" class="page-btn">{{num}}</a>
+                            <a v-if="userPage != userPageCount" href="javascript:;" @click="fnUserPageMove('next')" class="page-btn">&gt;</a>
+                        </div>
                     </div>
                 </div>
             </div>

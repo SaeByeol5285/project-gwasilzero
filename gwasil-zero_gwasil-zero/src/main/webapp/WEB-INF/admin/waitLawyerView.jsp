@@ -7,24 +7,8 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-        <title>변호사 상세보기</title>
+        <title>승인 대기 변호사 상세보기</title>
         <style>
-            body {
-                font-family: '맑은 고딕', sans-serif;
-                background-color: #f4f4f4;
-                margin: 0;
-                padding: 0;
-            }
-
-            .layout {
-                padding: 40px 20px;
-            }
-
-            .content {
-                max-width: 1200px;
-                margin: 0 auto;
-            }
-
             .profile-container {
                 display: flex;
                 background-color: #fff;
@@ -206,115 +190,134 @@
                 word-break: break-word;
             }
 
-            .title-area {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-bottom: 1px solid #ff5c00;
-                padding-bottom: 10px;
-                margin-bottom: 20px;
-            }
-
-            .title-area h2 {
-                margin: 0;
-            }
-
             .no-data {
                 color: #999;
                 font-style: italic;
                 font-size: 14px;
                 padding: 6px 0;
             }
+
+            .approve button {
+                height: 36px;
+                padding: 0 16px;
+                background-color: #ff5c00;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-weight: bold;
+                font-size: 14px;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+                margin-left: 5px;
+            }
+
+            .approve button:hover {
+            background-color: #e65100;
+            }
         </style>
     </head>
 
     <body>
         <jsp:include page="../common/header.jsp" />
-        <div id="lawInfoApp">
+        <div id="lawyerDetailApp">
             <div class="layout">
+                <jsp:include page="layout.jsp" />
                 <div class="content">
-                    <div class="title-area">
-                        <h2>변호사 상세보기</h2>
+                    <div class="header">
+                        <div>관리자페이지</div>
+                        <div>Admin님</div>
+                    </div>
+                    <div>
+                        <h3>승인 대기 변호사 상세보기</h3>
                     </div>
                     <div class="profile-container">
                         <div class="profile-photo">
-                            <img src="../../img/66432819ad4f841ac7c5d8a7-original-1715677210341.jpg" alt="프로필 사진">
+                            <div v-if="info.lawyerImg">
+                                <img :src="info.lawyerImg" alt="프로필 사진">
+                            </div>
+                            <div v-else class="no-data">프로필 사진 없음</div>
                             <div class="lawyer-meta">
                                 <div class="lawyer-name">{{ info.lawyerName }}</div>
                                 <div class="lawyer-phone">Tel : {{ info.lawyerPhone }}</div>
                                 <div class="lawyer-email">Email : {{ info.lawyerEmail }}</div>
                             </div>
+                            <div class="approve">
+                                <button @click="fnApprove">승인</button>
+                                <button @click="fnBack">목록</button>
+                            </div>
                         </div>
                         <div class="profile-detail">
                             <div class="section">
                                 <h3>소개</h3>
-                                <div v-if="info.lawyerInfo" v-html="info.lawyerInfo"></div>
+                                <div v-if="info.lawyerInfo" v-html="info.lawyerInfo">{{ info.lawyerInfo }}</div>
                                 <div v-else class="no-data">작성된 소개가 없습니다.</div>
                             </div>
                             <div class="section">
                                 <h3>경력</h3>
-                                <div v-if="info.lawyerCareer" v-html="info.lawyerCareer"></div>
+                                <div v-if="info.lawyerCareer" v-html="info.lawyerCareer">{{ info.lawyerCareer }}</div>
                                 <div v-else class="no-data">작성된 경력이 없습니다.</div>
                             </div>
                             <div class="section">
                                 <h3>주요 업무사례</h3>
-                                <div v-if="info.lawyerTask" v-html="info.lawyerTask"></div>
+                                <div v-if="info.lawyerTask" v-html="info.lawyerTask">{{ info.lawyerTask }}</div>
                                 <div v-else class="no-data">작성된 업무사례가 없습니다.</div>
                             </div>
                             <div class="section">
                                 <h3>학력</h3>
-                                <div v-if="info.lawyerEdu" v-html="info.lawyerEdu"></div>
+                                <div v-if="info.lawyerEdu" v-html="info.lawyerEdu">{{ info.lawyerEdu }}</div>
                                 <div v-else class="no-data">작성된 학력이 없습니다.</div>
                             </div>
                             <div class="section">
-                                <h3>자격 취득</h3>
-                                <div v-if="license.length > 0" class="license-list">
-                                    <div class="license-card" v-for="item in license" :key="item.licenseName">
-                                        <div class="license-name">{{ item.licenseName }}</div>
-                                        <img v-if="item.licenseFilePath" :src="item.licenseFilePath" alt="자격증 이미지" />
-                                        <div v-else class="no-data">이미지 없음</div>
-                                    </div>
-                                </div>
-                                <div v-else class="no-data">등록된 자격증이 없습니다.</div>
+                                <h3>출생년도</h3>
+                                <div v-if="info.birth">{{ info.birth }}</div>
+                                <div v-else class="no-data">작성된 생년월일이 없습니다.</div>
                             </div>
                             <div class="section">
-                                <h3>대표 사건 목록</h3>
-                                <div v-if="validCaseList.length > 0" class="case-list">
-                                    <div class="case-card" v-for="caseItem in validCaseList" :key="caseItem.BOARD_NO">
-                                        <img v-if="caseItem.thumbnailPath" :src="caseItem.thumbnailPath"
-                                            class="preview-img" />
-                                        <div v-else class="preview-img no-thumbnail">썸네일 없음</div>
-                                        <div class="case-title">{{ caseItem.BOARD_TITLE }}</div>
-                                        <div class="case-desc">{{ caseItem.CONTENTS }}</div>
-                                    </div>
+                                <h3>소속 법무 법인</h3>
+                                <div v-if="info.officproofName">{{ info.officproofName }}</div>
+                                <div v-else class="no-data">작성된 법인 내용이 없습니다.</div>
+                            </div>
+                            <div class="section">
+                                <h3>변호사 등록번호</h3>
+                                <div v-if="info.lawyerNumber">{{ info.lawyerNumber }}</div>
+                                <div v-else class="no-data">작성된 변호사 등록번호가 없습니다.</div>
+                            </div>
+                            <div class="section">
+                                <h3>변호사 취득일시</h3>
+                                <div v-if="info.passYears">{{ info.passYears }}</div>
+                                <div v-else class="no-data">작성된 변호사 취득일시가 없습니다.</div>
+                            </div>
+                            <div class="section">
+                                <h3>변호사 자격증명</h3>
+                                <div v-if="info.lawyerLiscensName">{{ info.lawyerLiscensName }}</div>
+                                <div v-else class="no-data">등록된 변호사 자격증명이 없습니다.</div>
+                            </div>
+                            <div class="section">
+                                <h3>변호사 자격증 사본</h3>
+                                <div v-if="info.lawyerLiscensPath">
+                                    <img :src="info.lawyerLiscensPath" alt="자격증 사본">
                                 </div>
-                                <div v-else class="no-data">대표 사건 사례가 등록되지 않았습니다.</div>
+                                <div v-else class="no-data">등록된 변호사 자격증 사본 없습니다.</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <jsp:include page="/WEB-INF/profile/recentViewBox.jsp" />
         <jsp:include page="../common/footer.jsp" />
     </body>
 
     </html>
     <script>
-        const lawInfoApp = Vue.createApp({
+        const urlParams = new URLSearchParams(location.search);
+        const lawyerId = urlParams.get("lawyerId");
+
+        const lawyerDetailApp = Vue.createApp({
             data() {
                 return {
-                    lawyerId: "${map.lawyerId}",
                     info: {},
-                    sessionId: "${sessionId}",
                     license: [],
-                    mainCaseList: []
                 };
-            },
-            computed: {
-                validCaseList() {
-                    return this.mainCaseList.filter(item => item != null);
-                }
             },
             methods: {
                 fnGetLawyerInfo() {
@@ -323,38 +326,29 @@
                         url: "/profile/info.dox",
                         dataType: "json",
                         type: "POST",
-                        data: { lawyerId: self.lawyerId },
+                        data: { lawyerId: lawyerId },
                         success: function (data) {
-                            // console.log(data. license);
+                            // console.log(data. info);
                             self.info = data.info;
                             self.license = data.license;
-                            self.mainCaseList = data.mainCaseList || [];
                         }
                     });
+                },
+                fnApprove() {
+                    if (confirm("이 변호사를 승인하시겠습니까?")) {
+                        $.post("/admin/lawApprove.dox", { lawyerId: lawyerId }, function () {
+                            alert("승인 처리되었습니다.");
+                            location.href = "lawyer.do";
+                        });
+                    }
+                },
+                fnBack() {
+                    history.back();
                 }
             },
             mounted() {
                 this.fnGetLawyerInfo();
-                const self = this;
-
-                setTimeout(function () {
-                    // info 값이 없으면 저장 안 함
-                    if (!self.info || !self.info.lawyerName) return;
-
-                    var item = {
-                        type: 'lawyer',
-                        id: self.lawyerId,
-                        name: self.info.lawyerName,
-                        image: self.info.thumbnailPath || null
-                    };
-
-                    var list = JSON.parse(localStorage.getItem('recentViewed') || '[]');
-                    list = list.filter(i => !(i.type === item.type && i.id === item.id)); // 중복 제거
-                    list.unshift(item);
-                    if (list.length > 5) list = list.slice(0, 5);
-                    localStorage.setItem('recentViewed', JSON.stringify(list));
-                }, 500);
             }
         });
-        lawInfoApp.mount('#lawInfoApp');
+        lawyerDetailApp.mount('#lawyerDetailApp');
     </script>

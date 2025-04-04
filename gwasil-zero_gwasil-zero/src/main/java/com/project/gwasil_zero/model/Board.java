@@ -19,5 +19,6 @@ public class Board {
 	private String lawyerName;
 	private String userName;
 	private String category;
+	private int cmtCount;
 
 }

@@ -20,97 +20,110 @@
                         <div>관리자페이지</div>
                         <div>Admin님</div>
                     </div>
-                    <div>
-                        <!-- 변호사 승인 처리 -->
-                        <h3>변호사 승인 대기 목록 (총 : {{ lawWaitTotal }}명 대기중)</h3>
-                        <table>
-                            <tr>
-                                <th>이름</th>
-                                <th>아이디</th>
-                                <th>주소</th>
-                                <th>소속 유형</th>
-                                <th>승인여부</th>
-                            </tr>
-                            <tr v-for="lawWait in lawWaitList" :key="lawWait.lawyerId">
-                                <td>{{lawWait.lawyerName}}</td>
-                                <td>{{lawWait.lawyerId}}</td>
-                                <td>{{lawWait.lawyerAddr}}</td>
-                                <td>
-                                    <span v-if="lawWait.lawyerStatus === 'I'">소속 변호사</span>
-                                    <span v-else-if="lawWait.lawyerStatus === 'P'">개인 변호사</span>
-                                    <span v-else>-</span>
-                                </td>
-                                <td>
-                                    <button @click="fnApprove(lawWait.lawyerId)">승인</button>
-                                </td>
-                            </tr>
-                        </table>
-                        <!-- 승인 대기 목록 페이징 -->
-                        <div class="pagination">
-                            <a v-if="waitPage != 1" href="javascript:;" @click="fnWaitPageMove('prev')"
-                                class="page-btn">&lt;</a>
-                            <a v-for="num in waitPageCount" :class="{active: waitPage === num}" href="javascript:;"
-                                @click="fnWaitPage(num)" class="page-btn">{{ num }}</a>
-                            <a v-if="waitPage != waitPageCount" href="javascript:;" @click="fnWaitPageMove('next')"
-                                class="page-btn">&gt;</a>
-                        </div>
-                        <!-- 승인 완료 변호사 목록 -->
-                        <h3>현재 변호사 목록 (총 : {{ lawPassedTotal }}명 등록중)</h3>
-                        <table>
-                            <tr>
-                                <th>이름</th>
-                                <th>아이디</th>
-                                <th>주소</th>
-                                <th>소속 유형</th>
-                                <th>승인여부</th>
-                            </tr>
-                            <tr v-for="lawPassed in lawPassedList" :key="lawPassed.lawyerId">
-                                <td>{{lawPassed.lawyerName}}</td>
-                                <td>{{lawPassed.lawyerId}}</td>
-                                <td>{{lawPassed.lawyerAddr}}</td>
-                                <td>
-                                    <span v-if="lawPassed.lawyerStatus === 'I'">소속 변호사</span>
-                                    <span v-else-if="lawPassed.lawyerStatus === 'P'">개인 변호사</span>
-                                    <span v-else>-</span>
-                                </td>
-                                <td>
-                                    <button @click="fnCancel(lawPassed.lawyerId)">승인취소</button>
-                                </td>
-                            </tr>
-                        </table>
-                        <div class="pagination">
-                            <a v-if="passedPage != 1" href="javascript:;" @click="fnPassedPageMove('prev')"
-                                class="page-btn">&lt;</a>
-                            <a v-for="num in passedPageCount" :class="{active: passedPage === num}" href="javascript:;"
-                                @click="fnPassedPage(num)" class="page-btn">{{ num }}</a>
-                            <a v-if="passedPage != passedPageCount" href="javascript:;"
-                                @click="fnPassedPageMove('next')" class="page-btn">&gt;</a>
-                        </div>
-                        <!-- 탈퇴 변호사 목록 -->
-                        <h3>탈퇴 변호사 목록 (총 : {{ lawOutTotal }}명 탈퇴)</h3>
-                        <table>
-                            <tr>
-                                <th>이름</th>
-                                <th>아이디</th>
-                                <th>주소</th>
-                                <th>재가입 승인</th>
-                            </tr>
-                            <tr v-for="lawOut in lawOutList" :key="lawOut.lawyerId">
-                                <td>{{lawOut.lawyerName}}</td>
-                                <td>{{lawOut.lawyerId}}</td>
-                                <td>{{lawOut.lawyerAddr}}</td>
-                                <td>
-                                    <button @click="fnComeBack(lawOut.lawyerId)">재가입</button>
-                                </td>
-                            </tr>
-                        </table>
-                        <div class="pagination">
-                            <a v-if="outPage != 1" href="javascript:;" @click="fnOutPageMove('prev')"
-                                class="page-btn">&lt;</a>
-                            <a v-for="num in outPageCount" :class="{active: outPage === num}" href="javascript:;"
-                                @click="fnOutPage(num)" class="page-btn">{{ num }}</a>
-                            <a v-if="outPage != outPageCount" href="javascript:;" @click="fnOutPageMove('next')"
-                                class="page-btn">&gt;</a>
+                    <h2>변호사 관리</h2>
+                    <div class="content-container">
+                        <div>
+                            <!-- 변호사 승인 처리 -->
+                            <h3>변호사 승인 대기 목록 (총 : {{ lawWaitTotal }}명 대기중)</h3>
+                            <table>
+                                <tr>
+                                    <th>이름</th>
+                                    <th>아이디</th>
+                                    <th>소속 법무 법인</th>
+                                    <th>변호사 등록번호</th>
+                                    <th>변호사 취득일시</th>
+                                    <th>소속 유형</th>
+                                </tr>
+                                <tr v-for="lawWait in lawWaitList" :key="lawWait.lawyerId">
+                                    <td>
+                                        <a :href="'waitLawyerView.do?lawyerId=' + lawWait.lawyerId + '&page=lawyer'">{{ lawWait.lawyerName }}</a>
+                                    </td>
+                                    <td>{{lawWait.lawyerId}}</td>
+                                    <td>{{lawWait.officproofName}}</td>
+                                    <td>{{lawWait.lawyerNumber}}</td>
+                                    <td>{{lawWait.passYears}}</td>
+                                    <td>
+                                        <span v-if="lawWait.lawyerStatus === 'I'">소속 변호사</span>
+                                        <span v-else-if="lawWait.lawyerStatus === 'P'">개인 변호사</span>
+                                        <span v-else>-</span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <!-- 승인 대기 목록 페이징 -->
+                            <div class="pagination">
+                                <a v-if="waitPage != 1" href="javascript:;" @click="fnWaitPageMove('prev')"
+                                    class="page-btn">&lt;</a>
+                                <a v-for="num in waitPageCount" :class="{active: waitPage === num}" href="javascript:;"
+                                    @click="fnWaitPage(num)" class="page-btn">{{ num }}</a>
+                                <a v-if="waitPage != waitPageCount" href="javascript:;" @click="fnWaitPageMove('next')"
+                                    class="page-btn">&gt;</a>
+                            </div>
+                            <!-- 승인 완료 변호사 목록 -->
+                            <h3>현재 변호사 목록 (총 : {{ lawPassedTotal }}명 등록중)</h3>
+                            <table>
+                                <tr>
+                                    <th>이름</th>
+                                    <th>아이디</th>
+                                    <th>소속 법무 법인</th>
+                                    <th>변호사 등록번호</th>
+                                    <th>변호사 취득일시</th>
+                                    <th>소속 유형</th>
+                                    <th>승인 취소</th>
+                                </tr>
+                                <tr v-for="lawPassed in lawPassedList" :key="lawPassed.lawyerId">
+                                    <td>{{lawPassed.lawyerName}}</td>
+                                    <td>{{lawPassed.lawyerId}}</td>
+                                    <td>{{lawPassed.officproofName}}</td>
+                                    <td>{{lawPassed.lawyerNumber}}</td>
+                                    <td>{{lawPassed.passYears}}</td>
+                                    <td>
+                                        <span v-if="lawPassed.lawyerStatus === 'I'">소속 변호사</span>
+                                        <span v-else-if="lawPassed.lawyerStatus === 'P'">개인 변호사</span>
+                                        <span v-else>-</span>
+                                    </td>
+                                    <td>
+                                        <button @click="fnCancel(lawPassed.lawyerId)">승인취소</button>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="pagination">
+                                <a v-if="passedPage != 1" href="javascript:;" @click="fnPassedPageMove('prev')"
+                                    class="page-btn">&lt;</a>
+                                <a v-for="num in passedPageCount" :class="{active: passedPage === num}" href="javascript:;"
+                                    @click="fnPassedPage(num)" class="page-btn">{{ num }}</a>
+                                <a v-if="passedPage != passedPageCount" href="javascript:;"
+                                    @click="fnPassedPageMove('next')" class="page-btn">&gt;</a>
+                            </div>
+                            <!-- 탈퇴 변호사 목록 -->
+                            <h3>탈퇴 변호사 목록 (총 : {{ lawOutTotal }}명 탈퇴)</h3>
+                            <table>
+                                <tr>
+                                    <th>이름</th>
+                                    <th>아이디</th>
+                                    <th>소속 법무 법인</th>
+                                    <th>변호사 등록번호</th>
+                                    <th>변호사 취득일시</th>
+                                    <th>재가입 승인</th>
+                                </tr>
+                                <tr v-for="lawOut in lawOutList" :key="lawOut.lawyerId">
+                                    <td>{{lawOut.lawyerName}}</td>
+                                    <td>{{lawOut.lawyerId}}</td>
+                                    <td>{{lawOut.officproofName}}</td>
+                                    <td>{{lawOut.lawyerNumber}}</td>
+                                    <td>{{lawOut.passYears}}</td>
+                                    <td>
+                                        <button @click="fnComeBack(lawOut.lawyerId)">재가입</button>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="pagination">
+                                <a v-if="outPage != 1" href="javascript:;" @click="fnOutPageMove('prev')"
+                                    class="page-btn">&lt;</a>
+                                <a v-for="num in outPageCount" :class="{active: outPage === num}" href="javascript:;"
+                                    @click="fnOutPage(num)" class="page-btn">{{ num }}</a>
+                                <a v-if="outPage != outPageCount" href="javascript:;" @click="fnOutPageMove('next')"
+                                    class="page-btn">&gt;</a>
+                            </div>
                         </div>
                     </div>
                 </div>

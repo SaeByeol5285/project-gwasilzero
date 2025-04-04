@@ -94,8 +94,7 @@
 			};
 		},
 		methods: {
-			methods: {
-                fnGo(item) {
+			fnGo(item) {
                     console.log("클릭된 아이템 ▶", item); 
                     if (item.type === 'lawyer') {
                         const url = "/profile/view.do?lawyerId=" + item.id;
@@ -107,7 +106,6 @@
                         location.href = url;
                     }
                 }
-            }
 		},
 		mounted() {
 			var self = this;

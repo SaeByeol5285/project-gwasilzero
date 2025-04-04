@@ -32,5 +32,6 @@ public class Lawyer {
 	private String lawyerLiscensPath; 
 	private String officproofName; 
 	private String officproofPath;
+	private String cdate;
   
 }

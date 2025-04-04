@@ -145,18 +145,17 @@
 					isLoading: false,
 					statusMessage: "",
 					categoryList: [
-					                 { value: "01", label: "신호 위반" },
-					                 { value: "02", label: "보행자 사고" },
-					                 { value: "03", label: "음주/무면허 사고" },
-					                 { value: "04", label: "끼어들기/진로 변경" },
-					                 { value: "05", label: "주차/문 개방" },
-					                 { value: "06", label: "중앙선 침범" },
-					                 { value: "07", label: "과속/안전거리 미확보" },
-					                 { value: "08", label: "역주행/일방통행" },
-					                 { value: "09", label: "불법 유턴/좌회전" },
-					                 { value: "10", label: "기타/복합 사고" }
-					              ],
-,
+						{ value: "01", label: "신호 위반" },
+						{ value: "02", label: "보행자 사고" },
+						{ value: "03", label: "음주/무면허 사고" },
+						{ value: "04", label: "끼어들기/진로 변경" },
+						{ value: "05", label: "주차/문 개방" },
+						{ value: "06", label: "중앙선 침범" },
+						{ value: "07", label: "과속/안전거리 미확보" },
+						{ value: "08", label: "역주행/일방통행" },
+						{ value: "09", label: "불법 유턴/좌회전" },
+						{ value: "10", label: "기타/복합 사고" }
+					],
 					selectedCategory: "",
 					sessionId: "${sessionScope.sessionId}"
 				};

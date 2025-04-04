@@ -85,7 +85,7 @@
 						</div>
 
 						<div class="flex-center mt-40">
-							<a :href="'/board/add.do?category=' + card.category" class="btn btn-primary">이 유형으로 글쓰기</a>
+							<a :href="'/board/add.do?category=' + card.category_no" class="btn btn-primary">이 유형으로 글쓰기</a>
 						</div>
 					</div>
 				</div>
@@ -116,7 +116,8 @@
 							"caution": "명백한 신호위반은 100% 과실 가능성 높음",
 							"guide": "위 상황과 유사하다면 ‘신호 위반’ 카테고리를 선택해주세요.",
 							"imageCount": 3,
-							"category": "signal_violation"
+							"category": "signal_violation",
+							"category_no": "01"
 						},
 
 						{
@@ -131,7 +132,8 @@
 							"caution": "스쿨존은 민식이법 적용, 형사처벌 가능성 있음",
 							"guide": "보행자와 관련된 사고라면 ‘보행자 사고’로 선택해주세요.",
 							"imageCount": 5,
-							"category": "pedestrian"
+							"category": "pedestrian",
+							"category_no": "02"
 						},
 
 						{
@@ -146,7 +148,8 @@
 							"caution": "중과실 사고로 형사처벌 및 면허취소 가능",
 							"guide": "위 사항에 해당된다면 ‘음주/무면허’로 선택해주세요.",
 							"imageCount": 2,
-							"category": "drunk_or_nolicense"
+							"category": "drunk_or_nolicense",
+							"category_no": "03"
 						},
 
 						{
@@ -161,7 +164,8 @@
 							"caution": "사고 시 끼어든 차량의 과실이 큼",
 							"guide": "끼어들기·진로 변경 관련 사고라면 이 카테고리를 선택해주세요.",
 							"imageCount": 3,
-							"category": "lane_change"
+							"category": "lane_change",
+							"category_no": "04"
 						},
 
 						{
@@ -176,7 +180,8 @@
 							"caution": "문 개방 사고는 운전자 책임이 큼",
 							"guide": "위 사고 상황이라면 ‘주차/문 개방’ 카테고리를 선택해주세요.",
 							"imageCount": 1,
-							"category": "parking_door"
+							"category": "parking_door",
+							"category_no": "05"
 						},
 
 						{
@@ -191,7 +196,8 @@
 							"caution": "중앙선 침범은 대부분 100% 과실 판단",
 							"guide": "위와 같은 경우라면 ‘중앙선 침범’으로 선택해주세요.",
 							"imageCount": 2,
-							"category": "center_line"
+							"category": "center_line",
+							"category_no": "06"
 						},
 
 						{
@@ -206,7 +212,8 @@
 							"caution": "과속 또는 거리 미확보는 과실 크고 형사처벌 가능",
 							"guide": "위와 같은 상황이라면 ‘과속/안전거리’로 선택해주세요.",
 							"imageCount": 2,
-							"category": "speed_distance"
+							"category": "speed_distance",
+							"category_no": "07"
 						},
 
 						{
@@ -221,7 +228,8 @@
 							"caution": "역주행 차량이 가해자로 판단되는 경우 많음",
 							"guide": "위와 같은 경우라면 ‘역주행/일방통행 위반’ 선택해주세요.",
 							"imageCount": 2,
-							"category": "wrong_way"
+							"category": "wrong_way",
+							"category_no": "08"
 						},
 
 						{
@@ -236,7 +244,8 @@
 							"caution": "명백한 표지 위반은 가해자로 판단됨",
 							"guide": "위 상황이라면 ‘불법 유턴/좌회전’으로 선택해주세요.",
 							"imageCount": 3,
-							"category": "illegal_turn"
+							"category": "illegal_turn",
+							"category_no": "09"
 						},
 
 						{
@@ -251,7 +260,8 @@
 							"caution": "정확한 분석이 필요한 사례",
 							"guide": "분류가 애매하다면 ‘기타/복합 사고’를 선택해주세요.",
 							"imageCount": 3,
-							"category": "etc_case"
+							"category": "etc_case",
+							"category_no": "10"
 						}
 					],
 					openIndex: null

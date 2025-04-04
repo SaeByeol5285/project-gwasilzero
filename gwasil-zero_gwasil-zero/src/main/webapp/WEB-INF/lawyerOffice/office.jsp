@@ -69,7 +69,7 @@
 		.section-subtitle {
 			font-size: 28px;
 			font-weight: bold;
-			margin-bottom: 30px;
+			margin-bottom: 5px;
 			text-align: center;
 			color: #222;
 			position: relative;
@@ -164,19 +164,63 @@
 			background-color: #f44336;
 		}
 
+		.btn-search.active {
+		background-color: #ff5c00;
+		color: white;
+		}
+
+		.pagination-container {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin-top: 30px;
+			margin-bottom: 20px;
+			gap: 6px;
+		}
+
+			.btn {
+			padding: 10px 18px;
+			font-size: 15px;
+			border: none;
+			border-radius: 8px;
+			background-color: #f2f2f2;
+			color: #444;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+			.btn:hover {
+			background-color: #ffe6db;
+			color: #ff5c00;
+		}
+
+			.btn.active {
+			background-color: #ff5c00;
+			color: white;
+			font-weight: bold;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		}
+
+			.btn:disabled {
+			opacity: 0.4;
+			cursor: default;
+		}
+
+
 
 	</style>
 </head>
 <body>
 <jsp:include page="../common/header.jsp" />
-<h2 class="section-subtitle">법률사무소 찾기</h2>
+<h2 class="section-subtitle">법률 사무소 찾기</h2>
 <div id="mapApp" class="container">
 	
 	<!-- ✅ 탭 -->
 	<div class="tabs">
-		<a href="?tab=area"><button class="tab-btn" :class="{active: currentTab==='area'}">지역별</button></a>
-		<a href="?tab=inner"><button class="tab-btn" :class="{active: currentTab==='inner'}">소속 변호사</button></a>
-		<a href="?tab=personal"><button class="tab-btn" :class="{active: currentTab==='personal'}">개인 변호사</button></a>
+		<a href="?tab=area"><button class="tab-btn" :class="{active: currentTab =='area'}">지역별</button></a>
+		<a href="?tab=inner"><button class="tab-btn" :class="{active: currentTab =='inner'}">소속 변호사</button></a>
+		<a href="?tab=personal"><button class="tab-btn" :class="{active: currentTab =='personal'}">개인 변호사</button></a>
 	</div>
 	
 
@@ -219,20 +263,20 @@
 		<div style="text-align: right; margin-bottom: 10px; display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
 			<span style="font-weight: bold; font-size: 14px;">현재 상담 가능 여부</span>
 			<select v-model="filterStatus" class="select-box" style="width: 160px;">
-				<option value="">:: 상담 상태 선택 ::</option>
+				<option value="">:: 전체 ::</option>
 				<option value="now">상담 가능</option>
 				<option value="delayed">상담 지연</option>
 				<option value="disabled">상담 불가능</option>
 			</select>
 		</div>
 
-		<div class="lawyer-card" v-for="lawyer in sortedLawyers" :key="lawyer.lawyerId">
+		<div class="lawyer-card" v-for="lawyer in pagedLawyers" :key="lawyer.lawyerId"  @click="goToLawyerMarker(lawyer)">
 			<div style="display: flex; justify-content: space-between; align-items: flex-start;">
 			  
 			  <!-- 왼쪽: 사진 + 텍스트 -->
 			  <div style="display: flex; gap: 16px; align-items: flex-start;">
 				<!-- 변호사 사진 -->
-				<img :src="lawyer.lawyerImg || '/img/common/profile_default.png'" alt="변호사 사진"
+				<img :src="lawyer.lawyerImg" alt="변호사 사진"
 				  style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;" />
 		  
 				<!-- 텍스트 영역 -->
@@ -252,7 +296,7 @@
 			  </div>
 		  
 			  <!-- 오른쪽: 북마크 아이콘 -->
-			  <div style="display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; height: 100%;">
+			  <div v-if="sessionType != 'lawyer'" style="display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; height: 100%;">
 				<img
 				  :src="isBookmarked(lawyer.lawyerId) ? '/img/selectedBookmark.png' : '/img/Bookmark.png'"
 				  @click.stop="toggleBookmark(lawyer.lawyerId)"
@@ -261,7 +305,22 @@
 			  </div>
 			  
 			</div>
-		</div>		 	
+		</div>	
+		
+		<div class="pagination-container">
+			<button class="btn" @click="page > 1 && (page--)" :disabled="page === 1">〈 이전</button>
+		  
+			<button
+			  v-for="n in pageCount"
+			  :key="n"
+			  @click="page = n"
+			  :class="['btn', page === n ? 'active' : '']"
+			>
+			  {{ n }}
+			</button>
+		  
+			<button class="btn" @click="page < pageCount && (page++)" :disabled="page === pageCount">다음 〉</button>
+		</div>	  
 		
 	</div>
 
@@ -299,7 +358,10 @@ const mapApp = Vue.createApp({
 			sessionId : "${sessionId}",
 			sessionType : "${sessionType}",
 			bookmarkList : [],
-			laweyrId : ""
+			laweyrId : "",
+			page : 1,
+			index : 0,
+			pageSize : 5
 
 		};
 	},
@@ -320,7 +382,7 @@ const mapApp = Vue.createApp({
 					this.fnSearchArea();
 				}
 
-			} else if (newTab === 'inner') {
+			} else if (newTab === 'inner') { // 소속 변호사
 				this.loadLawyers('I');
 			} else {
 				this.loadLawyers('P');
@@ -329,31 +391,47 @@ const mapApp = Vue.createApp({
 	},
 
 	computed: {
+
 		listTitle() {
 			return this.myLatitude && this.myLongitude
 				? "📋 법률 사무소 목록 (거리순)"
 				: "📋 법률 사무소 목록";
 		},
+
 		sortedLawyers() {
 			let filtered = [...this.lawyerList];
 
+			// 상담 상태 필터링
 			if (this.filterStatus) {
-				filtered = filtered.filter(lawyer => lawyer.counsel  === this.filterStatus);
+				filtered = filtered.filter(lawyer => lawyer.counsel === this.filterStatus);
 			}
 
-			// 거리 정렬 or 이름 정렬
 			if (this.myLatitude && this.myLongitude) {
-				filtered.sort((a, b) => {
-					if (a.distance != undefined && b.distance != undefined) {
-						return a.distance - b.distance;
-					}
-					return 0;
-				});
-			} else {
-				filtered.sort((a, b) => a.lawyerName.localeCompare(b.lawyerName));
-			}
+				// 거리 정보가 있는 사람과 없는 사람 나누기
+				const withDistance = filtered.filter(l => l.distance !== undefined);
+				const withoutDistance = filtered.filter(l => l.distance === undefined);
 
-			return filtered;
+				// 거리순 정렬
+				withDistance.sort((a, b) => a.distance - b.distance);
+
+				// 거리 없는 사람은 뒤로 붙이기
+				return [...withDistance, ...withoutDistance];
+			} else {
+				// 이름순 정렬 (기본)
+				return filtered.sort((a, b) => a.lawyerName.localeCompare(b.lawyerName));
+			}
+		},
+
+
+		// 페이징
+		pagedLawyers() {
+			const start = (this.page - 1) * this.pageSize;
+			const end = start + this.pageSize;
+			return this.sortedLawyers.slice(start, end);
+		},
+
+		pageCount() {
+			return Math.ceil(this.sortedLawyers.length / this.pageSize);
 		}
 
 	},
@@ -412,7 +490,6 @@ const mapApp = Vue.createApp({
 			});
 		},
 
-
 		geoFindMe() {
 			const self = this;
 
@@ -464,10 +541,43 @@ const mapApp = Vue.createApp({
 				position: currentPos,
 				title: "내 위치"
 			});
-			self.myLocationInfoWindow = new kakao.maps.InfoWindow({
-				content: "<div style='padding:5px;'>📍 내 위치</div>"
+
+			// 주소 가져오기
+			const geocoder = new kakao.maps.services.Geocoder();
+			geocoder.coord2Address(self.myLongitude, self.myLatitude, function(result, status) {
+				if (status === kakao.maps.services.Status.OK) {
+					const roadAddress = result[0].road_address
+						? result[0].road_address.address_name
+						: result[0].address.address_name;
+
+					const contentHtml = `
+						<div style="
+							width: 230px;
+							padding: 12px;
+							box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+							background-color: white;
+							font-family: 'Noto Sans KR', sans-serif;
+						">
+							<h4 style="margin: 0 0 8px 0; font-size: 16px; color: #333;">📍 내 위치</h4>
+							<p style="margin: 0 0 4px 0; font-size: 13px; color: #666;">` + roadAddress + `</p>
+						</div>
+					`;
+
+					self.myLocationInfoWindow = new kakao.maps.InfoWindow({
+						content: contentHtml
+					});
+					self.myLocationInfoWindow.open(self.map, self.myLocationMarker);
+
+					// 마커 클릭 시 토글
+					kakao.maps.event.addListener(self.myLocationMarker, 'click', function () {
+						if (self.myLocationInfoWindow.getMap()) {
+							self.myLocationInfoWindow.close();
+						} else {
+							self.myLocationInfoWindow.open(self.map, self.myLocationMarker);
+						}
+					});
+				}
 			});
-			self.myLocationInfoWindow.open(self.map, self.myLocationMarker);
 
 			// 거리 다시 계산
 			self.calculateDistances();
@@ -481,7 +591,6 @@ const mapApp = Vue.createApp({
 			if (status != null && status !== '') {
 				params.lawyerStatus = status;
 			}
-			
 
 			$.post("/lawyer/list.dox", params, function(res) {
 				const geocoder = new kakao.maps.services.Geocoder();
@@ -548,7 +657,6 @@ const mapApp = Vue.createApp({
 									<div style="
 										width: 230px;
 										padding: 12px;
-										border-radius: 10px;
 										box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 										background-color: white;
 										font-family: 'Noto Sans KR', sans-serif;
@@ -778,7 +886,13 @@ const mapApp = Vue.createApp({
 		this.map = new kakao.maps.Map(container, options);
 		this.infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
 
-		this.loadLawyers(null);
+		if (this.currentTab === 'inner') {
+			this.loadLawyers('I');
+		} else if (this.currentTab === 'personal') {
+			this.loadLawyers('P');
+		} else {
+			this.loadLawyers(null); // 지역별일 경우 전체
+		}
 
 	}
 });

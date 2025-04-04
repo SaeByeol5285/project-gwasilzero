@@ -35,9 +35,18 @@ public class CommonController {
 	//메인-최신게시글
 	@RequestMapping(value = "/common/boardList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String board_list(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+	public String boardlist(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap = commonService.getBoardList(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	//변호사 리스트
+	@RequestMapping(value = "/common/lawyerList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String lawyerList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = commonService.getLawyerList(map);
 		return new Gson().toJson(resultMap);
 	}
 	

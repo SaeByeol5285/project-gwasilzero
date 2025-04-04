@@ -252,12 +252,23 @@
 								class="thumbnail" @error="e => e.target.src='/img/common/image_not_exist.jpg'" />
 							<img v-else src="/img/common/image_not_exist.jpg" alt="기본 썸네일" class="thumbnail" />
 							<h3>{{ item.boardTitle }}</h3>
-							<p>사건 진행 상태: {{ item.boardStatus === 'DOING' ? '진행중' : item.boardStatus === 'END' ? '완료' : '미정' }}</p>
+							<p>사건 진행 상태: {{ item.boardStatus === 'DOING' ? '진행중' : item.boardStatus === 'END' ? '완료' :
+								'미정' }}</p>
 							<p>담당 변호사: {{ item.lawyerName || '미정' }}</p>
 						</div>
 					</div>
 					<div v-else style="text-align: center; color: #888; margin-top: 30px;">
 						내용이 없습니다.
+					</div>
+					<!-- 페이징 영역 -->
+					<div style="text-align: center; margin-top: 20px;">
+						<a v-if="page > 1" href="javascript:;" @click="fnPageMove('prev')">◀</a>
+						<a v-for="num in index" :key="num" href="javascript:;" @click="fnPage(num)">
+							<span v-if="page === num" style="margin: 0 5px; font-weight: bold; color: blue;">{{ num
+								}}</span>
+							<span v-else style="margin: 0 5px;">{{ num }}</span>
+						</a>
+						<a v-if="page < index" href="javascript:;" @click="fnPageMove('next')">▶</a>
 					</div>
 				</div>
 
@@ -331,86 +342,72 @@
 					</div>
 				</div>
 
-
-				<!-- 페이징 영역 -->
-				<div style="text-align: center; margin-top: 20px;">
-					<a v-if="page > 1" href="javascript:;" @click="fnPageMove('prev')">◀</a>
-					<a v-for="num in index" :key="num" href="javascript:;" @click="fnPage(num)">
-						<span v-if="page === num" style="margin: 0 5px; font-weight: bold; color: blue;">{{ num
-							}}</span>
-						<span v-else style="margin: 0 5px;">{{ num }}</span>
-					</a>
-					<a v-if="page < index" href="javascript:;" @click="fnPageMove('next')">▶</a>
+				<!-- 채팅 내역 -->
+				<div class="section chat-section">
+					<h3>채팅 내역</h3>
+					<table class="payment-table">
+						<colgroup>
+							<col style="width: 75%;"> <!-- 메시지 열 넓게 -->
+							<col style="width: 25%;"> <!-- 상대방 열 좁게 -->
+						</colgroup>
+						<thead>
+							<tr>
+								<th>메시지</th>
+								<th>변호사</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-if="chatList.length" v-for="chat in chatList" :key="chat.chatNo">
+								<td><a href="javascript:;" @click="fnChat(chat.chatNo)" class="message">{{ chat.message
+										}}</a></td>
+								<td>{{ chat.partnerName }}</td>
+							</tr>
+							<tr v-else>
+								<td colspan="2" style="text-align: center; color: #999;">채팅 내역이 없습니다.</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 
-			</div>
-
-			<!-- 채팅 내역 -->
-			<div class="section chat-section">
-				<h3>채팅 내역</h3>
-				<table class="payment-table">
-					<colgroup>
-						<col style="width: 75%;"> <!-- 메시지 열 넓게 -->
-						<col style="width: 25%;"> <!-- 상대방 열 좁게 -->
-					</colgroup>
-					<thead>
-						<tr>
-							<th>메시지</th>
-							<th>변호사</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr v-if="chatList.length" v-for="chat in chatList" :key="chat.chatNo">
-							<td><a href="javascript:;" @click="fnChat(chat.chatNo)" class="message">{{ chat.message
-									}}</a></td>
-							<td>{{ chat.partnerName }}</td>
-						</tr>
-						<tr v-else>
-							<td colspan="2" style="text-align: center; color: #999;">채팅 내역이 없습니다.</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-
-			<!-- 결제 내역 -->
-			<div class="section">
-				<h3>최근 결제 내역</h3>
-				<table class="payment-table">
-					<thead>
-						<tr>
-							<th>날짜</th>
-							<th>제품명</th>
-							<th>가격</th>
-							<th>상태</th>
-							<th>요청</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr v-if="payList && payList.length" v-for="pay in payList" :key="pay.orderId">
-							<td>{{ pay.payTime }}</td>
-							<td>{{ pay.packageName }}</td>
-							<td>{{ pay.price.toLocaleString() }} 원</td>
-							<td>{{ getPayStatusText(pay.payStatus) }}</td>
-							<td>
-								<button v-if="pay.payStatus === 'PAID'" @click="fnRequestRefund(pay.orderId)"
-									class="edit-btn">환불 요청</button>
-								<button v-else-if="pay.payStatus === 'REQUEST'" @click="fnCancelRefund(pay.orderId)"
-									class="withdraw-btn">환불 요청 취소</button>
-								<span v-else>-</span>
-							</td>
-						</tr>
-						<tr v-else>
-							<td colspan="5" style="text-align: center;">결제 내역이 없습니다.</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+				<!-- 결제 내역 -->
+				<div class="section">
+					<h3>최근 결제 내역</h3>
+					<table class="payment-table">
+						<thead>
+							<tr>
+								<th>날짜</th>
+								<th>제품명</th>
+								<th>가격</th>
+								<th>상태</th>
+								<th>요청</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-if="payList && payList.length" v-for="pay in payList" :key="pay.orderId">
+								<td>{{ pay.payTime }}</td>
+								<td>{{ pay.packageName }}</td>
+								<td>{{ pay.price.toLocaleString() }} 원</td>
+								<td>{{ getPayStatusText(pay.payStatus) }}</td>
+								<td>
+									<button v-if="pay.payStatus === 'PAID'" @click="fnRequestRefund(pay.orderId)"
+										class="edit-btn">환불 요청</button>
+									<button v-else-if="pay.payStatus === 'REQUEST'" @click="fnCancelRefund(pay.orderId)"
+										class="withdraw-btn">환불 요청 취소</button>
+									<span v-else>-</span>
+								</td>
+							</tr>
+							<tr v-else>
+								<td colspan="5" style="text-align: center;">결제 내역이 없습니다.</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 
 
-			<!-- 회원탈퇴 -->
-			<div style="text-align: center; margin-top: 20px;">
-				<button class="withdraw-btn" @click="fnRemoveUser">회원탈퇴</button>
-			</div>
+				<!-- 회원탈퇴 -->
+				<div style="text-align: center; margin-top: 20px;">
+					<button class="withdraw-btn" @click="fnRemoveUser">회원탈퇴</button>
+				</div>
 
 			</div>
 			<jsp:include page="../common/footer.jsp" />

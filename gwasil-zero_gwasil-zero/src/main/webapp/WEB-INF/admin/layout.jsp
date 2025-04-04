@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%@ page session="true" %>
+   <!-- <%@ page session="true" %>
     <%
         String sessionStatus = (String) session.getAttribute("sessionStatus");
         if (sessionStatus == null || !"ADMIN".equals(sessionStatus)) {
@@ -12,7 +12,7 @@
     <%
             return;
         }
-    %>    
+    %>    관리자 권한 설정 코드 추후 해제할것 --> 
 <!DOCTYPE html>
 <html>
 <head>

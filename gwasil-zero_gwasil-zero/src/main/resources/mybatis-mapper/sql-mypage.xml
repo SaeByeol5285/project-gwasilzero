@@ -135,7 +135,6 @@
 	        AND B.BOARD_STATUS = #{boardStatus}
 	    </if>
 	</select>
-
 	
 	<update id="updateBoardStatus" parameterType="hashmap">
       UPDATE BOARD
@@ -143,5 +142,56 @@
          BOARD_STATUS = #{boardStatus}
       WHERE BOARD_NO = #{boardNo}
     </update>
+    
+    <select id="selectLawyerPay" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
+      SELECT *
+      FROM PAY
+      WHERE LAWYER_ID = #{sessionId} 
+   </select>
    
+   <update id="updatePayStatus" parameterType="hashmap">
+      UPDATE PAY
+      SET
+         PAY_STATUS = 'REQUEST'
+      WHERE ORDER_ID = #{orderId}
+    </update>
+    
+    <update id="updateCancel" parameterType="hashmap">
+      UPDATE PAY
+      SET
+         PAY_STATUS = 'PAID'
+      WHERE ORDER_ID = #{orderId}
+    </update>
+    
+    <select id="selectLastChat" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
+	    SELECT cm.chat_no,
+	           cm.sender_id,
+	           u.user_name AS sender_name,
+	           cm.message,
+	           TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
+	
+	           CASE 
+	               WHEN c.sender_id = #{sessionId} THEN u2.user_name
+	               ELSE u1.user_name
+	           END AS partner_name
+	    FROM chat_message cm
+	    JOIN (
+	        SELECT chat_no, MAX(time) AS max_time
+	        FROM chat_message
+	        WHERE chat_no IN (
+	            SELECT chat_no
+	            FROM chat
+	            WHERE sender_id = #{sessionId}
+	               OR receiver_id = #{sessionId}
+	        )
+	        GROUP BY chat_no
+	    ) latest ON cm.chat_no = latest.chat_no AND cm.time = latest.max_time
+	    JOIN chat c ON cm.chat_no = c.chat_no
+	    LEFT JOIN tbl_user u ON cm.sender_id = u.user_id
+	    LEFT JOIN tbl_user u1 ON c.sender_id = u1.user_id
+	    LEFT JOIN tbl_user u2 ON c.receiver_id = u2.user_id
+	    ORDER BY cm.time DESC
+	</select>
+
+    
 </mapper>

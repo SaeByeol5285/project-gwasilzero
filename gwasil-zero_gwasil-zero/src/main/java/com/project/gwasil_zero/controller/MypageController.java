@@ -173,5 +173,44 @@ public class MypageController {
 		resultMap = mypageService.boardUpdate(map);
 		return new Gson().toJson(resultMap);
 	}
+	
+	// 변호사 마이페이지 결제 내역
+	@RequestMapping(value = "/lawyerMyPage/payList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getLawyerPay(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
+		resultMap = mypageService.getLawyerPay(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 결제 내역 환불
+	@RequestMapping(value = "/mypage/Refund.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String refund(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+		resultMap = mypageService.payStatusUpdate(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 결제 내역 환불 취소
+	@RequestMapping(value = "/mypage/RefundCancel.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String refundCancel(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+		resultMap = mypageService.cancelUpdate(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 채팅 내역 불러오기
+	@RequestMapping(value = "/mypage/chatList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String chatList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+		resultMap = mypageService.getChatList(map);
+		return new Gson().toJson(resultMap);
+	}
 }

@@ -73,7 +73,8 @@
                 <a href="/totalDocs/list.do?kind=HELP">고객만족센터</a>
                 <a v-if="!sessionId" href="/user/login.do">로그인 / 회원가입</a>
                 <a v-else @click="fnLogout" href="#">로그아웃</a>
-                <a v-if="sessionId != null" href="/mypage-home.do">마이페이지</a>
+                <a v-if="sessionType == 'user'" href="/mypage-home.do">마이페이지</a>
+                <a v-else-if="sessionType == 'lawyer'" href="/mypage/lawyerMyPage.do">마이페이지</a>
             </div>
 
             <!-- 네비게이션 -->

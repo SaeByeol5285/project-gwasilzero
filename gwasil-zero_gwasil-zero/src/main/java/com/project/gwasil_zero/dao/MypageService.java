@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.project.gwasil_zero.mapper.MypageMapper;
 import com.project.gwasil_zero.model.Board;
 import com.project.gwasil_zero.model.Chat;
+import com.project.gwasil_zero.model.ChatMessage;
 import com.project.gwasil_zero.model.Pay;
 import com.project.gwasil_zero.model.Lawyer;
 import com.project.gwasil_zero.model.User;
@@ -170,6 +171,56 @@ public class MypageService {
 	    mypageMapper.updateBoardStatus(map);
 	    resultMap.put("result", "success");      
 	    return resultMap;
+	}
+
+	public HashMap<String, Object> getLawyerPay(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<>();
+		    try {
+		        List<Pay> lawyerPayList = mypageMapper.selectLawyerPay(map);
+		        resultMap.put("lawyerPayList", lawyerPayList);
+		        resultMap.put("result", "success");
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        resultMap.put("result", "fail");
+		    }
+		    return resultMap;
+	}
+
+	public HashMap<String, Object> payStatusUpdate(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+	    mypageMapper.updatePayStatus(map);
+	    resultMap.put("result", "success");      
+	    return resultMap;
+	}
+
+	public HashMap<String, Object> cancelUpdate(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+	    mypageMapper.updateCancel(map);
+	    resultMap.put("result", "success");      
+	    return resultMap;
+	}
+
+	public HashMap<String, Object> getChatList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+	    
+		//chatlist는 해당 사용자의 id를 조회하여 해당 사용자가 있는 1ㄷ1채팅방의 채팅방번호들의 리스트
+		List<ChatMessage> chatList = mypageMapper.selectLastChat(map);
+		resultMap.put("chatList", chatList);
+//	    
+//		//채팅방번호들 가지고 chat_massage테이블 조회해서. 가장 늦게 올린 chat_massage를 받아오면 되겠지
+//	    List<ChatMessage> lastMessageList = new 
+//	    for() {
+//	    	ChatMessage cm = chatMapper.asdasdasd();
+//	    	lastMessageList.put("");
+//	    }
+	    
+	    
+	    resultMap.put("result", "success");
+	    return null;
 	}
 
    

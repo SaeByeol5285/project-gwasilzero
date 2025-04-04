@@ -2,272 +2,278 @@
    기본 스타일
 ============================= */
 .menu-font {
-	font-weight: 700;
-  }
-  
-  .light-font {
-	font-weight: 600;
-  }
-  
-  /* =============================
-	 상단 로그인/회원가입 라인
-  ============================= */
-  .header-line {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 10px 40px;
-	text-align: right;
-	font-size: 14px;
-	background-color: #fff;
-	border-bottom: 1px solid #f1f1f1;
-  }
-  
-  .header-line a {
-	margin-left: 20px;
-	text-decoration: none;
-	color: #FF5722;
-	font-weight: 600;
-  }
-  
-  /* =============================
-	 네비게이션 영역
-  ============================= */
-  .main-nav-wrapper {
-	background-color: white;
-	border-bottom: 2px solid #FF5722;
-  }
-  
-  .main-nav {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 0 40px;
-  
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	height: 80px;
-  }
-  
-  .logo {
-	display: block;
-	width: 120px;
-  }
-  
-  .logo img {
-	width: 100%;
-	height: auto;
-  }
-  
-  /* =============================
-	 메뉴
-  ============================= */
-  .main-menu {
-	list-style: none;
-	display: flex;
-	gap: 100px;
-	margin: 0;
-	padding: 0;
-	align-items: center;
-  }
-  
-  .menu-item {
-	position: relative;
-	font-size: 20px;
-  }
-  
-  .menu-item > a {
-	text-decoration: none;
-	color: black;
-	transition: color 0.3s;
-  }
-  
-  .menu-item:hover > a {
-	color: #FF5722;
-  }
-  
-  /* =============================
-	 드롭다운
-  ============================= */
-  .dropdown {
-	position: absolute;
-	top: 100%;
-	left: 0;
-	background-color: rgba(255, 87, 34, 0.9);
-	padding: 20px;
-	min-width: 150px;
-	display: none;
-	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-	z-index: 1000;
-	opacity: 0;
-	visibility: hidden;
-	transform: translateY(10px);
-	transition: all 0.3s ease;
-  }
-  
-  .menu-item:hover .dropdown {
-	display: block;
-	opacity: 1;
-	visibility: visible;
-	transform: translateY(0);
-  }
-  
-  .dropdown ul {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-  }
-  
-  .dropdown ul li {
-	margin: 8px 0;
-	text-align: left;
-  }
-  
-  .dropdown ul li a {
-	color: white;
-	text-decoration: none;
-	font-size: 17px;
-  }
-  
-  .dropdown ul li a:hover {
-	color: black;
-	font-weight: 700;
-  }
-  
-  /* =============================
-	 반응형 대응
-  ============================= */
-  @media screen and (max-width: 768px) {
-	.main-menu {
-	  flex-direction: column;
-	  align-items: flex-start;
-	  gap: 0;
-	}
-  
-	.menu-item {
-	  width: 100%;
-	  border-top: 1px solid #ddd;
-	}
-  
-	.menu-item:first-child {
-	  border-top: none;
-	}
-  
-	.dropdown {
-	  position: static;
-	  display: block;
-	  width: 100%;
-	  padding: 15px;
-	  opacity: 1 !important;
-	  visibility: visible !important;
-	  transform: none !important;
-	}
-  }
-  
-  
-  
-  /*알림용*/
-  .noti-link {
-      position: relative;
-      display: inline-block;
-      margin-right: 10px;
-  }
+    font-weight: 700;
+}
 
-  .noti-badge {
-      position: absolute;
-      top: -8px;
-      right: -10px;
-      background-color: red;
-      color: white;
-      border-radius: 50%;
-      padding: 2px 6px;
-      font-size: 8px;
-      font-weight: bold;
-  }
+.light-font {
+    font-weight: 600;
+}
 
-  .noti-popup {
-      position: absolute;
-      top: 35px;
-      right: 0;
-      width: 320px;
-      height: 400px;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      padding: 12px;
-      z-index: 1000;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-  }
+/* =============================
+   상단 로그인/회원가입 라인
+============================= */
+.header-line {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 40px;
+    text-align: right;
+    font-size: 14px;
+    background-color: #fff;
+    border-bottom: 1px solid #f1f1f1;
+}
 
-  .noti-section {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-  }
+.header-line a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #FF5722;
+    font-weight: 600;
+}
 
-  .noti-section h4 {
-      margin: 0;
-      font-size: 16px;
-      font-weight: bold;
-      text-align: left;
-      padding-bottom: 6px;
-      border-bottom: 2px solid #eee;
-  }
+/* =============================
+   네비게이션 영역
+============================= */
+.main-nav-wrapper {
+    background-color: white;
+    border-bottom: 2px solid #FF5722;
+}
 
-  .noti-list {
-      flex: 1;
-      overflow-y: auto;
-      padding-right: 6px;
-      margin-top: 6px;
-  }
+.main-nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
 
-  .noti-item {
-      font-size: 13px;
-      padding: 6px 0;
-	  text-align: left;
-      border-bottom: 1px solid #f1f1f1;
-      line-height: 1.4;
-  }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+}
 
-  .noti-empty {
-      font-size: 13px;
-      color: #999;
-	  text-align: center;
-      padding: 6px 0;
-  }
-  .noti-item.read {
-      color: #999;
-  }
+.logo {
+    display: block;
+    width: 120px;
+}
 
-  .noti-delete {
-      float: right;
-      color: #ccc;
-      cursor: pointer;
-      font-size: 12px;
-  }
+.logo img {
+    width: 100%;
+    height: auto;
+}
 
-  .noti-delete:hover {
-      color: red;
-  }
+/* =============================
+   메뉴
+============================= */
+.main-menu {
+    list-style: none;
+    display: flex;
+    gap: 100px;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+}
+
+.menu-item {
+    position: relative;
+    font-size: 20px;
+}
+
+.menu-item > a {
+    text-decoration: none;
+    color: black;
+    transition: color 0.3s;
+}
+
+.menu-item:hover > a {
+    color: #FF5722;
+}
+
+/* =============================
+   드롭다운
+============================= */
+.dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: rgba(255, 87, 34, 0.9);
+    padding: 20px;
+    min-width: 150px;
+    display: none;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.menu-item:hover .dropdown {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.dropdown ul li {
+    margin: 8px 0;
+    text-align: left;
+}
+
+.dropdown ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.dropdown ul li a:hover {
+    color: black;
+    font-weight: 700;
+}
+
+/* =============================
+   반응형 대응
+============================= */
+@media screen and (max-width: 768px) {
+    .main-menu {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+    }
+
+    .menu-item {
+        width: 100%;
+        border-top: 1px solid #ddd;
+    }
+
+    .menu-item:first-child {
+        border-top: none;
+    }
+
+    .dropdown {
+        position: static;
+        display: block;
+        width: 100%;
+        padding: 15px;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+    }
+}
 
 
-  .read {
-    background-color: #f0f0f0;
-    color: #888;
-  }
-  
-  /* 북마크용 */
-  .bookmark-link {
+/* =============================
+   알림 영역
+============================= */
+.noti-link {
     position: relative;
     display: inline-block;
-  }
+    margin-right: 10px;
+}
 
-  .bookmark-link .noti-popup {
+.noti-badge {
     position: absolute;
-    top: 100%;  
+    top: -8px;
+    right: -10px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 8px;
+    font-weight: bold;
+}
+
+.noti-popup {
+    position: absolute;
+    top: 35px;
+    right: 0;
+    width: 320px;
+    height: 400px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 12px;
+    z-index: 1000;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* 각 섹션을 정확히 절반 */
+.noti-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* 알림 타이틀 */
+.noti-section h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #eee;
+}
+
+/* 알림 스크롤 리스트 */
+.noti-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 6px;
+    margin-top: 6px;
+}
+
+/* 알림 항목 */
+.noti-item {
+    font-size: 13px;
+    padding: 6px 0;
+    text-align: left;
+    border-bottom: 1px solid #f1f1f1;
+    line-height: 1.4;
+    color: #FF5722;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.noti-item:hover {
+    background-color: #fff3eb;
+}
+
+/* 알림 없을 때 */
+.noti-empty {
+    font-size: 13px;
+    color: #999;
+    text-align: center;
+    padding: 6px 0;
+}
+
+/* 스크롤바 꾸미기 (선택사항) */
+.noti-list::-webkit-scrollbar {
+    width: 6px;
+}
+.noti-list::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 3px;
+}
+
+
+/* =============================
+   북마크 팝업 영역
+============================= */
+.bookmark-link {
+    position: relative;
+    display: inline-block;
+}
+
+.bookmark-link .noti-popup {
+    position: absolute;
+    top: 100%;
     left: 0;
     z-index: 999;
     background: white;
@@ -275,7 +281,5 @@
     border-radius: 8px;
     padding: 10px;
     width: 220px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-
-  
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}

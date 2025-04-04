@@ -215,63 +215,41 @@
       
       <div>
         
-        <!-- 목록 -->
-        <div class="comment-list" v-if="comments.length > 0">
-          <h4>댓글</h4>
+		<div class="comment-list">
+		  <h4>댓글</h4>
 
-          <div class="comment-item" v-for="(cmt, index) in comments" :key="index">
-            <div class="comment-meta">
-              {{ cmt.lawyerName }} | {{ cmt.cdate }}
-              <div class="comment-actions" v-if="sessionType === 'lawyer' && cmt.lawyerId === sessionId">
-                <span class="text-green" @click="updateComment(cmt.cmtNo)">수정</span>
-                <span @click="deleteComment(cmt.cmtNo)">삭제</span>
-              </div>
+		  
+		  <div v-if="comments.length > 0">
+		    <div class="comment-item" v-for="(cmt, index) in comments" :key="index">
+		      <div class="comment-meta">
+		        {{ cmt.lawyerName }} | {{ cmt.cdate }}
+		        <div class="comment-actions" v-if="sessionType === 'lawyer' && cmt.lawyerId === sessionId">
+		          <span class="text-green" @click="updateComment(cmt.cmtNo)">수정</span>
+		          <span @click="deleteComment(cmt.cmtNo)">삭제</span>
+		        </div>
+		      </div>
+		      <div class="comment-text">
+		        <div v-if="editingCommentNo === cmt.cmtNo">
+		          <textarea v-model="editedComment" rows="3"></textarea>
+		          <div style="margin-top: 5px;">
+		            <button class="btn-green" @click="saveUpdatedComment(cmt.cmtNo)">저장</button>
+		            <button class="btn-orange" @click="cancelUpdate" style="margin-left: 5px;">취소</button>
+		          </div>
+		        </div>
+		        <div v-else>
+		          {{ cmt.contents }}
+		        </div>
+		      </div>
+		    </div>
+		  </div>
 
-              <!-- 북마크 아이콘 -->
-            <img
-              v-if="sessionType === 'user'"
-              :src="isBookmarked(cmt.lawyerId) ? '/img/selectedBookmark.png' : '/img/Bookmark.png'"
-              @click="toggleBookmark(cmt.lawyerId)"
-              style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
-            />
+		  
+		  <div v-if="sessionType === 'lawyer'">
+		    <textarea v-model="newComment" placeholder="댓글을 입력하세요" rows="3"></textarea>
+		    <button class="btn-orange" @click="submitComment">등록</button>
+		  </div>
+		</div>
 
-            <!-- 계약 아이콘 -->
-            <img
-              v-if="sessionType === 'user'"
-              src="/img/contract.png"
-              @click="startContract(cmt.lawyerId)"
-              title="계약하기"
-              style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
-            />
-
-            <!-- 채팅 아이콘 -->
-            <img
-              v-if="sessionType === 'user'"
-              src="/img/icon-chat.png"
-              @click="startChat(cmt.lawyerId)"
-              title="채팅하기"
-              style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
-            />
-            </div>
-           <div class="comment-text">
-             <div v-if="editingCommentNo === cmt.cmtNo">
-               <textarea v-model="editedComment" rows="3"></textarea>
-               <div style="margin-top: 5px;">
-                 <button class="btn-green" @click="saveUpdatedComment(cmt.cmtNo)">저장</button>
-                 <button class="btn-orange" @click="cancelUpdate" style="margin-left: 5px;">취소</button>
-               </div>
-             </div>
-             <div v-else>
-               {{ cmt.contents }}
-             </div>
-           </div>
-          </div>
-
-          <div v-if="sessionType === 'lawyer' ">
-            <textarea v-model="newComment" placeholder="댓글을 입력하세요" rows="3"></textarea>
-            <button class="btn-orange" @click="submitComment">등록</button>
-          </div>
-        </div>
       
    </div>
    <jsp:include page="../common/footer.jsp"/>
@@ -329,28 +307,50 @@
                    }
                });
            },
-         submitComment() {
-             const self = this;
-             if (!self.newComment.trim()) {
-                 alert("댓글을 입력해주세요");
-                 return;
-             }
+		   submitComment() {
+		       const self = this;
 
-             $.ajax({
-                 url: "/board/commentAdd.dox",
-                 type: "POST",
-                 data: {
-                     boardNo: self.boardNo,
-                     contents: self.newComment,
-                   lawyerId: self.sessionId
-                 },
-                 success: function () {
-                     self.newComment = "";
-                   self.addNotification();
-                     self.fnGetBoard();
-                 }
-             });
-         },
+		       // 승인 여부 먼저 체크
+		       $.ajax({
+		           url: "/board/checkLawyerStatus.dox",
+		           type: "POST",
+		           data: {
+		               sessionId: self.sessionId
+		           },
+		           dataType: "json",
+		           success: function (res) {
+		               if (res.result === "true") {
+		                   // 승인된 경우에만 댓글 등록
+		                   if (!self.newComment.trim()) {
+		                       alert("댓글을 입력해주세요");
+		                       return;
+		                   }
+
+		                   $.ajax({
+		                       url: "/board/commentAdd.dox",
+		                       type: "POST",
+		                       data: {
+		                           boardNo: self.boardNo,
+		                           contents: self.newComment,
+		                           lawyerId: self.sessionId
+		                       },
+		                       success: function () {
+		                           self.newComment = "";
+		                           self.addNotification();
+		                           self.fnGetBoard();
+		                       }
+		                   });
+		               } else if (res.result === "false") {
+		                   alert("아직 승인되지 않은 변호사 계정입니다.");
+		               } else {
+		                   alert("변호사 상태 확인 중 오류가 발생했습니다.");
+		               }
+		           },
+		           error: function () {
+		               alert("변호사 상태 확인 요청 실패");
+		           }
+		       });
+		   },
          EditBoard: function(){
             let self = this;
             pageChange("/board/edit.do", {boardNo : self.boardNo, userId : self.sessionId});

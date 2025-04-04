@@ -13,6 +13,7 @@ import com.project.gwasil_zero.model.Board;
 import com.project.gwasil_zero.model.BoardCmt;
 import com.project.gwasil_zero.model.BoardFile;
 import com.project.gwasil_zero.model.Bookmark;
+import com.project.gwasil_zero.model.Lawyer;
 @Service
 public class BoardService {
 	@Autowired
@@ -198,5 +199,22 @@ public class BoardService {
 	    }
 	    return resultMap;
 	}
+	
+	public HashMap<String, Object> checkLawyerStatus(HashMap<String, Object> map) {
+        HashMap<String, Object> resultMap = new HashMap<>();
+        try {
+	        Lawyer lawyer = boardMapper.checkLawyerStatus(map);
+	        String result = "";
+	        if(lawyer.getLawyerPass().equals("Y"))
+	        	result = "true";
+	        else
+	        	result = "false";
+	        resultMap.put("result", result);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "failed");
+	    }
+	    return resultMap;
+    }
 	
 }

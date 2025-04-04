@@ -6,8 +6,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
-
-    <!-- Vue, jQuery 등 라이브러리는 한 번만 로드 -->
     <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <script src="/js/page-change.js"></script>
@@ -73,7 +71,9 @@
                 <a href="/totalDocs/list.do?kind=HELP">고객만족센터</a>
                 <a v-if="!sessionId" href="/user/login.do">로그인 / 회원가입</a>
                 <a v-else @click="fnLogout" href="#">로그아웃</a>
-                <a v-if="sessionId != null" href="/mypage-home.do">마이페이지</a>
+                <a v-if="sessionId != '' && sessionType == 'user'" href="/mypage-home.do">마이페이지</a>
+                <a v-if="sessionId != '' && sessionType == 'lawyer'" href="/mypage/lawyerMyPage.do">마이페이지</a>
+
             </div>
 
             <!-- 네비게이션 -->
@@ -299,6 +299,8 @@
             },
             mounted() {
                 let self = this;
+                console.log(self.sessionType);
+                
                 self.fnGetNotificationList();
                 if (self.sessionType === 'user') {
 

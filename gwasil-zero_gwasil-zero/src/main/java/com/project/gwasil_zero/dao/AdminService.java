@@ -374,5 +374,39 @@ public class AdminService {
 	    resultMap.put("result", "success");
 
 	    return resultMap;
+	}
+
+	public HashMap<String, Object> getStatLawyerLine(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<>();
+
+	    List<HashMap<String, Object>> rawList = adminMapper.selectStatLawyerLine(map);
+
+	    List<String> categories = new ArrayList<>();
+	    List<Integer> series = new ArrayList<>();
+
+	    int cumulative = 0;
+
+	    for (HashMap<String, Object> row : rawList) {
+	        String date = (String) row.get("TIME_GROUP");
+	        int count = ((BigDecimal) row.get("LAWYER_COUNT")).intValue();
+
+	        cumulative += count;
+
+	        categories.add(date);
+	        series.add(cumulative);
+	    }
+
+	    List<HashMap<String, Object>> seriesList = new ArrayList<>();
+	    HashMap<String, Object> oneSeries = new HashMap<>();
+	    oneSeries.put("name", "누적 변호사 수");
+	    oneSeries.put("data", series);
+	    seriesList.add(oneSeries);
+
+	    resultMap.put("series", seriesList);
+	    resultMap.put("categories", categories);
+	    resultMap.put("result", "success");
+
+	    return resultMap;
 	}	  
 }

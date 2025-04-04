@@ -8,7 +8,7 @@
 	<select id="selectAvailableReviewList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Review">
 		SELECT B.BOARD_NO, B.BOARD_TITLE, B.LAWYER_ID, B.BOARD_STATUS
 		FROM BOARD B
-		INNER JOIN REVIEW R ON R.USER_ID = 'user_001'
+		LEFT JOIN REVIEW R ON R.USER_ID = #{userId}
 		WHERE B.USER_ID = #{userId} AND B.BOARD_STATUS = 'DONE' AND B.LAWYER_ID IS NOT NULL
 		AND NOT EXISTS (
             SELECT 1 

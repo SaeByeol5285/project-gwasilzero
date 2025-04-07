@@ -143,7 +143,12 @@
             </div>
 
             <button @click="requestCert">📱 본인인증</button>
-            <button @click="fnJoin" :disabled="!isAuthenticated">회원가입</button>
+            <button @click="fnJoin" :disabled="!isAuthenticated" :style="{
+                    backgroundColor: isAuthenticated ? '#FF5722' : '#ccc',
+                    cursor: isAuthenticated ? 'pointer' : 'not-allowed'
+                }">
+                회원가입
+            </button>
         </div>
         <jsp:include page="../common/footer.jsp" />
     </body>

@@ -32,6 +32,14 @@ public class CommonController {
 		return "/introduceCo/introduceCo";
 	}
 	
+	//이용약관
+		@RequestMapping("/common/terms.do")
+		public String terms(Model model) throws Exception {
+			
+			return "/common/terms";
+		}
+	
+	
 	//메인-최신게시글
 	@RequestMapping(value = "/common/boardList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody

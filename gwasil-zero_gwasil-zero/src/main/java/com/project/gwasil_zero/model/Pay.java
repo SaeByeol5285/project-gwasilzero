@@ -15,5 +15,5 @@ public class Pay {
 	private String refundTime;
 	private String name;
 	private String receiverId;
-	
+
 }

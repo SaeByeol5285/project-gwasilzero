@@ -290,7 +290,7 @@
 							<h3>내 정보</h3>
 							<div class="info-details" v-if="info && info.userName">
 								이름: {{ info.userName }}<br>
-								핸드폰 번호: {{ info.userPhone }}<br>
+								핸드폰 번호: {{ formatPhone(info.userPhone) }}<br>
 								이메일: {{ info.userEmail }}
 							</div>
 						</div>
@@ -521,6 +521,10 @@
 					};
 				},
 				methods: {
+					formatPhone(phone) {
+						if (!phone || phone.length !== 11) return phone;
+						return phone.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+					},
 					fnGetUserInfo() {
 						var self = this;
 						$.ajax({

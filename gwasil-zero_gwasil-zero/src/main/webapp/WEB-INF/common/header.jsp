@@ -190,6 +190,8 @@
                     if (this.showNotification) this.fnGetNotificationList();
                 },
                 markAsRead(item) {
+                    let self = this;
+                    // 읽음처리
                     $.ajax({
                         url: "/notification/read.dox",
                         type: "POST",
@@ -204,6 +206,8 @@
                     pageChange("/board/view.do", { boardNo: item.boardNo });
                 },
                 fnChat() {
+                    let self = this;
+                    // 읽음처리
                     $.ajax({
                         url: "/notification/read.dox",
                         type: "POST",
@@ -284,6 +288,40 @@
                             }
                         });
                     }
+                },
+                fnLogout() {
+                    var self = this;
+                    $.ajax({
+                        url: "/user/logout.dox",
+                        dataType: "json",
+                        type: "POST",
+                        data: {},
+                        success: function (data) {
+                            if (data.result == "success") {
+                                console.log("sessionId =====> " + self.id);
+
+                                // 네이버 SDK가 저장한 로컬스토리지 데이터 삭제
+                                localStorage.removeItem("com.naver.nid.access_token");
+                                localStorage.removeItem("com.naver.nid.oauth.state_token");
+                                localStorage.removeItem("com.naver.nid.refresh_token");
+
+                                // 네이버 로그아웃을 위한 팝업 호출
+                                var naverLogoutUrl = "https://nid.naver.com/nidlogin.logout";
+                                var logoutWindow = window.open(naverLogoutUrl, "_blank", "width=500,height=600,scrollbars=yes");
+
+                                setTimeout(function () {
+                                    logoutWindow.close();
+                                    alert("로그아웃 되었습니다.");
+                                    location.href = "/common/main.do";
+                                }, 1200);
+                            } else {
+                                alert("로그아웃 실패");
+                            }
+                        },
+                        error: function () {
+                            alert("로그아웃 처리 중 오류가 발생했습니다.");
+                        }
+                    });
                 }
             },
             mounted() {

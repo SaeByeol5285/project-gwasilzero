@@ -40,7 +40,7 @@ public class AdminController {
         return "/admin/user"; 
     }
     
- // admin 변호사관리 주소dddd
+ // admin 변호사관리 주소
     @RequestMapping("/admin/lawyer.do") 
     public String adminLawyer(@RequestParam(value = "page", required = false) String page, Model model) {
         model.addAttribute("currentPage", page);

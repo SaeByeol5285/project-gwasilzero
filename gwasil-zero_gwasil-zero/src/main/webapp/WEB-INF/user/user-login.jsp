@@ -109,11 +109,6 @@
                     <img src="/img/kakao_login.png" alt="카카오 로그인">
                 </a>
             </div>
-
-            <div>
-                <a href="https://nid.naver.com/nidlogin.logout" target="_blank" class="naver-logout">네이버 계정 로그아웃</a>
-            </div>
-
             <div class="extra-links">
                 <a href="/user/search.do">아이디/비밀번호 찾기</a>>
                 <a href="/join/select.do">회원가입</a>
@@ -137,14 +132,10 @@
             methods: {
                 fnLogin() {
                     const self = this;
-                    const nparmap = {
-                        id: self.id,
-                        pwd: self.pwd
-                    };
                     $.ajax({
                         url: "/user/user-login.dox",
                         type: "POST",
-                        data: nparmap,
+                        data: { id: self.id, pwd: self.pwd },
                         dataType: "json",
                         success: function (res) {
                             if (res.result === "success") {
@@ -156,51 +147,73 @@
                         }
                     });
                 },
-                naverLoginClick() {
-                    console.log("함수실행");
-                    document.getElementById("naverIdLogin_loginButton").click();
-
-                    naverLogin.getLoginStatus(function (status) {
-                        if (status) {
-                            const user = naverLogin.user;
-                            const email = user.getEmail();
-                            const name = user.getName();
-                            const id = user.getId();
-
-                            if (!email) {
-                                alert("이메일 정보가 필요합니다. 다시 동의해주세요.");
-                                naverLogin.reprompt();
-                                return;
-                            }
-                            console.log("ajax통신전");
-                            $.ajax({
-                                url: "/user/naver-session.dox",
-                                type: "POST",
-                                data: {
-                                    email: email,
-                                    name: name,
-                                    id: id
-                                },
-                                success: function (res) {
-                                    console.log("네이버 세션 설정 완료");
-                                    location.href = "/common/main.do";
-                                },
-                                error: function () {
-                                    alert("네이버 세션 설정 실패");
-                                }
-                            });
+                kakaoLoginCallback(code) {
+                    console.log("✅ 인가 코드 받음:", code);
+                    $.ajax({
+                        url: "/kakao.dox",
+                        type: "POST",
+                        data: { code: code },
+                        success: function (res) {
+                            console.log("카카오 세션 설정 성공:", res);
+                            location.href = "/common/main.do";
+                        },
+                        error: function () {
+                            alert("카카오 로그인 실패");
                         }
                     });
+                },
+                naverLoginClick() {
+                    document.getElementById("naverIdLogin_loginButton").click();
+                },
+                handleNaverCallback() {
+                    setTimeout(() => {
+                        naverLogin.getLoginStatus(function (status) {
+                            if (status) {
+                                const user = naverLogin.user;
+                                const email = user.getEmail();
+                                const name = user.getName();
+                                const id = user.getId();
+                                if (!email) {
+                                    alert("이메일 정보가 필요합니다. 다시 동의해주세요.");
+                                    naverLogin.reprompt();
+                                    return;
+                                }
+                                $.ajax({
+                                    url: "/user/naver-session.dox",
+                                    type: "POST",
+                                    data: { email, name, id },
+                                    success: function () {
+                                        location.href = "/common/main.do";
+                                    },
+                                    error: function () {
+                                        alert("네이버 세션 설정 실패");
+                                    }
+                                });
+                            }
+                        });
+                    }, 300); // 네이버 초기화 후 약간의 딜레이 주기
+                }
+            },
+            mounted() {
+                const code = new URLSearchParams(window.location.search).get("code");
+                if (code) {
+                    this.kakaoLoginCallback(code);
+                } else {
+                    // 네이버 자동 로그인 처리
+                    if (window.location.href.includes("login.do")) {
+                        this.handleNaverCallback();
+                    }
                 }
             }
         });
-        app.mount("#app");
+
+        const vm = app.mount("#app");
 
         const naverLogin = new naver.LoginWithNaverId({
             clientId: "cHypMXQZj5CCSV0ShBQl",
             callbackUrl: "http://localhost:8080/user/login.do",
             isPopup: false,
-            callbackHandle: true
+            callbackHandle: true // 네이버에서 인가코드 받을 때 필요
         });
         naverLogin.init();
     </script>

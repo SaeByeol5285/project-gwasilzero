@@ -37,9 +37,14 @@
                             <div class="lawyer-card" v-for="item in list" :key="item.lawyerId"
                                 @click="fnView(item.lawyerId)">
                                 <div class="profile-pic">
-                                    <img src="../../img/66432819ad4f841ac7c5d8a7-original-1715677210341.jpg"
-                                        alt="프로필 사진">
+                                    <img v-if="item.lawyerImg" :src="item.lawyerImg" alt="프로필 사진" />
+                                    <div v-else class="no-data">등록된 프로필 사진이 없습니다.</div>
                                 </div>
+                                <div v-if="item.mainCategoryName1 || item.mainCategoryName2" class="category-badges">
+                                    <span v-if="item.mainCategoryName1" class="badge">{{ item.mainCategoryName1 }}</span>
+                                    <span v-if="item.mainCategoryName2" class="badge">{{ item.mainCategoryName2 }}</span>
+                                </div>
+                                <div v-else class="no-data">선택된 전문분야가 없습니다.</div>
                                 <div class="lawyer-name">{{item.lawyerName}}</div>
                                 <div class="intro">소개 : <span v-html="item.lawyerInfo"></span></div>
                             </div>

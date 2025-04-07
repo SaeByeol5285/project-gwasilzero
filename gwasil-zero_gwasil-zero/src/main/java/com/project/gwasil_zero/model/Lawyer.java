@@ -28,14 +28,14 @@ public class Lawyer {
 	private String birth; 
 	private String lawyerNumber; 
 	private String passYears; 
-	private String lawyerLicensName; 
-	private String lawyerLicensPath; 
+	private String lawyerLicenseName;
+	private String lawyerLicensePath;
 	private String officproofName; 
 	private String officproofPath;
 	private String cdate;
 	private String mainCategories1;
 	private String mainCategories2;
-	private String mainCategoryName1;   
+	private String mainCategoryName1;
 	private String mainCategoryName2;
-	
+
 }

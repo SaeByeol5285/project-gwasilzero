@@ -105,4 +105,43 @@ public class ProductController {
 		return new Gson().toJson(resultMap);
 	}
 	
+	// 상품 환불 리스트
+	@RequestMapping(value = "/admin/product/refund.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String ProductRefund(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+		resultMap = productService.refundProduct(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 상품 환불 완료
+	@RequestMapping(value = "/admin/product/refund-complete.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String refundComplete(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = productService.refundUpdate(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 상품 환불 취소
+	@RequestMapping(value = "/admin/product/refund-cancel.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String refundCancel(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = productService.refundCancel(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 환불 처리 알림
+	@RequestMapping(value = "/admin/product/nofitication.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String addAlert(@RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		resultMap = productService.notificationAdd(map); // 이게 있어야 함
+		return new Gson().toJson(resultMap);
+	}
+	
 }

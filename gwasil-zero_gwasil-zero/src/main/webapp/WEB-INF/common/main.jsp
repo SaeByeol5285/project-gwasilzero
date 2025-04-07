@@ -13,9 +13,6 @@
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
 
 		<title>main.jsp</title>
-
-		<style>
-		</style>
 	</head>
 
 	<body>
@@ -23,33 +20,93 @@
 		<div id="app">
 			<div class="container">
 				<!-- 변호사 소개 영역 -->
-				<section>
-					<div class="section-title">변호사 소개</div>
+				<section class="lawyer-intro">
 					<div class="lawyer-flex">
-						<!-- Swiper 영역 -->
 						<div class="swiper-container-area">
+							<div class="section-title">
+								<span class="orange">상담 가능 변호사</span> 와 지금 바로 <strong>블랙박스 영상</strong> 기반 상담을 받아보세요.
+							</div>
 							<div class="swiper mySwiper">
 								<div class="swiper-wrapper">
-									<div class="swiper-slide card-profile" v-for="lawyer in lawyerList"
-										:key="lawyer.name">
-										<img class="img-circle-profile" :src="lawyer.lawyerImg" />
-										<p><strong>{{ lawyer.lawyerName }}</strong></p>
+									<div class="swiper-slide" v-for="lawyer in lawyerList" :key="lawyer.lawyerId">
+										<div class="lawyer-card">
+											<img class="lawyer-img" :src="lawyer.lawyerImg" />
+											<div class="lawyer-icons">
+												<a><img src="../../img/common/message-ing.png" class="icon"></a>
+												<a><img src="../../img/common/bookmark.png" class="icon"></a>
+											</div>
+											<div class="icons-text">
+												<div class="card-txt-small">1:1채팅</div>
+												<div class="card-txt-small">북마크</div>
+											</div>
+											<div class="lawyer-content">
+												<div class="lawyer-tags">
+													<!-- 대표 카테고리 db에서 가져와서 넣기 -->
+													<span class="tag">신호위반</span>
+													<span class="tag">음주/무면허 사고</span>
+												</div>
+												<div>
+													<h3 class="lawyer-name">{{ lawyer.lawyerName }}<span
+															class="card-txt-small">변호사</span></h3>
+													<p class="lawyer-info" v-html="lawyer.lawyerInfo"></p>
+													<a class="btn-detail" href="#">자세히 보기</a>
+												</div>
+											</div>
+										</div>
 									</div>
 								</div>
-								<div class="swiper-button-next"></div>
-								<div class="swiper-button-prev"></div>
-								<div class="swiper-pagination"></div>
 							</div>
+							<div class="swiper-pagination"></div>
+							<div class="swiper-button-next" style="color: #ff57226b"></div>
+							<div class="swiper-button-prev" style="color: #ff57226b"></div>
 						</div>
-						<!-- 상담 가능한 변호사 리스트 -->
-						<div class="lawyer-available-list">
-							<h4>상담 가능 변호사</h4>
-							<ul>
-								<li v-for="lawyer in lawyerList" :key="lawyer.lawyerId">
-									{{ lawyer.lawyerName }}
-								</li>
-							</ul>
-							<a class="btn btn-outline" href="/lawyer/office.do">자세히 보기</a>
+					</div>
+				</section>
+
+				<section class="category-intro">
+					<div class="section-title">
+						어떤 분야의 사례를 알아보고 싶으신가요?
+					</div>
+					<div class="category-list">
+						<div>
+							<img src="../../img/common/category/1.icon.signal_violation.png" class="category-icon">
+							<div>신호위반</div>
+						</div>
+						<div>
+							<img src="../../img/common/category/2.icon.pedestrian.png" class="category-icon">
+							<div>보행자</div>
+						</div>
+						<div>
+							<img src="../../img/common/category/3.icon.drunk_or_nolicense.png" class="category-icon">
+							<div>음주/무면허</div>
+						</div>
+						<div>
+							<img src="../../img/common/category/4.icon.lane_change.png" class="category-icon">
+							<div>끼어들기/진로변경</div>
+						</div>
+						<div>
+							<img src="../../img/common/category/5.icon.parking_door.png" class="category-icon">
+							<div>주차/문개방</div>
+						</div>
+						<div>
+							<img src="../../img/common/category/6.icon.center_line.png" class="category-icon">
+							<div>중앙선 침범</div>
+						</div>
+						<div>
+							<img src="../../img/common/category/7.icon.speed_distance.png" class="category-icon">
+							<div>과석/안전거리 미확보</div>
+						</div>
+						<div>
+							<img src="../../img/common/category/8.icon.wrong_way.png" class="category-icon">
+							<div>일방통행/역주행</div>
+						</div>
+						<div>
+							<img src="../../img/common/category/9.icon.illegal_turn.png" class="category-icon">
+							<div>불법유턴/좌회전</div>
+						</div>
+						<div>
+							<img src="../../img/common/category/10.icon.etc_case.png" class="category-icon">
+							<div>기타/복합사고</div>
 						</div>
 					</div>
 				</section>
@@ -57,21 +114,24 @@
 				<!-- 최근 질문 -->
 				<section class="question-board">
 					<div class="flex-between">
-						<span class="section-title">최근 질문</span>
+						<a class="section-title orange">최근 상담 문의</a>
 						<a class="btn btn-outline" href="/board/list.do">질문하러 가기</a>
 					</div>
-					<ul class="question-list mt-40 mb-40">
+					<ul class="question-list">
 						<li class="card mb-20" v-for="board in boardList" :key="board.boardNo">
 							<div class="orange">{{ board.category }}</div>
-							<h3>{{ board.boardTitle }}</h3>
-							<div class="cut-letter">{{ board.contents }}</div>
+							<div>{{ board.boardTitle }}</div>
+							<div class="cut-letter card-txt-small">{{ board.contents }}</div>
 							<p>{{ board.cdate }}</p>
 							<div>변호사 답변 : {{ board.cmtCount }}개</div>
-							<div class="mt-10">
-								<a class="btn btn-outline" @click="fnView(board.boardNo)">자세히 보기</a>
-							</div>
 						</li>
 					</ul>
+				</section>
+
+				<!-- 리뷰 -->
+				<section class="review">
+
+
 				</section>
 
 			</div>
@@ -127,12 +187,15 @@
 				},
 				initSwiper() {
 					new Swiper('.mySwiper', {
-						slidesPerView: 2,
+						slidesPerView: 4,
 						spaceBetween: 30,
+						slidesPerGroup: 4,
+						speed: 1000,
+
 						loop: true,
 						autoplay: {
-							delay: 3000,
-							disableOnInteraction: false,
+							delay: 5000,
+							disableOnInteraction: true,
 						},
 						pagination: {
 							el: '.swiper-pagination',
@@ -143,7 +206,6 @@
 							prevEl: '.swiper-button-prev',
 						},
 						centeredSlides: false,
-						grabCursor: true,
 					});
 				}
 			},

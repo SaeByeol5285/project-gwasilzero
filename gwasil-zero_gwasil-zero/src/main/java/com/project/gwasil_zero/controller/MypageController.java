@@ -1,18 +1,24 @@
 package com.project.gwasil_zero.controller;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.Gson;
 import com.project.gwasil_zero.dao.MypageService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class MypageController {
@@ -52,6 +58,12 @@ public class MypageController {
 	public String edit(Model model) throws Exception {
 
 		return "/mypage/mypage-edit";
+	}
+	
+	@RequestMapping("/lawyerMyPage/edit.do")
+	public String lawyerEdit(Model model) throws Exception {
+
+		return "/mypage/lawyerMyPage-edit";
 	}
 
 	@RequestMapping(value = "/mypage/mypage-list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -213,4 +225,71 @@ public class MypageController {
 		resultMap = mypageService.getChatList(map);
 		return new Gson().toJson(resultMap);
 	}
+	
+	// 사용자 마이페이지 변호사 선임 결제 내역
+	@RequestMapping(value = "/mypage/contractList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String contract(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+		resultMap = mypageService.getContractList(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 변호사 마이페이지 사진 수정
+	@PostMapping("/lawyerMyPage/uploadImg.dox")
+	@ResponseBody
+	public Map<String, Object> uploadImg(@RequestParam("uploadFile") MultipartFile file,
+	                                     @RequestParam("lawyerId") String lawyerId,
+	                                     HttpServletRequest request) {
+	    Map<String, Object> result = new HashMap<>();
+	    try {
+	        String uploadDir = request.getServletContext().getRealPath("/img/lawyer/");
+	        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+	        File dest = new File(uploadDir, fileName);
+	        file.transferTo(dest);
+
+	        String imgPath = "/img/lawyer/" + fileName;
+
+	        // DB 업데이트
+	        Map<String, Object> param = new HashMap<>();
+	        param.put("lawyerId", lawyerId);
+	        param.put("lawyerImg", imgPath);
+	        mypageService.updateLawyerImg(param);
+
+	        result.put("result", "success");
+	        result.put("imgPath", imgPath);
+	    } catch (Exception e) {
+	        result.put("result", "fail");
+	    }
+	    return result;
+	}
+	
+	// 변호사 마이페이지 정보 수정
+	@RequestMapping(value = "/lawyerMyPage/info.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getlawyerInfo(@RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		resultMap = mypageService.selectLawyerInfo(map); // 이게 있어야 함
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 마이페이지 환불 처리 알림
+	@RequestMapping(value = "/mypage/notification.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getRefundNotification(@RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		resultMap = mypageService.selectRefundNotification(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 마이페이지 알림 읽음 처리
+	@RequestMapping(value = "/mypage/notificationRead.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String notificationRead(@RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		resultMap = mypageService.updateNotificationRead(map);
+		return new Gson().toJson(resultMap);
+	}
+
 }

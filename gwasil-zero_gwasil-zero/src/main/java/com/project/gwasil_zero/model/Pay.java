@@ -13,5 +13,6 @@ public class Pay {
 	private String payStatus;
 	private String price;
 	private String refundTime;
+	private String name;
 
 }

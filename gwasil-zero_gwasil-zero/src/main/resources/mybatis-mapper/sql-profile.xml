@@ -4,8 +4,15 @@
 
 <mapper namespace="com.project.gwasil_zero.mapper.ProfileMapper">
 	<select id = "selectInnerList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
-		SELECT * 
-		FROM LAWYER
+		SELECT 
+			L.*, 
+			C1.CATEGORY_NAME AS mainCategoryName1, 
+			C2.CATEGORY_NAME AS mainCategoryName2
+		FROM LAWYER L
+		LEFT JOIN CATEGORIES_MASTER C1 
+			ON LPAD(TRIM(L.MAIN_CATEGORIES1), 2, '0') = LPAD(TRIM(C1.CATEGORY_NO), 2, '0')
+		LEFT JOIN CATEGORIES_MASTER C2 
+			ON LPAD(TRIM(L.MAIN_CATEGORIES2), 2, '0') = LPAD(TRIM(C2.CATEGORY_NO), 2, '0')
 		WHERE 1=1 
 			AND LAWYER_STATUS = 'I'
 			AND LAWYER_PASS = 'Y'
@@ -42,8 +49,15 @@
 	</select>
 	
 	<select id = "selectPersonalList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
-		SELECT * 
-		FROM LAWYER
+		SELECT 
+			L.*, 
+			C1.CATEGORY_NAME AS mainCategoryName1, 
+			C2.CATEGORY_NAME AS mainCategoryName2
+		FROM LAWYER L
+		LEFT JOIN CATEGORIES_MASTER C1 
+			ON LPAD(TRIM(L.MAIN_CATEGORIES1), 2, '0') = LPAD(TRIM(C1.CATEGORY_NO), 2, '0')
+		LEFT JOIN CATEGORIES_MASTER C2 
+			ON LPAD(TRIM(L.MAIN_CATEGORIES2), 2, '0') = LPAD(TRIM(C2.CATEGORY_NO), 2, '0')
 		WHERE 1=1 
 			AND LAWYER_STATUS = 'P'
 			AND LAWYER_PASS = 'Y'
@@ -81,8 +95,15 @@
 	</select>
 	
 	<select id="selectLawyer" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
-		SELECT *  
+		SELECT 
+			L.*, 
+			C1.CATEGORY_NAME AS mainCategoryName1, 
+			C2.CATEGORY_NAME AS mainCategoryName2
 		FROM LAWYER L
+		LEFT JOIN CATEGORIES_MASTER C1 
+			ON LPAD(TRIM(L.MAIN_CATEGORIES1), 2, '0') = LPAD(TRIM(C1.CATEGORY_NO), 2, '0')
+		LEFT JOIN CATEGORIES_MASTER C2 
+			ON LPAD(TRIM(L.MAIN_CATEGORIES2), 2, '0') = LPAD(TRIM(C2.CATEGORY_NO), 2, '0')
 		WHERE L.LAWYER_ID = #{lawyerId} 
 	</select>
 	

@@ -51,7 +51,7 @@ public class UserController {
 		model.addAttribute("location", location);
 		return "/user/user-login";
 	}
-	
+
 	// 아이디/비밀번호 찾기 페이지 이동
 	@RequestMapping("/user/search.do")
 	public String search(Model model) throws Exception {
@@ -95,15 +95,15 @@ public class UserController {
 	@RequestMapping(value = "/user/userId-search.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String findId(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-	    HashMap<String, Object> resultMap = userService.searchUser(map); // ✅ 이걸로 변경
+		HashMap<String, Object> resultMap = userService.searchUser(map); // ✅ 이걸로 변경
 
-	    if ((int) resultMap.get("count") == 0) {
-	        resultMap.put("result", "fail");
-	    } else {
-	        resultMap.put("result", "success");
-	    }
+		if ((int) resultMap.get("count") == 0) {
+			resultMap.put("result", "fail");
+		} else {
+			resultMap.put("result", "success");
+		}
 
-	    return new Gson().toJson(resultMap);
+		return new Gson().toJson(resultMap);
 	}
 
 	// 비밀번호 찾기
@@ -133,9 +133,9 @@ public class UserController {
 	// 카카오 로그인 연동
 	@RequestMapping(value = "/kakao.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String kakao(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+	public String kakao(@RequestParam HashMap<String, Object> map) throws Exception {
+		// 1. access_token 발급
 		String tokenUrl = "https://kauth.kakao.com/oauth/token";
-
 		RestTemplate restTemplate = new RestTemplate();
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("grant_type", "authorization_code");
@@ -145,14 +145,26 @@ public class UserController {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 		ResponseEntity<Map> response = restTemplate.postForEntity(tokenUrl, request, Map.class);
+		String accessToken = (String) response.getBody().get("access_token");
 
-		Map<String, Object> responseBody = response.getBody();
-		HashMap<String, Object> resultMap = (HashMap<String, Object>) getUserInfo(
-				(String) responseBody.get("access_token"));
-		return new Gson().toJson(resultMap);
+		// 2. 사용자 정보 조회
+		Map<String, Object> userInfo = getUserInfo(accessToken);
+		Map<String, Object> profile = (Map<String, Object>) userInfo.get("properties"); // 여기서 닉네임 가져옴
+
+		// 3. 세션 저장 (닉네임을 id처럼 사용)
+		session.setAttribute("sessionId", profile.get("nickname"));
+		session.setAttribute("sessionType", "user");
+
+		System.out.println("✅ 카카오 닉네임: " + profile.get("nickname"));
+
+		// 4. 최소 응답
+		HashMap<String, Object> result = new HashMap<>();
+		result.put("result", "success");
+		result.put("nickname", profile.get("nickname"));
+
+		return new Gson().toJson(result);
 	}
 
 	private Map<String, Object> getUserInfo(String accessToken) {
@@ -178,19 +190,18 @@ public class UserController {
 	public HashMap<String, Object> naverSession(@RequestParam HashMap<String, Object> map, HttpSession session) {
 		session.setAttribute("sessionId", map.get("email")); // 또는 map.get("id") 등
 		session.setAttribute("sessionName", map.get("name"));
-		session.setAttribute("role", "user"); // 권한도 설정해두면 좋음
-		System.out.println(map.get("email") + ", " +map.get("name") );
+		session.setAttribute("sessionType", "user"); // 권한도 설정해두면 좋음
+		System.out.println(map.get("email") + ", " + map.get("name"));
 		HashMap<String, Object> result = new HashMap<>();
 		result.put("result", "success");
-		result.put("id",map.get("email"));
+		result.put("id", map.get("email"));
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/user/userId-check.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String checkUserId(@RequestParam HashMap<String, Object> map) {
 		return new Gson().toJson(userService.checkUserIdExist(map));
 	}
-	
 
 }

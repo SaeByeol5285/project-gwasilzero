@@ -39,23 +39,26 @@
                                     <img v-if="item.lawyerImg" :src="item.lawyerImg" alt="프로필 사진" />
                                     <div v-else class="no-data">등록된 프로필 사진이 없습니다.</div>
                                 </div>
-                                
                                 <div class="lawyer-name">{{item.lawyerName}}</div>
                                 <div class="intro">소개 : <span v-html="item.lawyerInfo"></span></div>
                             </div>
                         </div>
-                        <div class="pagination">
-                            <a v-if="page != 1" href="javascript:;" @click="fnPageMove('prev')"
-                                class="page-btn">&lt;</a>
-                            <a href="javascript:;" v-for="num in index" @click="fnPage(num)"
-                                :class="{'active': page == num}" class="page-btn">{{num}}</a>
-                            <a v-if="page != index" href="javascript:;" @click="fnPageMove('next')"
-                                class="page-btn">&gt;</a>
+                        <div class="pagination-container">
+                            <button class="btn" @click="prevPage" :disabled="page === 1">〈 이전</button>                         
+                            <button 
+                               v-for="n in index" 
+                               :key="n" 
+                               @click="goToPage(n)" 
+                               :class="['btn', page === n ? 'active' : '']">
+                               {{ n }}
+                            </button>                         
+                            <button class="btn" @click="nextPage" :disabled="page === index">다음 〉</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <jsp:include page="/WEB-INF/profile/recentViewBox.jsp" />
         <jsp:include page="../common/footer.jsp" />
     </body>
 
@@ -90,21 +93,40 @@
                         }
                     });
                 },
-                fnPage: function (num) {
-                    let self = this;
-                    self.page = num;
-                    self.fnGetList();
+                goToPage(n) {
+                    this.page = n;
+                    this.fnGetList();
                 },
-                fnPageMove: function (direction) {
-                    let self = this;
-                    if (direction == "next") {
-                        self.page++;
-                    } else {
-                        self.page--;
+
+                prevPage() {
+                    if (this.page > 1) {
+                    this.page--;
+                    this.fnGetList();
                     }
-                    self.fnGetList();
+                },
+                nextPage() {
+                    if (this.page < this.index) {
+                        this.page++;
+                        this.fnGetList();
+                    }
                 },
                 fnView: function (lawyerId) {
+                    const target = this.list.find(item => item.lawyerId === lawyerId);
+                    if (!target) return;
+
+                    var item = {
+                        type: 'lawyer',
+                        id: target.lawyerId,
+                        name: target.lawyerName,
+                        image: target.lawyerImg || null
+                    };
+
+                    var list = JSON.parse(localStorage.getItem('recentViewed') || '[]');
+                    list = list.filter(i => !(i.type === item.type && i.id === item.id));
+                    list.unshift(item);
+                    if (list.length > 5) list = list.slice(0, 5);
+                    localStorage.setItem('recentViewed', JSON.stringify(list));
+
                     pageChange("/profile/view.do", { lawyerId: lawyerId });
                 },
                 fnMove: function () {

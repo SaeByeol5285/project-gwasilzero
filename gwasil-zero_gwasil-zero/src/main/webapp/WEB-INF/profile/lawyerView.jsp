@@ -218,6 +218,23 @@
             .title-area h2 {
                 margin: 0;
             }
+
+            .button {
+                height: 36px;
+                padding: 0 16px;
+                background-color: #ff5c00;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-weight: bold;
+                font-size: 14px;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+            }
+
+            .button:hover {
+                background-color: #e65100;
+            }
             
             .no-data {
                 color: #999;
@@ -247,6 +264,7 @@
                                 <div class="lawyer-phone">Tel : {{ info.lawyerPhone }}</div>
                                 <div class="lawyer-email">Email : {{ info.lawyerEmail }}</div>
                             </div>
+                            <button @click="fnBack" class="button">목록</button>
                         </div>
                         <div class="profile-detail">
                             <div class="section">
@@ -342,6 +360,9 @@
                             self.mainCaseList = data.mainCaseList || [];
                         }
                     });
+                },
+                fnBack() {
+                    location.href = document.referrer;
                 }
             },
             mounted() {

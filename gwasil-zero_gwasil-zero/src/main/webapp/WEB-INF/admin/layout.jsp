@@ -12,7 +12,7 @@
     <%
             return;
         }
-    %>    
+    %>   
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,7 +31,7 @@
             <button onclick="fnPageMove('user')" class="${currentPage == 'user' ? 'active' : ''}">회원 관리</button>
             <button onclick="fnPageMove('lawyer')" class="${currentPage == 'lawyer' ? 'active' : ''}">변호사 관리</button>
             <button onclick="fnPageMove('report')" class="${currentPage == 'report' ? 'active' : ''}">게시글 관리</button>
-            <button onclick="fnPageMove('chart')" class="${currentPage == 'chart' ? 'active' : ''}">통계</button>
+            <button onclick="fnPageMove('chart')" class="${currentPage == 'chart' ? 'active' : ''}">통계 자료</button>
             <button onclick="fnPageMove('product')" class="${currentPage == 'product' ? 'active' : ''}">상품 관리</button>
     
             <button onclick="fnLogOut()" class="logout">Logout</button>
@@ -46,6 +46,21 @@
     }
 
     function fnLogOut() {
-        location.href = "/logout";
+        $.ajax({
+            url: "/user/logout.dox",
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                if (data.result === "success") {
+                    alert("로그아웃 되었습니다.");
+                    location.href = "/common/main.do";
+                } else {
+                    alert("로그아웃 실패");
+                }
+            },
+            error: function () {
+                alert("로그아웃 요청 중 오류가 발생했습니다.");
+            }
+        });
     }
 </script>

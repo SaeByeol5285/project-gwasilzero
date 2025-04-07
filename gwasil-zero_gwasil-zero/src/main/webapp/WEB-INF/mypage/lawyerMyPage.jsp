@@ -143,12 +143,75 @@
          margin-bottom: 10px;
       }
 
+      .payment-table thead {
+         background-color: #f2f2f2;
+      }
+
+      .payment-table th {
+         font-weight: bold;
+         color: #333;
+         font-size: 15px;
+         padding: 12px;
+      }
+
+      .payment-table td {
+         font-size: 14px;
+         padding: 10px 12px;
+         background-color: #fff;
+      }
+
+      .payment-table tr:nth-child(even) td {
+         background-color: #f9f9f9;
+      }
+
+      .payment-table {
+         border-radius: 8px;
+         overflow: hidden;
+         box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      }
+
+      .section-subtitle {
+         font-size: 28px;
+         font-weight: bold;
+         margin-bottom: 30px;
+         text-align: center;
+         color: #222;
+         position: relative;
+         display: inline-block;
+         padding-bottom: 10px;
+
+         display: block;
+         text-align: center;
+         margin-left: auto;
+         margin-right: auto;
+      }
+
+      .section-subtitle::after {
+         content: "";
+         position: absolute;
+         left: 50%;
+         transform: translateX(-50%);
+         bottom: 0;
+         width: 60px;
+         height: 3px;
+         background-color: #FF5722; /* 주황색 */
+         border-radius: 2px;
+      }
+
+      .message {
+         text-decoration: none;
+         color: #333;
+      }
+
+      .message:hover {
+         color: #e64a19;
+      }
    </style>
 
    <body>
       <jsp:include page="../common/header.jsp" />
       <div id="app">
-         <h2>마이페이지</h2>
+         <h2 class="section-subtitle">마이페이지</h2>
 
          <!-- 내 정보 섹션 -->
          <div class="section">
@@ -159,7 +222,7 @@
           
             <div class="info-section">
                <!-- 프로필 사진 -->
-               <div>
+               <div v-if="view">
                  <img :src="view.lawyerImg" alt="변호사 사진"
                    style="width: 130px; height: 130px; border-radius: 10px; object-fit: cover; border: 1px solid #ccc;" />
                </div>
@@ -248,48 +311,77 @@
                <a v-if="page < index" href="javascript:;" @click="fnPageMove('next')">▶</a>
              </div>
          </div>
-
-         
-                
           
-          <div class="section chat-section">
+         <div class="section chat-section">
             <h3>채팅 내역</h3>
-            <table>
-               <tr>
-                  <td>안녕하세요. OOO 입니다.</td>
-                  <td>000 번호사</td>
-               </tr>
-               <tr>
-                  <td>안녕하세요. 사고 관련해서 연락드립니다.</td>
-                  <td>XXX 번호사</td>
-               </tr>
+            <table class="payment-table">
+               <colgroup>
+                  <col style="width: 75%;"> <!-- 메시지 열 넓게 -->
+                  <col style="width: 25%;"> <!-- 상대방 열 좁게 -->
+               </colgroup>
+              <thead>
+                <tr>
+                  <th>메시지</th>
+                  <th>상대방</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-if="chatList.length" v-for="chat in chatList" :key="chat.chatNo">
+                  <td><a href="javascript:;" @click="fnChat(chat.chatNo)" class="message">{{ chat.message }}</a></td>
+                  <td>{{ chat.partnerName }}</td>
+                </tr>
+                <tr v-else>
+                  <td colspan="2" style="text-align: center; color: #999;">채팅 내역이 없습니다.</td>
+                </tr>
+              </tbody>
             </table>
-         </div>
+          </div>          
 
          <div class="section">
-            <h3>결제 내역</h3>
+            <h3>최근 결제 내역</h3>
             <table class="payment-table">
                <thead>
                   <tr>
                      <th>날짜</th>
                      <th>제품명</th>
                      <th>가격</th>
+                     <th>상태</th>
+                     <th>요청</th>
                   </tr>
-               </thead>
-               <tbody>
-                  <tr>
-                     <td>2025-03-20</td>
-                     <td>제품 A</td>
-                     <td>₩10,000</td>
-                  </tr>
-                  <tr>
-                     <td>2025-03-21</td>
-                     <td>제품 B</td>
-                     <td>₩20,000</td>
-                  </tr>
-               </tbody>
+               </thead>               
+              <tbody>
+               <tr v-if="lawyerPayList && lawyerPayList.length" v-for="pay in lawyerPayList" :key="pay.orderId">
+                  <td>{{ pay.payTime }}</td>
+                  <td>{{ pay.packageName }}</td>
+                  <td>{{ pay.price.toLocaleString() }} 원</td>
+                  <td>{{  getPayStatusText(pay.payStatus) }}</td>
+                  <td>
+                     <!-- 환불 가능 상태일 때 -->
+                     <button 
+                       v-if="pay.payStatus === 'PAID'" 
+                       @click="fnRequestRefund(pay.orderId)" 
+                       class="edit-btn">
+                       환불 요청
+                     </button>
+                   
+                     <!-- 환불 요청 상태일 때 -->
+                     <button 
+                       v-else-if="pay.payStatus === 'REQUEST'" 
+                       @click="fnCancelRefund(pay.orderId)" 
+                       class="withdraw-btn">
+                       환불 요청 취소
+                     </button>
+                   
+                     <!-- 그 외 상태일 때 -->
+                     <span v-else>-</span>
+                  </td>
+               </tr>
+               <tr v-else>
+                  <td colspan="5">결제 내역이 없습니다.</td>
+               </tr>
+            </tbody>            
             </table>
-         </div>
+          </div>          
 
          <div style="text-align: center; margin-top: 20px;">
             <button @click="fnEditProfile" class="edit-btn" style="margin-right: 10px;">
@@ -314,7 +406,9 @@
                boardStatus : "",
                page: 1,
                pageSize: 3,
-               index: 0
+               index: 0,
+               lawyerPayList : [],
+               chatList : []
             };
          },
          methods: {
@@ -389,12 +483,110 @@
                });
             },
 
+            fnGetPayments() {
+               const self = this;
+               $.ajax({
+                  url: "/lawyerMyPage/payList.dox",
+                  type: "POST",
+                  data: { sessionId: self.sessionId },
+                  dataType: "json",
+                  success: function(data) {
+                     console.log(data);
+                     self.lawyerPayList = data.lawyerPayList; 
+                  },
+                  error: function() {
+                     alert("결제 내역 불러오기 실패");
+                  }
+               });
+            },
+
+            fnRequestRefund(orderId) {
+               const self = this;
+
+               if (!confirm("해당 결제 건에 대해 환불을 요청하시겠습니까?")) return;
+
+               $.ajax({
+                  url: "/mypage/Refund.dox",
+                  type: "POST",
+                  data: { orderId: orderId },
+                  success: function (data) {
+                     alert("환불 요청이 접수되었습니다.");
+
+                     const pay = self.lawyerPayList.find(p => p.orderId === orderId);
+                     if (pay) {
+                        pay.payStatus = "REQUEST";
+                     }
+                  },
+                  error: function () {
+                     alert("환불 요청 처리 중 오류가 발생했습니다.");
+                  }
+               });
+            },
+
+            fnCancelRefund(orderId) {
+               const self = this;
+
+               if (!confirm("환불 요청을 취소하시겠습니까?")) return;
+
+               $.ajax({
+                  url: "/mypage/RefundCancel.dox", 
+                  type: "POST",
+                  data: { orderId: orderId },
+                  success: function () {
+                     alert("환불 요청이 취소되었습니다.");
+                     const pay = self.lawyerPayList.find(p => p.orderId === orderId);
+                     if (pay) {
+                     pay.payStatus = "PAID"; // 다시 결제 완료로 되돌림
+                     }
+                  },
+                  error: function () {
+                     alert("환불 요청 취소 처리 중 오류가 발생했습니다.");
+                  }
+               });
+            },
+
+            fnGetChatList() {
+               const self = this;
+               $.ajax({
+                  url: "/mypage/chatList.dox",
+                  type: "POST",
+                  data: { sessionId: self.sessionId },
+                  dataType: "json",
+                  success: function(data) {
+                     console.log(data);
+                     self.chatList = data && data.chatList ? data.chatList : [];
+                  },
+                  error: function() {
+                     alert("채팅 내역을 불러오는 중 오류가 발생했습니다.");
+                  }
+               });
+            },
+
+            fnChat(chatNo) {
+               pageChange("/chat/chat.do", {chatNo : chatNo});
+            },
+
+            getPayStatusText(status) {
+               switch (status) {
+                  case "PAID":
+                     return "결제 완료";
+                  case "REQUEST":
+                     return "환불 요청";
+                  case "REFUNDED":
+                     return "환불 완료";
+                  case "CANCELLED_REFUND":
+                     return "환불 취소";
+                  default:
+                     return status;
+               }
+            },
+
             fnPage(num) {
                this.page = num;
                this.fnLawyerBoard();
             },
             
-               fnPageMove(dir) {
+            fnPageMove(dir) {
                if (dir === "next" && this.page < this.index) {
                   this.page++;
                } else if (dir === "prev" && this.page > 1) {
@@ -450,6 +642,8 @@
          mounted() {
             this.fnGetList();
             this.fnLawyerBoard();
+            this.fnGetPayments();
+            this.fnGetChatList();
          }
       });
       app.mount('#app');

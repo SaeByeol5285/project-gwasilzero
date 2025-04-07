@@ -61,6 +61,13 @@ public class AdminController {
         return "/admin/chart"; 
     }
     
+    // admin 차트 주소
+    @RequestMapping("/admin/waitLawyerView.do") 
+    public String waitLawyerView(@RequestParam(value = "page", required = false) String page, Model model) {
+        model.addAttribute("currentPage", page);
+        return "/admin/waitLawyerView"; 
+    }
+        
     // 신규 유저 목록
  	@RequestMapping(value = "/admin/newMemList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
  	@ResponseBody
@@ -306,6 +313,25 @@ public class AdminController {
          map.put("groupType", groupType);
 
          resultMap = adminService.getStatUserLine(map);
+     } catch (Exception e) {
+         e.printStackTrace();
+         resultMap.put("result", "fail");
+     }
+
+   	    return new Gson().toJson(resultMap);
+   	}
+   	// 변호사 등록 차트 데이타 조회
+   	@RequestMapping(value = "/admin/statLawyerLine.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+   	@ResponseBody
+   	public String statLawyerLine(@RequestBody HashMap<String, Object> map) {
+   	    HashMap<String, Object> resultMap = new HashMap<>();
+
+   	 try {
+         // 필터 기본값 처리
+         String groupType = (String) map.getOrDefault("groupType", "monthly");
+         map.put("groupType", groupType);
+
+         resultMap = adminService.getStatLawyerLine(map);
      } catch (Exception e) {
          e.printStackTrace();
          resultMap.put("result", "fail");

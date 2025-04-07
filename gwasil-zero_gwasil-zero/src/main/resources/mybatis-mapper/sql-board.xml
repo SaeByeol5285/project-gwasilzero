@@ -143,4 +143,10 @@
 	<update id="updateBoardCmt" parameterType="hashmap">
 		update board_cmt set contents = #{contents}, udate = sysdate where cmt_no = #{cmtNo} 
 	</update>
+	
+	<select id="checkLawyerStatus" parameterType="hashmap"  resultType="com.project.gwasil_zero.model.Lawyer">
+	    SELECT *
+	    FROM lawyer
+	    WHERE lawyer_id = #{sessionId}
+	</select>
 </mapper>

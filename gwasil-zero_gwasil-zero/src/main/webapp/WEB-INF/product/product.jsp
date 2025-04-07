@@ -48,6 +48,14 @@
             color: #FF5722;
         }
 
+        .btn-cancel {
+            background-color: #777;
+        }
+
+        .btn-cancel:hover {
+            background-color: #555; /* 마우스 올리면 더 어두워짐 */
+        }
+        
 	</style>
 </head>
 <body>
@@ -92,6 +100,44 @@
                         <button class="btn" @click="fnAdd">신규 등록</button>
                     </div>
                 </div>
+
+                <!-- 환불 요청 리스트 -->
+                <div class="box" style="margin-top: 40px;">
+                    <h3>환불 요청 리스트</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>회원 유형</th>
+                                <th>이름</th>
+                                <th>패키지명</th>
+                                <th>결제 금액</th>
+                                <th>결제일자</th>
+                                <th>상태</th>
+                                <th>처리</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="refundList.length > 0" v-for="(item, index) in refundList" :key="index">
+                                <td>{{ item.userType === 'L' ? '변호사' : '일반 사용자' }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.packageName }}</td>
+                                <td>{{ item.price.toLocaleString() }}원</td>
+                                <td>{{ item.payTime }}</td>
+                                <td>{{ getRefundStatusText(item.payStatus) }}</td>
+                                <td>
+                                    <div v-if="item.payStatus === 'REQUEST'">
+                                        <button class="btn" @click="fnCompleteRefund(item.orderId)">환불 완료 처리</button>
+                                        <button class="btn btn-cancel" @click="fnCancelRefund(item.orderId)">환불 취소</button>
+                                    </div>
+                                    <span v-else>완료됨</span>
+                                </td>                                
+                            </tr>
+                            <tr v-else>
+                                <td colspan="7" style="text-align: center; color: #999;">환불 요청된 내역이 없습니다.</td>
+                            </tr>
+                        </tbody>
+                    </table>                    
+                </div>
             </div>
         </div>
     </div>  
@@ -104,7 +150,8 @@
         data() {
             return {
 				list : [],
-                selectList : []
+                selectList : [],
+                refundList : []
             };
         },
         methods: {
@@ -125,6 +172,100 @@
 					}
 				});
             },
+
+            fnGetRefundList() {
+                let self = this;
+                $.ajax({
+                    url: "/admin/product/refund.dox",
+                    type: "POST",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.result === "success") {
+                        self.refundList = data.refundList;
+                        }
+                    }
+                });
+            },
+            
+            getRefundStatusText(status) {
+                switch (status) {
+                    case "REQUEST": return "환불 요청";
+                    case "REFUNDED": return "환불 완료";
+                    default: return status;
+                }
+            },
+
+            fnCompleteRefund(orderId) {
+                let self = this;
+                const item = self.refundList.find(i => i.orderId === orderId); // 해당 항목 찾기
+
+                Swal.fire({
+                    title: "환불 완료 처리하시겠습니까?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "처리",
+                    cancelButtonText: "취소"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/admin/product/refund-complete.dox",
+                            type: "POST",
+                            data: { orderId: orderId },
+                            success: function (data) {
+                                if (data.result === "success") {
+                                    // ✅ 알림 insert 요청 추가
+                                    $.ajax({
+                                        url: "/admin/product/nofitication.dox",
+                                        type: "POST",
+                                        data: {
+                                            receiverId: item.userId || item.lawyerId,
+                                            senderId: "admin",
+                                            notiType: "REFUND",
+                                            contents: `[ ` + item.packageName + ` ] 환불이 완료되었습니다.`,
+                                            isRead: "N"
+                                        },
+                                        success: function () {
+                                            Swal.fire({
+                                                icon: "success",
+                                                title: "환불 완료",
+                                                text: "환불이 완료되었습니다. 사용자에게 알림이 전달되었습니다.",
+                                                confirmButtonText: "확인"
+                                            });
+                                            self.fnGetRefundList(); // 리스트 새로고침
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+            },
+
+            fnCancelRefund(orderId) {
+                let self = this;
+                Swal.fire({
+                    title: "환불 요청을 취소하시겠습니까?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "예",
+                    cancelButtonText: "아니오"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/admin/product/refund-cancel.dox",
+                            type: "POST",
+                            data: { orderId: orderId },
+                            success: function (data) {
+                                if (data.result === "success") {
+                                    Swal.fire("처리 완료", "환불 요청이 취소되었습니다.", "success");
+                                    self.fnGetRefundList();
+                                }
+                            }
+                        });
+                    }
+                });
+            },
+
 
             fnDelete() {
                 var self = this;
@@ -188,6 +329,7 @@
         },
         mounted() {
 			this.fnGetList();
+            this.fnGetRefundList();
         }
     });
     mainApp.mount('#mainApp');

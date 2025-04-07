@@ -91,21 +91,14 @@
                     <div class="pagination-container">
                         <button class="btn" @click="prevPage" :disabled="userPage === 1">〈 이전</button>
                         <button 
-                           v-for="n in index" 
+                           v-for="n in userPageCount" 
                            :key="n" 
                            @click="goToPage(n)" 
                            :class="['btn', userPage === n ? 'active' : '']">
                            {{ n }}
                         </button>
-                        <button class="btn" @click="nextPage" :disabled="userPage === index">다음 〉</button>
-                     </div>    
-
-                    <div class="pagination">
-                        <a v-if="userPage != 1" href="javascript:;" @click="fnUserPageMove('prev')" class="page-btn">&lt;</a>
-                        <a href="javascript:;" v-for="num in userPageCount" @click="fnUserPage(num)" 
-                           :class="{'active': userPage == num}" class="page-btn">{{num}}</a>
-                        <a v-if="userPage != userPageCount" href="javascript:;" @click="fnUserPageMove('next')" class="page-btn">&gt;</a>
-                    </div>
+                        <button class="btn" @click="nextPage" :disabled="userPage === userPageCount">다음 〉</button>
+                     </div>  
                 </div>
             </div>
         </div>
@@ -173,16 +166,22 @@
 					}
 				});
             },
-            fnUserPage(num) {
-                var self = this;
-                self.userPage = num;
-                self.fnUserList();
+            goToPage(n) {
+                    this.userPage = n;
+                    this.fnUserList();
+                },
+
+            prevPage() {
+                if (this.userPage > 1) {
+                this.userPage--;
+                this.fnUserList();
+                }
             },
-            fnUserPageMove(direction) {
-                var self = this;
-                if (direction === 'next') self.userPage++;
-                else self.userPage--;
-                self.fnUserList();
+            nextPage() {
+                if (this.userPage < this.userPageCount) {
+                    this.userPage++;
+                    this.fnUserList();
+                }
             }
         },
         mounted() {

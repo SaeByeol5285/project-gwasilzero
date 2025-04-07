@@ -50,12 +50,17 @@
                                 </td>
                             </tr>
                         </table>
-                        <div class="pagination">
-                            <a v-if="repoPage != 1" href="javascript:;" @click="fnRepoPageMove('prev')" class="page-btn">&lt;</a>
-                            <a href="javascript:;" v-for="num in repoPageCount" @click="fnRepoPage(num)" 
-                            :class="{'active': repoPage == num}" class="page-btn">{{num}}</a>
-                            <a v-if="repoPage != repoPageCount" href="javascript:;" @click="fnRepoPageMove('next')" class="page-btn">&gt;</a>
-                        </div>
+                        <div class="pagination-container">
+                            <button class="btn" @click="fnRepoPrevPage" :disabled="repoPage === 1">〈 이전</button>
+                            <button 
+                               v-for="n in repoPageCount" 
+                               :key="n" 
+                               @click="fnRepoPage(n)" 
+                               :class="['btn', repoPage === n ? 'active' : '']">
+                               {{ n }}
+                            </button>
+                            <button class="btn" @click="fnRepoNextPage" :disabled="repoPage === repoPageCount">다음 〉</button>
+                         </div> 
                     </div>
                 </div>                
             </div>
@@ -106,16 +111,21 @@
                     }
                 });
             },
-            fnRepoPage(num) {
-                var self = this;
-                self.repoPage = num;
-                self.fnGetReports();
+            fnRepoPage(n) {
+                this.repoPage = n;
+                this.fnGetReports();
             },
-            fnRepoPageMove(dir) {
-                var self = this;
-                if (dir === 'prev' && self.repoPage > 1) self.repoPage--;
-                else if (dir === 'next' && self.repoPage < self.repoPageCount) self.repoPage++;
-                self.fnGetReports();
+            fnRepoPrevPage() {
+                if (this.repoPage > 1) {
+                this.repoPage--;
+                this.fnGetReports();
+                }
+            },
+            fnRepoNextPage() {
+                if (this.repoPage < this.repoPageCount) {
+                    this.repoPage++;
+                    this.fnGetReports();
+                }
             },
             fnHandleReport(item) {
                 if (!item.actionStatus) {

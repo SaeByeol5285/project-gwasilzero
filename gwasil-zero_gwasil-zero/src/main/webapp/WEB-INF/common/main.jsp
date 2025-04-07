@@ -114,14 +114,16 @@
 				<!-- 최근 질문 -->
 				<section class="question-board">
 					<div class="flex-between">
-						<a class="section-title orange">최근 상담 문의</a>
-						<a class="btn btn-outline" href="/board/list.do">질문하러 가기</a>
+						<a class="section-title orange"  href="/board/list.do" style="text-decoration: none;">최근 상담글 ></a>
 					</div>
 					<ul class="question-list">
 						<li class="card mb-20" v-for="board in boardList" :key="board.boardNo">
-							<div class="orange">{{ board.category }}</div>
+							<div>
+								<img src="/img/common/logo3.png" class="top-icon" />
+								<span class="orange">{{ board.category }}</span>
+							</div>
 							<div>{{ board.boardTitle }}</div>
-							<div class="cut-letter card-txt-small">{{ board.contents }}</div>
+							<div class="cut-letter">{{ board.contents }}</div>
 							<p>{{ board.cdate }}</p>
 							<div>변호사 답변 : <span class="orange">{{ board.cmtCount }}</span>개</div>
 						</li>
@@ -130,11 +132,36 @@
 
 				<!-- 리뷰 -->
 				<section class="review">
+					<div class="section-title">상담 후기</div>
+					<div class="swiper reviewSwiper">
+						<div class="swiper-wrapper">
+							<div class="swiper-slide" v-for="review in reviewList" :key="review.reviewNo">
+								<li class="review-card">
+									<!-- 로고영역: 카드 내부지만 절대위치로 띄움 -->
+									<div class="review-logo">
+										<img src="/img/common/logo3.png" class="review-icon" />
+										<span class="review-lawyerName">{{ review.lawyerName }}</span><span
+												class="small">변호사</span>
+									</div>
 
+									<!-- 나머지 본문 -->
+									<div class="review-body">
+										<p class="review-highlight">“{{ review.highlight }}”</p>
+										<p class="review-content">{{ review.contents }}</p>
+										<p class="review-user">{{ review.userId }}님의 후기</p>
+									</div>
+								</li>
+
+							</div>
+						</div>
+						<div class="swiper-button-next" style="color: #ff57226b"></div>
+						<div class="swiper-button-prev" style="color: #ff57226b"></div>
+					</div>
 
 				</section>
-
 			</div>
+
+		</div>
 		</div>
 		<jsp:include page="../common/footer.jsp" />
 	</body>
@@ -145,9 +172,27 @@
 				return {
 					boardList: [],
 					lawyerList: [],
+					reviewList: [],
+
 				};
 			},
 			methods: {
+				fnGetReviewList() {
+					const self = this;
+					$.ajax({
+						url: "/common/reviewList.dox",
+						dataType: "json",
+						type: "POST",
+						success: function (data) {
+							if (data.result === "success") {
+								console.log(data);
+								self.reviewList = data.list;
+							} else {
+								alert("review 불러오기 실패");
+							}
+						}
+					});
+				},
 				fnGetBoardList() {
 					const self = this;
 					$.ajax({
@@ -186,6 +231,7 @@
 					});
 				},
 				initSwiper() {
+					//변호사 슬라이더
 					new Swiper('.mySwiper', {
 						slidesPerView: 4,
 						spaceBetween: 30,
@@ -207,11 +253,32 @@
 						},
 						centeredSlides: false,
 					});
-				}
+					//리뷰 슬라이더
+					new Swiper('.reviewSwiper', {
+						slidesPerView: 3,
+						spaceBetween: 40,
+						slidesPerGroup: 3,
+						loop: true,
+						// autoplay: {
+						// 	delay: 6000,
+						// 	disableOnInteraction: false,
+						// },
+						pagination: {
+							el: '.swiper-pagination',
+							clickable: true,
+						},
+						navigation: {
+							nextEl: '.swiper-button-next',
+							prevEl: '.swiper-button-prev',
+						},
+					});
+				},
+
 			},
 			mounted() {
 				this.fnGetBoardList();
 				this.fnGetLawyerList();
+				this.fnGetReviewList();
 			},
 
 		});

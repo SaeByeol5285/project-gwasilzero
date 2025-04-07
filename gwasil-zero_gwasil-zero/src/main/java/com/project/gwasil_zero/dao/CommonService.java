@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.project.gwasil_zero.mapper.CommonMapper;
 import com.project.gwasil_zero.model.Board;
 import com.project.gwasil_zero.model.Lawyer;
+import com.project.gwasil_zero.model.Review;
 
 @Service
 public class CommonService {
@@ -47,5 +48,20 @@ public class CommonService {
 
 		return resultMap;
 	}
+
+	public HashMap<String, Object> getLReviewList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+			List<Review> list = commonMapper.selectReviewList(map);
+			resultMap.put("list", list);
+			resultMap.put("result", "success");
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", "failed");
+		}
+
+		return resultMap;	}
 
 }

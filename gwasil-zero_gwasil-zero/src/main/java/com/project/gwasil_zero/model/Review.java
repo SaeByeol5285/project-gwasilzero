@@ -15,5 +15,6 @@ public class Review {
 	private int boardNo;
 	private String boardTitle;
 	private String boardStatus;
+	private String lawyerName;
 
 }

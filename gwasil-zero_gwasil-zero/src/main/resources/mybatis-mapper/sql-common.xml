@@ -26,6 +26,13 @@
 		ORDER BY DBMS_RANDOM.VALUE
 		OFFSET 0 ROWS FETCH NEXT 6 ROWS ONLY
 	</select>
+	
+	<select id="selectReviewList" resultType="com.project.gwasil_zero.model.Review">
+		SELECT R.*, LAWYER_NAME AS lawyerName
+		FROM REVIEW R
+        LEFT JOIN LAWYER L ON R.LAWYER_ID = L.LAWYER_ID
+        WHERE SCORE >= 4
+	</select>
 
 
 </mapper>

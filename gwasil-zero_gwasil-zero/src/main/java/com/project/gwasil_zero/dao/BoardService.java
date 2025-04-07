@@ -217,4 +217,19 @@ public class BoardService {
 	    return resultMap;
     }
 	
+	
+	public void saveBoardKeywords(int boardNo, List<String> keywords) {
+	    for (String keyword : keywords) {
+	        HashMap<String, Object> keywordMap = new HashMap<>();
+	        keywordMap.put("boardNo", boardNo);
+	        keywordMap.put("keyword", keyword);
+	        boardMapper.insertBoardKeyword(keywordMap);
+	    }
+	}
+	
+	public List<Board> getRelatedBoards(int boardNo) {
+	    HashMap<String, Object> map = new HashMap<>();
+	    map.put("boardNo", boardNo);
+	    return boardMapper.selectRelatedBoards(map);
+	}
 }

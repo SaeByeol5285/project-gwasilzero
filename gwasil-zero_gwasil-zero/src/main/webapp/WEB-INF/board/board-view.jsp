@@ -20,6 +20,7 @@
 				font-family: 'Arial', sans-serif;
 			}
 
+			/* 제목 */
 			.view-title {
 				font-size: 30px;
 				font-weight: 800;
@@ -30,6 +31,7 @@
 				gap: 10px;
 			}
 
+			/* 아이콘 */
 			.title-icon {
 				font-size: 32px;
 				color: #FF5722;
@@ -56,6 +58,7 @@
 				margin-bottom: 30px;
 			}
 
+			/* 첨부 이미지/비디오 */
 			.media-section {
 				display: flex;
 				flex-wrap: wrap;
@@ -77,6 +80,7 @@
 				border: 1px solid #ccc;
 			}
 
+			/* 댓글 영역 */
 			.comment-list {
 				width: 70%;
 				margin: 40px auto;
@@ -174,6 +178,95 @@
 			.text-green:hover {
 				text-decoration: underline;
 			}
+
+			/* 연관 게시글 영역 */
+			.related-wrapper {
+				width: 70%;
+				margin: 60px auto;
+				text-align: center;
+				border-top: 3px solid #FFA726;
+				border-bottom: 3px solid #FFA726;
+				padding: 20px 0;
+			}
+
+
+			.related-title {
+				font-size: 22px;
+				font-weight: bold;
+				color: #333;
+				margin-bottom: 24px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 6px;
+				position: relative;
+			}
+
+			.related-title::after {
+				content: "";
+				display: block;
+				width: 60px;
+				height: 3px;
+				background-color: #FF5722;
+				position: absolute;
+				bottom: -8px;
+				left: 50%;
+				transform: translateX(-50%);
+			}
+
+			.related-cards {
+				display: flex;
+				justify-content: center;
+				flex-wrap: wrap;
+				gap: 20px;
+				margin-top: 30px;
+			}
+
+			
+			.related-card {
+				width: 200px;
+				border: 1px solid #ddd;
+				border-radius: 12px;
+				overflow: hidden;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+				cursor: pointer;
+				transition: transform 0.25s, box-shadow 0.25s;
+				background-color: #fff;
+			}
+
+
+			.related-card:hover {
+				transform: translateY(-6px);
+				box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+			}
+
+			.related-card img {
+				width: 100%;
+				height: 130px;
+				object-fit: cover;
+				border-bottom: 1px solid #eee;
+				background-color: #f2f2f2;
+			}
+
+			.card-info {
+				padding: 12px;
+			}
+
+			.card-info h5 {
+				font-size: 15px;
+				margin: 0 0 6px;
+				color: #333;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.card-info p {
+				font-size: 13px;
+				color: #777;
+				margin: 0;
+			}
+
 		</style>
 
 
@@ -213,11 +306,35 @@
 					</div>
 				</div>
 				<button v-if="sessionId === board.userId" @click="EditBoard">수정</button>
-
 			</div>
 
+			
+			
+			<!-- 관련된 게시글 영역 -->
+			<div class="related-wrapper" v-if="relatedBoards.length > 0">
+			  <div class="related-title">📌 연관된 게시글</div>
+			  <div class="related-cards">
+			    <div
+			      class="related-card"
+			      v-for="item in relatedBoards"
+			      :key="item.boardNo"
+			      @click="goToBoard(item.boardNo)"
+			    >
+			      <img
+			        :src="item.thumbnailPath?.replace('../', '/')"
+			        alt="썸네일"
+			        @error="e => e.target.src = '/img/common/image_not_exist.jpg'"
+			      />
+			      <div class="card-info">
+			        <h5>{{ item.boardTitle }}</h5>
+			        <p>작성자: {{ item.userName }}</p>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			
+			
 			<div>
-
 				<div class="comment-list">
 					<h4>댓글</h4>
 
@@ -278,7 +395,8 @@
 					bookmarkList: [],
 					makerId: "",
 					editingCommentNo: null,
-					editedComment: ""
+					editedComment: "",
+					relatedBoards: []
 				};
 			},
 			methods: {
@@ -495,12 +613,28 @@
 				cancelUpdate() {
 					this.editingCommentNo = null;
 					this.editedComment = "";
+				},
+				fnGetBoardWithKeyword(){
+					let self = this;
+					$.ajax({
+					  url: "/board/related.dox",
+					  type: "POST",
+					  data: { boardNo: self.boardNo },
+					  dataType: "json",
+					  success: function (res) {
+					    self.relatedBoards = res.related || [];
+					  }
+					});
+				},
+				goToBoard(boardNo) {
+					pageChange("/board/view.do", { boardNo: boardNo });
 				}
 			},
 			mounted() {
 				let self = this;
 				console.log(self.sessionType);
 				self.fnGetBoard();
+				self.fnGetBoardWithKeyword();
 			}
 		});
 		app.mount("#app");

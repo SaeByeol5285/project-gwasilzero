@@ -14,13 +14,13 @@
         <header>
             <!-- 로그인 / 북마크 / 알림 -->
             <div class="header-line">
-                <a v-if="sessionType === 'user'" href="javascript:void(0);" class="noti-link"
+                <a v-if="sessionType === 'user' || sessionType === 'lawyer'" href="javascript:void(0);" class="noti-link"
                     @click="toggleNotification" ref="notiToggle">
                     새 소식
                     <span v-if="list.length > 0" class="noti-badge">{{ list.length > 9 ? '9+' : list.length }}</span>
 
                     <div v-if="showNotification" class="noti-popup" ref="notiPopup" @click.stop>
-                        <div class="noti-section">
+                        <div class="noti-section"  v-if="sessionType === 'user'">
                             <h4>댓글 알림</h4>
                             <div class="noti-list" v-if="commentNoti.length > 0">
                                 <div class="noti-item" v-for="item in commentNoti" :key="item.notiNo"

@@ -1,6 +1,7 @@
 package com.project.gwasil_zero.dao;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,8 +11,10 @@ import com.project.gwasil_zero.mapper.MypageMapper;
 import com.project.gwasil_zero.model.Board;
 import com.project.gwasil_zero.model.Chat;
 import com.project.gwasil_zero.model.ChatMessage;
+import com.project.gwasil_zero.model.Contract;
 import com.project.gwasil_zero.model.Pay;
 import com.project.gwasil_zero.model.Lawyer;
+import com.project.gwasil_zero.model.Notification;
 import com.project.gwasil_zero.model.User;
 
 @Service
@@ -64,8 +67,8 @@ public class MypageService {
 		    List<Board> boardList = mypageMapper.selectUserBoardList(map);
 		    resultMap.put("boardList", boardList);
 		    
-		    int cnt = mypageMapper.selectBoardCount(map);
-			resultMap.put("cnt", cnt);
+		    int boardCnt = mypageMapper.selectBoardCount(map);
+			resultMap.put("boardCnt", boardCnt);
 		    
 			resultMap.put("result", "success");		
 			
@@ -127,7 +130,7 @@ public class MypageService {
    public HashMap<String, Object> getLawyer(HashMap<String, Object> map) {
 	   // TODO Auto-generated method stub
 	   HashMap<String, Object> resultMap = new HashMap<String, Object>();
-	   Lawyer view = mypageMapper.selectLawyerInfo(map);
+	   Lawyer view = mypageMapper.selectLawyerView(map);
 	   resultMap.put("view", view);
 	   return resultMap;
    }
@@ -217,5 +220,47 @@ public class MypageService {
 	    return resultMap;
 	}
 
-   
+	public HashMap<String, Object> getContractList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	        List<Contract> contractList = mypageMapper.selectContractList(map);
+	        resultMap.put("contractList", contractList);
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+	    return resultMap;
+	}
+
+	public HashMap<String, Object> selectLawyerInfo(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<>();
+	    Lawyer lawyerInfo = mypageMapper.selectLawyerInfo(map);
+	    resultMap.put("lawyerInfo", lawyerInfo);
+	    return resultMap;
+	}
+
+	public void updateLawyerImg(Map<String, Object> param) {
+		// TODO Auto-generated method stub
+		mypageMapper.updateLawyerImg(param);
+	}
+
+	public HashMap<String, Object> selectRefundNotification(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		   Notification notifications = mypageMapper.selectRefundNoti(map);
+		   resultMap.put("notifications", notifications);
+		   return resultMap;
+	}
+
+	public HashMap<String, Object> updateNotificationRead(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+	    mypageMapper.updateNoti(map);
+	    resultMap.put("result", "success");      
+	    return resultMap;
+	}
+
 }

@@ -10,6 +10,7 @@
    <script src="/js/page-change.js"></script>
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
    <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
    <title>board-list</title>
    
 </head>
@@ -395,6 +396,7 @@
             list : [],
             sessionId : "${sessionScope.sessionId}",
 			categoryList: [
+                          { value: "all", label: "전체" },
 			                 { value: "01", label: "신호 위반" },
 			                 { value: "02", label: "보행자 사고" },
 			                 { value: "03", label: "음주/무면허 사고" },
@@ -464,6 +466,23 @@
               }
           },
           goToAddPage: function () {
+            if (!this.sessionId || this.sessionId === "") {
+					Swal.fire({
+						title: "작성 불가!",
+						text: "로그인 후 이용하실 수 있습니다.",
+						icon: "warning",
+						showCancelButton: true,
+						confirmButtonColor: "#ff5c00", // 주황색
+						cancelButtonColor: "#aaa",
+						confirmButtonText: "로그인하러 가기",
+						cancelButtonText: "취소"
+					}).then((result) => {
+						if (result.isConfirmed) {
+                     location.href = "/user/login.do";
+						}
+					});
+					return;
+				}
             location.href = "/board/add.do";
           }
          ,

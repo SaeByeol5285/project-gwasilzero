@@ -220,13 +220,69 @@
 				.message:hover {
 					color: #e64a19;
 				}
+
+				.pagination-container {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					margin-top: 30px;
+					margin-bottom: 20px;
+					gap: 6px;
+				}
+
+				.btn {
+					padding: 10px 18px;
+					font-size: 15px;
+					border: none;
+					border-radius: 8px;
+					background-color: #f2f2f2;
+					color: #444;
+					font-weight: 500;
+					cursor: pointer;
+					transition: all 0.2s ease;
+				}
+
+				.btn:hover {
+					background-color: #ffe6db;
+					color: #ff5c00;
+				}
+
+				.btn.active {
+					background-color: #ff5c00;
+					color: white;
+					font-weight: bold;
+					box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+				}
+
+				.btn:disabled {
+					opacity: 0.4;
+					cursor: default;
+				}
+
+				.alert-banner {
+					background-color: #ffefdb;
+					border: 1px solid #ffa66a;
+					color: #d35400;
+					padding: 15px 20px;
+					border-radius: 10px;
+					margin-bottom: 20px;
+					font-weight: bold;
+					box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+				}
 			</style>
 		</head>
 
 		<body>
 			<jsp:include page="../common/header.jsp" />
 			<div id="app">
+
+				<!-- 알림 배너 -->
+				<div v-if="alertMessage" class="alert-banner">
+					{{ alertMessage }}
+				</div>
+
 				<h2 class="section-subtitle">마이페이지</h2>
+
 				<!-- 내 정보 -->
 				<div class="section">
 					<div class="info-section">
@@ -261,14 +317,19 @@
 						내용이 없습니다.
 					</div>
 					<!-- 페이징 영역 -->
-					<div style="text-align: center; margin-top: 20px;">
-						<a v-if="page > 1" href="javascript:;" @click="fnPageMove('prev')">◀</a>
-						<a v-for="num in index" :key="num" href="javascript:;" @click="fnPage(num)">
-							<span v-if="page === num" style="margin: 0 5px; font-weight: bold; color: blue;">{{ num
-								}}</span>
-							<span v-else style="margin: 0 5px;">{{ num }}</span>
-						</a>
-						<a v-if="page < index" href="javascript:;" @click="fnPageMove('next')">▶</a>
+					<div class="pagination-container">
+						<button class="btn" @click="fnPageMove('prev')" :disabled="page === 1">〈 이전</button>
+					
+						<button 
+						v-for="n in index" 
+						:key="n" 
+						@click="fnPage(n)" 
+						:class="['btn', page === n ? 'active' : '']"
+						>
+						{{ n }}
+						</button>
+					
+						<button class="btn" @click="fnPageMove('next')" :disabled="page === index">다음 〉</button>
 					</div>
 				</div>
 
@@ -371,7 +432,7 @@
 
 				<!-- 결제 내역 -->
 				<div class="section">
-					<h3>최근 결제 내역</h3>
+					<h3>패키지 결제 내역</h3>
 					<table class="payment-table">
 						<thead>
 							<tr>
@@ -386,7 +447,7 @@
 							<tr v-if="payList && payList.length" v-for="pay in payList" :key="pay.orderId">
 								<td>{{ pay.payTime }}</td>
 								<td>{{ pay.packageName }}</td>
-								<td>{{ pay.price.toLocaleString() }} 원</td>
+								<td>{{ pay.price.toLocaleString() }}원</td>
 								<td>{{ getPayStatusText(pay.payStatus) }}</td>
 								<td>
 									<button v-if="pay.payStatus === 'PAID'" @click="fnRequestRefund(pay.orderId)"
@@ -397,13 +458,38 @@
 								</td>
 							</tr>
 							<tr v-else>
-								<td colspan="5" style="text-align: center;">결제 내역이 없습니다.</td>
+								<td colspan="5" style="text-align: center; color: #999;">결제 내역이 없습니다.</td>
 							</tr>
 						</tbody>
 					</table>
 				</div>
 
-
+				<!-- 변호사 선임 결제 내역 -->
+				<div class="section">
+					<h3>변호사 선임 결제 내역</h3>
+					<table class="payment-table">
+					<thead>
+						<tr>
+						<th>날짜</th>
+						<th>변호사</th>
+						<th>금액</th>
+						<th>상태</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-if="contractList.length" v-for="item in contractList" :key="item.contractNo">
+						<td>{{ item.cdate }}</td>
+						<td>{{ item.lawyerName }}</td>
+						<td>{{ item.contractPrice.toLocaleString() }} 원</td>
+						<td>{{ getContractStatusText(item.contractStatus) }}</td>
+						</tr>
+						<tr v-else>
+						<td colspan="4" style="text-align: center; color: #999;">결제 내역이 없습니다.</td>
+						</tr>
+					</tbody>
+					</table>
+				</div>
+  
 				<!-- 회원탈퇴 -->
 				<div style="text-align: center; margin-top: 20px;">
 					<button class="withdraw-btn" @click="fnRemoveUser">회원탈퇴</button>
@@ -420,7 +506,6 @@
 				data() {
 					return {
 						sessionId: "${sessionId}",
-						userId: "",
 						info: {},
 						boardList: [],
 						chatList: [],
@@ -431,6 +516,8 @@
 						page: 1,
 						pageSize: 3,  // 글 3개씩
 						index: 0,
+						contractList : [],
+						alertMessage: "",
 					};
 				},
 				methods: {
@@ -463,7 +550,34 @@
 							success: function (data) {
 								console.log("✅ 글 : ", data);
 								self.boardList = data.boardList;
-								self.index = Math.ceil(data.cnt / self.pageSize);
+								self.index = Math.ceil(data.boardCnt / self.pageSize);
+							}
+						});
+					},
+
+					fnGetNotification() {
+						const self = this;
+						$.ajax({
+							url: "/mypage/notification.dox",
+							type: "POST",
+							data: { receiverId: self.sessionId },
+							dataType: "json",
+							success: function (data) {
+								if (data.result === "success" && data.notifications.length > 0) {
+									const message = data.notifications[0].contents;
+									Swal.fire({
+										title: '📢 알림',
+										text: message,
+										icon: 'info',
+										confirmButtonText: '확인'
+									}).then(() => {
+										$.ajax({
+											url: "/mypage/notificationRead.dox",
+											type: "POST",
+											data: { receiverId: self.sessionId }
+										});
+									});
+								}
 							}
 						});
 					},
@@ -472,6 +586,7 @@
 						this.page = num;
 						this.fnGetBoardList();
 					},
+
 					fnPageMove(dir) {
 						if (dir === "next" && this.page < this.index) {
 							this.page++;
@@ -501,6 +616,7 @@
 							}
 						});
 					},
+					
 					fnGetPayList() {
 						var self = this;
 						var nparmap = {
@@ -667,6 +783,29 @@
 							}
 						});
 					},
+
+					fnGetContractList() {
+						const self = this;
+						$.ajax({
+						url: "/mypage/contractList.dox",
+						type: "POST",
+						data: { userId: self.sessionId },
+						dataType: "json",
+						success: function (data) {
+							console.log("🔎 계약 내역:", data);
+							self.contractList = data.contractList || [];
+						}
+						});
+					},
+					
+					getContractStatusText(status) {
+						switch (status) {
+						case "COMPLETE": return "결제 완료";
+						case "REQUEST": return "환불 요청";
+						case "REFUNDED": return "환불 완료";
+						default: return status;
+						}
+					},
 				},
 				mounted() {
 					console.log("✅ 세션 ID:", this.sessionId); // 🔍 콘솔에서 확인
@@ -675,6 +814,8 @@
 					this.fnGetChatList();
 					this.fnGetPayList();
 					this.fnLoadReview();
+					this.fnGetContractList();
+					this.fnGetNotification();
 				}
 			});
 			app.mount("#app");

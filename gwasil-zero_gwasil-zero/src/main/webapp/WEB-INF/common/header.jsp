@@ -43,14 +43,14 @@
                         </div>
                         <div class="header-icons">
                             <!-- 알림 -->
-                            <a v-if="sessionType === 'user'" href="javascript:void(0);" class="noti-link"
+                            <a v-if="sessionType === 'user' || sessionType === 'lawyer'" href="javascript:void(0);" class="noti-link"
                                 @click="toggleNotification" ref="notiToggle">
                                 <img src="/img/common/alarm-none.png" class="top-icon" />
                                 <span v-if="list.length > 0" class="noti-badge">{{ list.length > 9 ? '9+' : list.length
                                     }}</span>
 
                                 <div v-if="showNotification" class="noti-popup" ref="notiPopup" @click.stop>
-                                    <div class="noti-section">
+                                    <div class="noti-section" v-if="sessionType === 'user'">
                                         <h4>댓글 알림</h4>
                                         <div class="noti-list" v-if="commentNoti.length > 0">
                                             <div class="noti-item" v-for="item in commentNoti" :key="item.notiNo"
@@ -76,7 +76,7 @@
                                 </div>
                             </a>
                             <!-- 북마크 -->
-                            <a v-if="sessionType === 'user'" href="javascript:void(0);" class="bookmark-link"
+                            <a v-if="sessionType === 'user' " href="javascript:void(0);" class="bookmark-link"
                                 @click="toggleBookmarkPopup" ref="bookmarkToggle">
                                 <img src="/img/common/bookmark.png" class="top-icon" />
                                 <!-- 북마크 팝업 -->
@@ -214,17 +214,36 @@
                     });
                 },
                 fnLogout() {
+                    var self = this;
                     $.ajax({
                         url: "/user/logout.dox",
-                        type: "POST",
                         dataType: "json",
-                        success: (data) => {
-                            if (data.result === "success") {
-                                alert("로그아웃 되었습니다.");
-                                location.href = "/common/main.do";
+                        type: "POST",
+                        data: {},
+                        success: function (data) {
+                            if (data.result == "success") {
+                                console.log("sessionId =====> " + self.id);
+
+                                // 네이버 SDK가 저장한 로컬스토리지 데이터 삭제
+                                localStorage.removeItem("com.naver.nid.access_token");
+                                localStorage.removeItem("com.naver.nid.oauth.state_token");
+                                localStorage.removeItem("com.naver.nid.refresh_token");
+
+                                // 네이버 로그아웃을 위한 팝업 호출
+                                var naverLogoutUrl = "https://nid.naver.com/nidlogin.logout";
+                                var logoutWindow = window.open(naverLogoutUrl, "_blank", "width=500,height=600,scrollbars=yes");
+
+                                setTimeout(function () {
+                                    logoutWindow.close();
+                                    alert("로그아웃 되었습니다.");
+                                    location.href = "/common/main.do";
+                                }, 1200);
                             } else {
                                 alert("로그아웃 실패");
                             }
+                        },
+                        error: function () {
+                            alert("로그아웃 처리 중 오류가 발생했습니다.");
                         }
                     });
                 },

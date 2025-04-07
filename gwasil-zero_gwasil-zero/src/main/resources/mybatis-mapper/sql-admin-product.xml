@@ -37,24 +37,25 @@
 	
 	<select id="selectRefundList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
 		SELECT 
-	        P.ORDER_ID,
-	        P.PACKAGE_NAME,
-	        P.PAY_TIME,
-	        P.PRICE,
-	        P.PAY_STATUS,
-	        NVL(U.USER_NAME, L.LAWYER_NAME) AS NAME,
-	        CASE 
-	            WHEN P.USER_ID IS NOT NULL THEN 'U'
-	            WHEN P.LAWYER_ID IS NOT NULL THEN 'L'
-	        END AS USERTYPE,
-	        NVL(P.USER_ID, P.LAWYER_ID) AS RECEIVER_ID
-	    FROM PAY P
-	    LEFT JOIN TBL_USER U ON P.USER_ID = U.USER_ID
-	    LEFT JOIN LAWYER L ON P.LAWYER_ID = L.LAWYER_ID
-	    WHERE P.PAY_STATUS = 'REQUEST'
+		    P.ORDER_ID,
+		    P.PACKAGE_NAME,
+		    P.PAY_TIME,
+		    P.PRICE,
+		    P.PAY_STATUS,
+		    NVL(U.USER_NAME, L.LAWYER_NAME) AS NAME,
+		    CASE 
+		        WHEN P.USER_ID IS NOT NULL THEN 'U'
+		        WHEN P.LAWYER_ID IS NOT NULL THEN 'L'
+		    END AS USERTYPE,
+		    P.USER_ID,
+		    P.LAWYER_ID
+		FROM PAY P
+		LEFT JOIN TBL_USER U ON P.USER_ID = U.USER_ID
+		LEFT JOIN LAWYER L ON P.LAWYER_ID = L.LAWYER_ID
+		WHERE P.PAY_STATUS = 'REQUEST'
 	</select>
 	
-	<update id="upadteRefund" parameterType="hashmap">
+	<update id="updateRefund" parameterType="hashmap">
 	    UPDATE PAY
 	    SET 
 	        PAY_STATUS = 'REFUNDED',
@@ -74,7 +75,7 @@
 	    INSERT INTO NOTIFICATION (
 	        NOTI_NO, RECEIVER_ID, NOTI_TYPE, CONTENTS, IS_READ, CREATED_AT, SENDER_ID
 	    ) VALUES (
-	        SEQ_NOTIFICATION.NEXTVAL,
+	        NOTIFICATION_SEQ.NEXTVAL,
 	        #{receiverId},
 	        #{notiType},
 	        #{contents},

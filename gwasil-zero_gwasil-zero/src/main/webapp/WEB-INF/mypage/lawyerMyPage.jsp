@@ -7,6 +7,7 @@
       <script src="https://code.jquery.com/jquery-3.7.1.js"
          integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       <script src="/js/page-change.js"></script>
       <title>과실 ZERO - 교통사고 전문 법률 플랫폼</title>
    </head>
@@ -468,6 +469,35 @@
                });
             },
 
+            fnGetNotification() {
+					const self = this;
+					$.ajax({
+						url: "/mypage/notification.dox",
+						type: "POST",
+						data: { receiverId: self.sessionId },
+						dataType: "json",
+						success: function (data) {
+							if (data.result === "success" && data.notifications.length > 0) {
+								console.log("알림", data);
+								const message = data.notifications[0].contents;
+								Swal.fire({
+									title: '📢 알림',
+									text: message,
+									icon: 'info',
+									confirmButtonText: '확인'
+								}).then(() => {
+									$.ajax({
+										url: "/mypage/notificationRead.dox",
+										type: "POST",
+										data: { receiverId: self.sessionId }
+									});
+								});
+							}
+						}
+					});
+				},
+            
+
             fnUpdateStatus() {
                 const self = this;
                 $.ajax({
@@ -681,6 +711,7 @@
             this.fnLawyerBoard();
             this.fnGetPayments();
             this.fnGetChatList();
+            this.fnGetNotification();
          }
       });
       app.mount('#app');

@@ -23,7 +23,7 @@ public interface ProductMapper {
 
 	List<Pay> selectRefundList(HashMap<String, Object> map);
 
-	void upadteRefund(HashMap<String, Object> map);
+	void updateRefund(HashMap<String, Object> map);
 
 	void CancelRefund(HashMap<String, Object> map);
 

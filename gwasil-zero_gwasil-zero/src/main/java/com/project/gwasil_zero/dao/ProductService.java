@@ -88,7 +88,7 @@ public class ProductService {
 	public HashMap<String, Object> refundUpdate(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		productMapper.upadteRefund(map);
+		productMapper.updateRefund(map);
 		resultMap.put("result", "success");
 		return resultMap;
 	}

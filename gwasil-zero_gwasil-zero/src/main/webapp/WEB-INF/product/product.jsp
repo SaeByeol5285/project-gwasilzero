@@ -213,12 +213,17 @@
                             data: { orderId: orderId },
                             success: function (data) {
                                 if (data.result === "success") {
+                                    const receiverId = item.userId || item.lawyerId;
+                                    if (!receiverId) {
+                                        console.error("⚠️ receiverId가 없습니다. 알림을 보낼 수 없습니다.");
+                                        return;
+                                    }
                                     // ✅ 알림 insert 요청 추가
                                     $.ajax({
-                                        url: "/admin/product/nofitication.dox",
+                                        url: "/admin/product/notification.dox",
                                         type: "POST",
                                         data: {
-                                            receiverId: item.userId || item.lawyerId,
+                                            receiverId: receiverId,
                                             senderId: "admin",
                                             notiType: "REFUND",
                                             contents: `[ ` + item.packageName + ` ] 환불이 완료되었습니다.`,
@@ -243,6 +248,8 @@
 
             fnCancelRefund(orderId) {
                 let self = this;
+                const item = self.refundList.find(i => i.orderId === orderId); // 🔍 해당 항목 찾기
+
                 Swal.fire({
                     title: "환불 요청을 취소하시겠습니까?",
                     icon: "warning",
@@ -257,15 +264,34 @@
                             data: { orderId: orderId },
                             success: function (data) {
                                 if (data.result === "success") {
-                                    Swal.fire("처리 완료", "환불 요청이 취소되었습니다.", "success");
-                                    self.fnGetRefundList();
+                                    // ✅ 알림 보내기
+                                    const receiverId = item.userId || item.lawyerId;
+                                    if (!receiverId) {
+                                        console.error("⚠️ receiverId가 없습니다. 알림을 보낼 수 없습니다.");
+                                        return;
+                                    }
+
+                                    $.ajax({
+                                        url: "/admin/product/notification.dox",
+                                        type: "POST",
+                                        data: {
+                                            receiverId: receiverId,
+                                            senderId: "admin",
+                                            notiType: "CANCEL_REFUND",
+                                            contents: `[ ` + item.packageName + ` ] 환불 요청이 취소되었습니다.`,
+                                            isRead: "N"
+                                        },
+                                        success: function () {
+                                            Swal.fire("처리 완료", "환불 요청이 취소되었고 사용자에게 알림이 전달되었습니다.", "success");
+                                            self.fnGetRefundList(); // 리스트 새로고침
+                                        }
+                                    });
                                 }
                             }
                         });
                     }
                 });
             },
-
 
             fnDelete() {
                 var self = this;

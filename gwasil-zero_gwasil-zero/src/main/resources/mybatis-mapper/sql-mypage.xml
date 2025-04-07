@@ -292,7 +292,7 @@
 	    ORDER BY CREATED_AT DESC
 	</select>
 	
-	<update id="updateNotificationRead" parameterType="hashmap">
+	<update id="updateNoti" parameterType="hashmap">
 	    UPDATE NOTIFICATION
 	    SET IS_READ = 'Y'
 	    WHERE RECEIVER_ID = #{receiverId}

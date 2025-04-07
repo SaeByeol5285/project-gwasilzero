@@ -116,7 +116,6 @@
 			border-radius: 2px;
 		}
 	</style>
-	
 </head>
 <body>
 	<jsp:include page="../common/header.jsp" />

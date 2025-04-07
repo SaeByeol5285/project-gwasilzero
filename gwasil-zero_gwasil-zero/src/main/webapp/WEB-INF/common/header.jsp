@@ -8,6 +8,11 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <script src="/js/page-change.js"></script>
+    <style>
+        * {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+    </style>
 
     <div id="header">
         <header class="main-header">
@@ -32,18 +37,63 @@
                         </a>
                     </div>
                     <div class="right-area">
-                        <div class="search-bar">
+                        <div class="header-search-bar">
                             <input type="text" placeholder="비슷한 블랙박스 영상을 찾아보세요!" />
-                            <img src="/img/common/logo3.png" class="top-icon" />
+                            <img src="/img/common/logo3.png" class="top-icon"/>
                         </div>
                         <div class="header-icons">
-                            <a v-if="sessionType === 'user'" @click="toggleNotification" ref="notiToggle">
+                            <!-- 알림 -->
+                            <a v-if="sessionType === 'user'" href="javascript:void(0);" class="noti-link"
+                                @click="toggleNotification" ref="notiToggle">
                                 <img src="/img/common/alarm-none.png" class="top-icon" />
                                 <span v-if="list.length > 0" class="noti-badge">{{ list.length > 9 ? '9+' : list.length
                                     }}</span>
+
+                                <div v-if="showNotification" class="noti-popup" ref="notiPopup" @click.stop>
+                                    <div class="noti-section">
+                                        <h4>댓글 알림</h4>
+                                        <div class="noti-list" v-if="commentNoti.length > 0">
+                                            <div class="noti-item" v-for="item in commentNoti" :key="item.notiNo"
+                                                @click="markAsRead(item)">
+                                                {{ item.contents }}
+                                                <br><small>{{ item.createdAt }}</small>
+                                            </div>
+                                        </div>
+                                        <div v-else class="noti-empty">댓글 알림이 없습니다.</div>
+                                    </div>
+
+                                    <div class="noti-section">
+                                        <h4>채팅 알림</h4>
+                                        <div class="noti-list" v-if="messageNoti.length > 0">
+                                            <div class="noti-item" v-for="item in messageNoti" :key="item.notiNo"
+                                                @click="fnChat">
+                                                {{ item.contents }}
+                                                <br><small>{{ item.createdAt }}</small>
+                                            </div>
+                                        </div>
+                                        <div v-else class="noti-empty">채팅 알림이 없습니다.</div>
+                                    </div>
+                                </div>
                             </a>
-                            <a v-if="sessionType === 'user'" @click="toggleBookmarkPopup" ref="bookmarkToggle">
+                            <!-- 북마크 -->
+                            <a v-if="sessionType === 'user'" href="javascript:void(0);" class="bookmark-link"
+                                @click="toggleBookmarkPopup" ref="bookmarkToggle">
                                 <img src="/img/common/bookmark.png" class="top-icon" />
+                                <!-- 북마크 팝업 -->
+                                <div v-if="showBookmarkPopup" class="noti-popup" ref="bookmarkPopup" @click.stop>
+                                    <div class="noti-section">
+                                        <h4>관심 변호사</h4>
+                                        <div class="noti-list" v-if="bookmarkList.length > 0">
+                                            <div class="noti-item" v-for="(bm, index) in bookmarkList" :key="index">
+                                                {{ bm.lawyerName }}
+                                                <img src="/img/selectedBookmark.png"
+                                                    style="float: right; width: 18px; height: 18px; cursor: pointer;"
+                                                    @click="confirmBookmarkDelete(bm.lawyerId)" />
+                                            </div>
+                                        </div>
+                                        <div class="noti-empty" v-else>관심있는 변호사가 없습니다.</div>
+                                    </div>
+                                </div>
                             </a>
                             <a v-if="sessionId && sessionType === 'user'" href="/mypage-home.do">
                                 <img src="/img/common/mypage.png" class="top-icon" />

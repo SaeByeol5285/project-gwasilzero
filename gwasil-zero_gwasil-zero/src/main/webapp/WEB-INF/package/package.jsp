@@ -199,23 +199,30 @@
 					}
 				});
 			},
-			canBuy(item) {
-				if (!this.sessionId || this.sessionId === "") return true;
-				// 변호사는 일반 사용자용 구매 불가
-				if (item.packageStatus === 'U' && this.role === 'lawyer') return false;
-				// 일반 사용자는 변호사용 구매 불가
-				if (item.packageStatus === 'L' && this.role === 'user') return false;
-				// 이미 구매한 패키지는 비활성화
-				if (this.purchasedList.includes(item.packageName)) return false;
-				return true;
-			},
-
+			// 구매 여부 판단
 			isPurchased(item) {
 				if (!this.sessionId || this.sessionId === "") return false;
 
-				return this.purchasedList.includes(item.packageName);
+				const found = this.purchasedList.find(p => p.packageName === item.packageName);
+				return found && found.payStatus === "PAID";
 			},
 
+			// 구매 가능한지 판단
+			canBuy(item) {
+				if (!this.sessionId || this.sessionId === "") return true;
+
+				// 권한 체크
+				if (item.packageStatus === 'U' && this.role === 'lawyer') return false;
+				if (item.packageStatus === 'L' && this.role === 'user') return false;
+
+				const found = this.purchasedList.find(p => p.packageName === item.packageName);
+
+				// 구매 완료 상태일 경우만 구매 불가
+				if (found && found.payStatus === "PAID") return false;
+
+				// 환불 완료, 취소 등은 다시 구매 가능
+				return true;
+			},
 
 			fnBuy(item) {
 				if (!this.sessionId || this.sessionId === "") {

@@ -1,14 +1,17 @@
 package com.project.gwasil_zero.mapper;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
 import com.project.gwasil_zero.model.Board;
 import com.project.gwasil_zero.model.Chat;
 import com.project.gwasil_zero.model.ChatMessage;
+import com.project.gwasil_zero.model.Contract;
 import com.project.gwasil_zero.model.Pay;
 import com.project.gwasil_zero.model.Lawyer;
+import com.project.gwasil_zero.model.Notification;
 import com.project.gwasil_zero.model.User;
 
 @Mapper
@@ -30,7 +33,7 @@ public interface MypageMapper {
 
 	int deleteUserByAdmin(HashMap<String, Object> map);
 
-	Lawyer selectLawyerInfo(HashMap<String, Object> map);
+	Lawyer selectLawyerView(HashMap<String, Object> map);
 
 	void updateLawyer(HashMap<String, Object> map);
 
@@ -53,5 +56,17 @@ public interface MypageMapper {
 	List<ChatMessage> selectLastChat(HashMap<String, Object> map);
 
 	int selectBoardCount(HashMap<String, Object> map);
+
+	List<Contract> selectContractList(HashMap<String, Object> map);
+
+	Lawyer selectLawyerInfo(HashMap<String, Object> map);
+
+	void updateLawyerImg(Map<String, Object> param);
+
+	void insertNotification(HashMap<String, Object> map);
+
+	Notification selectRefundNoti(HashMap<String, Object> map);
+
+	void updateNoti(HashMap<String, Object> map);
 
 }

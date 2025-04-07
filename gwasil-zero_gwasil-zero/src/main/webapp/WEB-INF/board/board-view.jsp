@@ -334,43 +334,63 @@
 			</div>
 			
 			
-			<div>
-				<div class="comment-list">
-					<h4>댓글</h4>
+			<div class="comment-list" v-if="comments.length > 0">
+			          <h4>댓글</h4>
 
+			          <div class="comment-item" v-for="(cmt, index) in comments" :key="index">
+			            <div class="comment-meta">
+			              {{ cmt.lawyerName }} | {{ cmt.cdate }}
+			              <div class="comment-actions" v-if="sessionType === 'lawyer' && cmt.lawyerId === sessionId">
+			                <span class="text-green" @click="updateComment(cmt.cmtNo)">수정</span>
+			                <span @click="deleteComment(cmt.cmtNo)">삭제</span>
+			              </div>
 
-					<div v-if="comments.length > 0">
-						<div class="comment-item" v-for="(cmt, index) in comments" :key="index">
-							<div class="comment-meta">
-								{{ cmt.lawyerName }} | {{ cmt.cdate }}
-								<div class="comment-actions"
-									v-if="sessionType === 'lawyer' && cmt.lawyerId === sessionId">
-									<span class="text-green" @click="updateComment(cmt.cmtNo)">수정</span>
-									<span @click="deleteComment(cmt.cmtNo)">삭제</span>
-								</div>
-							</div>
-							<div class="comment-text">
-								<div v-if="editingCommentNo === cmt.cmtNo">
-									<textarea v-model="editedComment" rows="3"></textarea>
-									<div style="margin-top: 5px;">
-										<button class="btn-green" @click="saveUpdatedComment(cmt.cmtNo)">저장</button>
-										<button class="btn-orange" @click="cancelUpdate"
-											style="margin-left: 5px;">취소</button>
-									</div>
-								</div>
-								<div v-else>
-									{{ cmt.contents }}
-								</div>
-							</div>
-						</div>
-					</div>
+			              <!-- 북마크 아이콘 -->
+			            <img
+			              v-if="sessionType === 'user'"
+			              :src="isBookmarked(cmt.lawyerId) ? '/img/selectedBookmark.png' : '/img/Bookmark.png'"
+			              @click="toggleBookmark(cmt.lawyerId)"
+			              style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
+			            />
 
+			            <!-- 계약 아이콘 -->
+			            <img
+			              v-if="sessionType === 'user'"
+			              src="/img/contract.png"
+			              @click="startContract(cmt.lawyerId)"
+			              title="계약하기"
+			              style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
+			            />
 
-					<div v-if="sessionType === 'lawyer'">
-						<textarea v-model="newComment" placeholder="댓글을 입력하세요" rows="3"></textarea>
-						<button class="btn-orange" @click="submitComment">등록</button>
-					</div>
-				</div>
+			            <!-- 채팅 아이콘 -->
+			            <img
+			              v-if="sessionType === 'user'"
+			              src="/img/icon-chat.png"
+			              @click="startChat(cmt.lawyerId)"
+			              title="채팅하기"
+			              style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
+			            />
+			            </div>
+			           <div class="comment-text">
+			             <div v-if="editingCommentNo === cmt.cmtNo">
+			               <textarea v-model="editedComment" rows="3"></textarea>
+			               <div style="margin-top: 5px;">
+			                 <button class="btn-green" @click="saveUpdatedComment(cmt.cmtNo)">저장</button>
+			                 <button class="btn-orange" @click="cancelUpdate" style="margin-left: 5px;">취소</button>
+			               </div>
+			             </div>
+			             <div v-else>
+			               {{ cmt.contents }}
+			             </div>
+			           </div>
+			          </div>
+
+			          <div v-if="sessionType === 'lawyer' ">
+			            <textarea v-model="newComment" placeholder="댓글을 입력하세요" rows="3"></textarea>
+			            <button class="btn-orange" @click="checkLawyerStatus">등록</button>
+			          </div>
+			        </div>
+
 
 
 			</div>
@@ -431,6 +451,22 @@
 						}
 					});
 				},
+				checkLawyerStatus() {
+		             const self = this;
+		             $.ajax({
+		                 url: "/board/checkLawyerStatus.dox",
+		                 type: "POST",
+		                 data: {
+		                   lawyerId: self.sessionId
+		                 },
+		                 success: function (data) {
+		                self.lawyerStatus = data.result;
+		                console.log(self.lawyerStatus)
+		                self.submitComment();
+		                 }
+		             });
+		         },
+
 				submitComment() {
 					const self = this;
 

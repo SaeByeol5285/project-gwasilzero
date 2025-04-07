@@ -157,27 +157,37 @@
 	
 	<!-- 키워드 기반 추출 -->
 	<select id="selectRelatedBoards" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Board">
-		   SELECT DISTINCT b.*,
-                  m.user_name as userName, l.lawyer_name as lawyerName,
-                  bf.file_path AS thumbnailPath
+		   SELECT b.*, 
+		         m.user_name AS userName, 
+		         l.lawyer_name AS lawyerName, 
+		         bf.file_path AS thumbnailPath
 		  FROM board b
 		  JOIN tbl_user m ON b.user_id = m.user_id
 		  LEFT JOIN lawyer l ON b.lawyer_id = l.lawyer_id
 		  LEFT JOIN (
-		    SELECT board_no, file_path
-		    FROM board_file
+		    SELECT board_no, file_path 
+		    FROM board_file 
 		    WHERE thumbnail = 'Y'
 		  ) bf ON b.board_no = bf.board_no
-		  JOIN keyword k1 ON b.board_no = k1.board_no
-		  JOIN categories c1 ON b.board_no = c1.board_no
-		  WHERE k1.keyword IN (
-		      SELECT keyword FROM keyword WHERE board_no = #{boardNo}
-		  )
-		  AND c1.category = (
-		      SELECT category FROM categories WHERE board_no = #{boardNo} FETCH FIRST 1 ROWS ONLY
-		  )
-		  AND b.board_no != #{boardNo}
-		  AND b.board_status != 'DELETE'
+		  JOIN (
+		    SELECT k2.board_no, COUNT(*) AS match_count
+		    FROM keyword k1
+		    JOIN keyword k2 ON k1.keyword = k2.keyword
+		    WHERE k1.board_no = #{boardNo} 
+		      AND k2.board_no != #{boardNo}
+		    GROUP BY k2.board_no
+		    HAVING COUNT(*) >= 2
+		  ) match_keyword ON b.board_no = match_keyword.board_no
+		  WHERE b.board_status != 'DELETE'
+		    AND EXISTS (
+		      SELECT 1 FROM categories c1 
+		      WHERE c1.board_no = b.board_no 
+		        AND c1.category = (
+		          SELECT category FROM categories 
+		          WHERE board_no = #{boardNo} 
+		          FETCH FIRST 1 ROWS ONLY
+		        )
+		    )
 		  AND ROWNUM &lt;= 3
 	</select>
 

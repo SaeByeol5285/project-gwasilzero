@@ -343,3 +343,9 @@ li {
   width: 220px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
+/*포커스 해제용*/
+a:focus {
+  outline: none;
+  color: inherit;
+}

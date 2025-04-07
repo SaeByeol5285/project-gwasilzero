@@ -263,6 +263,7 @@
                             } else {
                                 this.bookmarkList = [];
                             }
+							localStorage.setItem('bookmarkUpdated', Date.now());
                         }
                     });
                 },
@@ -322,7 +323,31 @@
                             alert("로그아웃 처리 중 오류가 발생했습니다.");
                         }
                     });
-                }
+                },
+				handleClickOutside(event) {
+				    // 알림창 외부 클릭
+				    if (this.showNotification) {
+				        const popup = this.$refs.notiPopup;
+				        const toggle = this.$refs.notiToggle;
+
+				        if (popup && !popup.contains(event.target) && toggle && !toggle.contains(event.target)) {
+				            this.showNotification = false;
+				        }
+				    }
+
+				    // 북마크창 외부 클릭
+				    if (this.showBookmarkPopup) {
+				        const popup = this.$refs.bookmarkPopup;
+				        const toggle = this.$refs.bookmarkToggle;
+
+				        if (popup && !popup.contains(event.target) && toggle && !toggle.contains(event.target)) {
+				            this.showBookmarkPopup = false;
+				        }
+				    }
+				},
+				beforeUnmount() {
+				    document.removeEventListener('click', this.handleClickOutside);
+				}
             },
             mounted() {
                 if (this.sessionType === 'user') {
@@ -330,6 +355,13 @@
                     this.fnGetBookmarkList();
                 }
                 this.currentPath = window.location.pathname || "";
+
+				document.addEventListener('click', this.handleClickOutside);
+				window.addEventListener('storage', (e) => {
+					if (e.key === 'bookmarkUpdated') {
+						this.fnGetBookmarkList();
+					}
+				});
             }
         });
         header.mount("#header");

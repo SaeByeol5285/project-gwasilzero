@@ -32,12 +32,17 @@
 										<div class="lawyer-card">
 											<img class="lawyer-img" :src="lawyer.lawyerImg" />
 											<div class="lawyer-icons">
-												<a><img src="../../img/common/message-ing.png" class="icon"></a>
-												<a><img src="../../img/common/bookmark.png" class="icon"></a>
+												<a  v-if="sessionType === 'user'"><img src="../../img/common/message-ing.png" class="icon" @click="startChat(lawyer.lawyerId)"></a>
+												<a @click="toggleBookmark(lawyer.lawyerId)">
+													<img
+														:src="isBookmarked(lawyer.lawyerId) ? '/img/selectedBookmark.png' : '/img/common/bookmark.png'"
+														class="icon"
+													/>
+												</a>
 											</div>
 											<div class="icons-text">
-												<div class="card-txt-small">1:1채팅</div>
-												<div class="card-txt-small">북마크</div>
+												<div v-if="sessionType === 'user'" class="card-txt-small" @click = "startChat(lawyer.lawyerId)">1:1채팅</div>
+												<div class="card-txt-small" @click = "fnBookmark(lawyer.lawyerId)">북마크</div>
 											</div>
 											<div class="lawyer-content">
 												<div class="lawyer-tags">
@@ -145,6 +150,9 @@
 				return {
 					boardList: [],
 					lawyerList: [],
+					sessionId : "${sessionScope.sessionId}",
+					bookmarkList: [],
+					sessionType : "${sessionScope.sessionType}"
 				};
 			},
 			methods: {
@@ -207,11 +215,109 @@
 						},
 						centeredSlides: false,
 					});
-				}
+				},
+				startChat(lawyerId) {
+					let self = this;
+					
+					if (!self.sessionId) {
+						alert("로그인이 필요합니다.");
+						return;
+					}
+					
+					if (self.sessionType !== 'user') {
+						alert("일반 사용자만 채팅을 이용할 수 있습니다.");
+						return;
+					}
+					
+					$.ajax({
+						url: "/chat/findOrCreate.dox",
+						type: "POST",
+						data: {
+							userId: self.sessionId,
+							lawyerId: lawyerId
+						},
+						success: function (res) {
+							let chatNo = res.chatNo;
+							pageChange("/chat/chat.do", {
+								chatNo: chatNo
+							});
+						}
+					});
+				},
+				EditBoard: function () {
+					let self = this;
+					pageChange("/board/edit.do", { boardNo: self.boardNo, userId: self.sessionId });
+				},
+				isBookmarked(lawyerId) {
+					return this.bookmarkList.some(bm => bm.lawyerId === lawyerId);
+				},
+				toggleBookmark(lawyerId) {
+					const self = this;
+
+					if (!self.sessionId) {
+						alert("로그인이 필요합니다.");
+						return;
+					}
+					
+
+					if (self.sessionType !== 'user') {
+						alert("일반 사용자만 북마크를 사용할 수 있습니다.");
+						return;
+					}
+
+					const isMarked = self.isBookmarked(lawyerId);
+					const url = isMarked ? "/bookmark/remove.dox" : "/bookmark/add.dox";
+
+					$.ajax({
+						url: url,
+						type: "POST",
+						data: {
+							userId: self.sessionId,
+							lawyerId: lawyerId
+						},
+						success: function (data) {
+							if (isMarked) {
+								self.bookmarkList = self.bookmarkList.filter(b => b.lawyerId !== lawyerId);
+								alert(data.result);
+							} else {
+								self.bookmarkList.push({ lawyerId: lawyerId });
+								alert(data.result);
+							}
+							localStorage.setItem('bookmarkUpdated', Date.now());
+						},
+						error: function () {
+							alert("북마크 처리 중 오류가 발생했습니다.");
+						}
+					});
+				},
+				fnGetBookmarkList() {
+					const self = this;
+					if (!self.sessionId) return;
+
+					$.ajax({
+						url: "/bookmark/list.dox",
+						type: "POST",
+						data: { userId: self.sessionId },
+						dataType: "json",
+						success: function (data) {
+							if (data.result === "success") {
+								self.bookmarkList = data.list;
+							}
+						}
+					});
+				},
 			},
 			mounted() {
 				this.fnGetBoardList();
 				this.fnGetLawyerList();
+				this.fnGetBookmarkList();
+				console.log(this.sessionId);
+				//북마크 갱신용
+				window.addEventListener('storage', (e) => {
+					if (e.key === 'bookmarkUpdated') {
+						this.fnGetBookmarkList();
+					}
+				});
 			},
 
 		});

@@ -46,5 +46,10 @@ public interface BoardMapper {
 	void updateBoardCmt(HashMap<String, Object> map);
 	
 	Lawyer checkLawyerStatus(HashMap<String, Object> map);
+	
+	void insertBoardKeyword(HashMap<String, Object> map);
+	
+	List<Board> selectRelatedBoards(HashMap<String, Object> map);
+
 
 }

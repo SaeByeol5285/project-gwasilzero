@@ -35,7 +35,7 @@ public class Lawyer {
 	private String cdate;
 	private String mainCategories1;
 	private String mainCategories2;
-	private String mainCategoryName1;
+	private String mainCategoryName1;   
 	private String mainCategoryName2;
-  
+	
 }

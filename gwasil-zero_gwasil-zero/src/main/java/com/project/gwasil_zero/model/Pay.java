@@ -14,5 +14,6 @@ public class Pay {
 	private String price;
 	private String refundTime;
 	private String name;
+	private String receiverId;
 
 }

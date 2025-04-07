@@ -1,13 +1,21 @@
 package com.project.gwasil_zero.controller;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.Gson;
 import com.project.gwasil_zero.dao.BoardService;
+import com.project.gwasil_zero.model.Board;
 
 
 @Controller
@@ -225,6 +234,57 @@ public class BoardController {
 	        }
 
 	        resultMap.put("fileResult", "success");
+	        try {
+	            String textScriptPath = "C:\\KR-WordRank\\keyword_extract.py";
+
+	            File tempTextFile = File.createTempFile("contents_", ".txt");
+	            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempTextFile), StandardCharsets.UTF_8))) {
+	                writer.write(contents);
+	            }
+
+	            ProcessBuilder pbText = new ProcessBuilder(
+	                "python",
+	                textScriptPath,
+	                tempTextFile.getAbsolutePath()
+	            );
+
+	            pbText.redirectErrorStream(true);
+	            Process processText = pbText.start();
+
+	            BufferedReader reader = new BufferedReader(new InputStreamReader(processText.getInputStream(), "MS949")); // 또는 UTF-8
+	            StringBuilder output = new StringBuilder();
+	            String line;
+	            while ((line = reader.readLine()) != null) {
+	                output.append(line);
+	            }
+
+	            int exitCode = processText.waitFor();
+	            if (exitCode == 0) {
+	                System.out.println("📌 본문 키워드 분석 결과:");
+	                System.out.println(output.toString());
+
+	                // 🔽 파이썬에서 출력한 JSON 파싱 후 저장
+	                Gson gson = new Gson();
+	                Type type = new TypeToken<Map<String, Double>>() {}.getType();
+	                Map<String, Double> keywordMap = gson.fromJson(output.toString(), type);
+
+	                List<String> keywords = new ArrayList<>(keywordMap.keySet());
+
+	                // 최대 3개까지만 저장
+	                if (keywords.size() > 3) {
+	                    keywords = keywords.subList(0, 3);
+	                }
+
+	                boardService.saveBoardKeywords(boardNo, keywords);
+	            } else {
+	                System.out.println("❌ 키워드 분석 실패 (code: " + exitCode + ")");
+	            }
+
+	        } catch (Exception e) {
+	            System.out.println("❗ 키워드 분석 중 예외 발생");
+	            e.printStackTrace();
+	        }
+	        
 	        return resultMap;
 
 	    } catch (Exception e) {
@@ -232,6 +292,8 @@ public class BoardController {
 	        resultMap.put("fileResult", "failed");
 	        return resultMap;
 	    }
+	    
+	    
 	}
 
 	@RequestMapping(value = "/board/edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -315,6 +377,45 @@ public class BoardController {
 	            }
 	        }
 
+	        try {
+	            String textScriptPath = "C:\\KR-WordRank\\keyword_extract.py";
+	            
+	            File tempTextFile = File.createTempFile("contents_", ".txt");
+	            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempTextFile), StandardCharsets.UTF_8))) {
+	                writer.write(contents);
+	            }
+
+	            ProcessBuilder pbText = new ProcessBuilder(
+	            	    "python",
+	            	    textScriptPath,
+	            	    tempTextFile.getAbsolutePath()  // <- 본문 파일 경로만 넘김
+	            	);
+
+	            pbText.redirectErrorStream(true);
+	            Process processText = pbText.start();
+
+	            BufferedReader reader = new BufferedReader(
+	            	    new InputStreamReader(processText.getInputStream(), Charset.forName("MS949"))
+	            	);
+	            StringBuilder output = new StringBuilder();
+	            String line;
+	            while ((line = reader.readLine()) != null) {
+	                output.append(line);
+	            }
+
+	            int exitCode = processText.waitFor();
+	            if (exitCode == 0) {
+	                System.out.println("📌 본문 키워드 분석 결과:");
+	                System.out.println(output.toString());
+	            } else {
+	                System.out.println("❌ 키워드 분석 실패 (code: " + exitCode + ")");
+	            }
+
+	        } catch (Exception e) {
+	            System.out.println("❗ 키워드 분석 중 예외 발생");
+	            e.printStackTrace();
+	        }
+	        
 	        resultMap.put("result", "success");
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -348,5 +449,14 @@ public class BoardController {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap = boardService.checkLawyerStatus(map);
 		return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/board/related.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getRelatedBoards(@RequestParam("boardNo") int boardNo) {
+	    List<Board> relatedBoards = boardService.getRelatedBoards(boardNo);
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap.put("related", relatedBoards);
+	    return new Gson().toJson(resultMap);
 	}
 }

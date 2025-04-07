@@ -91,10 +91,6 @@
                 },
                 fnSave() {
                     const self = this;
-                    if (!self.info.userName || !self.info.userPhone || !self.info.userEmail) {
-                        alert("모든 항목을 입력해주세요.");
-                        return;
-                    }
                     const nparmap = {
                         userId: self.sessionId,
                         userName: self.info.userName,
@@ -118,6 +114,7 @@
                 }
             },
             mounted() {
+                this.fnGetInfo();
             }
         });
         app.mount("#app");

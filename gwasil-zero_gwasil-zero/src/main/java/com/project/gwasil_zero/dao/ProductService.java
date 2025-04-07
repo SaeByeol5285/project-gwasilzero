@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.gwasil_zero.mapper.ProductMapper;
 import com.project.gwasil_zero.model.Packages;
+import com.project.gwasil_zero.model.Pay;
 
 @Service
 public class ProductService {
@@ -68,7 +69,43 @@ public class ProductService {
 		return resultMap;
 	}
 
+	public HashMap<String, Object> refundProduct(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			List<Pay> refundList = productMapper.selectRefundList(map);		
+			resultMap.put("refundList", refundList);
+			resultMap.put("result", "success");		
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage()); //개발자 확인하기 위한 용도
+			resultMap.put("result", "fail");						
+		}
+		return resultMap;
+	}
+
+	public HashMap<String, Object> refundUpdate(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		productMapper.upadteRefund(map);
+		resultMap.put("result", "success");
+		return resultMap;
+	}
+
+	public HashMap<String, Object> refundCancel(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		productMapper.CancelRefund(map);
+		resultMap.put("result", "success");
+		return resultMap;
+	}
 	
-	
-	
+	public HashMap<String, Object> notificationAdd(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		productMapper.insertNotification(map);
+	    resultMap.put("result", "success");
+	    return resultMap;
+	}
+
 }

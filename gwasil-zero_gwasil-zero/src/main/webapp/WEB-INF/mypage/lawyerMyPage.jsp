@@ -206,6 +206,45 @@
       .message:hover {
          color: #e64a19;
       }
+
+      .pagination-container {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         margin-top: 30px;
+         margin-bottom: 20px;
+         gap: 6px;
+      }
+
+      .btn {
+         padding: 10px 18px;
+         font-size: 15px;
+         border: none;
+         border-radius: 8px;
+         background-color: #f2f2f2;
+         color: #444;
+         font-weight: 500;
+         cursor: pointer;
+         transition: all 0.2s ease;
+      }
+
+      .btn:hover {
+         background-color: #ffe6db;
+         color: #ff5c00;
+      }
+
+      .btn.active {
+         background-color: #ff5c00;
+         color: white;
+         font-weight: bold;
+         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+
+      .btn:disabled {
+         opacity: 0.4;
+         cursor: default;
+      }
+
    </style>
 
    <body>
@@ -243,12 +282,13 @@
                  </div>
                  <p>핸드폰 번호: {{ view.lawyerPhone }}</p>
                  <p>이메일: {{ view.lawyerEmail }}</p>
+                 <p>사무소: {{ view.lawyerAddr }}</p>
                </div>
-             </div>
+            </div>
              
-          </div>
+         </div>
 
-          <div class="section">
+         <div class="section">
             <div class="info-header" style="margin-bottom: 20px;">
                <h3>내 담당 사건</h3>
                <div style="display: flex; align-items: center; gap: 8px;">
@@ -291,25 +331,22 @@
 
             <div v-else style="text-align: center; color: #888; margin-top: 30px;" >
                내용이 없습니다.
-             </div>
+            </div>
 
-            <div style="text-align: center; margin-top: 20px;">
-               <a v-if="page > 1" href="javascript:;" @click="fnPageMove('prev')">◀</a>
-               <a
-                 v-for="num in index"
-                 :key="num"
-                 href="javascript:;"
-                 @click="fnPage(num)"
+            <div class="pagination-container">
+               <button class="btn" @click="fnPageMove('prev')" :disabled="page === 1">〈 이전</button>
+            
+               <button 
+                  v-for="num in index" 
+                  :key="num" 
+                  @click="fnPage(num)" 
+                  :class="['btn', page === num ? 'active' : '']"
                >
-                 <span
-                   v-if="page === num"
-                   style="margin: 0 5px; font-weight: bold; color: blue;"
-                   >{{ num }}</span
-                 >
-                 <span v-else style="margin: 0 5px;">{{ num }}</span>
-               </a>
-               <a v-if="page < index" href="javascript:;" @click="fnPageMove('next')">▶</a>
-             </div>
+                  {{ num }}
+               </button>
+            
+               <button class="btn" @click="fnPageMove('next')" :disabled="page === index">다음 〉</button>
+            </div>            
          </div>
           
          <div class="section chat-section">
@@ -600,7 +637,7 @@
             },
 
             fnEdit() {
-               pageChange("/lawyerMyPage/edit.dox", { sessionId: this.sessionId });
+               pageChange("/lawyerMyPage/edit.do", { sessionId: this.sessionId });
             },
 
             fnEditProfile() {

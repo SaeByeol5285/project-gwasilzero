@@ -15,8 +15,6 @@
 		<title>main.jsp</title>
 
 		<style>
-			
-			
 		</style>
 	</head>
 
@@ -24,152 +22,139 @@
 		<jsp:include page="../common/header.jsp" />
 		<div id="app">
 			<div class="container">
-				<section class="mt-40 mb-40">
+				<!-- 변호사 소개 영역 -->
+				<section>
 					<div class="section-title">변호사 소개</div>
-					<div class="swiper mySwiper">
-						<div class="swiper-wrapper">
-							<div class="swiper-slide card">
-								<img class="img-circle"
-									src="../../img/65c09ad0057892157e091fd4-original-1707121361363.jpg" alt="변호사" />
-								<p><strong>김묘연</strong></p>
-								<p>유턴 사고 전문 변호사</p>
-							</div>
-							<div class="swiper-slide card">
-								<img class="img-circle"
-									src="../../img/6743ddaac975c372bdf11b55-original-1732500907700.jpg" alt="변호사" />
-								<p><strong>한보라</strong></p>
-								<p>좌회전 사고 전문 변호사</p>
-							</div>
-							<div class="swiper-slide card">
-								<img class="img-circle"
-									src="../../img/662b42288c5ed98ed456f0ed-original-1714111016988.jpg" alt="변호사" />
-								<p><strong>정다미</strong></p>
-								<p>음주운전 사고 전문 변호사</p>
-							</div>
-							<div class="swiper-slide card">
-								<img class="img-circle"
-									src="../../img/63e0b8862df2010046cbcb4a-original-1675671686593.jpg" alt="변호사" />
-								<p><strong>홍길동</strong></p>
-								<p>차대차 전문 변호사</p>
-							</div>
-							<div class="swiper-slide card">
-								<img class="img-circle"
-									src="../../img/66432819ad4f841ac7c5d8a7-original-1715677210341.jpg" alt="변호사" />
-								<p><strong>김영희</strong></p>
-								<p>무단횡단 전문 변호사</p>
-							</div>
-							<div class="swiper-slide card">
-								<img class="img-circle"
-									src="../../img/676a1679502ca3b171b5cb6d-original-1735005818097.JPG" alt="변호사" />
-								<p><strong>이철수</strong></p>
-								<p>우회전 사고 전문 변호사</p>
+					<div class="lawyer-flex">
+						<!-- Swiper 영역 -->
+						<div class="swiper-container-area">
+							<div class="swiper mySwiper">
+								<div class="swiper-wrapper">
+									<div class="swiper-slide card-profile" v-for="lawyer in lawyerList"
+										:key="lawyer.name">
+										<img class="img-circle-profile" :src="lawyer.lawyerImg" />
+										<p><strong>{{ lawyer.lawyerName }}</strong></p>
+									</div>
+								</div>
+								<div class="swiper-button-next"></div>
+								<div class="swiper-button-prev"></div>
+								<div class="swiper-pagination"></div>
 							</div>
 						</div>
-
-						<div class="swiper-button-next"></div>
-						<div class="swiper-button-prev"></div>
-						<div class="swiper-pagination"></div>
+						<!-- 상담 가능한 변호사 리스트 -->
+						<div class="lawyer-available-list">
+							<h4>상담 가능 변호사</h4>
+							<ul>
+								<li v-for="lawyer in lawyerList" :key="lawyer.lawyerId">
+									{{ lawyer.lawyerName }}
+								</li>
+							</ul>
+							<a class="btn btn-outline" href="/lawyer/office.do">자세히 보기</a>
+						</div>
 					</div>
 				</section>
+
+				<!-- 최근 질문 -->
 				<section class="question-board">
 					<div class="flex-between">
 						<span class="section-title">최근 질문</span>
 						<a class="btn btn-outline" href="/board/list.do">질문하러 가기</a>
 					</div>
-					<ul class="question-list mt-40 mb-40" >
+					<ul class="question-list mt-40 mb-40">
 						<li class="card mb-20" v-for="board in boardList" :key="board.boardNo">
-							<div class="orange">{{board.category}}</div>
-							<h3>{{board.boardTitle}}</h3>
-							<div class="cut-letter">{{board.contents}}</div>
-							<p>{{board.cdate}}</p>
-							<div>변호사 답변 : {{}}개</div>
+							<div class="orange">{{ board.category }}</div>
+							<h3>{{ board.boardTitle }}</h3>
+							<div class="cut-letter">{{ board.contents }}</div>
+							<p>{{ board.cdate }}</p>
+							<div>변호사 답변 : {{ board.cmtCount }}개</div>
+							<div class="mt-10">
+								<a class="btn btn-outline" @click="fnView(board.boardNo)">자세히 보기</a>
+							</div>
 						</li>
 					</ul>
 				</section>
+
 			</div>
 		</div>
 		<jsp:include page="../common/footer.jsp" />
 	</body>
 
-	</html>
 	<script>
-
 		const app = Vue.createApp({
 			data() {
 				return {
 					boardList: [],
+					lawyerList: [],
 				};
 			},
 			methods: {
 				fnGetBoardList() {
 					const self = this;
-					const nparmap = {
-					};
 					$.ajax({
 						url: "/common/boardList.dox",
 						dataType: "json",
 						type: "POST",
-						data: nparmap,
 						success: function (data) {
 							if (data.result === "success") {
-								console.log(data);
 								self.boardList = data.list;
 							} else {
-								alert("board불러오기 실패");
+								alert("board 불러오기 실패");
 							}
-						},
-
+						}
 					});
 				},
-				fnGetCmt() {
+				fnView(boardNo) {
+					location.href = "/board/view.do?boardNo=" + boardNo;
+				},
+				fnGetLawyerList() {
 					const self = this;
-					const nparmap = {
-					};
 					$.ajax({
-						url: "/common/boardList.dox",
-						dataType: "json",
+						url: "/common/lawyerList.dox",
 						type: "POST",
-						data: nparmap,
-						success: function (data) {
+						dataType: "json",
+						success(data) {
 							if (data.result === "success") {
 								console.log(data);
-								self.boardList = data.list;
-
+								self.lawyerList = data.list;
+								self.$nextTick(() => {
+									self.initSwiper();
+								});
 							} else {
-								alert("board불러오기 실패");
+								alert("변호사 목록 불러오기 실패");
 							}
-						},
-
+						}
 					});
 				},
-
-
-
-
+				initSwiper() {
+					new Swiper('.mySwiper', {
+						slidesPerView: 2,
+						spaceBetween: 30,
+						loop: true,
+						autoplay: {
+							delay: 3000,
+							disableOnInteraction: false,
+						},
+						pagination: {
+							el: '.swiper-pagination',
+							clickable: true,
+						},
+						navigation: {
+							nextEl: '.swiper-button-next',
+							prevEl: '.swiper-button-prev',
+						},
+						centeredSlides: false,
+						grabCursor: true,
+					});
+				}
 			},
 			mounted() {
-				var self = this;
-				const swiper = new Swiper('.mySwiper', {
-					slidesPerView: 3,
-					spaceBetween: 30,
-					loop: true,
-					autoplay: {
-						delay: 2000, // 3초마다 자동으로 전환
-						disableOnInteraction: false, // 사용자가 슬라이드를 조작해도 자동 전환 유지
-					},
-					pagination: {
-						el: '.swiper-pagination',
-						clickable: true,
-					},
-					navigation: {
-						nextEl: '.swiper-button-next',
-						prevEl: '.swiper-button-prev',
-					},
-				});
-				self.fnGetBoardList();
-			}
+				this.fnGetBoardList();
+				this.fnGetLawyerList();
+			},
+
 		});
 
 		app.mount('#app');
 	</script>
-	​
+
+	</html>

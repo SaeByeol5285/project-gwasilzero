@@ -74,7 +74,7 @@
                                                 </template>
                                             </div>
                                         </div>
-                                        <div v-else class="no-data">등록된 자격증이 없습니다.</div>
+                                        <div v-else class="no-data">등록된 자격증이 없습니다!!</div>
                                         <div style="margin-top: 10px;">
                                             <button type="button" @click="addLicense" class="add-license-btn">+ 자격
                                                 추가</button>

@@ -123,7 +123,7 @@
 							<div>{{ board.boardTitle }}</div>
 							<div class="cut-letter card-txt-small">{{ board.contents }}</div>
 							<p>{{ board.cdate }}</p>
-							<div>변호사 답변 : {{ board.cmtCount }}개</div>
+							<div>변호사 답변 : <span class="orange">{{ board.cmtCount }}</span>개</div>
 						</li>
 					</ul>
 				</section>

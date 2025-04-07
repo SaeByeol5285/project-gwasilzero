@@ -88,6 +88,18 @@
                             <td>{{ user.cdate }}</td>
                         </tr>
                     </table>
+                    <div class="pagination-container">
+                        <button class="btn" @click="prevPage" :disabled="userPage === 1">〈 이전</button>
+                        <button 
+                           v-for="n in index" 
+                           :key="n" 
+                           @click="goToPage(n)" 
+                           :class="['btn', userPage === n ? 'active' : '']">
+                           {{ n }}
+                        </button>
+                        <button class="btn" @click="nextPage" :disabled="userPage === index">다음 〉</button>
+                     </div>    
+
                     <div class="pagination">
                         <a v-if="userPage != 1" href="javascript:;" @click="fnUserPageMove('prev')" class="page-btn">&lt;</a>
                         <a href="javascript:;" v-for="num in userPageCount" @click="fnUserPage(num)" 

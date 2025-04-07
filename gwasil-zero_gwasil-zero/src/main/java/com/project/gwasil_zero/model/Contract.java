@@ -13,6 +13,6 @@ public class Contract {
 	private String refundAccuont;
 	private String cdate;
 	private String contractStatus;
-	private String lawyerName; 
+	private String lawyerName;
 	
 }

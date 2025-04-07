@@ -11,13 +11,12 @@
 <body>
     <jsp:include page="../common/header.jsp" />
     <div id="reportApp">
-        <div class="layout">
             <jsp:include page="layout.jsp" />
 
             <div class="content">
                 <div class="header">
                     <div>관리자페이지</div>
-                    <div>Admin님</div>
+                    <div>{{sessionId}}님</div>
                 </div>
                 <h2>게시글 관리</h2>
                 <div class="content-container">
@@ -60,7 +59,7 @@
                     </div>
                 </div>                
             </div>
-        </div>
+            </div>  <!-- 여기서 layout 닫기  -->
     </div>
     <jsp:include page="../common/footer.jsp" />
 </body>
@@ -70,6 +69,7 @@
     const reportApp = Vue.createApp({
         data() {
             return {
+                sessionId: "${sessionId}",
                 reportList: [],
                 repoTotal: 0,
                 repoPage: 1,

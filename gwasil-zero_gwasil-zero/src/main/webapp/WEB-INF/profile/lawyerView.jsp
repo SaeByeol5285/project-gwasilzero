@@ -218,7 +218,7 @@
             .title-area h2 {
                 margin: 0;
             }
-
+            
             .no-data {
                 color: #999;
                 font-style: italic;
@@ -238,7 +238,10 @@
                     </div>
                     <div class="profile-container">
                         <div class="profile-photo">
-                            <img src="../../img/66432819ad4f841ac7c5d8a7-original-1715677210341.jpg" alt="프로필 사진">
+                            <template v-if="info.lawyerImg">
+                                <img :src="info.lawyerImg" alt="프로필 사진">
+                            </template>
+                            <template v-else class="no-data">등록된 프로필 사진이 없습니다.</template>
                             <div class="lawyer-meta">
                                 <div class="lawyer-name">{{ info.lawyerName }}</div>
                                 <div class="lawyer-phone">Tel : {{ info.lawyerPhone }}</div>
@@ -276,6 +279,14 @@
                                     </div>
                                 </div>
                                 <div v-else class="no-data">등록된 자격증이 없습니다.</div>
+                            </div>
+                            <div class="section">
+                                <h3>전문 분야</h3>
+                                <ul v-if="info.mainCategoryName1 || info.mainCategoryName2" class="category-list">
+                                    <li v-if="info.mainCategoryName1">{{ info.mainCategoryName1 }}</li>
+                                    <li v-if="info.mainCategoryName2">{{ info.mainCategoryName2 }}</li>
+                                </ul>
+                                <div v-else class="no-data">선택된 전문분야가 없습니다.</div>
                             </div>
                             <div class="section">
                                 <h3>대표 사건 목록</h3>
@@ -325,7 +336,7 @@
                         type: "POST",
                         data: { lawyerId: self.lawyerId },
                         success: function (data) {
-                            // console.log(data. license);
+                            console.log(data. info);
                             self.info = data.info;
                             self.license = data.license;
                             self.mainCaseList = data.mainCaseList || [];

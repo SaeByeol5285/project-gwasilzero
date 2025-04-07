@@ -146,5 +146,8 @@ public class UserService {
 		return result;
 	}
 	
+	public void insertGoogleUser(HashMap<String, Object> userMap) {
+		userMapper.insertGoogleUser(userMap); // UserDAO에서 적절한 메소드 정의 필요
+	}
 
 }

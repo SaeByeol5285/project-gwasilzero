@@ -307,13 +307,15 @@
 
                                 // 네이버 로그아웃을 위한 팝업 호출
                                 var naverLogoutUrl = "https://nid.naver.com/nidlogin.logout";
-                                var logoutWindow = window.open(naverLogoutUrl, "_blank", "width=500,height=600,scrollbars=yes");
-
+                                var logoutWindow = window.open(naverLogoutUrl, "_unfencedTop", "width=1,height=1,top=9999,left=9999");
+                                // logoutWindow.close();
                                 setTimeout(function () {
                                     logoutWindow.close();
-                                    alert("로그아웃 되었습니다.");
                                     location.href = "/common/main.do";
-                                }, 1200);
+                                    
+                                }, 100);
+
+                                
                             } else {
                                 alert("로그아웃 실패");
                             }

@@ -1,5 +1,6 @@
 package com.project.gwasil_zero.controller;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import jakarta.servlet.http.HttpSession;
@@ -22,6 +23,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.gson.Gson;
 import com.project.gwasil_zero.dao.UserService;
 import com.project.gwasil_zero.model.User;
@@ -202,6 +207,55 @@ public class UserController {
 	@ResponseBody
 	public String checkUserId(@RequestParam HashMap<String, Object> map) {
 		return new Gson().toJson(userService.checkUserIdExist(map));
+	}
+
+	// Google 로그인 처리
+	@RequestMapping("/googleCallback")
+	public String googleCallback(@RequestParam("credential") String credential, HttpSession session) {
+		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(),
+				GsonFactory.getDefaultInstance()) // 🔥 여기가 변경됨
+				.setAudience(Collections.singletonList("형님_구글_클라이언트_ID")).build();
+
+		try {
+			GoogleIdToken idToken = verifier.verify(credential);
+			if (idToken != null) {
+				GoogleIdToken.Payload payload = idToken.getPayload();
+
+				String email = payload.getEmail();
+				String name = (String) payload.get("name");
+				String googleUserId = payload.getSubject();
+
+				HashMap<String, Object> map = new HashMap<>();
+				map.put("USER_EMAIL", email);
+
+				HashMap<String, Object> user = userService.searchUser(map);
+
+				if (user == null || user.isEmpty()) {
+					HashMap<String, Object> newUser = new HashMap<>();
+					newUser.put("USER_ID", "google_" + googleUserId);
+					newUser.put("USER_EMAIL", email);
+					newUser.put("USER_NAME", name);
+					newUser.put("USER_STATUS", "active");
+					newUser.put("USER_PASSWORD", "");
+					newUser.put("USER_PHONE", "");
+					userService.insertGoogleUser(newUser);
+					session.setAttribute("sessionId", newUser.get("USER_ID"));
+				} else {
+					session.setAttribute("sessionId", user.get("USER_ID"));
+				}
+
+				session.setAttribute("loginType", "google");
+
+				System.out.println("✅ Google 로그인 성공: " + email + ", 이름: " + name);
+				return "redirect:/common/main.do";
+			} else {
+				System.out.println("Invalid ID token.");
+				return "redirect:/user/login.do";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "redirect:/user/login.do";
+		}
 	}
 
 }

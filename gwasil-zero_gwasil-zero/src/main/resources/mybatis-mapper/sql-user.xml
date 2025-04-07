@@ -76,6 +76,13 @@
 			  LAWYER_PWD = #{pwd} 
 		WHERE LAWYER_ID = #{id}
 	</update>
+	<insert id="insertGoogleUser" parameterType="hashmap">
+	    INSERT INTO TBL_USER (
+	        USER_ID, USER_EMAIL, USER_NAME, USER_STATUS, USER_PASSWORD, USER_PHONE, CDATE
+	    ) VALUES (
+	        #{USER_ID}, #{USER_EMAIL}, #{USER_NAME}, #{USER_STATUS}, '', '', SYSDATE
+	    )
+	</insert>
 	
 </mapper>
 

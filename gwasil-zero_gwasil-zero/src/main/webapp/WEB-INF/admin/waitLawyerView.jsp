@@ -207,7 +207,7 @@
                 font-weight: bold;
                 font-size: 14px;
                 cursor: pointer;
-                transition: background-color 0.2s ease;
+                transition: 0.2s ease;
                 margin-left: 5px;
             }
 
@@ -220,89 +220,93 @@
     <body>
         <jsp:include page="../common/header.jsp" />
         <div id="lawyerDetailApp">
-            <div class="layout">
-                <jsp:include page="layout.jsp" />
-                <div class="content">
-                    <div class="header">
-                        <div>관리자페이지</div>
-                        <div>Admin님</div>
-                    </div>
-                    <div>
-                        <h3>승인 대기 변호사 상세보기</h3>
-                    </div>
-                    <div class="profile-container">
-                        <div class="profile-photo">
-                            <div v-if="info.lawyerImg">
-                                <img :src="info.lawyerImg" alt="프로필 사진">
-                            </div>
-                            <div v-else class="no-data">프로필 사진 없음</div>
-                            <div class="lawyer-meta">
-                                <div class="lawyer-name">{{ info.lawyerName }}</div>
-                                <div class="lawyer-phone">Tel : {{ info.lawyerPhone }}</div>
-                                <div class="lawyer-email">Email : {{ info.lawyerEmail }}</div>
-                            </div>
-                            <div class="approve">
-                                <button @click="fnApprove">승인</button>
-                                <button @click="fnBack">목록</button>
-                            </div>
+            <jsp:include page="layout.jsp" />
+            <div class="content">
+                <div class="header">
+                    <div>관리자페이지</div>
+                    <div>{{sessionId}}님</div>
+                </div>
+                <div>
+                    <h3>승인 대기 변호사 상세보기</h3>
+                </div>
+                <div class="profile-container">
+                    <div class="profile-photo">
+                        <div v-if="info.lawyerImg">
+                            <img :src="info.lawyerImg" alt="프로필 사진">
                         </div>
-                        <div class="profile-detail">
-                            <div class="section">
-                                <h3>소개</h3>
-                                <div v-if="info.lawyerInfo" v-html="info.lawyerInfo">{{ info.lawyerInfo }}</div>
-                                <div v-else class="no-data">작성된 소개가 없습니다.</div>
+                        <div v-else class="no-data">프로필 사진 없음</div>
+                        <div class="lawyer-meta">
+                            <div class="lawyer-name">{{ info.lawyerName }}</div>
+                            <div class="lawyer-phone">Tel : {{ info.lawyerPhone }}</div>
+                            <div class="lawyer-email">Email : {{ info.lawyerEmail }}</div>
+                        </div>
+                        <div class="approve">
+                            <button @click="fnApprove">승인</button>
+                            <button @click="fnBack">목록</button>
+                        </div>
+                    </div>
+                    <div class="profile-detail">
+                        <div class="section">
+                            <h3>소개</h3>
+                            <div v-if="info.lawyerInfo" v-html="info.lawyerInfo">{{ info.lawyerInfo }}</div>
+                            <div v-else class="no-data">작성된 소개가 없습니다.</div>
+                        </div>
+                        <div class="section">
+                            <h3>경력</h3>
+                            <div v-if="info.lawyerCareer" v-html="info.lawyerCareer">{{ info.lawyerCareer }}</div>
+                            <div v-else class="no-data">작성된 경력이 없습니다.</div>
+                        </div>
+                        <div class="section">
+                            <h3>주요 업무사례</h3>
+                            <div v-if="info.lawyerTask" v-html="info.lawyerTask">{{ info.lawyerTask }}</div>
+                            <div v-else class="no-data">작성된 업무사례가 없습니다.</div>
+                        </div>
+                        <div class="section">
+                            <h3>학력</h3>
+                            <div v-if="info.lawyerEdu" v-html="info.lawyerEdu">{{ info.lawyerEdu }}</div>
+                            <div v-else class="no-data">작성된 학력이 없습니다.</div>
+                        </div>
+                        <div class="section">
+                            <h3>출생년도</h3>
+                            <div v-if="info.birth">{{ info.birth }}</div>
+                            <div v-else class="no-data">작성된 생년월일이 없습니다.</div>
+                        </div>
+                        <div class="section">
+                            <h3>소속 법무 법인</h3>
+                            <div v-if="info.officproofName">{{ info.officproofName }}</div>
+                            <div v-else class="no-data">작성된 법인 내용이 없습니다.</div>
+                        </div>
+                        <div class="section">
+                            <h3>변호사 등록번호</h3>
+                            <div v-if="info.lawyerNumber">{{ info.lawyerNumber }}</div>
+                            <div v-else class="no-data">작성된 변호사 등록번호가 없습니다.</div>
+                        </div>
+                        <div class="section">
+                            <h3>변호사 취득일시</h3>
+                            <div v-if="info.passYears">{{ info.passYears }}</div>
+                            <div v-else class="no-data">작성된 변호사 취득일시가 없습니다.</div>
+                        </div>
+                        <div class="section">
+                            <h3>변호사 자격증명</h3>
+                            <div v-if="info.lawyerLicensName">{{ info.lawyerLicensName }}</div>
+                            <div v-else class="no-data">등록된 변호사 자격증명이 없습니다.</div>
+                        </div>
+                        <div class="section">
+                            <h3>변호사 자격증 사본</h3>
+                            <div v-if="info.lawyerLicensPath">
+                                <ul>
+                                    <li>📜 {{ info.lawyerLicensName }}
+                                        <a :href="info.lawyerLicensPath" target="_blank" style="margin-left: 10px;">이미지 보기</a>
+                                        <a :href="info.lawyerLicensPath" :download="info.lawyerLicensName" style="margin-left: 10px;">다운로드</a>
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="section">
-                                <h3>경력</h3>
-                                <div v-if="info.lawyerCareer" v-html="info.lawyerCareer">{{ info.lawyerCareer }}</div>
-                                <div v-else class="no-data">작성된 경력이 없습니다.</div>
-                            </div>
-                            <div class="section">
-                                <h3>주요 업무사례</h3>
-                                <div v-if="info.lawyerTask" v-html="info.lawyerTask">{{ info.lawyerTask }}</div>
-                                <div v-else class="no-data">작성된 업무사례가 없습니다.</div>
-                            </div>
-                            <div class="section">
-                                <h3>학력</h3>
-                                <div v-if="info.lawyerEdu" v-html="info.lawyerEdu">{{ info.lawyerEdu }}</div>
-                                <div v-else class="no-data">작성된 학력이 없습니다.</div>
-                            </div>
-                            <div class="section">
-                                <h3>출생년도</h3>
-                                <div v-if="info.birth">{{ info.birth }}</div>
-                                <div v-else class="no-data">작성된 생년월일이 없습니다.</div>
-                            </div>
-                            <div class="section">
-                                <h3>소속 법무 법인</h3>
-                                <div v-if="info.officproofName">{{ info.officproofName }}</div>
-                                <div v-else class="no-data">작성된 법인 내용이 없습니다.</div>
-                            </div>
-                            <div class="section">
-                                <h3>변호사 등록번호</h3>
-                                <div v-if="info.lawyerNumber">{{ info.lawyerNumber }}</div>
-                                <div v-else class="no-data">작성된 변호사 등록번호가 없습니다.</div>
-                            </div>
-                            <div class="section">
-                                <h3>변호사 취득일시</h3>
-                                <div v-if="info.passYears">{{ info.passYears }}</div>
-                                <div v-else class="no-data">작성된 변호사 취득일시가 없습니다.</div>
-                            </div>
-                            <div class="section">
-                                <h3>변호사 자격증명</h3>
-                                <div v-if="info.lawyerLiscensName">{{ info.lawyerLiscensName }}</div>
-                                <div v-else class="no-data">등록된 변호사 자격증명이 없습니다.</div>
-                            </div>
-                            <div class="section">
-                                <h3>변호사 자격증 사본</h3>
-                                <div v-if="info.lawyerLiscensPath">
-                                    <img :src="info.lawyerLiscensPath" alt="자격증 사본">
-                                </div>
-                                <div v-else class="no-data">등록된 변호사 자격증 사본 없습니다.</div>
-                            </div>
+                            <div v-else class="no-data">등록된 변호사 자격증 사본 없습니다.</div>
                         </div>
                     </div>
                 </div>
             </div>
+            </div> <!-- 여기서 layout 닫기  -->
         </div>
         <jsp:include page="../common/footer.jsp" />
     </body>
@@ -317,6 +321,7 @@
                 return {
                     info: {},
                     license: [],
+                    sessionId: "${sessionId}"
                 };
             },
             methods: {
@@ -328,7 +333,7 @@
                         type: "POST",
                         data: { lawyerId: lawyerId },
                         success: function (data) {
-                            // console.log(data. info);
+                            console.log(data. info);
                             self.info = data.info;
                             self.license = data.license;
                         }

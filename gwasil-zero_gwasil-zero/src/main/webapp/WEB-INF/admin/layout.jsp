@@ -37,7 +37,7 @@
             <button onclick="fnLogOut()" class="logout">Logout</button>
         </div>
         <!-- 오른쪽 content는 각 JSP에서 직접 작성 -->
-    </div>
+   
 </body>
 </html>
 <script>

@@ -15,7 +15,7 @@
 	
 	<insert id="insertPaymentLawyer" parameterType="hashmap">
 	    INSERT INTO PAY(ORDER_ID, PACKAGE_NAME, PAY_TIME, LAWYER_ID, PAY_STATUS, PRICE)
-	    VALUES (#{orderId}, #{packageName}, sysdate, #{sessionId}, 'PAID' #{price})
+	    VALUES (#{orderId}, #{packageName}, sysdate, #{sessionId}, 'PAID', #{price})
 	</insert>
 	
 	<select id="selectpayList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
@@ -29,5 +29,11 @@
 			AND LAWYER_ID = #{lawyerId}
 		</if>
 	</select>
+	
+	<update id="updateAuthEndTime" parameterType="hashmap">
+	    UPDATE lawyer
+	    SET auth_endtime = ADD_MONTHS(SYSDATE, 1)
+	    WHERE lawyer_id = #{lawyerId}
+	</update>
 
 </mapper>

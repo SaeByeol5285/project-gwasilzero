@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="/js/page-change.js"></script>
   <title>게시글 수정</title>
   <style>
@@ -90,29 +91,6 @@
 	        margin: 20px 0;
 	    }
 
-	    button {
-	        padding: 8px 16px;
-	        font-size: 14px;
-	        border: none;
-	        border-radius: 4px;
-	        margin-right: 8px;
-	        cursor: pointer;
-	    }
-
-	    button:hover {
-	        opacity: 0.9;
-	    }
-
-	    button:nth-child(1) {
-	        background-color: #007bff;
-	        color: white;
-	    }
-
-	    button:nth-child(2) {
-	        background-color: #dc3545;
-	        color: white;
-	    }
-
 	    /* 댓글 스타일 */
 	    .comment-wrapper {
 	        border-top: 1px solid #eee;
@@ -133,15 +111,6 @@
 	        border: 1px solid #ccc;
 	        margin-bottom: 10px;
 	        resize: vertical;
-	    }
-
-	    .comment-wrapper button {
-	        background-color: #007bff;
-	        color: white;
-	        border: none;
-	        padding: 6px 12px;
-	        border-radius: 4px;
-	        cursor: pointer;
 	    }
 
 	    .comment-list {
@@ -165,6 +134,49 @@
 	    .comment-text {
 	        font-size: 14px;
 	    }
+
+		.btn {
+			padding: 8px 16px;
+			font-size: 14px;
+			font-weight: 500;
+			border-radius: 6px;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		.btn-write {
+			background-color: #ffece4;
+			color: #ff5c00;
+			font-weight: 600;
+		}
+
+		.btn-write:hover {
+			background-color: #ff6b1a;
+			color: #fff;
+		}
+
+		.btn-red {
+			background-color: #ffe1e1;
+			color: #e60000;
+			font-weight: 600;
+		}
+
+		.btn-red:hover {
+			background-color: #e60000;
+			color: #fff;
+		}
+
+		.btn-blue {
+			background-color: #e3f2ff;
+			color: #007bff;
+			font-weight: 600;
+		}
+
+		.btn-blue:hover {
+			background-color: #007bff;
+			color: #fff;
+		}
+
 	</style>
 </head>
 <body>
@@ -186,13 +198,13 @@
 
         <input type="file" multiple @change="handleFileUpload" />
 
-        <button @click="submitEdit">수정 완료</button>
-        <button @click="deleteBoard">삭제</button>
+        <button @click="submitEdit" class="btn btn-write" style="margin-right: 5px;">✏️ 수정 완료</button>
+        <button @click="deleteBoard" class="btn btn-red">🗑️ 삭제</button>
 
         <div class="comment-wrapper">
             <h4>댓글</h4>
             <textarea v-model="newComment" placeholder="댓글을 입력하세요" rows="3"></textarea>
-            <button @click="submitComment">등록</button>
+            <button @click="submitComment" class="btn btn-blue">💬 댓글 등록</button>
 
             <div class="comment-list" v-if="comments.length > 0">
                 <div class="comment-item" v-for="(cmt, index) in comments" :key="index">
@@ -285,17 +297,41 @@ const app = Vue.createApp({
 		    data: formData,
 		    processData: false,
 		    contentType: false,
-		    success: () => alert("수정 완료")
+		    success: function() {
+				alert("수정 완료!");
+				location.href="/board/list.do";
+			}
 		  });
 		},
-        deleteBoard() {
-            if (!confirm("정말 삭제하시겠습니까?")) return;
+		deleteBoard() {
+			let self = this;
 
-            $.post("/board/delete.dox", { boardNo: this.board.boardNo }, () => {
-                alert("삭제 완료");
-                location.href = "/board/list.do";
-            });
-        },
+			Swal.fire({
+				title: '정말 삭제하시겠습니까?',
+				text: "삭제된 게시글은 복구할 수 없습니다.",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#ff5c00',
+				cancelButtonColor: '#aaa',
+				confirmButtonText: '네, 삭제할게요',
+				cancelButtonText: '취소'
+			}).then((result) => {
+				if (result.isConfirmed) {
+				$.post("/board/delete.dox", { boardNo: self.board.boardNo }, () => {
+					Swal.fire({
+					title: '삭제 완료!',
+					text: '게시글이 성공적으로 삭제되었습니다.',
+					icon: 'success',
+					confirmButtonColor: '#ff5c00',
+					confirmButtonText: '확인'
+					}).then(() => {
+					location.href = "/board/list.do";
+					});
+				});
+				}
+			});
+		},
+
         submitComment() {
             const self = this;
             if (!self.newComment.trim()) {

@@ -264,4 +264,12 @@ public class MypageService {
 	    return resultMap;
 	}
 
+	public HashMap<String, Object> upadatePhoneConsult(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+	    mypageMapper.updateConsult(map);
+	    resultMap.put("result", "success");      
+	    return resultMap;
+	}
+
 }

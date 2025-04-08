@@ -69,4 +69,6 @@ public interface MypageMapper {
 
 	void updateNoti(HashMap<String, Object> map);
 
+	void updateConsult(HashMap<String, Object> map);
+
 }

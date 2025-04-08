@@ -34,7 +34,7 @@
 		}
 	
 		.package-box {
-			width: 280px;
+			width: 330px;
 			background-color: white;
 			border-radius: 10px;
 			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
@@ -128,7 +128,11 @@
 			<template v-for="item in list" :key="item.packageName">
 				<div class="package-box" v-if="item.packageStatus === 'U'">
 					<div class="package-title">{{ item.packageName }}</div>
-					<div class="package-info">{{ item.packageInfo }}</div>
+					<div class="package-info">
+						<div v-for="(line, idx) in item.packageInfo.split('\n')" :key="idx">
+						  {{ line }}
+						</div>
+					  </div>
 					<div class="package-price">₩{{ item.packagePrice.toLocaleString() }}</div>
 
 					<a v-if="!isPurchased(item) && canBuy(item)" href="javascript:;" @click="fnBuy(item)" class="buy-btn">
@@ -151,7 +155,11 @@
 			<template v-for="item in list" :key="item.packageName">
 				<div class="package-box" v-if="item.packageStatus === 'L'">
 					<div class="package-title">{{ item.packageName }}</div>
-					<div class="package-info">{{ item.packageInfo }}</div>
+					<div class="package-info">
+						<div v-for="(line, idx) in item.packageInfo.split('\n')" :key="idx">
+						  {{ line }}
+						</div>
+					  </div>
 					<div class="package-price">₩{{ item.packagePrice.toLocaleString() }}</div>
 
 					<a v-if="!isPurchased(item) && canBuy(item)" href="javascript:;" @click="fnBuy(item)" class="buy-btn">

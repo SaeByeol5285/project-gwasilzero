@@ -405,7 +405,7 @@
 							<tr v-if="chatList.length" v-for="chat in chatList" :key="chat.chatNo">
 								<td><a href="javascript:;" @click="fnChat(chat.chatNo)" class="message">{{ chat.message
 										}}</a></td>
-								<td>{{ chat.partnerName }}</td>
+								<td><a href="javascript:;" @click="fnProfile(chat.partnerId)" class="message">{{ chat.partnerName }}</a></td>
 							</tr>
 							<tr v-else>
 								<td colspan="2" style="text-align: center; color: #999;">채팅 내역이 없습니다.</td>
@@ -588,6 +588,10 @@
 						pageChange("/board/view.do", { boardNo: boardNo });
 					},
 
+					fnProfile(lawyerId) {
+						pageChange("/profile/view.do", {lawyerId : lawyerId});
+					},
+
 					fnGetChatList() {
 						var self = this;
 						var nparmap = {
@@ -659,6 +663,7 @@
 							case "PAID": return "결제 완료";
 							case "REQUEST": return "환불 요청";
 							case "REFUNDED": return "환불 완료";
+							case "USED" : return "사용 완료";
 							default: return status;
 						}
 					},

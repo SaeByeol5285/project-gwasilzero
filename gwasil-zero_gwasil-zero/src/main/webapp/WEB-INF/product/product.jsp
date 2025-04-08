@@ -16,6 +16,7 @@
 			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 		}
 		th, td {
+            max-width: 700px;
 			padding: 12px;
 			border: 1px solid #ccc;
 			text-align: center;
@@ -72,7 +73,7 @@
                 <h2>상품 관리</h2>
 
                 <div class="box">
-                    <h3>판매 리스트</h3>
+                    <h3>판매 목록</h3>
                     <table>
                         <thead>
                             <tr>
@@ -103,7 +104,7 @@
 
                 <!-- 환불 요청 리스트 -->
                 <div class="box" style="margin-top: 40px;">
-                    <h3>환불 요청 리스트</h3>
+                    <h3>환불 요청 목록</h3>
                     <table>
                         <thead>
                             <tr>

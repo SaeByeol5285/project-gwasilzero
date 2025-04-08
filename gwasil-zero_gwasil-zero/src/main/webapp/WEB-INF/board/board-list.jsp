@@ -88,31 +88,30 @@
    }
 
    .category-btn {
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #555;
-  background-color: #fdfdfd;
-  border: 1px solid #ddd;
-  border-radius: 15px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: all 0.25s ease;
-  cursor: pointer;
-}
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #555;
+      background-color: #fdfdfd;
+      border: 1px solid #ddd;
+      border-radius: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      transition: all 0.25s ease;
+      cursor: pointer;
+   }
 
-.category-btn:hover {
-  transform: translateY(-2px);
-  background-color: #fff8f5;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-}
+   .category-btn:hover {
+      transform: translateY(-2px);
+      background-color: #fff8f5;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+   }
 
-.category-btn.active {
-  background-color: #ff5c00;
-  color: #fff;
-  border-color: #ff5c00;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-}
-
+   .category-btn.active {
+      background-color: #ff5c00;
+      color: #fff;
+      border-color: #ff5c00;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+   }
 
    .search-bar {
          display: flex;
@@ -331,7 +330,7 @@
          </select>
          <input v-model="keyword" @keyup.enter="fnBoardList" class="search-input" placeholder="검색어를 입력하세요">
          <button @click="fnBoardList" class="btn">검색</button>
-         <button @click="goToAddPage" class="btn btn-write">글 작성</button>
+         <button v-if="sessionType != 'lawyer'" @click="goToAddPage" class="btn btn-write">글 작성</button>
       </div>
       
       <div class="card-container">
@@ -395,6 +394,7 @@
             return {
             list : [],
             sessionId : "${sessionScope.sessionId}",
+            sessionType : "${sessionType}",
 			categoryList: [
                           { value: "all", label: "전체" },
 			                 { value: "01", label: "신호 위반" },

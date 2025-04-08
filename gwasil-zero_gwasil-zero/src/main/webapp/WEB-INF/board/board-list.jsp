@@ -88,31 +88,30 @@
    }
 
    .category-btn {
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #555;
-  background-color: #fdfdfd;
-  border: 1px solid #ddd;
-  border-radius: 15px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: all 0.25s ease;
-  cursor: pointer;
-}
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #555;
+      background-color: #fdfdfd;
+      border: 1px solid #ddd;
+      border-radius: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      transition: all 0.25s ease;
+      cursor: pointer;
+   }
 
-.category-btn:hover {
-  transform: translateY(-2px);
-  background-color: #fff8f5;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-}
+   .category-btn:hover {
+      transform: translateY(-2px);
+      background-color: #fff8f5;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+   }
 
-.category-btn.active {
-  background-color: #ff5c00;
-  color: #fff;
-  border-color: #ff5c00;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-}
-
+   .category-btn.active {
+      background-color: #ff5c00;
+      color: #fff;
+      border-color: #ff5c00;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+   }
 
    .search-bar {
          display: flex;
@@ -265,17 +264,17 @@
       cursor: default;
    }
 
-	.btn.active {
-		background-color: #ff5c00;
-		color: white;
-		font-weight: bold;
-		box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-	}
+   .btn.active {
+      background-color: #ff5c00;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+   }
 
-	.btn:disabled {
-		opacity: 0.4;
-		cursor: default;
-	}
+   .btn:disabled {
+      opacity: 0.4;
+      cursor: default;
+   }
 
    .btn-write {
       background-color: #ffece4;
@@ -331,7 +330,7 @@
          </select>
          <input v-model="keyword" @keyup.enter="fnBoardList" class="search-input" placeholder="검색어를 입력하세요">
          <button @click="fnBoardList" class="btn">검색</button>
-         <button @click="goToAddPage" class="btn btn-write">글 작성</button>
+         <button v-if="sessionType != 'lawyer'" @click="goToAddPage" class="btn btn-write">글 작성</button>
       </div>
       
       <div class="card-container">
@@ -395,19 +394,20 @@
             return {
             list : [],
             sessionId : "${sessionScope.sessionId}",
-			categoryList: [
+            sessionType : "${sessionType}",
+         categoryList: [
                           { value: "all", label: "전체" },
-			                 { value: "01", label: "신호 위반" },
-			                 { value: "02", label: "보행자 사고" },
-			                 { value: "03", label: "음주/무면허 사고" },
-			                 { value: "04", label: "끼어들기/진로 변경" },
-			                 { value: "05", label: "주차/문 개방" },
-			                 { value: "06", label: "중앙선 침범" },
-			                 { value: "07", label: "과속/안전거리 미확보" },
-			                 { value: "08", label: "역주행/일방통행" },
-			                 { value: "09", label: "불법 유턴/좌회전" },
-			                 { value: "10", label: "기타/복합 사고" }
-			              ],
+                          { value: "01", label: "신호 위반" },
+                          { value: "02", label: "보행자 사고" },
+                          { value: "03", label: "음주/무면허 사고" },
+                          { value: "04", label: "끼어들기/진로 변경" },
+                          { value: "05", label: "주차/문 개방" },
+                          { value: "06", label: "중앙선 침범" },
+                          { value: "07", label: "과속/안전거리 미확보" },
+                          { value: "08", label: "역주행/일방통행" },
+                          { value: "09", label: "불법 유턴/좌회전" },
+                          { value: "10", label: "기타/복합 사고" }
+                       ],
             category : "all", // 사고종류 
             checked : false,
             keyword : "",
@@ -467,22 +467,22 @@
           },
           goToAddPage: function () {
             if (!this.sessionId || this.sessionId === "") {
-					Swal.fire({
-						title: "작성 불가!",
-						text: "로그인 후 이용하실 수 있습니다.",
-						icon: "warning",
-						showCancelButton: true,
-						confirmButtonColor: "#ff5c00", // 주황색
-						cancelButtonColor: "#aaa",
-						confirmButtonText: "로그인하러 가기",
-						cancelButtonText: "취소"
-					}).then((result) => {
-						if (result.isConfirmed) {
+               Swal.fire({
+                  title: "작성 불가!",
+                  text: "로그인 후 이용하실 수 있습니다.",
+                  icon: "warning",
+                  showCancelButton: true,
+                  confirmButtonColor: "#ff5c00", // 주황색
+                  cancelButtonColor: "#aaa",
+                  confirmButtonText: "로그인하러 가기",
+                  cancelButtonText: "취소"
+               }).then((result) => {
+                  if (result.isConfirmed) {
                      location.href = "/user/login.do";
-						}
-					});
-					return;
-				}
+                  }
+               });
+               return;
+            }
             location.href = "/board/add.do";
           }
          ,

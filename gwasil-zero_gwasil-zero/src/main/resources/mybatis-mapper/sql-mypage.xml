@@ -1,132 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.project.gwasil_zero.mapper.MypageMapper">
-  	
-	<select id="selectUserBoardList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Board">
-	    SELECT
-	        B.*,
-	        F.FILE_PATH || '/' || F.FILE_REALNAME AS thumb,
-	       	L.LAWYER_NAME
-	    FROM
-	        BOARD B
-	    LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
-	    LEFT JOIN LAWYER L ON L.LAWYER_ID = B.LAWYER_ID
-	    WHERE
-	        B.USER_ID = #{userId}
-	    ORDER BY B.CDATE DESC
-	    offset #{page} rows fetch next #{pageSize} rows only
-	</select>
-	
-	<select id="selectBoardCount" parameterType="hashmap" resultType="int">
-	    SELECT COUNT(*)
-	    FROM
-	        BOARD B
-	    LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
-	    LEFT JOIN LAWYER L ON L.LAWYER_ID = B.LAWYER_ID
-	    WHERE
-	        B.USER_ID = #{userId}
-	</select>
-	
-	<select id="selectUserChatList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
-	    SELECT
-		    cm.chat_no,
-		    cm.sender_id,
-		    cm.message,
-		    TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
-		
-		    CASE 
-		        WHEN c.sender_id = #{sessionId} THEN l2.lawyer_name
-		        ELSE l1.lawyer_name
-		    END AS partner_name
-		
-		FROM chat_message cm
-		
-		JOIN (
-		    SELECT chat_no, MAX(time) AS max_time
-		    FROM chat_message
-		    WHERE chat_no IN (
-		        SELECT chat_no
-		        FROM chat
-		        WHERE sender_id = #{sessionId}
-		           OR receiver_id = #{sessionId}
-		    )
-		    GROUP BY chat_no
-		) latest 
-		    ON cm.chat_no = latest.chat_no 
-		   AND cm.time = latest.max_time
-		
-		JOIN chat c ON cm.chat_no = c.chat_no
-		
-		LEFT JOIN lawyer l1 ON c.sender_id = l1.lawyer_id
-		LEFT JOIN lawyer l2 ON c.receiver_id = l2.lawyer_id
-		
-		ORDER BY cm.time DESC
+     
+   <select id="selectUserBoardList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Board">
+       SELECT
+           B.*,
+           F.FILE_PATH || '/' || F.FILE_REALNAME AS thumb,
+             L.LAWYER_NAME
+       FROM
+           BOARD B
+       LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
+       LEFT JOIN LAWYER L ON L.LAWYER_ID = B.LAWYER_ID
+       WHERE
+           B.USER_ID = #{userId}
+       ORDER BY B.CDATE DESC
+       offset #{page} rows fetch next #{pageSize} rows only
+   </select>
+   
+   <select id="selectBoardCount" parameterType="hashmap" resultType="int">
+       SELECT COUNT(*)
+       FROM
+           BOARD B
+       LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
+       LEFT JOIN LAWYER L ON L.LAWYER_ID = B.LAWYER_ID
+       WHERE
+           B.USER_ID = #{userId}
+   </select>
+   
+   <select id="selectUserChatList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
+       SELECT
+          cm.chat_no,
+          cm.sender_id,
+          cm.message,
+          TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
+      
+          CASE 
+              WHEN c.sender_id = #{sessionId} THEN l2.lawyer_name
+              ELSE l1.lawyer_name
+          END AS partner_name
+      
+      FROM chat_message cm
+      
+      JOIN (
+          SELECT chat_no, MAX(time) AS max_time
+          FROM chat_message
+          WHERE chat_no IN (
+              SELECT chat_no
+              FROM chat
+              WHERE sender_id = #{sessionId}
+                 OR receiver_id = #{sessionId}
+          )
+          GROUP BY chat_no
+      ) latest 
+          ON cm.chat_no = latest.chat_no 
+         AND cm.time = latest.max_time
+      
+      JOIN chat c ON cm.chat_no = c.chat_no
+      
+      LEFT JOIN lawyer l1 ON c.sender_id = l1.lawyer_id
+      LEFT JOIN lawyer l2 ON c.receiver_id = l2.lawyer_id
+      
+      ORDER BY cm.time DESC
 
-	</select>
-	
-	
-	<select id="selectMyPayList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
-	    SELECT *
-	    FROM PAY
-	   	WHERE USER_ID = #{sessionId}
-	    
-	</select>
-	
-	<select id="selectUserForMypage" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
-	    SELECT 
-	        USER_NAME, 
-	        SUBSTR(USER_PHONE, 1, 3) || '-' || SUBSTR(USER_PHONE, 4, 4) || '-' || SUBSTR(USER_PHONE, 8, 4) AS USER_PHONE,
-	        USER_EMAIL, 
-	        USER_ID
-	    FROM TBL_USER
-	    WHERE USER_ID = #{userId}
-	</select>
+   </select>
+   
+   
+   <select id="selectMyPayList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
+       SELECT *
+       FROM PAY
+         WHERE USER_ID = #{sessionId}
+       
+   </select>
+   
+   <select id="selectUserForMypage" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+       SELECT 
+           USER_NAME, 
+           SUBSTR(USER_PHONE, 1, 3) || '-' || SUBSTR(USER_PHONE, 4, 4) || '-' || SUBSTR(USER_PHONE, 8, 4) AS USER_PHONE,
+           USER_EMAIL, 
+           USER_ID
+       FROM TBL_USER
+       WHERE USER_ID = #{userId}
+   </select>
   
-	<update id="updateUserInfo" parameterType="hashmap">
-	    UPDATE TBL_USER
-	    SET
-	        USER_NAME = #{userName},
-	        USER_PHONE = #{userPhone},
-	        USER_EMAIL = #{userEmail}
-	    WHERE USER_ID = #{userId}
-	</update>
-	
-	<select id="selectUserInfo" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
-	    SELECT USER_ID, USER_NAME, USER_PHONE, USER_EMAIL
-	    FROM TBL_USER
-	    WHERE USER_ID = #{sessionId}
-	</select>
-	
-	<!-- 비밀번호 확인용 -->
-	<select id="selectUserById" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
-	    SELECT *
-	    FROM TBL_USER
-	    WHERE USER_ID = #{userId}
-	</select>
+   <update id="updateUserInfo" parameterType="hashmap">
+       UPDATE TBL_USER
+       SET
+           USER_NAME = #{userName},
+           USER_PHONE = #{userPhone},
+           USER_EMAIL = #{userEmail}
+       WHERE USER_ID = #{userId}
+   </update>
+   
+   <select id="selectUserInfo" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+       SELECT USER_ID, USER_NAME, USER_PHONE, USER_EMAIL
+       FROM TBL_USER
+       WHERE USER_ID = #{sessionId}
+   </select>
+   
+   <!-- 비밀번호 확인용 -->
+   <select id="selectUserById" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+       SELECT *
+       FROM TBL_USER
+       WHERE USER_ID = #{userId}
+   </select>
 
-	<!-- 탈퇴 처리 (user_status 변경 or 삭제) -->
-	<update id="deleteUserByAdmin" parameterType="hashmap">
-	    UPDATE TBL_USER
-	    SET USER_STATUS = 'OUT',
-	        CDATE = SYSDATE
-	    WHERE USER_ID = #{userId}
-	</update>   
+   <!-- 탈퇴 처리 (user_status 변경 or 삭제) -->
+   <update id="deleteUserByAdmin" parameterType="hashmap">
+       UPDATE TBL_USER
+       SET USER_STATUS = 'OUT',
+           CDATE = SYSDATE
+       WHERE USER_ID = #{userId}
+   </update>   
    
    <select id="selectLawyerView" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
-	   SELECT 
-	      LAWYER_ID,
-	      LAWYER_NAME,
-	      LAWYER_EMAIL,
-	      SUBSTR(LAWYER_PHONE, 1, 3) || '-' || SUBSTR(LAWYER_PHONE, 4, 4) || '-' || SUBSTR(LAWYER_PHONE, 8, 4) AS LAWYER_PHONE,
-	      LAWYER_ADDR,
-	      LAWYER_IMG,
-	      LAWYER_INFO,
-	      COUNSEL
-	   FROM LAWYER
-	   WHERE LAWYER_ID = #{sessionId}
-	</select>
+      SELECT 
+         LAWYER_ID,
+         LAWYER_NAME,
+         LAWYER_EMAIL,
+         SUBSTR(LAWYER_PHONE, 1, 3) || '-' || SUBSTR(LAWYER_PHONE, 4, 4) || '-' || SUBSTR(LAWYER_PHONE, 8, 4) AS LAWYER_PHONE,
+         LAWYER_ADDR,
+         LAWYER_IMG,
+         LAWYER_INFO,
+         COUNSEL
+      FROM LAWYER
+      WHERE LAWYER_ID = #{sessionId}
+   </select>
    
    <update id="updateLawyer" parameterType="hashmap">
       UPDATE LAWYER
@@ -140,10 +140,10 @@
    </update>
    
    <update id="updateLawyerImg" parameterType="hashmap">
-	    UPDATE lawyer
-	    SET lawyer_img = #{lawyerImg}
-	    WHERE lawyer_id = #{lawyerId}
-	</update>
+       UPDATE lawyer
+       SET lawyer_img = #{lawyerImg}
+       WHERE lawyer_id = #{lawyerId}
+   </update>
 
    <update id="deleteLawyer" parameterType="hashmap">
       UPDATE LAWYER
@@ -160,33 +160,33 @@
    </update>
    
    <select id="selectLawyerBoard" parameterType="hashmap" resultType="Board">
-	    SELECT B.*, U.USER_NAME
-	    FROM BOARD B
-	    INNER JOIN TBL_USER U ON B.USER_ID = U.USER_ID
-	    WHERE 1=1
-	    <if test="sessionId != null and sessionId != ''">
-	        AND B.LAWYER_ID = #{sessionId}
-	    </if>
-	    <if test="boardStatus != null and boardStatus != ''">
-	        AND B.BOARD_STATUS = #{boardStatus}
-	    </if>
-	    offset #{page} rows fetch next #{pageSize} rows only
-	</select>
-	
-	<select id="selectBoardCnt" parameterType="hashmap" resultType="int">
-	    SELECT COUNT(*)
-	    FROM BOARD B
-	    INNER JOIN TBL_USER U ON B.USER_ID = U.USER_ID
-	    WHERE 1=1
-	    <if test="sessionId != null and sessionId != ''">
-	        AND B.LAWYER_ID = #{sessionId}
-	    </if>
-	    <if test="boardStatus != null and boardStatus != ''">
-	        AND B.BOARD_STATUS = #{boardStatus}
-	    </if>
-	</select>
-	
-	<update id="updateBoardStatus" parameterType="hashmap">
+       SELECT B.*, U.USER_NAME
+       FROM BOARD B
+       INNER JOIN TBL_USER U ON B.USER_ID = U.USER_ID
+       WHERE 1=1
+       <if test="sessionId != null and sessionId != ''">
+           AND B.LAWYER_ID = #{sessionId}
+       </if>
+       <if test="boardStatus != null and boardStatus != ''">
+           AND B.BOARD_STATUS = #{boardStatus}
+       </if>
+       offset #{page} rows fetch next #{pageSize} rows only
+   </select>
+   
+   <select id="selectBoardCnt" parameterType="hashmap" resultType="int">
+       SELECT COUNT(*)
+       FROM BOARD B
+       INNER JOIN TBL_USER U ON B.USER_ID = U.USER_ID
+       WHERE 1=1
+       <if test="sessionId != null and sessionId != ''">
+           AND B.LAWYER_ID = #{sessionId}
+       </if>
+       <if test="boardStatus != null and boardStatus != ''">
+           AND B.BOARD_STATUS = #{boardStatus}
+       </if>
+   </select>
+   
+   <update id="updateBoardStatus" parameterType="hashmap">
       UPDATE BOARD
       SET
          BOARD_STATUS = #{boardStatus}
@@ -214,90 +214,90 @@
     </update>
     
     <select id="selectLastChat" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
-	    SELECT
-	        cm.chat_no,
-	        cm.sender_id,
-	        su.user_name AS sender_name,
-	        cm.message,
-	        TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
-	
-	        CASE 
-	            WHEN c.sender_id = #{sessionId} THEN ru.user_name
-	            ELSE su2.user_name
-	        END AS partner_name
-	
-	    FROM chat_message cm
-	
-	    JOIN (
-	        SELECT chat_no, MAX(time) AS max_time
-	        FROM chat_message
-	        WHERE chat_no IN (
-	            SELECT chat_no
-	            FROM chat
-	            WHERE sender_id = #{sessionId}
-	               OR receiver_id = #{sessionId}
-	        )
-	        GROUP BY chat_no
-	    ) latest ON cm.chat_no = latest.chat_no AND cm.time = latest.max_time
-	
-	    JOIN chat c ON cm.chat_no = c.chat_no
-	
-	    LEFT JOIN tbl_user su ON cm.sender_id = su.user_id
-	
-	    LEFT JOIN tbl_user su2 ON c.sender_id = su2.user_id
-	    LEFT JOIN tbl_user ru ON c.receiver_id = ru.user_id
-	
-	    ORDER BY cm.time DESC
-	</select>
-	
-	<select id="selectContractList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Contract">
-	    SELECT 
-	        C.CONTRACT_NO,
-	        C.CONTRACT_PRICE,
-	        TO_CHAR(C.CDATE, 'YYYY-MM-DD HH24:MI') AS CDATE,
-	        C.CONTRACT_STATUS,
-	        L.LAWYER_NAME
-	    FROM 
-	        CONTRACT C
-	    JOIN 
-	        LAWYER L ON C.LAWYER_ID = L.LAWYER_ID
-	    WHERE 
-	        C.USER_ID = #{userId}
-	    ORDER BY C.CDATE DESC
-	</select>
-	
-	<select id="selectLawyerInfo" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
-	    SELECT LAWYER_NAME, LAWYER_EMAIL, LAWYER_PHONE, LAWYER_ADDR
-	    FROM LAWYER
-	    WHERE LAWYER_ID = #{sessionId}
-	</select>
+       SELECT
+           cm.chat_no,
+           cm.sender_id,
+           su.user_name AS sender_name,
+           cm.message,
+           TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
+   
+           CASE 
+               WHEN c.sender_id = #{sessionId} THEN ru.user_name
+               ELSE su2.user_name
+           END AS partner_name
+   
+       FROM chat_message cm
+   
+       JOIN (
+           SELECT chat_no, MAX(time) AS max_time
+           FROM chat_message
+           WHERE chat_no IN (
+               SELECT chat_no
+               FROM chat
+               WHERE sender_id = #{sessionId}
+                  OR receiver_id = #{sessionId}
+           )
+           GROUP BY chat_no
+       ) latest ON cm.chat_no = latest.chat_no AND cm.time = latest.max_time
+   
+       JOIN chat c ON cm.chat_no = c.chat_no
+   
+       LEFT JOIN tbl_user su ON cm.sender_id = su.user_id
+   
+       LEFT JOIN tbl_user su2 ON c.sender_id = su2.user_id
+       LEFT JOIN tbl_user ru ON c.receiver_id = ru.user_id
+   
+       ORDER BY cm.time DESC
+   </select>
+   
+   <select id="selectContractList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Contract">
+       SELECT 
+           C.CONTRACT_NO,
+           C.CONTRACT_PRICE,
+           TO_CHAR(C.CDATE, 'YYYY-MM-DD HH24:MI') AS CDATE,
+           C.CONTRACT_STATUS,
+           L.LAWYER_NAME
+       FROM 
+           CONTRACT C
+       JOIN 
+           LAWYER L ON C.LAWYER_ID = L.LAWYER_ID
+       WHERE 
+           C.USER_ID = #{userId}
+       ORDER BY C.CDATE DESC
+   </select>
+   
+   <select id="selectLawyerInfo" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+       SELECT LAWYER_NAME, LAWYER_EMAIL, LAWYER_PHONE, LAWYER_ADDR
+       FROM LAWYER
+       WHERE LAWYER_ID = #{sessionId}
+   </select>
 
-	<select id="selectRefundNoti" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Notification">
-	    SELECT 
-	        NOTI_NO,
-	        RECEIVER_ID,
-	        NOTI_TYPE,
-	        CONTENTS,
-	        IS_READ,
-	        TO_CHAR(CREATED_AT, 'YYYY-MM-DD HH24:MI:SS') AS CREATED_AT,
-	        SENDER_ID,
-	        BOARD_NO,
-	        CHAT_NO
-	    FROM 
-	        NOTIFICATION
-	    WHERE 
-	        RECEIVER_ID = #{receiverId}
-	    AND 
-	        IS_READ = 'N'
-	    ORDER BY CREATED_AT DESC
-	</select>
-	
-	<update id="updateNotificationRead" parameterType="hashmap">
-	    UPDATE NOTIFICATION
-	    SET IS_READ = 'Y'
-	    WHERE RECEIVER_ID = #{receiverId}
-	    AND IS_READ = 'N'
-	</update>
-
+   <select id="selectRefundNoti" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Notification">
+       SELECT 
+           NOTI_NO,
+           RECEIVER_ID,
+           NOTI_TYPE,
+           CONTENTS,
+           IS_READ,
+           TO_CHAR(CREATED_AT, 'YYYY-MM-DD HH24:MI:SS') AS CREATED_AT,
+           SENDER_ID,
+           BOARD_NO,
+           CHAT_NO
+       FROM 
+           NOTIFICATION
+       WHERE 
+           RECEIVER_ID = #{receiverId}
+       AND 
+           IS_READ = 'N' AND NOTI_TYPE IN ('REFUND', 'CANCEL_REFUND')
+       ORDER BY CREATED_AT DESC
+   </select>
+   
+   <update id="updateNoti" parameterType="hashmap">
+    UPDATE NOTIFICATION
+       SET IS_READ = 'Y'
+       WHERE RECEIVER_ID = #{receiverId}
+       AND IS_READ = 'N'
+       AND NOTI_TYPE IN ('REFUND', 'CANCEL_REFUND')
+   </update>
 
 </mapper>

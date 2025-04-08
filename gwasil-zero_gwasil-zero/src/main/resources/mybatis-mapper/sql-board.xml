@@ -72,9 +72,9 @@
 
 
 	<insert id = "insertBoard" parameterType="hashmap"  useGeneratedKeys="true" keyColumn="board_no" keyProperty="boardNo">
-		insert into board (board_no, board_title, contents, user_id, cnt, cdate, udate, board_status, lawyer_id, lawyer_review) 
+		insert into board (board_no, board_title, contents, user_id, cnt, cdate, udate, board_status, lawyer_id, lawyer_review, use_package) 
 		values
-		(board_seq.nextval, #{title}, #{contents}, #{userId}, 0, SYSDATE, SYSDATE, #{boardStatus}, null, null)
+		(board_seq.nextval, #{title}, #{contents}, #{userId}, 0, SYSDATE, SYSDATE, #{boardStatus}, null, null,#{usePackage,jdbcType=VARCHAR})
 	</insert>
 	
 	<insert id="insertCategory" parameterType="hashmap">
@@ -191,4 +191,38 @@
 		  AND ROWNUM &lt;= 3
 	</select>
 
+	<delete id="deleteBoardKeywords" parameterType="int">
+	    DELETE FROM keyword WHERE board_no = #{boardNo}
+	</delete>
+	
+	<update id="increaseViewCount" parameterType="int">
+	  UPDATE board
+	  SET cnt = NVL(cnt, 0) + 1
+	  WHERE board_no = #{boardNo}
+	</update>
+	
+	<select id="selectPackageCount" parameterType="hashmap" resultType="int">
+	    SELECT COUNT(*) 
+	    FROM pay
+	    WHERE user_id = #{userId}
+	      AND package_name = '빠른 답변 패키지'
+	      AND pay_status = 'PAID'
+	</select>
+	
+	<!-- 사용 가능한 패키지 리스트 반환 -->
+	<select id="selectAvailablePackages" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
+	    SELECT *
+	    FROM pay
+	    WHERE user_id = #{userId}
+	      AND package_name = '빠른 답변 패키지'
+	      AND pay_status = 'PAID'
+	    ORDER BY pay_time DESC
+	</select>
+	
+	<update id="updatePayStatusToUsed" parameterType="hashmap">
+	    UPDATE pay
+	    SET pay_status = 'USED'
+	    WHERE order_id = #{usedPayOrderId}
+	</update>
+	
 </mapper>

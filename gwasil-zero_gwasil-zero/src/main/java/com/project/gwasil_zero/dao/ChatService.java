@@ -117,7 +117,9 @@ public class ChatService {
             return chatNo;
         } else {
             chatMapper.createChat(map);
-            return (Integer) map.get("chatNo"); // INSERT 후 selectKey로 반환
+            return ((Number) map.get("chatNo")).intValue(); // INSERT 후 selectKey로 반환
         }
     }
+    
+	    
 }

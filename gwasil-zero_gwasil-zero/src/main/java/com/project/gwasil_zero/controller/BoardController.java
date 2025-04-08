@@ -14,6 +14,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 
@@ -123,6 +125,8 @@ public class BoardController {
 	                                      @RequestParam("contents") String contents,
 	                                      @RequestParam("category") String category,
 	                                      @RequestParam("sessionId") String sessionId,
+	                                      @RequestParam("usedPayOrderId") String usedPayOrderId,
+	                                      @RequestParam("usePackage") String usePackage,
 
 	                                      HttpServletRequest request,
 	                                      HttpServletResponse response,
@@ -144,6 +148,8 @@ public class BoardController {
 	        boardData.put("userId", sessionId);
 	        boardData.put("boardStatus", "A");
 	        boardData.put("category", category);
+	        boardData.put("usedPayOrderId", usedPayOrderId);
+	        boardData.put("usePackage", usePackage);
 	        resultMap = boardService.saveBoard(boardData);
 	        int boardNo = (int) resultMap.get("boardNo");
 
@@ -377,6 +383,7 @@ public class BoardController {
 	            }
 	        }
 
+	        // 4. 키워드 분석 및 DB 저장
 	        try {
 	            String textScriptPath = "C:\\KR-WordRank\\keyword_extract.py";
 	            
@@ -405,10 +412,18 @@ public class BoardController {
 
 	            int exitCode = processText.waitFor();
 	            if (exitCode == 0) {
-	                System.out.println("📌 본문 키워드 분석 결과:");
+	            	System.out.println("📌 본문 키워드 분석 결과:");
 	                System.out.println(output.toString());
+
+	                String[] keywords = output.toString().split(",");
+	                List<String> keywordList = Arrays.stream(keywords)
+	                    .map(String::trim)
+	                    .filter(s -> !s.isEmpty())
+	                    .collect(Collectors.toList());
+
+	                boardService.updateBoardKeywords(boardNo, keywordList);
 	            } else {
-	                System.out.println("❌ 키워드 분석 실패 (code: " + exitCode + ")");
+	                System.out.println(" 키워드 분석 실패 (code: " + exitCode + ")");
 	            }
 
 	        } catch (Exception e) {
@@ -458,5 +473,22 @@ public class BoardController {
 	    HashMap<String, Object> resultMap = new HashMap<>();
 	    resultMap.put("related", relatedBoards);
 	    return new Gson().toJson(resultMap);
+	}
+	
+	@PostMapping("/board/increaseView.dox")
+	@ResponseBody
+	public HashMap<String, Object> increaseView(@RequestParam int boardNo) {
+	    HashMap<String, Object> result = new HashMap<>();
+	    int updated = boardService.increaseViewCount(boardNo); // 조회수 증가 처리
+	    result.put("result", "success");
+	    return result;
+	}
+	
+	@PostMapping("/board/packageCount.dox")
+	@ResponseBody
+	public HashMap<String, Object> getPackageCount(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = boardService.getPackageCount(map);
+	    return resultMap;
 	}
 }

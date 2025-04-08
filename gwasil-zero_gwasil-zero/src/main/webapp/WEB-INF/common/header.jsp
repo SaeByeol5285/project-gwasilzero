@@ -66,7 +66,7 @@
                                         <h4>채팅 알림</h4>
                                         <div class="noti-list" v-if="messageNoti.length > 0">
                                             <div class="noti-item" v-for="item in messageNoti" :key="item.notiNo"
-                                                @click="fnChat">
+                                                @click="fnChat(item)">
                                                 {{ item.contents }}
                                                 <br><small>{{ item.createdAt }}</small>
                                             </div>
@@ -205,18 +205,25 @@
                 fnBoardView(item) {
                     pageChange("/board/view.do", { boardNo: item.boardNo });
                 },
-                fnChat() {
-                    let self = this;
-                    // 읽음처리
-                    $.ajax({
-                        url: "/notification/read.dox",
-                        type: "POST",
-                        data: { notiNo: item.notiNo },
-                        success: () => {
-                            location.href = "/chat/chat/do";
-                        }
-                    });
-                },
+				fnChat(item) {
+	                let self = this;
+
+	                if (!confirm("채팅방으로 이동하시겠습니까?")) return;
+					console.log("notiNo",item.notiNo);
+	                // 읽음 처리 후 바로 이동
+	                $.ajax({
+	                    url: "/notification/read.dox",
+	                    type: "POST",
+	                    data: { notiNo: item.notiNo },
+	                    success: () => {
+	                        if (item.chatNo) {
+	                            location.href = "/chat/chat.do?chatNo=" + item.chatNo;
+	                        } else {
+	                            alert("채팅방 정보가 없습니다.");
+	                        }
+	                    }
+	                });
+	            },
                 fnLogout() {
                     var self = this;
                     $.ajax({
@@ -252,11 +259,12 @@
                     });
                 },
                 fnGetBookmarkList() {
+					let self = this;
                     $.ajax({
                         url: "/bookmark/list.dox",
                         type: "POST",
                         dataType: "json",
-                        data: { sessionId: this.sessionId },
+                        data: { sessionId: self.sessionId },
                         success: (data) => {
                             if (data.result === "success") {
                                 this.bookmarkList = data.list;
@@ -283,6 +291,7 @@
                             success: () => {
                                 alert("삭제되었습니다.");
                                 this.fnGetBookmarkList();
+								location.reload();
                             },
                             error: () => {
                                 alert("삭제 중 오류가 발생했습니다.");
@@ -350,9 +359,10 @@
 				}
             },
             mounted() {
+				console.log(self.sessionid);
+				this.fnGetNotificationList();
                 if (this.sessionType === 'user') {
-                    this.fnGetNotificationList();
-                    this.fnGetBookmarkList();
+                   // this.fnGetBookmarkList();
                 }
                 this.currentPath = window.location.pathname || "";
 
@@ -362,7 +372,8 @@
 						this.fnGetBookmarkList();
 					}
 				});
-            }
+            	
+			}
         });
         header.mount("#header");
     </script>

@@ -1,8 +1,11 @@
 package com.project.gwasil_zero.dao;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,7 @@ import com.project.gwasil_zero.model.BoardCmt;
 import com.project.gwasil_zero.model.BoardFile;
 import com.project.gwasil_zero.model.Bookmark;
 import com.project.gwasil_zero.model.Lawyer;
+import com.project.gwasil_zero.model.Pay;
 @Service
 public class BoardService {
 	@Autowired
@@ -39,6 +43,12 @@ public class BoardService {
 			} else if (boardNoObj instanceof Integer) {
 				boardNo = (Integer) boardNoObj;
 			}
+			
+			 // 패키지 사용 처리 로직
+			if ("Y".equals((String)map.get("usePackage")) && (String)map.get("usedPayOrderId") != null) {
+	            boardMapper.updatePayStatusToUsed(map);
+	        }
+			
 
 			resultMap.put("result", "success");
 			resultMap.put("boardNo", boardNo);
@@ -205,14 +215,28 @@ public class BoardService {
         try {
 	        Lawyer lawyer = boardMapper.checkLawyerStatus(map);
 	        String result = "";
+	        String authResult = "false";
+	        String auth = lawyer.getLawyerPass(); // 'Y' or 'N'
+	        String authEndTimeStr = lawyer.getAuthEndTime(); // String 타입
+	        
+	        if (authEndTimeStr != null && !authEndTimeStr.isEmpty()) {
+	            LocalDate today = LocalDate.now();
+	            LocalDate authEndDate = LocalDate.parse(authEndTimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+	            if (!authEndDate.isBefore(today)) {
+	                authResult = "true";
+	            }
+	        }
+	        
 	        if(lawyer.getLawyerPass().equals("Y"))
 	        	result = "true";
 	        else
 	        	result = "false";
 	        resultMap.put("result", result);
+	        resultMap.put("authResult", authResult);
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        resultMap.put("result", "failed");
+	        resultMap.put("authResult", "false");
 	    }
 	    return resultMap;
     }
@@ -231,5 +255,38 @@ public class BoardService {
 	    HashMap<String, Object> map = new HashMap<>();
 	    map.put("boardNo", boardNo);
 	    return boardMapper.selectRelatedBoards(map);
+	}
+	
+	public void updateBoardKeywords(int boardNo, List<String> keywords) {
+	    // 기존 키워드 삭제
+	    boardMapper.deleteBoardKeywords(boardNo);
+
+	    // 새 키워드 삽입
+	    for (String keyword : keywords) {
+	        HashMap<String, Object> keywordMap = new HashMap<>();
+	        keywordMap.put("boardNo", boardNo);
+	        keywordMap.put("keyword", keyword);
+	        boardMapper.insertBoardKeyword(keywordMap);
+	    }
+	}
+	
+	public int increaseViewCount(int boardNo) {
+        return boardMapper.increaseViewCount(boardNo);
+    }
+	
+	public HashMap<String, Object> getPackageCount(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	        int count = boardMapper.selectPackageCount(map);
+	        List<Pay> packageList = boardMapper.selectAvailablePackages(map);
+
+	        resultMap.put("result", "success");
+	        resultMap.put("packageCount", count);
+	        resultMap.put("packageList", packageList); // ⬅ 패키지 리스트 추가
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+	    return resultMap;
 	}
 }

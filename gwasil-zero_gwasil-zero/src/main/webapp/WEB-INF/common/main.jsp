@@ -150,9 +150,9 @@
 				return {
 					boardList: [],
 					lawyerList: [],
-					sessionId : "${sessionScope.sessionId}",
+					sessionId : "${sessionId}",
 					bookmarkList: [],
-					sessionType : "${sessionScope.sessionType}"
+					sessionType : "${sessionType}"
 				};
 			},
 			methods: {
@@ -297,7 +297,7 @@
 					$.ajax({
 						url: "/bookmark/list.dox",
 						type: "POST",
-						data: { userId: self.sessionId },
+						data: { sessionId: self.sessionId },
 						dataType: "json",
 						success: function (data) {
 							if (data.result === "success") {
@@ -311,7 +311,7 @@
 				this.fnGetBoardList();
 				this.fnGetLawyerList();
 				this.fnGetBookmarkList();
-				console.log(this.sessionId);
+				console.log("메인에서 :" ,this.sessionId);
 				//북마크 갱신용
 				window.addEventListener('storage', (e) => {
 					if (e.key === 'bookmarkUpdated') {

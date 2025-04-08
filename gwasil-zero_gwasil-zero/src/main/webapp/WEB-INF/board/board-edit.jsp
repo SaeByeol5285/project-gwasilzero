@@ -1,171 +1,183 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+]<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="/js/page-change.js"></script>
   <title>게시글 수정</title>
   <style>
-	    body {
-	        font-family: 'Arial', sans-serif;
-	        background-color: #f5f5f5;
-	        margin: 0;
-	        padding: 0;
-	    }
+       body {
+           font-family: 'Arial', sans-serif;
+           background-color: #f5f5f5;
+           margin: 0;
+           padding: 0;
+       }
 
-	    .view-container {
-	        width: 65%;
-	        margin: 40px auto;
-	        padding: 30px;
-	        background-color: #fff;
-	        border-radius: 10px;
-	        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-	    }
+       .view-container {
+           width: 65%;
+           margin: 40px auto;
+           padding: 30px;
+           background-color: #fff;
+           border-radius: 10px;
+           box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+       }
 
-	    .input-title {
-	        width: 100%;
-	        font-size: 22px;
-	        font-weight: bold;
-	        padding: 10px 14px;
-	        margin-bottom: 20px;
-	        border: 1px solid #ccc;
-	        border-radius: 6px;
-	    }
+       .input-title {
+           width: 100%;
+           font-size: 22px;
+           font-weight: bold;
+           padding: 10px 14px;
+           margin-bottom: 20px;
+           border: 1px solid #ccc;
+           border-radius: 6px;
+       }
 
-	    .textarea-content {
-	        width: 100%;
-	        min-height: 180px;
-	        padding: 14px;
-	        font-size: 15px;
-	        border: 1px solid #ccc;
-	        border-radius: 6px;
-	        resize: vertical;
-	        margin-bottom: 30px;
-	    }
+       .textarea-content {
+           width: 100%;
+           min-height: 180px;
+           padding: 14px;
+           font-size: 15px;
+           border: 1px solid #ccc;
+           border-radius: 6px;
+           resize: vertical;
+           margin-bottom: 30px;
+       }
 
-	    h4 {
-	        font-size: 18px;
-	        margin-bottom: 10px;
-	        color: #333;
-	    }
+       h4 {
+           font-size: 18px;
+           margin-bottom: 10px;
+           color: #333;
+       }
 
-	    .media-preview {
-	        display: flex;
-	        align-items: center;
-	        gap: 20px;
-	        margin-bottom: 15px;
-	    }
+       .media-preview {
+           display: flex;
+           align-items: center;
+           gap: 20px;
+           margin-bottom: 15px;
+       }
 
-	    .media-preview img,
-	    .media-preview video {
-	        max-width: 250px;
-	        max-height: 180px;
-	        border-radius: 6px;
-	        border: 1px solid #ddd;
-	    }
+       .media-preview img,
+       .media-preview video {
+           max-width: 250px;
+           max-height: 180px;
+           border-radius: 6px;
+           border: 1px solid #ddd;
+       }
 
-	    .media-preview span {
-	        font-size: 14px;
-	        color: #555;
-	        flex: 1;
-	    }
+       .media-preview span {
+           font-size: 14px;
+           color: #555;
+           flex: 1;
+       }
 
-	    .media-preview button {
-	        padding: 6px 12px;
-	        background-color: #ff4d4d;
-	        color: white;
-	        border: none;
-	        border-radius: 4px;
-	        cursor: pointer;
-	        font-size: 13px;
-	    }
+       .media-preview button {
+           padding: 6px 12px;
+           background-color: #ff4d4d;
+           color: white;
+           border: none;
+           border-radius: 4px;
+           cursor: pointer;
+           font-size: 13px;
+       }
 
-	    .media-preview button:hover {
-	        background-color: #e60000;
-	    }
+       .media-preview button:hover {
+           background-color: #e60000;
+       }
 
-	    input[type="file"] {
-	        margin: 20px 0;
-	    }
+       input[type="file"] {
+           margin: 20px 0;
+       }
 
-	    button {
-	        padding: 8px 16px;
-	        font-size: 14px;
-	        border: none;
-	        border-radius: 4px;
-	        margin-right: 8px;
-	        cursor: pointer;
-	    }
+       /* 댓글 스타일 */
+       .comment-wrapper {
+           border-top: 1px solid #eee;
+           margin-top: 40px;
+           padding-top: 30px;
+       }
 
-	    button:hover {
-	        opacity: 0.9;
-	    }
+       .comment-wrapper h4 {
+           margin-bottom: 12px;
+           font-size: 18px;
+       }
 
-	    button:nth-child(1) {
-	        background-color: #007bff;
-	        color: white;
-	    }
+       .comment-wrapper textarea {
+           width: 100%;
+           padding: 10px;
+           font-size: 14px;
+           border-radius: 6px;
+           border: 1px solid #ccc;
+           margin-bottom: 10px;
+           resize: vertical;
+       }
 
-	    button:nth-child(2) {
-	        background-color: #dc3545;
-	        color: white;
-	    }
+       .comment-list {
+           margin-top: 20px;
+       }
 
-	    /* 댓글 스타일 */
-	    .comment-wrapper {
-	        border-top: 1px solid #eee;
-	        margin-top: 40px;
-	        padding-top: 30px;
-	    }
+       .comment-item {
+           padding: 12px;
+           background-color: #f9f9f9;
+           border: 1px solid #ddd;
+           border-radius: 6px;
+           margin-bottom: 10px;
+       }
 
-	    .comment-wrapper h4 {
-	        margin-bottom: 12px;
-	        font-size: 18px;
-	    }
+       .comment-meta {
+           font-size: 13px;
+           color: #666;
+           margin-bottom: 4px;
+       }
 
-	    .comment-wrapper textarea {
-	        width: 100%;
-	        padding: 10px;
-	        font-size: 14px;
-	        border-radius: 6px;
-	        border: 1px solid #ccc;
-	        margin-bottom: 10px;
-	        resize: vertical;
-	    }
+       .comment-text {
+           font-size: 14px;
+       }
 
-	    .comment-wrapper button {
-	        background-color: #007bff;
-	        color: white;
-	        border: none;
-	        padding: 6px 12px;
-	        border-radius: 4px;
-	        cursor: pointer;
-	    }
+      .btn {
+         padding: 8px 16px;
+         font-size: 14px;
+         font-weight: 500;
+         border-radius: 6px;
+         cursor: pointer;
+         transition: all 0.2s ease;
+      }
 
-	    .comment-list {
-	        margin-top: 20px;
-	    }
+      .btn-write {
+         background-color: #ffece4;
+         color: #ff5c00;
+         font-weight: 600;
+      }
 
-	    .comment-item {
-	        padding: 12px;
-	        background-color: #f9f9f9;
-	        border: 1px solid #ddd;
-	        border-radius: 6px;
-	        margin-bottom: 10px;
-	    }
+      .btn-write:hover {
+         background-color: #ff6b1a;
+         color: #fff;
+      }
 
-	    .comment-meta {
-	        font-size: 13px;
-	        color: #666;
-	        margin-bottom: 4px;
-	    }
+      .btn-red {
+         background-color: #ffe1e1;
+         color: #e60000;
+         font-weight: 600;
+      }
 
-	    .comment-text {
-	        font-size: 14px;
-	    }
-	</style>
+      .btn-red:hover {
+         background-color: #e60000;
+         color: #fff;
+      }
+
+      .btn-blue {
+         background-color: #e3f2ff;
+         color: #007bff;
+         font-weight: 600;
+      }
+
+      .btn-blue:hover {
+         background-color: #007bff;
+         color: #fff;
+      }
+
+   </style>
 </head>
 <body>
 <jsp:include page="../common/header.jsp"/>
@@ -186,13 +198,13 @@
 
         <input type="file" multiple @change="handleFileUpload" />
 
-        <button @click="submitEdit">수정 완료</button>
-        <button @click="deleteBoard">삭제</button>
+        <button @click="submitEdit" class="btn btn-write" style="margin-right: 5px;">✏️ 수정 완료</button>
+        <button @click="deleteBoard" class="btn btn-red">🗑️ 삭제</button>
 
         <div class="comment-wrapper">
             <h4>댓글</h4>
             <textarea v-model="newComment" placeholder="댓글을 입력하세요" rows="3"></textarea>
-            <button @click="submitComment">등록</button>
+            <button @click="submitComment" class="btn btn-blue">💬 댓글 등록</button>
 
             <div class="comment-list" v-if="comments.length > 0">
                 <div class="comment-item" v-for="(cmt, index) in comments" :key="index">
@@ -211,7 +223,7 @@ const app = Vue.createApp({
     data() {
         return {
             board: {},
-			deletedFiles: [],
+         deletedFiles: [],
             boardNo: "${map.boardNo}",
             sessionId: "${sessionScope.sessionId}",
             boardFile: [],
@@ -270,32 +282,56 @@ const app = Vue.createApp({
         handleFileUpload(event) {
             this.newFiles = Array.from(event.target.files);
         },
-		submitEdit() {
-		  const formData = new FormData();
-		  formData.append("boardNo", this.board.boardNo);
-		  formData.append("boardTitle", this.board.boardTitle);
-		  formData.append("contents", this.board.contents);
+      submitEdit() {
+        const formData = new FormData();
+        formData.append("boardNo", this.board.boardNo);
+        formData.append("boardTitle", this.board.boardTitle);
+        formData.append("contents", this.board.contents);
 
-		  this.newFiles.forEach(f => formData.append("files", f));
-		  this.deletedFiles.forEach(f => formData.append("deletedFiles", f));
+        this.newFiles.forEach(f => formData.append("files", f));
+        this.deletedFiles.forEach(f => formData.append("deletedFiles", f));
 
-		  $.ajax({
-		    url: "/board/edit.dox",
-		    method: "POST",
-		    data: formData,
-		    processData: false,
-		    contentType: false,
-		    success: () => alert("수정 완료")
-		  });
-		},
-        deleteBoard() {
-            if (!confirm("정말 삭제하시겠습니까?")) return;
+        $.ajax({
+          url: "/board/edit.dox",
+          method: "POST",
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function() {
+            alert("수정 완료!");
+            location.href="/board/list.do";
+         }
+        });
+      },
+      deleteBoard() {
+         let self = this;
 
-            $.post("/board/delete.dox", { boardNo: this.board.boardNo }, () => {
-                alert("삭제 완료");
-                location.href = "/board/list.do";
+         Swal.fire({
+            title: '정말 삭제하시겠습니까?',
+            text: "삭제된 게시글은 복구할 수 없습니다.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ff5c00',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: '네, 삭제할게요',
+            cancelButtonText: '취소'
+         }).then((result) => {
+            if (result.isConfirmed) {
+            $.post("/board/delete.dox", { boardNo: self.board.boardNo }, () => {
+               Swal.fire({
+               title: '삭제 완료!',
+               text: '게시글이 성공적으로 삭제되었습니다.',
+               icon: 'success',
+               confirmButtonColor: '#ff5c00',
+               confirmButtonText: '확인'
+               }).then(() => {
+               location.href = "/board/list.do";
+               });
             });
-        },
+            }
+         });
+      },
+
         submitComment() {
             const self = this;
             if (!self.newComment.trim()) {
@@ -317,11 +353,11 @@ const app = Vue.createApp({
                 }
             });
         },
-		removeFile(index) {
-		    const file = this.boardFile[index];
-		    this.deletedFiles.push(file.fileName); // 삭제될 파일명 저장
-		    this.boardFile.splice(index, 1); // 화면에서 제거
-		  },
+      removeFile(index) {
+          const file = this.boardFile[index];
+          this.deletedFiles.push(file.fileName); // 삭제될 파일명 저장
+          this.boardFile.splice(index, 1); // 화면에서 제거
+        },
     },
     mounted() {
         this.fnGetBoard();
@@ -330,3 +366,4 @@ const app = Vue.createApp({
 app.mount("#app");
 </script>
 </html>
+]

@@ -10,6 +10,7 @@ import com.project.gwasil_zero.model.Board;
 import com.project.gwasil_zero.model.BoardCmt;
 import com.project.gwasil_zero.model.BoardFile;
 import com.project.gwasil_zero.model.Lawyer;
+import com.project.gwasil_zero.model.Pay;
 
 @Mapper
 public interface BoardMapper {
@@ -51,5 +52,14 @@ public interface BoardMapper {
 	
 	List<Board> selectRelatedBoards(HashMap<String, Object> map);
 
-
+	void deleteBoardKeywords(int boardNo);
+	
+	int increaseViewCount(int boardNo);
+	
+	int selectPackageCount(HashMap<String, Object> map);
+	
+	List<Pay> selectAvailablePackages(HashMap<String, Object> map);
+	
+	void updatePayStatusToUsed(HashMap<String, Object> map);
+	
 }

@@ -13,6 +13,7 @@
 .section-title {
 	font-size: 22px !important;
 	margin-bottom: 20px;
+	color: #333;
 }
 
 .orange {
@@ -89,8 +90,9 @@
 }
 
 .icon {
-	width: 20px;
-	height: 20px;
+	width: 22px;
+	height: 22px;
+	cursor: pointer;
 }
 
 .icons-text {
@@ -203,23 +205,69 @@
 	width: 100%;
 }
 
+.board-logo {
+	display: flex;
+	align-items: end;
+	gap: 4px;
+	background: white;
+	padding: 4px 10px;
+}
+
 /* 리뷰 영역 */
 .review {
 	border-top: 2px solid #FF5722;
+	position: relative;
+	/* 기준을 이 섹션으로 */
 	padding: 40px 20px;
+}
+.reviewSwiper .swiper-slide {
+	width: 320px !important; /* 원하는 너비 */
+	flex-shrink: 0;
+	display: flex;
+	justify-content: center;  
+}
+
+.reviewSwiper {
+	box-sizing: border-box;
+	overflow: hidden !important;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+	top: 40%;
+	width: 32px;
+	height: 32px;
+	z-index: 10;
+	padding: 6px;
+}
+
+.swiper-button-next {
+	right: 10px;
+	z-index: 10;
+
+}
+
+.swiper-button-prev {
+	left: 10px;
+	z-index: 10;
+
 }
 
 .review-card {
+	width: 100%;
+	max-width: 320px;  /* 혹은 동일하게 320px */
 	position: relative;
-	width: 300px;
-	height: 230px;
-	padding: 20px;
-	border: 3px solid #FF5722;
-	border-radius: 30px;
-	background: #fff;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+	border: 2px solid #ff5c00;
+	border-radius: 16px;
+	padding: 24px;
+	background-color: white;
+	height: 220px;
+	/* 카드 높이 고정 */
 	overflow: hidden;
-	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .review-logo {
@@ -249,30 +297,45 @@
 
 /* 본문 내용 */
 .review-body {
-	position: absolute;
-	top: 40px;
-	padding: 0 30px;
+	flex-grow: 1;
+	margin-top: 5px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 }
 
+
 .review-highlight {
-	font-size: 17px;
 	font-weight: bold;
-	color: #FF5722;
-	margin-top: 20px;
-	margin-bottom: 14px;
+	color: #ff5c00;
+	font-size: 15px;
+	margin-bottom: 10px;
+	line-height: 1.4;
+	max-height: 3.2em;
+	/* 두 줄 */
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: normal;
+	word-break: keep-all;
 }
 
 .review-content {
 	font-size: 14px;
-	color: #444;
-	margin-bottom: 20px;
-	min-height: 60px;
+	color: #333;
+	line-height: 1.5;
+	max-height: 3.6em;
+	/* 2~3줄 */
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: normal;
+	word-break: keep-all;
 }
 
 .review-user {
 	font-size: 13px;
-	color: #888;
-	font-style: italic;
+	color: #999;
+	text-align: right;
+	margin-top: auto;
 }
 
 /*슬라이더*/

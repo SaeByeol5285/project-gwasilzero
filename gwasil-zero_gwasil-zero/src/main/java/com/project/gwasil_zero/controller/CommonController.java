@@ -63,7 +63,7 @@ public class CommonController {
 	@ResponseBody
 	public String reviewList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap = commonService.getLReviewList(map);
+		resultMap = commonService.getReviewList(map);
 		return new Gson().toJson(resultMap);
 	}
 

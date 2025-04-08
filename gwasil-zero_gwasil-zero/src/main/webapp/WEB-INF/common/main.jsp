@@ -32,12 +32,18 @@
 										<div class="lawyer-card">
 											<img class="lawyer-img" :src="lawyer.lawyerImg" />
 											<div class="lawyer-icons">
-												<a><img src="../../img/common/message-ing.png" class="icon"></a>
-												<a><img src="../../img/common/bookmark.png" class="icon"></a>
+												<a v-if="sessionType === 'user'"><img src="../../img/common/call.png"
+														class="icon" @click="startChat(lawyer.lawyerId)"></a>
+												<a @click="toggleBookmark(lawyer.lawyerId)">
+													<img :src="isBookmarked(lawyer.lawyerId) ? '/img/selectedBookmark.png' : '/img/common/bookmark.png'"
+														class="icon" />
+												</a>
 											</div>
 											<div class="icons-text">
-												<div class="card-txt-small">1:1채팅</div>
-												<div class="card-txt-small">북마크</div>
+												<div v-if="sessionType === 'user'" class="card-txt-small"
+													@click="startChat(lawyer.lawyerId)">전화상담</div>
+												<div class="card-txt-small" @click="fnBookmark(lawyer.lawyerId)">북마크
+												</div>
 											</div>
 											<div class="lawyer-content">
 												<div class="lawyer-tags">
@@ -114,11 +120,11 @@
 				<!-- 최근 질문 -->
 				<section class="question-board">
 					<div class="flex-between">
-						<a class="section-title orange"  href="/board/list.do" style="text-decoration: none;">최근 상담글 ></a>
+						<a class="section-title" href="/board/list.do" style="text-decoration: none;">최근 상담글 ></a>
 					</div>
 					<ul class="question-list">
 						<li class="card mb-20" v-for="board in boardList" :key="board.boardNo">
-							<div>
+							<div class="board-logo">
 								<img src="/img/common/logo3.png" class="top-icon" />
 								<span class="orange">{{ board.category }}</span>
 							</div>
@@ -141,14 +147,14 @@
 									<div class="review-logo">
 										<img src="/img/common/logo3.png" class="review-icon" />
 										<span class="review-lawyerName">{{ review.lawyerName }}</span><span
-												class="small">변호사</span>
+											class="small">변호사</span>
 									</div>
 
 									<!-- 나머지 본문 -->
 									<div class="review-body">
 										<p class="review-highlight">“{{ review.highlight }}”</p>
 										<p class="review-content">{{ review.contents }}</p>
-										<p class="review-user">{{ review.userId }}님의 후기</p>
+										<p class="review-user">{{ review.userId.slice(0, 3) + '***' }}님의 후기</p>
 									</div>
 								</li>
 
@@ -159,9 +165,8 @@
 					</div>
 
 				</section>
-			</div>
 
-		</div>
+			</div>
 		</div>
 		<jsp:include page="../common/footer.jsp" />
 	</body>
@@ -173,7 +178,9 @@
 					boardList: [],
 					lawyerList: [],
 					reviewList: [],
-
+					sessionId: "${sessionId}",
+					bookmarkList: [],
+					sessionType: "${sessionType}"
 				};
 			},
 			methods: {
@@ -186,7 +193,7 @@
 						success: function (data) {
 							if (data.result === "success") {
 								console.log(data);
-								self.reviewList = data.list;
+								self.reviewList = self.reviewList = data.list;
 							} else {
 								alert("review 불러오기 실패");
 							}
@@ -231,13 +238,11 @@
 					});
 				},
 				initSwiper() {
-					//변호사 슬라이더
 					new Swiper('.mySwiper', {
 						slidesPerView: 4,
 						spaceBetween: 30,
 						slidesPerGroup: 4,
 						speed: 1000,
-
 						loop: true,
 						autoplay: {
 							delay: 5000,
@@ -258,14 +263,11 @@
 						slidesPerView: 3,
 						spaceBetween: 40,
 						slidesPerGroup: 3,
+						speed: 1000,
 						loop: true,
-						// autoplay: {
-						// 	delay: 6000,
-						// 	disableOnInteraction: false,
-						// },
-						pagination: {
-							el: '.swiper-pagination',
-							clickable: true,
+						autoplay: {
+							delay: 6000,
+							disableOnInteraction: true,
 						},
 						navigation: {
 							nextEl: '.swiper-button-next',
@@ -273,12 +275,109 @@
 						},
 					});
 				},
+				startChat(lawyerId) {
+					let self = this;
 
+					if (!self.sessionId) {
+						alert("로그인이 필요합니다.");
+						return;
+					}
+
+					if (self.sessionType !== 'user') {
+						alert("일반 사용자만 채팅을 이용할 수 있습니다.");
+						return;
+					}
+
+					$.ajax({
+						url: "/chat/findOrCreate.dox",
+						type: "POST",
+						data: {
+							userId: self.sessionId,
+							lawyerId: lawyerId
+						},
+						success: function (res) {
+							let chatNo = res.chatNo;
+							pageChange("/chat/chat.do", {
+								chatNo: chatNo
+							});
+						}
+					});
+				},
+				EditBoard: function () {
+					let self = this;
+					pageChange("/board/edit.do", { boardNo: self.boardNo, userId: self.sessionId });
+				},
+				isBookmarked(lawyerId) {
+					return this.bookmarkList.some(bm => bm.lawyerId === lawyerId);
+				},
+				toggleBookmark(lawyerId) {
+					const self = this;
+
+					if (!self.sessionId) {
+						alert("로그인이 필요합니다.");
+						return;
+					}
+
+
+					if (self.sessionType !== 'user') {
+						alert("일반 사용자만 북마크를 사용할 수 있습니다.");
+						return;
+					}
+
+					const isMarked = self.isBookmarked(lawyerId);
+					const url = isMarked ? "/bookmark/remove.dox" : "/bookmark/add.dox";
+
+					$.ajax({
+						url: url,
+						type: "POST",
+						data: {
+							userId: self.sessionId,
+							lawyerId: lawyerId
+						},
+						success: function (data) {
+							if (isMarked) {
+								self.bookmarkList = self.bookmarkList.filter(b => b.lawyerId !== lawyerId);
+								alert(data.result);
+							} else {
+								self.bookmarkList.push({ lawyerId: lawyerId });
+								alert(data.result);
+							}
+							localStorage.setItem('bookmarkUpdated', Date.now());
+						},
+						error: function () {
+							alert("북마크 처리 중 오류가 발생했습니다.");
+						}
+					});
+				},
+				fnGetBookmarkList() {
+					const self = this;
+					if (!self.sessionId) return;
+
+					$.ajax({
+						url: "/bookmark/list.dox",
+						type: "POST",
+						data: { sessionId: self.sessionId },
+						dataType: "json",
+						success: function (data) {
+							if (data.result === "success") {
+								self.bookmarkList = data.list;
+							}
+						}
+					});
+				},
 			},
 			mounted() {
 				this.fnGetBoardList();
 				this.fnGetLawyerList();
+				this.fnGetBookmarkList();
 				this.fnGetReviewList();
+				console.log("메인에서 :", this.sessionId);
+				//북마크 갱신용
+				window.addEventListener('storage', (e) => {
+					if (e.key === 'bookmarkUpdated') {
+						this.fnGetBookmarkList();
+					}
+				});
 			},
 
 		});
@@ -287,3 +386,4 @@
 	</script>
 
 	</html>
+

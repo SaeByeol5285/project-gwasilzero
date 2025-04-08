@@ -16,5 +16,6 @@ public class Review {
 	private String boardTitle;
 	private String boardStatus;
 	private String lawyerName;
+	private String highlight;
 
 }

@@ -18,8 +18,8 @@
         <div id="lawEditApp">
             <div class="layout">
                 <div class="content">
-                    <div class="title-area">
-                        <h2>변호사 프로필 수정</h2>
+                    <div>
+                        <h2 class="section-subtitle">변호사 프로필 수정</h2>
                     </div>
                     <div class="profile-container">
                         <form id="lawyerEditForm" @submit.prevent>

@@ -17,10 +17,10 @@
         <div id="perLawApp">
             <div class="layout">
                 <div class="content">
+                    <div>
+                        <h2 class="section-subtitle">개인 변호사</h2>
+                    </div>
                     <div class="content-wrapper">
-                        <div class="title-area">
-                            <h2 class="section-subtitle">개인 변호사</h2>
-                        </div>
                         <div class="filter-bar">
                             <label>변호사 찾기</label>
                             <select v-model="searchOption">

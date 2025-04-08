@@ -59,7 +59,7 @@
    </select>
 	<update id="updateUserStatus" parameterType="hashmap">
 	    UPDATE TBL_USER
-	    SET USER_STATUS = 'Nomal'
+	    SET USER_STATUS = 'NORMAL'
 	    WHERE USER_ID = #{id}
 	</update>
 	
@@ -80,9 +80,16 @@
 	    INSERT INTO TBL_USER (
 	        USER_ID, USER_EMAIL, USER_NAME, USER_STATUS, USER_PASSWORD, USER_PHONE, CDATE
 	    ) VALUES (
-	        #{USER_ID}, #{USER_EMAIL}, #{USER_NAME}, #{USER_STATUS}, '', '', SYSDATE
+	        #{USER_ID}, #{USER_EMAIL}, #{USER_NAME}, #{USER_STATUS}, 'google-login', '010-0000-0000', SYSDATE
 	    )
 	</insert>
+
+	
+	<select id="selectUserByEmail" parameterType="hashmap" resultType="hashmap">
+	    SELECT *
+	    FROM TBL_USER
+	    WHERE USER_EMAIL = #{USER_EMAIL, jdbcType=VARCHAR}
+	</select>
 	
 </mapper>
 

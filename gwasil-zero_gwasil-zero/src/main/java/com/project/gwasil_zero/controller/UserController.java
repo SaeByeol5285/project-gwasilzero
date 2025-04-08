@@ -127,13 +127,6 @@ public class UserController {
 		return new Gson().toJson(resultMap);
 	}
 
-	// 중복 체크
-	@RequestMapping(value = "/user/check.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	@ResponseBody
-	public String check(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-		HashMap<String, Object> resultMap = userService.searchUser(map);
-		return new Gson().toJson(resultMap);
-	}
 
 	// 카카오 로그인 연동
 	@RequestMapping(value = "/kakao.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -213,8 +206,10 @@ public class UserController {
 	@RequestMapping("/googleCallback")
 	public String googleCallback(@RequestParam("credential") String credential, HttpSession session) {
 		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(),
-				GsonFactory.getDefaultInstance()) // 🔥 여기가 변경됨
-				.setAudience(Collections.singletonList("형님_구글_클라이언트_ID")).build();
+				GsonFactory.getDefaultInstance())
+				.setAudience(Collections
+						.singletonList("606230365694-vdm0p79esdfp0rr0ipdpvrp0k8n44sig.apps.googleusercontent.com"))
+				.build();
 
 		try {
 			GoogleIdToken idToken = verifier.verify(credential);
@@ -228,7 +223,7 @@ public class UserController {
 				HashMap<String, Object> map = new HashMap<>();
 				map.put("USER_EMAIL", email);
 
-				HashMap<String, Object> user = userService.searchUser(map);
+				HashMap<String, Object> user = userService.selectUserByEmail(map);
 
 				if (user == null || user.isEmpty()) {
 					HashMap<String, Object> newUser = new HashMap<>();
@@ -236,12 +231,16 @@ public class UserController {
 					newUser.put("USER_EMAIL", email);
 					newUser.put("USER_NAME", name);
 					newUser.put("USER_STATUS", "active");
-					newUser.put("USER_PASSWORD", "");
-					newUser.put("USER_PHONE", "");
+					newUser.put("USER_PASSWORD", "google-login"); // 🔐 NOT NULL 처리
+					newUser.put("USER_PHONE", "010-0000-0000"); // 📱 NOT NULL 처리
+
 					userService.insertGoogleUser(newUser);
+
 					session.setAttribute("sessionId", newUser.get("USER_ID"));
+					session.setAttribute("sessionType", "user"); // ✅ 여기 추가
 				} else {
 					session.setAttribute("sessionId", user.get("USER_ID"));
+					session.setAttribute("sessionType", "user"); // ✅ 여기 추가
 				}
 
 				session.setAttribute("loginType", "google");
@@ -257,5 +256,4 @@ public class UserController {
 			return "redirect:/user/login.do";
 		}
 	}
-
 }

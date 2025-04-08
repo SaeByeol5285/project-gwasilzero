@@ -7,6 +7,10 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.21/vue.global.min.js"></script>
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
     <title>비밀번호 찾기</title>
     <style>
       #app {
@@ -53,14 +57,16 @@
   </head>
 
   <body>
+    <jsp:include page="../common/header.jsp" />
     <div id="app">
       <div class="form-section">
         <h2>비밀번호 찾기</h2>
         <input v-model="user.userId" placeholder="아이디 입력" />
-        <button @click="requestCert">인증 요청</button>
+        <button @click="requestCert" style="margin-bottom: 10px;">인증 요청</button>
         <button @click="fnSearchPwd" :disabled="!isAuthenticated">비밀번호 찾기</button>
       </div>
     </div>
+    <jsp:include page="../common/footer.jsp" />
   </body>
 
   </html>

@@ -218,12 +218,146 @@
             .title-area h2 {
                 margin: 0;
             }
-            
+
             .no-data {
                 color: #999;
                 font-style: italic;
                 font-size: 14px;
                 padding: 6px 0;
+            }
+
+
+            /* 리뷰 */
+            .mypage-review {
+                padding: 20px;
+                font-family: '맑은 고딕', sans-serif;
+            }
+
+            .review-card {
+                border: 1px solid #eee;
+                background: #fff;
+                padding: 15px;
+                border-radius: 10px;
+                margin-bottom: 15px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            }
+
+            .review-header {
+                display: flex;
+                justify-content: space-between;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+
+            .review-date {
+                color: #888;
+                font-size: 13px;
+            }
+
+            .review-score {
+                margin: 8px 0;
+                font-size: 16px;
+                color: #ffcc00;
+            }
+
+            .star {
+                color: #ddd;
+            }
+
+            .star.filled {
+                color: #ff9900;
+            }
+
+            .review-content {
+                font-size: 15px;
+                color: #333;
+            }
+
+            .no-data {
+                padding: 20px;
+                color: #888;
+                text-align: center;
+            }
+
+            /* ai */
+            /* AI 분석 결과 박스 */
+            .llm-result {
+                background: linear-gradient(to right, #f4f2ff, #eceeff);
+                border-left: 5px solid #6a11cb;
+                border-radius: 10px;
+                padding: 18px 22px;
+                margin-top: 18px;
+                color: #333;
+                font-family: 'Noto Sans', '맑은 고딕', sans-serif;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+                transition: box-shadow 0.3s ease;
+            }
+
+            .llm-result:hover {
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            }
+
+            .llm-result strong {
+                color: #6a11cb;
+                font-weight: 600;
+                font-size: 14px;
+                display: block;
+                margin-bottom: 10px;
+            }
+
+            /* AI 질문 input */
+            #questionInput {
+                padding: 8px 12px;
+                width: 400px;
+                border: 1px solid #d2c6f9;
+                border-radius: 6px;
+                font-size: 14px;
+                outline: none;
+                transition: border 0.3s ease;
+            }
+
+            #questionInput:focus {
+                border-color: #6a11cb;
+                box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.15);
+            }
+
+            /* 버튼 */
+            .ai-button {
+                background: transparent;
+                border: 2px solid #6a11cb;
+                color: #6a11cb;
+                padding: 6px 14px;
+                border-radius: 6px;
+                font-weight: 500;
+                font-size: 14px;
+                margin-right: 6px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .ai-button:hover {
+                background: #6a11cb;
+                color: white;
+                box-shadow: 0 0 10px rgba(106, 17, 203, 0.4);
+            }
+
+            /* 로딩 텍스트 */
+            .loading-text {
+                font-style: italic;
+                color: #666;
+                animation: blink 1.5s infinite;
+            }
+
+            @keyframes blink {
+
+                0%,
+                100% {
+                    opacity: 1;
+                }
+
+                50% {
+                    opacity: 0.4;
+                }
             }
         </style>
     </head>
@@ -253,6 +387,33 @@
                                 <h3>소개</h3>
                                 <div v-if="info.lawyerInfo" v-html="info.lawyerInfo"></div>
                                 <div v-else class="no-data">작성된 소개가 없습니다.</div>
+                            </div>
+                            <div class="section">
+                                <h3 style="color: #6a11cb;">AI 후기 분석</h3>
+                                <!-- 자연어 질문 -->
+                                <div class="llm-section">
+                                    <label for="questionInput"><strong>🤖 AI에게 자유롭게 질문하기</strong></label>
+                                    <input type="text" id="questionInput" v-model="question"
+                                        placeholder="예: 해당 변호사의 후기 중 가장 인상 깊은 내용을 알려줘" style="width: 400px;">
+                                    <button class="ai-button" @click="sendCustomLLMRequest">질문하기</button>
+                                </div>
+
+                                <!-- 또는 버튼 사용 -->
+                                <div class="ai-buttons" style="margin-top: 16px;">
+                                    <strong>또는 아래 버튼 중 하나를 눌러보세요:</strong><br>
+                                    <button class="ai-button" @click="getReviewAverage">평균 별점 보기</button>
+                                    <button class="ai-button" @click="getKeywordFromReviews">키워드 보기</button>
+                                    <button class="ai-button" @click="getRepresentativeReview">대표 후기 보기</button>
+                                </div>
+
+                                <!-- 결과 -->
+                                <div class="llm-result" v-if="answer">
+                                    <strong>🤖 AI 분석 결과</strong>
+                                    <p v-if="loading" class="loading-text">AI가 분석 중입니다...</p>
+                                    <p v-else>{{ answer }}</p>
+                                </div>
+
+
                             </div>
                             <div class="section">
                                 <h3>경력</h3>
@@ -301,6 +462,39 @@
                                 </div>
                                 <div v-else class="no-data">대표 사건 사례가 등록되지 않았습니다.</div>
                             </div>
+
+                            <div class="section">
+                                <h3>후기 목록</h3>
+                                <div id="lawyerReviewApp" class="mypage-review">
+                                    <div v-if="reviewList.length > 0" class="review-summary">
+                                        총 {{reviewCnt}} 건의 리뷰
+                                    </div>
+                                    <div v-if="reviewList.length > 0">
+                                        <div class="review-card" v-for="item in reviewList" :key="item.reviewNo">
+                                            <div class="review-header">
+                                                <strong>작성자:</strong> {{ item.userId.slice(0, 3) + '***' }}
+                                                <span class="review-date">{{ item.cdate }}</span>
+                                            </div>
+                                            <div class="review-score">
+                                                <span v-for="n in 5" :key="n" class="star"
+                                                    :class="{ filled: n <= item.score }">⭐</span>
+                                                <span class="score-text">({{ item.score }}점)</span>
+                                            </div>
+                                            <div class="review-content">
+                                                {{ item.contents }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 페이징 -->
+                                    <div class="pagination" style="margin-top: 20px; display: flex; gap: 10px;"
+                                        v-if="reviewList.length > 0">
+                                        <button :disabled="page === 1" @click="pageChange(page - 1)">이전</button>
+                                        <span>페이지 {{ page }} / {{ index }}</span>
+                                        <button :disabled="page === index" @click="pageChange(page + 1)">다음</button>
+                                    </div>
+                                    <div v-else class="no-data">아직 후기가 존재하지 않습니다.</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -319,7 +513,17 @@
                     info: {},
                     sessionId: "${sessionId}",
                     license: [],
-                    mainCaseList: []
+                    mainCaseList: [],
+
+                    //리뷰
+                    reviewList: [],
+                    question: "",
+                    answer: "",
+                    page: 1,
+                    pageSize: 3,
+                    index: 0,
+                    reviewCnt: 0,
+                    loading: false
                 };
             },
             computed: {
@@ -336,13 +540,116 @@
                         type: "POST",
                         data: { lawyerId: self.lawyerId },
                         success: function (data) {
-                            console.log(data. info);
+                            console.log(data.info);
                             self.info = data.info;
+                            self.lawyerId = data.info.lawyerId;
                             self.license = data.license;
                             self.mainCaseList = data.mainCaseList || [];
+                            self.fnGetReviewList();
+                            console.log("✅ 변호사 정보 로딩 완료:", data.info.lawyerId);
+
+                        }
+                    });
+                },
+                fnGetReviewList() {
+                    const self = this;
+                    var nparmap = {
+                        lawyerId: self.lawyerId,
+                        page: (self.page - 1),
+                        pageSize: self.pageSize
+                    };
+
+                    $.ajax({
+                        url: "/profile/reviewList.dox",
+                        dataType: "json",
+                        type: "POST",
+                        data: nparmap,
+                        success: function (data) {
+                            console.log(data.list);
+                            self.reviewList = data.list;
+                            self.index = Math.ceil(data.count / self.pageSize);
+                            self.reviewCnt = data.count;
+
+                        }
+                    });
+                },
+                pageChange(page) {
+                    this.page = page;
+                    this.fnGetReviewList();
+                },
+                // LLM에게 질문을 보내는 함수
+                getKeywordFromReviews() {
+                    const self = this;
+                    //리뷰 내용 이어붙이기
+                    let allContents = "";
+                    for (let i = 0; i < self.reviewList.length; i++) {
+                        allContents += "리뷰 " + (i + 1) + ": " + self.reviewList[i].contents + "\n";
+                    }
+                    // LLM에게 보낼 질문 만들기
+                    const question =
+                        "다음은 변호사에 대한 리뷰 목록입니다. " +
+                        "이 텍스트들을 기반으로 자주 등장하는 단어 3개를 뽑아주세요. " +
+                        "단어만 콤마(,)로 구분해서 간단히 적어주세요.\n" +
+                        allContents;
+                    self.loading = true;  // 🔵 로딩 시작
+                    // 서버로 전송
+                    $.ajax({
+                        url: "http://localhost:5000/qa",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({ question: question }),
+                        success: function (res) {
+                            self.answer = res.answer;
+                            self.loading = false; // ✅ 로딩 끝
+                        },
+                        error: function () {
+                            self.answer = "키워드 추출에 실패했습니다.";
+                            self.loading = false; // ✅ 로딩 끝
+                        }
+                    });
+                },
+                sendCustomLLMRequest() {
+                    const self = this;
+                    if (!self.question || self.question.trim() === '') {
+                        self.answer = "질문을 입력해주세요.";
+                        return;
+                    }
+                    self.sendLLMRequest(self.question);
+                },
+                getReviewAverage() {
+                    this.sendLLMRequest("해당 변호사의 후기들에 대한 평균 별점을 알려줘. 예시는 '해당 변호사의 평균 별점은 4.7점입니다.' 형태로.");
+                },
+                getRepresentativeReview() {
+                    this.sendLLMRequest("해당 변호사의 후기 중 가장 긍정적인 대표 후기를 하나만 알려줘.");
+                },
+                sendLLMRequest(fullQuestion) {
+                    const self = this;
+                    const lawyerId = self.lawyerId;
+
+                    if (!lawyerId || lawyerId === "null") {
+                        self.answer = "변호사 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.";
+                        return;
+                    }
+
+                    const questionToSend = "REVIEW 테이블에서 LAWYER_ID가 '" + lawyerId + "'인 " + fullQuestion;
+
+                    self.loading = true;
+                    $.ajax({
+                        url: "http://localhost:5000/qa",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({ question: questionToSend }),
+                        success: function (res) {
+                            self.answer = res.answer;
+                            self.loading = false;
+                        },
+                        error: function () {
+                            self.answer = "답변을 가져오는 데 실패했습니다.";
+                            self.loading = false;
                         }
                     });
                 }
+
             },
             mounted() {
                 this.fnGetLawyerInfo();

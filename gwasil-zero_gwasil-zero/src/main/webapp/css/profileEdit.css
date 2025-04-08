@@ -1,6 +1,5 @@
 /* 20250403 css 수정 */
 body {
-  font-family: '맑은 고딕', sans-serif;
   background-color: #f4f4f4;
   margin: 0;
   padding: 0;
@@ -201,4 +200,25 @@ body {
   font-style: italic;
   font-size: 14px;
   padding: 6px 0;
+}
+
+/* 전문 분야 */
+.category-checkbox-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; 
+}
+
+.category-checkbox-item {
+    flex: 0 0 48%;  
+    margin-bottom: 10px; 
+}
+
+.category-checkbox-item input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.highlighted {
+    font-weight: bold;
+    color: #ff5c00;  
 }

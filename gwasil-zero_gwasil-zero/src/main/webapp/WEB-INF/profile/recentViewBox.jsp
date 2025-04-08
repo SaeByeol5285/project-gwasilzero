@@ -70,8 +70,7 @@
 	<div id="recentBox" class="recent-box card">
         <div class="recent-title">최근 본 항목</div>
         <ul class="recent-list">
-            <li v-for="item in list" :key="item.id" @click="fnGo(item)" class="recent-item">
-                <img v-if="item.image" :src="item.image" alt="썸네일" class="thumb">
+            <li v-for="item in list" :key="item.id" @click="fnGo(item)" class="recent-item">                
                 <div class="item-text">
                     <span v-if="item.type === 'lawyer'">👨‍⚖️ {{ item.name }}</span>
                     <span v-if="item.type === 'board'">📝 {{ item.title }}</span>
@@ -99,9 +98,10 @@
 		},
 		mounted() {
 			const stored = localStorage.getItem("recentViewed");
-            this.list = stored ? JSON.parse(stored) : [];
-		}
-	});
+            const allItems = stored ? JSON.parse(stored) : [];
+
+            this.list = allItems;
+        }
+    });
 	recentApp.mount('#recentBox');
-</script>
-​
+</script>​

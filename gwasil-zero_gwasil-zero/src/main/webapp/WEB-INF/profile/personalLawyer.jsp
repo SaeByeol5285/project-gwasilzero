@@ -19,8 +19,7 @@
                 <div class="content">
                     <div class="content-wrapper">
                         <div class="title-area">
-                            <h2>개인 변호사</h2>
-                            <a href="javascript:;" @click="fnMove">소속 변호사 &gt;</a>
+                            <h2 class="section-subtitle">개인 변호사</h2>
                         </div>
                         <div class="filter-bar">
                             <label>변호사 찾기</label>
@@ -30,7 +29,8 @@
                                 <option value="txt">키워드</option>
                             </select>
                             <input type="text" v-model="keyword" @keyup.enter="fnGetList" placeholder="검색어">
-                            <button @click="fnGetList" class="btn">검색</button>
+                            <button @click="fnGetList">검색</button>
+                            <a href="javascript:;" @click="fnMove">소속 변호사 &gt;</a>
                         </div>
                         <div class="lawyer-list">
                             <div class="lawyer-card" v-for="item in list" :key="item.lawyerId"
@@ -40,7 +40,10 @@
                                     <div v-else class="no-data">등록된 프로필 사진이 없습니다.</div>
                                 </div>
                                 <div class="lawyer-name">{{item.lawyerName}}</div>
-                                <div class="intro">소개 : <span v-html="item.lawyerInfo"></span></div>
+                                <div class="intro">
+                                    <span v-if="item.lawyerInfo" v-html="item.lawyerInfo"></span>
+                                    <span v-else class="no-data">등록된 소개가 없습니다.</span>
+                                </div>
                             </div>
                         </div>
                         <div class="pagination-container">
@@ -117,8 +120,7 @@
                     var item = {
                         type: 'lawyer',
                         id: target.lawyerId,
-                        name: target.lawyerName,
-                        image: target.lawyerImg || null
+                        name: target.lawyerName
                     };
 
                     var list = JSON.parse(localStorage.getItem('recentViewed') || '[]');

@@ -96,25 +96,25 @@ public class ProfileController {
 	        // 이미지 경로 로그
 //	        System.out.println("UploadPath: " + uploadPath);
 
-	        // info
+	        // 1. 프로필 정보 가져오기
 	        String infoJson = request.getParameter("info");
 	        Map<String, Object> infoMap = gson.fromJson(infoJson, Map.class);
 
-	        // 대표 사건
+	        // 2. 대표 사건 선택 목록 가져오기
 	        String selectedBoardsJson = request.getParameter("selectedBoards");
 	        List<Double> selectedBoardsDouble = gson.fromJson(selectedBoardsJson, List.class);
 	        List<Integer> selectedBoards = selectedBoardsDouble.stream()
 	                .map(Double::intValue)
 	                .collect(Collectors.toList());
 
-	        // 삭제할 자격증
+	        // 3. 삭제된 자격증 목록 가져오기
 	        String deletedLicenseJson = request.getParameter("deletedLicenseIds");
 	        List<Map<String, Object>> deletedLicenseList = new ArrayList<>();
 	        if (deletedLicenseJson != null && !deletedLicenseJson.isEmpty()) {
 	            deletedLicenseList = gson.fromJson(deletedLicenseJson, List.class);
 	        }
 
-	        // 신규 자격증 목록
+	        // 4. 신규 자격증 처리
 	        List<HashMap<String, Object>> licenseList = new ArrayList<>();
 	        int licenseCount = Integer.parseInt(request.getParameter("licenseCount"));
 	        for (int i = 0; i < licenseCount; i++) {
@@ -134,8 +134,15 @@ public class ProfileController {
 	                throw new Exception("[" + (licenseName != null ? licenseName : "이름 없음") + "] 자격증 항목이 누락되었습니다.");
 	            }
 	        }
+	        
+	        // 5. 선택된 전문 분야 값 받아오기
+	        String selectedCategoriesJson = request.getParameter("selectedCategories");
+	        List<String> selectedCategories = gson.fromJson(selectedCategoriesJson, List.class);
 
-	        // 최종 파라미터 맵 구성
+	        String mainCategories1 = selectedCategories.size() > 0 ? selectedCategories.get(0) : null;
+	        String mainCategories2 = selectedCategories.size() > 1 ? selectedCategories.get(1) : null;
+
+	        // 6. 최종 파라미터 맵 구성
 	        HashMap<String, Object> paramMap = new HashMap<>();
 	        paramMap.put("lawyerId", lawyerId);
 	        paramMap.put("lawyerInfo", infoMap.get("lawyerInfo"));
@@ -145,8 +152,11 @@ public class ProfileController {
 	        paramMap.put("selectedBoards", selectedBoards);
 	        paramMap.put("licenseList", licenseList);
 	        paramMap.put("deletedLicenseList", deletedLicenseList);
+	        paramMap.put("mainCategories1", mainCategories1);
+	        paramMap.put("mainCategories2", mainCategories2);
 	        paramMap.put("uploadPath", uploadPath);
 
+	        // 7. 서비스 메서드 호출 (DB 업데이트)
 	        resultMap = profileService.editLawyer(paramMap);
 	        resultMap.put("result", "success");
 	    } catch (Exception e) {
@@ -156,5 +166,24 @@ public class ProfileController {
 
 	    return new Gson().toJson(resultMap);
 	}
+	
+	// CATEGORIES_MASTER 테이블의 데이터 가져오기
+    @RequestMapping(value = "/profile/getCategories.dox", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getCategories() throws Exception {
+        HashMap<String, Object> resultMap = new HashMap<>();
+        
+        try {
+            // CATEGORIES_MASTER 데이터 조회
+            List<Map<String, Object>> categories = profileService.getCategories();
+            resultMap.put("categories", categories);
+            resultMap.put("result", "success");
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put("result", "fail");
+        }
+
+        return new Gson().toJson(resultMap);
+    }
 
 }

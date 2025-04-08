@@ -39,6 +39,12 @@ public interface ProfileMapper {
 	
     // 대표 사건 업데이트
     void updateMainCases(HashMap<String, Object> param);
+    
+    // 전문분야 리스트
+	List<Map<String, Object>> selectCategories();
+	
+	// 전문분야 업데이트
+//	void updateLawyerCategories(HashMap<String, Object> categoriesParam);
 	
 	
 		

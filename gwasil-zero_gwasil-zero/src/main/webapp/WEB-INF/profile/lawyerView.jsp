@@ -255,10 +255,10 @@
                     </div>
                     <div class="profile-container">
                         <div class="profile-photo">
-                            <template v-if="info.lawyerImg">
+                            <div v-if="info.lawyerImg">
                                 <img :src="info.lawyerImg" alt="프로필 사진">
-                            </template>
-                            <template v-else class="no-data">등록된 프로필 사진이 없습니다.</template>
+                            </div>
+                            <div v-else class="no-data">등록된 프로필 사진이 없습니다.</div>
                             <div class="lawyer-meta">
                                 <div class="lawyer-name">{{ info.lawyerName }}</div>
                                 <div class="lawyer-phone">Tel : {{ info.lawyerPhone }}</div>
@@ -376,8 +376,7 @@
                     var item = {
                         type: 'lawyer',
                         id: self.lawyerId,
-                        name: self.info.lawyerName,
-                        image: self.info.thumbnailPath || null
+                        name: self.info.lawyerName
                     };
 
                     var list = JSON.parse(localStorage.getItem('recentViewed') || '[]');

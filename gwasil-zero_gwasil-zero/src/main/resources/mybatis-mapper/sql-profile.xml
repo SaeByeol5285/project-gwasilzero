@@ -133,7 +133,9 @@
         SET LAWYER_INFO = #{lawyerInfo},
             LAWYER_CAREER = #{lawyerCareer},
             LAWYER_TASK = #{lawyerTask},
-            LAWYER_EDU = #{lawyerEdu}
+            LAWYER_EDU = #{lawyerEdu},
+            MAIN_CATEGORIES1 = #{mainCategories1},
+        	MAIN_CATEGORIES2 = #{mainCategories2}
         WHERE lawyer_id = #{lawyerId}
     </update>
     
@@ -156,5 +158,11 @@
 	        MAIN_CASE3_NO = #{mainCase3No, jdbcType=INTEGER}
         WHERE LAWYER_ID = #{lawyerId}
     </update>
+    
+    <select id="selectCategories" resultType="map">
+	    SELECT CATEGORY_NO, CATEGORY_NAME
+	    FROM CATEGORIES_MASTER
+	    WHERE CATEGORY_NO != '00'
+	</select>
     
 </mapper>

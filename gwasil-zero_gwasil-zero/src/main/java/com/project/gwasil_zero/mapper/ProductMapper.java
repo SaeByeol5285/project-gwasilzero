@@ -29,4 +29,8 @@ public interface ProductMapper {
 
 	void insertNotification(HashMap<String, Object> map);
 
+	int selectProductCount(HashMap<String, Object> map);
+
+	int selectRefundCount(HashMap<String, Object> map);
+
 }

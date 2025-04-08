@@ -20,7 +20,9 @@ public class ProductService {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			List<Packages> list = productMapper.selectProductList(map);		
+			List<Packages> list = productMapper.selectProductList(map);	
+			int productCount = productMapper.selectProductCount(map);
+			resultMap.put("productCount", productCount);
 			resultMap.put("list", list);
 			resultMap.put("result", "success");		
 			
@@ -74,6 +76,8 @@ public class ProductService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			List<Pay> refundList = productMapper.selectRefundList(map);		
+			int refundCount = productMapper.selectRefundCount(map);
+			resultMap.put("refundCount", refundCount);
 			resultMap.put("refundList", refundList);
 			resultMap.put("result", "success");		
 			

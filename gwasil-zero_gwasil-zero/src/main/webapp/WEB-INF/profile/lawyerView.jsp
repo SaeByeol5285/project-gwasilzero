@@ -412,8 +412,6 @@
                                     <p v-if="loading" class="loading-text">AI가 분석 중입니다...</p>
                                     <p v-else>{{ answer }}</p>
                                 </div>
-
-
                             </div>
                             <div class="section">
                                 <h3>경력</h3>
@@ -652,9 +650,14 @@
 
             },
             mounted() {
-                this.fnGetLawyerInfo();
                 const self = this;
-
+                // 새별추가
+                const params = new URLSearchParams(window.location.search);
+                const lawyerIdParam = params.get('lawyerId');
+                if (lawyerIdParam) {
+                    self.lawyerId = lawyerIdParam;
+                }
+                self.fnGetLawyerInfo();
                 setTimeout(function () {
                     // info 값이 없으면 저장 안 함
                     if (!self.info || !self.info.lawyerName) return;

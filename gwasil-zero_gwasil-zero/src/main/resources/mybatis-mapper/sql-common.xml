@@ -4,7 +4,7 @@
 
 <mapper namespace="com.project.gwasil_zero.mapper.CommonMapper">
 	
-	<!-- 리스트 -->
+	<!-- 보드 리스트 -->
 	<select id="selectBoardList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Board">
 		SELECT T.*, M.CATEGORY_NAME AS CATEGORY
 		FROM (
@@ -19,14 +19,18 @@
         LEFT JOIN CATEGORIES_MASTER M ON CT.CATEGORY = M.CATEGORY_NO
 	</select>
 	
+	<!--변호사 리스트-->
 	<select id="selectLawyerList" resultType="com.project.gwasil_zero.model.Lawyer">
-		SELECT *
-		FROM LAWYER
-		WHERE COUNSEL = 'now'
+		SELECT L.LAWYER_ID, LAWYER_NAME, LAWYER_IMG, LAWYER_INFO, COUNSEL, C1.CATEGORY_NAME AS MAIN_CATEGORY_NAME1, C2.CATEGORY_NAME AS MAIN_CATEGORY_NAME2
+		FROM LAWYER L
+        INNER JOIN CATEGORIES_MASTER C1 ON L.MAIN_CATEGORIES1 = C1.CATEGORY_NO
+        INNER JOIN CATEGORIES_MASTER C2 ON L.MAIN_CATEGORIES2 = C2.CATEGORY_NO
+		WHERE COUNSEL = 'now' AND LAWYER_PASS = 'Y'
 		ORDER BY DBMS_RANDOM.VALUE
 		OFFSET 0 ROWS FETCH NEXT 6 ROWS ONLY
 	</select>
 	
+	<!--리뷰리스트-->
 	<select id="selectReviewList" resultType="com.project.gwasil_zero.model.Review">
 		SELECT R.*, LAWYER_NAME AS lawyerName
 		FROM REVIEW R

@@ -20,5 +20,6 @@ public class Board {
 	private String userName;
 	private String category;
 	private int cmtCount;
+	private String usePackage;
 
 }

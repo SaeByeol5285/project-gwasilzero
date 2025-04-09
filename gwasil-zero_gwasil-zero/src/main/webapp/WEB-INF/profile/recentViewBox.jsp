@@ -1,9 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%
-        String sessionType = (String) session.getAttribute("sessionType");
-        if (sessionType == null) sessionType = "";
-    %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -74,11 +70,10 @@
 	<div id="recentBox" class="recent-box card">
         <div class="recent-title">최근 본 항목</div>
         <ul class="recent-list">
-            <li v-for="item in list" :key="item.id" @click="fnGo(item)" class="recent-item">
-                <img v-if="item.image" :src="item.image" alt="썸네일" class="thumb">
+            <li v-for="item in list" :key="item.id" @click="fnGo(item)" class="recent-item">                
                 <div class="item-text">
-                <span v-if="item.type === 'lawyer'">👨‍⚖️ {{ item.name }}</span>
-                <span v-if="item.type === 'board'">📝 {{ item.title }}</span>
+                    <span v-if="item.type === 'lawyer'">👨‍⚖️ {{ item.name }}</span>
+                    <span v-if="item.type === 'board'">📝 {{ item.title }}</span>
                 </div>
             </li>
         </ul>
@@ -89,39 +84,24 @@
     const recentApp = Vue.createApp({
 		data() {
 			return {
-				list: [],
-				sessionType: "<%= sessionType %>"
+				list: []
 			};
 		},
 		methods: {
 			fnGo(item) {
-                    console.log("클릭된 아이템 ▶", item); 
-                    if (item.type === 'lawyer') {
-                        const url = "/profile/view.do?lawyerId=" + item.id;
-                        console.log("이동할 URL ▶", url);
-                        location.href = url;
-                    } else if (item.type === 'board') {
-                        const url = "/board/boardView.jsp?boardNo=" + item.id;
-                        console.log("이동할 URL ▶", url); // 2. URL 확인
-                        location.href = url;
-                    }
+                if (item.type === 'lawyer') {
+                    location.href = "/profile/view.do?lawyerId=" + item.id;
+                } else if (item.type === 'board') {
+                    location.href = "/board/boardView.jsp?boardNo=" + item.id;
                 }
+            }
 		},
 		mounted() {
-			var self = this;
 			const stored = localStorage.getItem("recentViewed");
-			const allItems = stored ? JSON.parse(stored) : [];
+            const allItems = stored ? JSON.parse(stored) : [];
 
-			// 사용자 유형에 따라 필터링
-			if (self.sessionType === 'user') {
-				self.list = allItems;
-			} else if (self.sessionType === 'lawyer') {
-				self.list = allItems.filter(i => i.type === 'board');
-			} else {
-				self.list = []; // 비로그인 등 기타
-			}
-		}
-	});
+            this.list = allItems;
+        }
+    });
 	recentApp.mount('#recentBox');
-</script>
-​
+</script>​

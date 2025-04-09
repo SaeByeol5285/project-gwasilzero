@@ -17,12 +17,10 @@
         <div id="inLawApp">
             <div class="layout">
                 <div class="content">
+                    <div>
+                        <h2 class="section-subtitle">소속 변호사</h2>
+                    </div>
                     <div class="content-wrapper">
-                        <div class="title-area">
-                            <h2>소속 변호사</h2>
-                            <a href="javascript:;" @click="fnMove">개인 변호사 &gt;</a>
-                        </div>
-
                         <div class="filter-bar">
                             <label>변호사 찾기</label>
                             <select v-model="searchOption">
@@ -31,7 +29,8 @@
                                 <option value="txt">키워드</option>
                             </select>
                             <input type="text" v-model="keyword" @keyup.enter="fnGetList" placeholder="검색어">
-                            <button @click="fnGetList" class="btn">검색</button>
+                            <button @click="fnGetList">검색</button>
+                            <a href="javascript:;" @click="fnMove">개인 변호사 &gt;</a>
                         </div>
                         <div class="lawyer-list">
                             <div class="lawyer-card" v-for="item in list" :key="item.lawyerId"
@@ -46,21 +45,28 @@
                                 </div>
                                 <div v-else class="no-data">선택된 전문분야가 없습니다.</div>
                                 <div class="lawyer-name">{{item.lawyerName}}</div>
-                                <div class="intro">소개 : <span v-html="item.lawyerInfo"></span></div>
+                                <div class="intro">
+                                    <span v-if="item.lawyerInfo" v-html="item.lawyerInfo"></span>
+                                    <span v-else class="no-data">등록된 소개가 없습니다.</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="pagination">
-                            <a v-if="page != 1" href="javascript:;" @click="fnPageMove('prev')"
-                                class="page-btn">&lt;</a>
-                            <a href="javascript:;" v-for="num in index" @click="fnPage(num)"
-                                :class="{'active': page == num}" class="page-btn">{{num}}</a>
-                            <a v-if="page != index" href="javascript:;" @click="fnPageMove('next')"
-                                class="page-btn">&gt;</a>
-                        </div>
+                        <div class="pagination-container">
+                            <button class="btn" @click="prevPage" :disabled="page === 1">〈 이전</button>                         
+                            <button 
+                               v-for="n in index" 
+                               :key="n" 
+                               @click="goToPage(n)" 
+                               :class="['btn', page === n ? 'active' : '']">
+                               {{ n }}
+                            </button>                         
+                            <button class="btn" @click="nextPage" :disabled="page === index">다음 〉</button>
+                        </div> 
                     </div>
                 </div>
             </div>
         </div>
+        <jsp:include page="/WEB-INF/profile/recentViewBox.jsp" />
         <jsp:include page="../common/footer.jsp" />
     </body>
 
@@ -95,21 +101,45 @@
                         }
                     });
                 },
-                fnPage: function (num) {
-                    let self = this;
-                    self.page = num;
-                    self.fnGetList();
+                goToPage(n) {
+                    this.page = n;
+                    this.fnGetList();
                 },
-                fnPageMove: function (direction) {
-                    let self = this;
-                    if (direction == "next") {
-                        self.page++;
-                    } else {
-                        self.page--;
+
+                prevPage() {
+                    if (this.page > 1) {
+                    this.page--;
+                    this.fnGetList();
                     }
-                    self.fnGetList();
+                },
+                nextPage() {
+                    if (this.page < this.index) {
+                        this.page++;
+                        this.fnGetList();
+                    }
                 },
                 fnView: function (lawyerId) {
+                    const target = this.list.find(item => item.lawyerId === lawyerId);
+                    if (!target) {
+                        console.log("변호사 정보가 없습니다.");
+                        return;
+                    }
+
+                    var item = {
+                        type: 'lawyer',
+                        id: target.lawyerId,
+                        name: target.lawyerName
+                    };
+
+                    console.log("저장할 아이템: ", item);
+
+                    var list = JSON.parse(localStorage.getItem('recentViewed') || '[]');
+                    list = list.filter(i => !(i.type === item.type && i.id === item.id));
+                    list.unshift(item);
+
+                    if (list.length > 5) list = list.slice(0, 5);                    
+                    localStorage.setItem('recentViewed', JSON.stringify(list));
+
                     pageChange("/profile/view.do", { lawyerId: lawyerId });
                 },
                 fnMove: function () {

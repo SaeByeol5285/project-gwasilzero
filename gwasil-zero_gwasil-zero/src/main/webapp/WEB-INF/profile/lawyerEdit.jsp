@@ -18,8 +18,8 @@
         <div id="lawEditApp">
             <div class="layout">
                 <div class="content">
-                    <div class="title-area">
-                        <h2>변호사 프로필 수정</h2>
+                    <div>
+                        <h2 class="section-subtitle">변호사 프로필 수정</h2>
                     </div>
                     <div class="profile-container">
                         <form id="lawyerEditForm" @submit.prevent>
@@ -46,6 +46,28 @@
                                     <th>학력</th>
                                     <td>
                                         <div id="editor-edu" class="quill-editor"></div>
+                                    </td>
+                                </tr>
+                                <!-- 전문분야 선택 -->
+                                <tr>
+                                    <th>전문 분야</th>
+                                    <td>
+                                        <p class="board-note">{{ selectedCategories.length }}개 선택됨 (최대 2개)</p>
+                                        <div class="category-checkbox-container">
+                                            <!-- categoryList를 반복하여 체크박스 표시 -->
+                                            <div v-for="(category, index) in categoryList" :key="category.CATEGORY_NO" class="category-checkbox-item">
+                                                <input type="checkbox" 
+                                                       :id="'category' + category.CATEGORY_NO" 
+                                                       :value="category.CATEGORY_NO"
+                                                       v-model="selectedCategories"
+                                                       :disabled="selectedCategories.length >= 2 && !selectedCategories.includes(category.CATEGORY_NO)"
+                                                       :checked="selectedCategories.includes(category.CATEGORY_NO)" />
+                                                <label :for="'category' + category.CATEGORY_NO" 
+                                                       :class="{ 'highlighted': selectedCategories.includes(category.CATEGORY_NO) }">
+                                                    {{ category.CATEGORY_NAME }}
+                                                </label>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
 
@@ -129,13 +151,14 @@
         const lawEditApp = Vue.createApp({
             data() {
                 return {
-                    // lawyerId : "${sessionId}",
-                    lawyerId: "lawyer_2",
+                    lawyerId : "${sessionId}",
                     info: {},
                     boardList: [],
                     license: [],
                     selectedBoards: [],
-                    deletedLicenseIds: []
+                    deletedLicenseIds: [],
+                    categoryList: [],  
+                    selectedCategories: [] 
                 };
             },
             computed: {
@@ -154,6 +177,7 @@
                         success(data) {
                             // console.log(data.boardList);
                             self.info = data.info;
+                            console.log(self.info.mainCategories1);
                             // Quill에 값 설정
                             quillInfo.root.innerHTML = self.info.lawyerInfo || '';
                             quillCareer.root.innerHTML = self.info.lawyerCareer || '';
@@ -174,11 +198,19 @@
                             if (self.info.mainCase1No) self.selectedBoards.push(self.info.mainCase1No);
                             if (self.info.mainCase2No) self.selectedBoards.push(self.info.mainCase2No);
                             if (self.info.mainCase3No) self.selectedBoards.push(self.info.mainCase3No);
+
+                            // LAWYER의 MAIN_CATEGORIES1, 2를 categoryList로 변환하여 선택된 값 세팅
+                            self.selectedCategories = [self.info.mainCategories1, self.info.mainCategories2].filter(category => category !== null);
+                            self.fnGetCategories();
                         }
                     });
                 },
                 fnEdit() {
                     const self = this;
+
+                    // 전문분야 선택
+                    self.info.mainCategories1 = self.selectedCategories[0] || null;
+                    self.info.mainCategories2 = self.selectedCategories[1] || null;
 
                     // Quill 값 동기화
                     self.info.lawyerInfo = quillInfo.root.innerHTML;
@@ -191,13 +223,13 @@
                     formData.append("info", JSON.stringify(self.info));
                     formData.append("selectedBoards", JSON.stringify(self.selectedBoards));
                     formData.append("deletedLicenseIds", JSON.stringify(self.deletedLicenseIds));
-                    formData.append("deletedLicenseIds", JSON.stringify(self.deletedLicenseIds));
+                    formData.append("selectedCategories", JSON.stringify(self.selectedCategories));
 
                     let count = 0;
                     self.license.forEach((item, i) => {
                         if (item.isExisting) return;
                         if (!item.licenseName || !item.licenseFile) {
-                            alert(`${i + 1}번째 신규 자격증 항목이 누락되었습니다.`);
+                            alert("자격증 항목의 이름과 파일을 확인하세요.");
                             return;
                         }
 
@@ -276,6 +308,18 @@
                         this.license[index].licenseFile = null;
                         this.license[index].licensePreview = null;
                     }
+                },
+                fnGetCategories() {
+                    const self = this;
+                    $.ajax({
+                        url: "/profile/getCategories.dox", 
+                        type: "GET",
+                        dataType: "json",
+                        success(data) {
+                            console.log(data.categories);
+                            self.categoryList = data.categories || [];
+                        }
+                    });
                 }
             },
             mounted() {
@@ -286,6 +330,7 @@
                 // } 🚨 로그인 없이 접근 불가. 마지막에 추가할것!!! 🚨
 
                 this.fnGetLawyerInfo();
+                this.fnGetCategories();
 
                 // Quill 초기화
                 quillInfo = new Quill('#editor-info', { theme: 'snow' });

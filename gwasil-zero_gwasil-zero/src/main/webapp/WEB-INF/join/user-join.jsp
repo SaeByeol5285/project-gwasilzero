@@ -81,6 +81,16 @@
                 margin-bottom: 15px;
                 line-height: 1.5;
             }
+
+            .email-row {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .email-row span {
+                margin: 0 5px;
+            }
         </style>
     </head>
 
@@ -89,6 +99,7 @@
         <div id="app">
             <h1 style="text-align: center;">사용자 회원가입</h1>
 
+            <!-- 이용약관 동의 -->
             <div class="terms-check">
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <label for="agree">이용약관에 동의합니다</label>
@@ -96,59 +107,83 @@
                 </div>
                 <input type="checkbox" id="agree" v-model="agreeTerms">
             </div>
-
             <div v-if="showTerms" class="terms-content">
                 <strong>[이용약관]</strong><br />
                 제 1 조 (목적)<br />
-                본 약관은 과실제로(이하 "회사")가 제공하는 모든 서비스의 이용과 관련하여 회사와 회원 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.<br /><br />
+                본 약관은 과실제로(이하 "회사")가 제공하는 모든 서비스의 이용과 관리하여 회사와 회원 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.<br /><br />
                 제 2 조 (정의)<br />
-                "회원"이란 회사의 서비스에 접속하여 이 약관에 따라 서비스를 이용하는 고객을 말합니다.<br /><br />
+                "회원"이라는 회사의 서비스에 접속하여 이 약관에 따른 서비스를 이용하는 고객을 말합니다.<br /><br />
                 제 3 조 (약관의 효력 및 변경)<br />
                 회사는 관련 법령을 위반하지 않는 범위에서 이 약관을 변경할 수 있으며, 변경 시 공지사항을 통해 안내합니다.
             </div>
 
-            <div style="margin-bottom: 15px;">
+            <!-- 이름 -->
+            <div>
                 <div>이름(닉네임)</div>
                 <input v-model="user.userName" placeholder="이름(닉네임) 입력" />
+                <div v-if="user.userName.trim().length === 0" class="error-text">이름을 입력해주세요.</div>
             </div>
 
-            <div style="margin-bottom: 15px;">
+            <!-- 아이디 -->
+            <div>
                 <div>아이디 (5자 이상)</div>
                 <input v-model="user.userId" placeholder="아이디 입력" @input="checkUserId" />
+                <div v-if="user.userId.length > 0 && user.userId.length < 5" class="error-text">아이디는 5자 이상으로 작성해주세요.
+                </div>
                 <div v-if="idError" class="error-text">영문/숫자만 입력해주세요.</div>
                 <button @click="fnIdCheck" style="margin-top: 5px;">중복체크</button>
             </div>
 
-            <div style="margin-bottom: 15px;">
+            <!-- 비밀번호 -->
+            <div>
                 <div>비밀번호 (8자 이상)</div>
                 <input type="password" v-model="user.pwd" placeholder="비밀번호 입력" />
                 <div v-if="user.pwd.length > 0 && user.pwd.length < 8" class="error-text">비밀번호는 8자 이상이어야 합니다.</div>
             </div>
 
-            <div style="margin-bottom: 15px;">
+            <!-- 비밀번호 확인 -->
+            <div>
                 <div>비밀번호 확인</div>
                 <input type="password" v-model="user.pwd2" placeholder="비밀번호 확인" />
                 <div v-if="user.pwd !== user.pwd2 && user.pwd2" class="error-text">비밀번호 불일치</div>
             </div>
 
-            <div style="margin-bottom: 15px;">
+            <!-- 이메일 -->
+            <div>
                 <div>이메일</div>
-                <input v-model="user.userEmail" placeholder="이메일 입력" />
+                <div class="email-row">
+                    <input v-model="emailId" @blur="emailIdTouched = true" @input="emailIdTouched = true"
+                        placeholder="이메일 아이디" style="flex: 1;" />
+                    <span>@</span>
+                    <select v-model="emailDomain" style="flex: 1;">
+                        <option value="">도메인 선택</option>
+                        <option value="naver.com">naver.com</option>
+                        <option value="gmail.com">gmail.com</option>
+                        <option value="daum.net">daum.net</option>
+                        <option value="hanmail.net">hanmail.net</option>
+                        <option value="nate.com">nate.com</option>
+                        <option value="직접입력">직접입력</option>
+                    </select>
+                </div>
+                <input v-if="emailDomain === '직접입력'" v-model="customDomain" placeholder="도메인 입력"
+                    style="margin-top: 8px;" />
+                <div v-if="emailIdTouched && !isEmailValid" class="error-text">이메일 형식이 아닙니다.</div>
             </div>
 
-            <div style="margin-bottom: 15px;">
+            <!-- 휴대폰 -->
+            <div>
                 <div>휴대폰 (11자리)</div>
                 <input v-model="user.userPhone" placeholder="휴대폰 번호 입력" />
-                <div v-if="user.userPhone.length > 11" class="error-text">휴대폰 번호는 11자리를 초과할 수 없습니다.</div>
+                <!-- 11자리 미만일 때 에러 메시지 추가 -->
+                <div v-if="user.userPhone.length !== 11" class="error-text">휴대폰 번호는 11자리로 입력해주세요.</div>
             </div>
 
+            <!-- 인증/회원가입 버튼 -->
             <button @click="requestCert">📱 본인인증</button>
             <button @click="fnJoin" :disabled="!isAuthenticated" :style="{
         backgroundColor: isAuthenticated ? '#FF5722' : '#ccc',
         cursor: isAuthenticated ? 'pointer' : 'not-allowed'
-    }">
-                회원가입
-            </button>
+    }">회원가입</button>
         </div>
         <jsp:include page="../common/footer.jsp" />
 
@@ -163,17 +198,28 @@
                             userId: "",
                             pwd: "",
                             pwd2: "",
-                            userEmail: "",
-                            userPhone: ""
+                            userPhone: "",
+                            userEmail: ""
                         },
+                        emailId: "",
+                        emailDomain: "",
+                        customDomain: "",
                         isAuthenticated: false,
                         isIdChecked: false,
                         agreeTerms: false,
                         showTerms: false,
-                        nameError: false,
-                        isComposing: false,
-                        idError: false
+                        idError: false,
+                        emailIdTouched: false
                     };
+                },
+                computed: {
+                    fullEmail() {
+                        const domain = this.emailDomain === '직접입력' ? this.customDomain : this.emailDomain;
+                        return this.emailId && domain ? this.emailId + "@" + domain : '';
+                    },
+                    isEmailValid() {
+                        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.fullEmail);
+                    }
                 },
                 methods: {
                     checkUserId() {
@@ -198,23 +244,22 @@
                         if (!this.agreeTerms) return alert("⚠️ 이용약관에 동의해주세요.");
                         if (!this.isIdChecked) return alert("⚠️ 중복체크 하세요.");
                         if (!this.isAuthenticated) return alert("⚠️ 본인인증 하세요.");
-
                         if (!this.user.userName.trim()) return alert("이름을 입력하세요.");
                         if (this.user.userId.length < 5) return alert("아이디는 5자 이상이어야 합니다.");
                         if (this.user.pwd.length < 8) return alert("비밀번호는 8자 이상이어야 합니다.");
                         if (this.user.pwd !== this.user.pwd2) return alert("비밀번호가 일치하지 않습니다.");
-                        if (!this.user.userEmail.trim()) return alert("이메일을 입력하세요.");
+                        if (!this.fullEmail || !this.isEmailValid) return alert("유효한 이메일을 입력하세요.");
                         if (this.user.userPhone.length !== 11 || !/^[0-9]+$/.test(this.user.userPhone)) {
                             return alert("휴대폰 번호는 11자리 숫자여야 합니다.");
                         }
 
-                        const nparmap = { ...this.user };
+                        this.user.userEmail = this.fullEmail;
 
                         $.ajax({
                             url: "/join/user-add.dox",
                             dataType: "json",
                             type: "POST",
-                            data: nparmap,
+                            data: this.user,
                             success: function () {
                                 alert("회원가입 완료되었습니다.");
                                 location.href = "/user/login.do";
@@ -246,6 +291,7 @@
                     }
                 }
             });
+
             app.mount('#app');
         </script>
     </body>

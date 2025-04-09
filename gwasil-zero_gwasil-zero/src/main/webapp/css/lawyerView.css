@@ -5,6 +5,13 @@ body {
     font-family: '맑은 고딕', sans-serif;
 }
 
+/* 공통 contanier 크기 조절 */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
 .layout {
     padding: 40px 20px;
 }
@@ -64,8 +71,8 @@ body {
 }
 
 .profile-left img {
-    width: 140px;
-    height: 140px;
+    width: 190px;
+    height: 230px;
     object-fit: cover;
     border-radius: 12px;
     border: 2px solid #ff5c00;
@@ -162,30 +169,26 @@ body {
 }
 
 .tab-content {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 20px;
-	padding: 0 30px;
-	align-items: flex-start; 
+    column-count: 2;
+    column-gap: 20px;
+    padding: 0 30px;
 }
 
 .info-box {
-	flex: 0 1 calc(50% - 10px);
-    background-color: #fff;
+    display: inline-block;
+    width: 90%;
+    margin-bottom: 20px;
+    break-inside: avoid;
+    background: #fff;
     border: 1px solid #ddd;
     border-radius: 12px;
     padding: 20px 30px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-	box-sizing: border-box;
-}
-
-.info-box:nth-child(odd):last-child {
-    flex: 0 1 calc(50% - 10px);
 }
 
 @media (max-width: 768px) {
-    .info-box {
-        flex: 1 1 100%;
+    .tab-content {
+        column-count: 1;
     }
 }
 

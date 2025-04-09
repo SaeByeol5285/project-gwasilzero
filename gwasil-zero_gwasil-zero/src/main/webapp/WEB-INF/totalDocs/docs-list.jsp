@@ -15,6 +15,81 @@
 		<style>
 			* {
 				font-family: 'Noto Sans KR', sans-serif;
+				box-sizing: border-box !important;
+			}
+
+			.section-subtitle {
+				font-size: 28px;
+				font-weight: bold;
+				margin-bottom: 30px;
+				text-align: center;
+				color: #222;
+				position: relative;
+				display: inline-block;
+				padding-bottom: 10px;
+
+				display: block;
+				text-align: center;
+				margin-left: auto;
+				margin-right: auto;
+			}
+
+			.section-subtitle::after {
+				content: "";
+				position: absolute;
+				left: 50%;
+				transform: translateX(-50%);
+				bottom: 0;
+				width: 60px;
+				height: 3px;
+				background-color: var(--main-color);
+				border-radius: 2px;
+			}
+
+			.pagination-container {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				margin-top: 30px;
+				margin-bottom: 20px;
+				gap: 6px;
+			}
+
+			.btn {
+				padding: 10px 18px;
+				/* margin-bottom: 10px; */
+				font-size: 15px;
+				border: none;
+				border-radius: 8px;
+				background-color: #f2f2f2;
+				color: #444;
+				font-weight: 500;
+				cursor: pointer;
+				transition: all 0.2s ease;
+			}
+
+			.btn:hover {
+				background-color: #ffe6db;
+				color: #ff5c00;
+			}
+
+			.btn.active {
+				background-color: #ff5c00;
+				color: white;
+				font-weight: bold;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			}
+
+			.btn:disabled {
+				opacity: 0.4;
+				cursor: default;
+			}
+
+			.btn.active {
+				background-color: #ff5c00;
+				color: white;
+				font-weight: bold;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 			}
 		</style>
 
@@ -23,6 +98,7 @@
 	<body>
 		<jsp:include page="../common/header.jsp" />
 		<div id="app" class="container">
+			<h2 class="section-subtitle">통합 자료실</h2>
 
 			<!-- 상단 탭 메뉴 -->
 			<div class="tab-menu">
@@ -38,8 +114,8 @@
 
 			<!-- 공지사항 -->
 			<div v-if="currentTab === 'notice'">
-				<div class="flex-between mb-20" style="align-items: center; font-family: var(--font-main);">
-					<div style="display: flex; gap: 10px; flex-wrap: wrap;">
+				<div class="flex-between mb-20">
+					<div class="search-bar">
 						<select v-model="searchOption" class="search-select">
 							<option value="all">:: 전체 ::</option>
 							<option value="title">제목</option>
@@ -56,35 +132,40 @@
 					</select>
 				</div>
 
-				<div class="card mb-20" v-for="item in list" :key="item.totalNo" @click="fnNoticeView(item.totalNo)"
-					style="cursor:pointer;">
-					<h3>{{ item.totalTitle }}</h3>
-					<p>작성자: {{ item.userId }}</p>
-					<p>작성일: {{ item.cdate }}</p>
+				<div class="doc-list-wrapper">
+					<div class="doc-list-item" v-for="item in list" :key="item.totalNo"
+						@click="currentTab === 'notice' ? fnNoticeView(item.totalNo) : fnHelpView(item.totalNo)">
+						<div class="doc-title">{{ item.totalTitle }}</div>
+						<div class="doc-meta">
+							<span class="meta-writer">{{ item.userId }}</span>
+							<span class="meta-date">{{ item.cdate }}</span>
+						</div>
+					</div>
 				</div>
 
-				<div class="flex-center mt-40">
-					<button @click="prevPage" :disabled="page === 1">〈</button>
+				<div class="pagination-container">
+					<button class="btn" @click="prevPage" :disabled="page === 1">〈 이전</button>
 					<button v-for="n in index" :key="n" @click="goToPage(n)"
-						:class="['btn', page === n ? 'btn-primary' : 'btn-outline']" class="mx-1">{{ n }}</button>
-					<button @click="nextPage" :disabled="page === index">〉</button>
+						:class="['btn', page === n ? 'active' : '']">{{ n }}</button>
+					<button class="btn" @click="nextPage" :disabled="page === index">다음 〉</button>
 				</div>
+
 			</div>
+
 
 			<!-- 이용문의 -->
 			<div v-else-if="currentTab === 'help'">
-				<div class="flex-between mb-20" style="align-items: center; font-family: var(--font-main);">
-					<div style="display: flex; gap: 10px; flex-wrap: wrap;">
+				<div class="flex-between mb-20">
+					<div class="search-bar">
 						<select v-model="searchOption" class="search-select">
 							<option value="all">:: 전체 ::</option>
 							<option value="title">제목</option>
 							<option value="writer">작성자</option>
 						</select>
-						<input v-model="keyword" @keyup.enter="fnHelpList" class="search-input" placeholder="검색어 입력">
-						<button v-if="keyword" @click="keyword = ''" class="btn btn-small">×</button>
-						<button @click="resetPage = true; fnHelpList" class="btn btn-primary">검색</button>
+						<input v-model="keyword" @keyup.enter="fnNoticeList" class="search-input" placeholder="검색어 입력">
+						<button @click="resetPage = true; fnNoticeList" class="btn btn-primary">검색</button>
 					</div>
-					<select v-model="pageSize" @change="fnHelpList" class="search-select" style="min-width: 100px;">
+					<select v-model="pageSize" @change="fnNoticeList" class="search-select" style="min-width: 100px;">
 						<option value="5">5개씩</option>
 						<option value="10">10개씩</option>
 						<option value="15">15개씩</option>
@@ -92,22 +173,26 @@
 					</select>
 				</div>
 
-				<div class="card mb-20" v-for="item in list" :key="item.totalNo" @click="fnHelpView(item.totalNo)"
-					style="cursor:pointer;">
-					<h3>{{ item.totalTitle }}</h3>
-					<p>작성자: {{ item.userId }}</p>
-					<p>작성일: {{ item.cdate }}</p>
-					<div>
-						<span v-if="item.answerStatus == '답변완료'" class="btn btn-primary">{{ item.answerStatus }}</span>
-						<span v-else class="btn btn-outline">{{ item.answerStatus }}</span>
+				<div class="doc-list-wrapper">
+					<div class="doc-list-item" v-for="item in list" :key="item.totalNo"
+						@click="currentTab === 'notice' ? fnNoticeView(item.totalNo) : fnHelpView(item.totalNo)">
+						<div class="doc-title">{{ item.totalTitle }}</div>
+						<div class="doc-meta">
+							<span class="meta-writer">{{ item.userId }}</span>
+							<span class="meta-date">{{ item.cdate }}</span>
+							<span v-if="currentTab === 'help'"
+								:class="item.answerStatus === '답변완료' ? 'status-done' : 'status-pending'">
+								{{ item.answerStatus }}
+							</span>
+						</div>
 					</div>
 				</div>
 
-				<div class="flex-center mt-40">
-					<button @click="prevPage" :disabled="page === 1">〈</button>
+				<div class="pagination-container">
+					<button class="btn" @click="prevPage" :disabled="page === 1">〈 이전</button>
 					<button v-for="n in index" :key="n" @click="goToPage(n)"
-						:class="['btn', page === n ? 'btn-primary' : 'btn-outline']" class="mx-1">{{ n }}</button>
-					<button @click="nextPage" :disabled="page === index">〉</button>
+						:class="['btn', page === n ? 'active' : '']">{{ n }}</button>
+					<button class="btn" @click="nextPage" :disabled="page === index">다음 〉</button>
 				</div>
 			</div>
 

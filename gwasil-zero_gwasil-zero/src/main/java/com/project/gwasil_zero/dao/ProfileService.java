@@ -16,6 +16,7 @@ import com.project.gwasil_zero.model.Board;
 import com.project.gwasil_zero.model.BoardFile;
 import com.project.gwasil_zero.model.Lawyer;
 import com.project.gwasil_zero.model.License;
+import com.project.gwasil_zero.model.Review;
 
 @Service
 public class ProfileService {
@@ -179,5 +180,24 @@ public class ProfileService {
 	        e.printStackTrace();
 	    }
 	}
+
+	public HashMap<String, Object> getLReviewList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+			List<Review> list = profileMapper.selectReviewList(map);
+			int count = profileMapper.selectReviewCnt(map);			
+			resultMap.put("list", list);
+			resultMap.put("count", count);
+			
+			resultMap.put("result", "success");
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", "failed");
+		}
+
+		return resultMap;	
+		}
 
 }

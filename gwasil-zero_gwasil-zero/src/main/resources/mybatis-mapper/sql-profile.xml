@@ -157,4 +157,18 @@
         WHERE LAWYER_ID = #{lawyerId}
     </update>
     
+    
+    <select id="selectReviewList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Review">
+    	SELECT * 
+    	FROM REVIEW
+    	WHERE LAWYER_ID = #{lawyerId}
+    	OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+    </select>
+    
+    <select id="selectReviewCnt" parameterType="hashmap">
+    	SELECT COUNT(*)
+    	FROM REVIEW
+    	WHERE LAWYER_ID = #{lawyerId}
+    </select>
+    
 </mapper>

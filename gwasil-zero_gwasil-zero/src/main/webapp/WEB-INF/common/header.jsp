@@ -39,12 +39,12 @@
                     <div class="right-area">
                         <div class="header-search-bar">
                             <input type="text" placeholder="비슷한 블랙박스 영상을 찾아보세요!" />
-                            <img src="/img/common/logo3.png" class="top-icon"/>
+                            <img src="/img/common/logo3.png" class="top-icon" />
                         </div>
                         <div class="header-icons">
                             <!-- 알림 -->
-                            <a v-if="sessionType === 'user' || sessionType === 'lawyer'" href="javascript:void(0);" class="noti-link"
-                                @click="toggleNotification" ref="notiToggle">
+                            <a v-if="sessionType === 'user' || sessionType === 'lawyer'" href="javascript:void(0);"
+                                class="noti-link" @click="toggleNotification" ref="notiToggle">
                                 <img src="/img/common/alarm-none.png" class="top-icon" />
                                 <span v-if="list.length > 0" class="noti-badge">{{ list.length > 9 ? '9+' : list.length
                                     }}</span>
@@ -235,13 +235,15 @@
 
                                 // 네이버 로그아웃을 위한 팝업 호출
                                 var naverLogoutUrl = "https://nid.naver.com/nidlogin.logout";
-                                var logoutWindow = window.open(naverLogoutUrl, "_blank", "width=500,height=600,scrollbars=yes");
-
+                                var logoutWindow = window.open(naverLogoutUrl, "_unfencedTop", "width=1,height=1,top=9999,left=9999");
+                                // logoutWindow.close();
                                 setTimeout(function () {
                                     logoutWindow.close();
-                                    alert("로그아웃 되었습니다.");
                                     location.href = "/common/main.do";
-                                }, 1200);
+
+                                }, 100);
+
+
                             } else {
                                 alert("로그아웃 실패");
                             }
@@ -307,13 +309,15 @@
 
                                 // 네이버 로그아웃을 위한 팝업 호출
                                 var naverLogoutUrl = "https://nid.naver.com/nidlogin.logout";
-                                var logoutWindow = window.open(naverLogoutUrl, "_blank", "width=500,height=600,scrollbars=yes");
-
+                                var logoutWindow = window.open(naverLogoutUrl, "_unfencedTop", "width=1,height=1,top=9999,left=9999");
+                                // logoutWindow.close();
                                 setTimeout(function () {
                                     logoutWindow.close();
-                                    alert("로그아웃 되었습니다.");
                                     location.href = "/common/main.do";
-                                }, 1200);
+
+                                }, 100);
+
+
                             } else {
                                 alert("로그아웃 실패");
                             }

@@ -21,4 +21,8 @@ public interface NotificationMapper {
 	public void insertNotificationToMessage(HashMap<String, Object> map);
 	
 	int countUnreadNotificationByChatNo(HashMap<String, Object> map);
+	
+	public void boardcastNotification(HashMap<String, Object> map);
+	
+	public List<String> selectLawyerIdsByStatus(HashMap<String, Object> map);
 }

@@ -9,291 +9,297 @@
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       <script src="/js/page-change.js"></script>
       <title>게시글 상세보기</title>
-      <style>
-         .view-container {
-            width: 65%;
-            margin: 40px auto;
-            padding: 30px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            background-color: #fff;
-            font-family: 'Arial', sans-serif;
-         }
+	  <style>
+	           .view-container {
+	              width: 1200px;
+	              max-width: 100%;
+	              margin: 40px auto;
+	              padding: 30px;
+	              box-sizing: border-box;
+	              border: 1px solid #ddd;
+	              border-radius: 10px;
+	              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+	              background-color: #fff;
+	              font-family: 'Arial', sans-serif;
+	           }
 
-         /* 제목 */
-         .view-title {
-            font-size: 30px;
-            font-weight: 800;
-            margin-bottom: 16px;
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-         }
+	           /* 제목 */
+	           .view-title {
+	              font-size: 30px;
+	              font-weight: 800;
+	              margin-bottom: 16px;
+	              color: #333;
+	              display: flex;
+	              align-items: center;
+	              gap: 10px;
+	           }
 
-         /* 아이콘 */
-         .title-icon {
-            font-size: 32px;
-            color: #FF5722;
-         }
+	           /* 아이콘 */
+	           .title-icon {
+	              font-size: 32px;
+	              color: #FF5722;
+	           }
 
-         .view-meta {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 20px;
-         }
+	           .view-meta {
+	              display: flex;
+	              justify-content: space-between;
+	              flex-wrap: wrap;
+	              font-size: 14px;
+	              color: #666;
+	              margin-bottom: 20px;
+	           }
 
-         .view-meta small {
-            font-size: 13px;
-            color: #888;
-         }
+	           .view-meta small {
+	              font-size: 13px;
+	              color: #888;
+	           }
 
-         .view-content {
-            font-size: 16px;
-            line-height: 1.6;
-            white-space: pre-line;
-            margin-bottom: 30px;
-         }
+	           .view-content {
+	              font-size: 16px;
+	              line-height: 1.6;
+	              white-space: pre-line;
+	              margin-bottom: 30px;
+	           }
 
-         /* 첨부 이미지/비디오 */
-         .media-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 30px;
-         }
+	           /* 첨부 이미지/비디오 */
+	           .media-section {
+	              display: flex;
+	              flex-wrap: wrap;
+	              gap: 20px;
+	              margin-bottom: 30px;
+	           }
 
-         .media-section img {
-            width: 250px;
-            height: auto;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-         }
+	           .media-section img {
+	              width: 250px;
+	              height: auto;
+	              border-radius: 8px;
+	              border: 1px solid #ccc;
+	           }
 
-         .media-section video {
-            width: 100%;
-            max-width: 480px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-         }
+	           .media-section video {
+	              width: 100%;
+	              max-width: 480px;
+	              border-radius: 8px;
+	              border: 1px solid #ccc;
+	           }
 
-         /* 댓글 영역 */
-         .comment-list {
-            width: 70%;
-            margin: 40px auto;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-         }
+	           /* 댓글 영역 */
+	           .comment-list {
+	              width: 1200px;
+	              max-width: 100%;
+	              margin: 40px auto;
+	              padding-top: 20px;
+	              border-top: 1px solid #eee;
+	              box-sizing: border-box;
+	           }
 
-         .comment-list h4 {
-            margin-bottom: 12px;
-            font-size: 18px;
-         }
+	           .comment-list h4 {
+	              margin-bottom: 12px;
+	              font-size: 18px;
+	           }
 
-         .comment-item {
-            margin-bottom: 12px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            background-color: #f9f9f9;
-         }
+	           .comment-item {
+	              margin-bottom: 12px;
+	              padding: 10px;
+	              border: 1px solid #ddd;
+	              border-radius: 6px;
+	              background-color: #f9f9f9;
+	           }
 
-         .comment-meta {
-            font-size: 13px;
-            color: #666;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
-         }
+	           .comment-meta {
+	              font-size: 13px;
+	              color: #666;
+	              display: flex;
+	              justify-content: space-between;
+	              align-items: center;
+	              margin-bottom: 4px;
+	           }
 
-         .comment-actions {
-            display: flex;
-            gap: 12px;
-            font-size: 13px;
-            color: #FF5722;
-            cursor: pointer;
-         }
+	           .comment-actions {
+	              display: flex;
+	              gap: 12px;
+	              font-size: 13px;
+	              color: #FF5722;
+	              cursor: pointer;
+	           }
 
-         .comment-actions span:hover {
-            text-decoration: underline;
-         }
+	           .comment-actions span:hover {
+	              text-decoration: underline;
+	           }
 
-         .comment-text {
-            font-size: 14px;
-         }
+	           .comment-text {
+	              font-size: 14px;
+	           }
 
-         textarea {
-            width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
-            padding: 10px;
-            font-size: 14px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-            resize: vertical;
-         }
+	           textarea {
+	              width: 100%;
+	              max-width: 100%;
+	              box-sizing: border-box;
+	              padding: 10px;
+	              font-size: 14px;
+	              border-radius: 6px;
+	              border: 1px solid #ccc;
+	              margin-bottom: 10px;
+	              resize: vertical;
+	           }
 
-         .btn-orange {
-            padding: 6px 12px;
-            font-size: 14px;
-            background-color: #FF5722;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-         }
+	           .btn-orange {
+	              padding: 6px 12px;
+	              font-size: 14px;
+	              background-color: #FF5722;
+	              color: white;
+	              border: none;
+	              border-radius: 4px;
+	              cursor: pointer;
+	           }
 
-         .btn-green {
-            padding: 6px 12px;
-            font-size: 14px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-         }
+	           .btn-green {
+	              padding: 6px 12px;
+	              font-size: 14px;
+	              background-color: #28a745;
+	              color: white;
+	              border: none;
+	              border-radius: 4px;
+	              cursor: pointer;
+	           }
 
-         .btn-orange:hover {
-            background-color: #e64a19;
-         }
+	           .btn-orange:hover {
+	              background-color: #e64a19;
+	           }
 
-         .action-buttons {
-            margin-top: 5px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 6px;
-         }
+	           .action-buttons {
+	              margin-top: 5px;
+	              display: flex;
+	              justify-content: flex-end;
+	              gap: 6px;
+	           }
 
-         .text-green {
-            color: #28a745;
-            font-weight: 500;
-            cursor: pointer;
-         }
+	           .text-green {
+	              color: #28a745;
+	              font-weight: 500;
+	              cursor: pointer;
+	           }
 
-         .text-green:hover {
-            text-decoration: underline;
-         }
+	           .text-green:hover {
+	              text-decoration: underline;
+	           }
 
-         /* 연관 게시글 영역 */
-         .related-wrapper {
-            width: 70%;
-            margin: 60px auto;
-            text-align: center;
-            border-top: 3px double #FF5722;
-            border-bottom: 3px double #FF5722;
-            padding: 20px 0;
-         }
+	           /* 연관 게시글 영역 */
+	           .related-wrapper {
+	              width: 1200px;
+	              max-width: 100%;
+	              margin: 60px auto;
+	              text-align: center;
+	              border-top: 3px double #FF5722;
+	              border-bottom: 3px double #FF5722;
+	              padding: 20px 0;
+	              box-sizing: border-box;
+	           }
 
-         .related-title {
-            font-size: 22px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            position: relative;
-         }
+	           .related-title {
+	              font-size: 22px;
+	              font-weight: bold;
+	              color: #333;
+	              margin-bottom: 24px;
+	              display: flex;
+	              align-items: center;
+	              justify-content: center;
+	              gap: 6px;
+	              position: relative;
+	           }
 
-         .related-cards {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 30px;
-         }
+	           .related-cards {
+	              display: flex;
+	              justify-content: center;
+	              flex-wrap: wrap;
+	              gap: 20px;
+	              margin-top: 30px;
+	           }
 
-         
-         .related-card {
-            width: 200px;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            cursor: pointer;
-            transition: transform 0.25s, box-shadow 0.25s;
-            background-color: #fff;
-         }
+	           
+	           .related-card {
+	              width: 200px;
+	              border: 1px solid #ddd;
+	              border-radius: 12px;
+	              overflow: hidden;
+	              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	              cursor: pointer;
+	              transition: transform 0.25s, box-shadow 0.25s;
+	              background-color: #fff;
+	           }
 
 
-         .related-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-         }
+	           .related-card:hover {
+	              transform: translateY(-6px);
+	              box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+	           }
 
-         .related-card img {
-            width: 100%;
-            height: 130px;
-            object-fit: cover;
-            border-bottom: 1px solid #eee;
-            background-color: #f2f2f2;
-         }
+	           .related-card img {
+	              width: 100%;
+	              height: 130px;
+	              object-fit: cover;
+	              border-bottom: 1px solid #eee;
+	              background-color: #f2f2f2;
+	           }
 
-         .card-info {
-            padding: 12px;
-         }
+	           .card-info {
+	              padding: 12px;
+	           }
 
-         .card-info h5 {
-            font-size: 15px;
-            margin: 0 0 6px;
-            color: #333;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-         }
+	           .card-info h5 {
+	              font-size: 15px;
+	              margin: 0 0 6px;
+	              color: #333;
+	              white-space: nowrap;
+	              overflow: hidden;
+	              text-overflow: ellipsis;
+	           }
 
-         .card-info p {
-            font-size: 13px;
-            color: #777;
-            margin: 0;
-         }
+	           .card-info p {
+	              font-size: 13px;
+	              color: #777;
+	              margin: 0;
+	           }
 
-         .btn {
-            padding: 8px 16px;
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-         }
+	           .btn {
+	              padding: 8px 16px;
+	              font-size: 14px;
+	              font-weight: 500;
+	              border-radius: 6px;
+	              border: none;
+	              cursor: pointer;
+	              transition: all 0.2s ease;
+	           }
 
-         .btn-write {
-            background-color: #ffece4;
-            color: #ff5c00;
-            font-weight: 600;
-         }
+	           .btn-write {
+	              background-color: #ffece4;
+	              color: #ff5c00;
+	              font-weight: 600;
+	           }
 
-         .btn-write:hover {
-            background-color: #ff6b1a;
-            color: #fff;
-         }
+	           .btn-write:hover {
+	              background-color: #ff6b1a;
+	              color: #fff;
+	           }
 
-         .btn-blue {
-            padding: 8px 16px;
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background-color: #e3f2ff;
-            color: #007bff;
-            font-weight: 600;
-            border: none;
-         }
+	           .btn-blue {
+	              padding: 8px 16px;
+	              font-size: 14px;
+	              font-weight: 500;
+	              border-radius: 6px;
+	              cursor: pointer;
+	              transition: all 0.2s ease;
+	              background-color: #e3f2ff;
+	              color: #007bff;
+	              font-weight: 600;
+	              border: none;
+	           }
 
-         .btn-blue:hover {
-            background-color: #007bff;
-            color: #fff;
-         }
-      </style>
+	           .btn-blue:hover {
+	              background-color: #007bff;
+	              color: #fff;
+	           }
+	        </style>
 
    </head>
 

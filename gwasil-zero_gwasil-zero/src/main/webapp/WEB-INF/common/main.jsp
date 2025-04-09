@@ -11,7 +11,7 @@
 		<link rel="stylesheet" href="/css/common.css">
 		<script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
-
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 		<title>main.jsp</title>
 	</head>
 
@@ -32,7 +32,7 @@
 										<div class="lawyer-card">
 											<img class="lawyer-img" :src="lawyer.lawyerImg" />
 											<div class="lawyer-icons">
-												<a v-if="sessionType === 'user'"><img src="../../img/common/call.png"
+												<a ><img src="../../img/common/call.png"
 														class="icon" @click="startChat(lawyer.lawyerId)"></a>
 												<a @click="toggleBookmark(lawyer.lawyerId)">
 													<img :src="isBookmarked(lawyer.lawyerId) ? '/img/selectedBookmark.png' : '/img/common/bookmark.png'"
@@ -40,7 +40,7 @@
 												</a>
 											</div>
 											<div class="icons-text">
-												<div v-if="sessionType === 'user'" class="card-txt-small"
+												<div  class="card-txt-small"
 													@click="startChat(lawyer.lawyerId)">전화상담</div>
 												<div class="card-txt-small" @click="fnBookmark(lawyer.lawyerId)">북마크
 												</div>
@@ -283,12 +283,24 @@
 					let self = this;
 
 					if (!self.sessionId) {
-						alert("로그인이 필요합니다.");
-						return;
+						Swal.fire({
+	                    	icon: "warning",
+	                    	title: "로그인 필요",
+	                    	text: "로그인이 필요합니다.",
+	                    	confirmButtonColor: "#ff5c00"
+	                    })	.then(() => {
+                           location.href = "/user/login.do";
+                        });
+                        return;
 					}
 
 					if (self.sessionType !== 'user') {
-						alert("일반 사용자만 채팅을 이용할 수 있습니다.");
+						Swal.fire({
+		                	icon: "warning",
+		                	title: "이용 불가",
+		                	text: "변호사 사용자는 이용 불가능합니다.",
+		                	confirmButtonColor: "#ff5c00"
+		                });
 						return;
 					}
 
@@ -318,12 +330,24 @@
 					const self = this;
 
 					if (!self.sessionId) {
-						alert("로그인이 필요합니다.");
-						return;
+						Swal.fire({
+	                    	icon: "warning",
+	                    	title: "로그인 필요",
+	                    	text: "로그인이 필요합니다.",
+	                    	confirmButtonColor: "#ff5c00"
+	                    })	.then(() => {
+	                       location.href = "/user/login.do";
+	                    });
+	                    return;
 					}
 
 					if (self.sessionType !== 'user') {
-						alert("일반 사용자만 북마크를 사용할 수 있습니다.");
+						Swal.fire({
+		                	icon: "warning",
+		                	title: "이용 불가",
+		                	text: "변호사 사용자는 이용 불가능합니다.",
+		                	confirmButtonColor: "#ff5c00"
+		                });
 						return;
 					}
 

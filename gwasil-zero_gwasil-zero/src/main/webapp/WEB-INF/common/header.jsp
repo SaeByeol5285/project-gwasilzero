@@ -73,6 +73,17 @@
                                         </div>
                                         <div v-else class="noti-empty">채팅 알림이 없습니다.</div>
                                     </div>
+									
+									<div class="noti-section" v-if="sessionType === 'lawyer'">
+										<h4>게시글 알림</h4>
+										<div class="noti-list" v-if="broadcastNoti.length > 0">
+											<div class="noti-item" v-for="item in broadcastNoti" :key="item.notiNo"
+                                                @click="markAsRead(item)">
+                                                {{ item.contents }}
+                                                <br><small>{{ item.createdAt }}</small>
+                                            </div>
+										</div>
+									</div>
                                 </div>
                             </a>
                             <!-- 북마크 -->
@@ -140,6 +151,7 @@
                     list: [],
                     commentNoti: [],
                     messageNoti: [],
+					broadcastNoti: [],
                     showBookmarkPopup: false,
                     bookmarkList: [],
                     currentPath: "",
@@ -181,6 +193,7 @@
                                 this.list = data.list;
                                 this.commentNoti = data.list.filter(n => n.notiType === 'C');
                                 this.messageNoti = data.list.filter(n => n.notiType === 'M');
+								this.broadcastNoti - data.list.filter(n => n.notiType === 'BROADCAST');
                             }
                         }
                     });

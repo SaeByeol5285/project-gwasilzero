@@ -39,8 +39,9 @@
                     <div class="right-area">
                         <div class="header-search-bar">
                             <!-- 새별수정 -->
-                            <input type="text" placeholder="비슷한 블랙박스 영상을 찾아보세요!" v-model="keyword" @keyup.enter="goToBoard" />
-                            <img src="/img/common/logo3.png" class="top-icon" @click="goToBoard"/>
+                            <input type="text" placeholder="비슷한 블랙박스 영상을 찾아보세요!" v-model="keyword"
+                                @keyup.enter="goToBoard" />
+                            <img src="/img/common/logo3.png" class="top-icon" @click="goToBoard" />
                         </div>
                         <div class="header-icons">
                             <!-- 알림 -->
@@ -74,8 +75,20 @@
                                         </div>
                                         <div v-else class="noti-empty">채팅 알림이 없습니다.</div>
                                     </div>
+
+                                    <div class="noti-section" v-if="sessionType === 'lawyer'">
+                                        <h4>게시글 알림</h4>
+                                        <div class="noti-list" v-if="broadcastNoti.length > 0">
+                                            <div class="noti-item" v-for="item in broadcastNoti" :key="item.notiNo"
+                                                @click="markAsRead(item)">
+                                                {{ item.contents }}
+                                                <br><small>{{ item.createdAt }}</small>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </a>
+
                             <!-- 북마크 -->
                             <a v-if="sessionType === 'user' " href="javascript:void(0);" class="bookmark-link"
                                 @click="toggleBookmarkPopup" ref="bookmarkToggle">
@@ -141,6 +154,7 @@
                     list: [],
                     commentNoti: [],
                     messageNoti: [],
+                    broadcastNoti: [],
                     showBookmarkPopup: false,
                     bookmarkList: [],
                     currentPath: "",
@@ -184,6 +198,7 @@
                                 this.list = data.list;
                                 this.commentNoti = data.list.filter(n => n.notiType === 'C');
                                 this.messageNoti = data.list.filter(n => n.notiType === 'M');
+                        this.broadcastNoti - data.list.filter(n => n.notiType === 'BROADCAST');
                             }
                         }
                     });
@@ -264,7 +279,7 @@
                     });
                 },
                 fnGetBookmarkList() {
-					let self = this;
+                    let self = this;
                     $.ajax({
                         url: "/bookmark/list.dox",
                         type: "POST",
@@ -276,7 +291,7 @@
                             } else {
                                 this.bookmarkList = [];
                             }
-							localStorage.setItem('bookmarkUpdated', Date.now());
+                            localStorage.setItem('bookmarkUpdated', Date.now());
                         }
                     });
                 },
@@ -296,7 +311,7 @@
                             success: () => {
                                 alert("삭제되었습니다.");
                                 this.fnGetBookmarkList();
-								location.reload();
+                                location.reload();
                             },
                             error: () => {
                                 alert("삭제 중 오류가 발생했습니다.");
@@ -304,63 +319,30 @@
                         });
                     }
                 },
-                fnLogout() {
-                    var self = this;
-                    $.ajax({
-                        url: "/user/logout.dox",
-                        dataType: "json",
-                        type: "POST",
-                        data: {},
-                        success: function (data) {
-                            if (data.result == "success") {
-                                console.log("sessionId =====> " + self.id);
+                handleClickOutside(event) {
+                    // 알림창 외부 클릭
+                    if (this.showNotification) {
+                        const popup = this.$refs.notiPopup;
+                        const toggle = this.$refs.notiToggle;
 
-                                // 네이버 SDK가 저장한 로컬스토리지 데이터 삭제
-                                localStorage.removeItem("com.naver.nid.access_token");
-                                localStorage.removeItem("com.naver.nid.oauth.state_token");
-                                localStorage.removeItem("com.naver.nid.refresh_token");
-
-                                // 네이버 로그아웃을 위한 팝업 호출
-                                var naverLogoutUrl = "https://nid.naver.com/nidlogin.logout";
-                                var logoutWindow = window.open(naverLogoutUrl, "_unfencedTop", "width=1,height=1,top=9999,left=9999");
-                                // logoutWindow.close();
-                                setTimeout(function () {
-                                    logoutWindow.close();
-                                    location.href = "/common/main.do";                                   
-                                }, 100);
-                            } else {
-                                alert("로그아웃 실패");
-                            }
-                        },
-                        error: function () {
-                            alert("로그아웃 처리 중 오류가 발생했습니다.");
+                        if (popup && !popup.contains(event.target) && toggle && !toggle.contains(event.target)) {
+                            this.showNotification = false;
                         }
-                    });
+                    }
+
+                    // 북마크창 외부 클릭
+                    if (this.showBookmarkPopup) {
+                        const popup = this.$refs.bookmarkPopup;
+                        const toggle = this.$refs.bookmarkToggle;
+
+                        if (popup && !popup.contains(event.target) && toggle && !toggle.contains(event.target)) {
+                            this.showBookmarkPopup = false;
+                        }
+                    }
                 },
-				handleClickOutside(event) {
-				    // 알림창 외부 클릭
-				    if (this.showNotification) {
-				        const popup = this.$refs.notiPopup;
-				        const toggle = this.$refs.notiToggle;
-
-				        if (popup && !popup.contains(event.target) && toggle && !toggle.contains(event.target)) {
-				            this.showNotification = false;
-				        }
-				    }
-
-				    // 북마크창 외부 클릭
-				    if (this.showBookmarkPopup) {
-				        const popup = this.$refs.bookmarkPopup;
-				        const toggle = this.$refs.bookmarkToggle;
-
-				        if (popup && !popup.contains(event.target) && toggle && !toggle.contains(event.target)) {
-				            this.showBookmarkPopup = false;
-				        }
-				    }
-				},
-				beforeUnmount() {
-				    document.removeEventListener('click', this.handleClickOutside);
-				},
+                beforeUnmount() {
+                    document.removeEventListener('click', this.handleClickOutside);
+                },
                 //새별
                 goToBoard() {
                     if (this.keyword) {
@@ -371,21 +353,21 @@
                 }
             },
             mounted() {
-				console.log(self.sessionid);
-				this.fnGetNotificationList();
+                console.log(self.sessionid);
+                this.fnGetNotificationList();
                 if (this.sessionType === 'user') {
-                   // this.fnGetBookmarkList();
+                    // this.fnGetBookmarkList();
                 }
                 this.currentPath = window.location.pathname || "";
 
-				document.addEventListener('click', this.handleClickOutside);
-				window.addEventListener('storage', (e) => {
-					if (e.key === 'bookmarkUpdated') {
-						this.fnGetBookmarkList();
-					}
-				});
-            	
-			}
+                document.addEventListener('click', this.handleClickOutside);
+                window.addEventListener('storage', (e) => {
+                    if (e.key === 'bookmarkUpdated') {
+                        this.fnGetBookmarkList();
+                    }
+                });
+
+            }
         });
         header.mount("#header");
     </script>

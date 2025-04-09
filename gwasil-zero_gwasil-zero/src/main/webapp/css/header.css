@@ -84,11 +84,6 @@
   width: 280px;
 }
 
-.header-search-bar img {
-  width: 20px;
-  height: 20px;
-  padding-right: 12px;
-}
 
 /* 🛠 아이콘 */
 .header-icons {
@@ -100,6 +95,7 @@
 .top-icon {
   width: 20px;
   height: 20px;
+  padding: 5px;
 }
 
 

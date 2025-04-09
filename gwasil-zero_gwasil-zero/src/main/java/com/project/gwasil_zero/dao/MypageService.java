@@ -250,8 +250,9 @@ public class MypageService {
 	public HashMap<String, Object> selectRefundNotification(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		   Notification notifications = mypageMapper.selectRefundNoti(map);
+		   List<Notification> notifications = mypageMapper.selectRefundNoti(map);
 		   resultMap.put("notifications", notifications);
+		   resultMap.put("result", "success");
 		   return resultMap;
 	}
 
@@ -259,6 +260,14 @@ public class MypageService {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 	    mypageMapper.updateNoti(map);
+	    resultMap.put("result", "success");      
+	    return resultMap;
+	}
+
+	public HashMap<String, Object> upadatePhoneConsult(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+	    mypageMapper.updateConsult(map);
 	    resultMap.put("result", "success");      
 	    return resultMap;
 	}

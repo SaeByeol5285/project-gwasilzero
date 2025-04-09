@@ -19,7 +19,7 @@
 		<jsp:include page="../common/header.jsp" />
 		<div id="app">
 			<div class="container">
-				<!-- 변호사 소개 영역 -->
+				<!-- 변호사 소개  영역 -->
 				<section class="lawyer-intro">
 					<div class="lawyer-flex">
 						<div class="swiper-container-area">

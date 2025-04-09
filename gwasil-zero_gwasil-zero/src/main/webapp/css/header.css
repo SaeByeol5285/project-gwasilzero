@@ -22,7 +22,7 @@
 ============================= */
 .login-line {
   background-color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   color: #FF5722;
   padding: 6px 24px 0;
   display: flex;
@@ -65,7 +65,6 @@
   width: auto;
 }
 
-
 /* 🔍 검색창 */
 .header-search-bar {
   display: flex;
@@ -73,29 +72,42 @@
   border: 2px solid #ff5722;
   border-radius: 20px;
   overflow: hidden;
-  height: 36px;
+  width: 340px;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.header-search-bar * {
+  box-sizing: border-box;
 }
 
 .header-search-bar input {
   border: none;
+  outline: none;
   padding: 0 14px;
   font-size: 14px;
   height: 100%;
-  width: 280px;
+  width: 100%;
+  line-height: 40px;
+  vertical-align: middle;
+  appearance: none;
 }
 
+img.top-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  margin-right: 6px;
+  vertical-align: middle;
+  display: block;
+  cursor: pointer;
+}
 
 /* 🛠 아이콘 */
 .header-icons {
   display: flex;
   align-items: center;
   gap: 14px;
-}
-
-.top-icon {
-  width: 20px;
-  height: 20px;
-  padding: 5px;
 }
 
 
@@ -189,37 +201,35 @@ li {
   margin: 0;
 }
 
-
 /* =============================
    반응형 대응
 ============================= */
 @media screen and (max-width: 768px) {
   .main-menu {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
   }
 
   .menu-item {
-      width: 100%;
-      border-top: 1px solid #ddd;
+    width: 100%;
+    border-top: 1px solid #ddd;
   }
 
   .menu-item:first-child {
-      border-top: none;
+    border-top: none;
   }
 
   .dropdown {
-      position: static;
-      display: block;
-      width: 100%;
-      padding: 15px;
-      opacity: 1 !important;
-      visibility: visible !important;
-      transform: none !important;
+    position: static;
+    display: block;
+    width: 100%;
+    padding: 15px;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
   }
 }
-
 
 /* =============================
  알림 영역
@@ -253,13 +263,11 @@ li {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   padding: 12px;
   z-index: 1000;
-
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-/* 각 섹션을 정확히 절반 */
 .noti-section {
   flex: 1;
   display: flex;
@@ -267,7 +275,6 @@ li {
   overflow: hidden;
 }
 
-/* 알림 타이틀 */
 .noti-section h4 {
   margin: 0;
   font-size: 16px;
@@ -277,7 +284,6 @@ li {
   border-bottom: 2px solid #eee;
 }
 
-/* 알림 스크롤 리스트 */
 .noti-list {
   flex: 1;
   overflow-y: auto;
@@ -285,7 +291,6 @@ li {
   margin-top: 6px;
 }
 
-/* 알림 항목 */
 .noti-item {
   font-size: 13px;
   padding: 6px 0;
@@ -301,7 +306,6 @@ li {
   background-color: #fff3eb;
 }
 
-/* 알림 없을 때 */
 .noti-empty {
   font-size: 13px;
   color: #999;
@@ -309,7 +313,6 @@ li {
   padding: 6px 0;
 }
 
-/* 스크롤바 꾸미기 (선택사항) */
 .noti-list::-webkit-scrollbar {
   width: 6px;
 }
@@ -317,7 +320,6 @@ li {
   background-color: #ccc;
   border-radius: 3px;
 }
-
 
 /* =============================
  북마크 팝업 영역

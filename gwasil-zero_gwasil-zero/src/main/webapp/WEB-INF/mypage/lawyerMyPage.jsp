@@ -179,8 +179,8 @@
          color: #222;
          position: relative;
          display: inline-block;
+         padding-top: 40px;
          padding-bottom: 10px;
-
          display: block;
          text-align: center;
          margin-left: auto;
@@ -193,9 +193,9 @@
          left: 50%;
          transform: translateX(-50%);
          bottom: 0;
-         width: 60px;
+         width: 150px;
          height: 3px;
-         background-color: #FF5722; /* 주황색 */
+         background-color: var(--main-color);
          border-radius: 2px;
       }
 

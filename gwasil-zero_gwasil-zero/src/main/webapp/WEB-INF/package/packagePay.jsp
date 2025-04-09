@@ -25,14 +25,14 @@
         }
 
         h2 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
             margin-bottom: 30px;
             color: var(--text-dark);
         }
 
         .info {
-            font-size: 18px;
+            font-size: 16px;
             margin: 10px 0;
             color: var(--text-subtle); /* 회색으로 눈 편하게 */
         }
@@ -74,7 +74,6 @@
         <div class="info">🧾 주문번호 : <strong>{{ orderId }}</strong></div>
         <div class="info">📦 패키지명 : <strong>{{ packageName }}</strong></div>
         <div class="info">💰 금액 : <strong>{{ price.toLocaleString() }} 원</strong></div>
-        <p>세션 아이디 확인: ${sessionId}</p>
 
         <button class="pay-btn" @click="fnPay">결제하기</button>
     </div>

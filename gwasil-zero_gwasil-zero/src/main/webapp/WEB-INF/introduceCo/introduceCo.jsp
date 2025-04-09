@@ -97,7 +97,7 @@
         </div>
 
         <div class="cta-box">
-          <a href="/user/add.do" class="cta-button">회원가입 시 1회 무료 상담 가능</a>
+          <a href="/join/select.do" class="cta-button">회원가입 시 1회 무료 상담 가능</a>
         </div>
       </section>
 

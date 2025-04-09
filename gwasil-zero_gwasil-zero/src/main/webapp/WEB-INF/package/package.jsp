@@ -57,7 +57,7 @@
 		}
 	
 		.package-info {
-			font-size: 15px;
+			font-size: 16px;
 			margin-bottom: 16px;
 			color: #666;
 			min-height: 48px;
@@ -96,21 +96,21 @@
 			color: #222;
 			position: relative;
 			display: inline-block;
+			padding-top: 40px;
 			padding-bottom: 10px;
-
 			display: block;
 			text-align: center;
 			margin-left: auto;
 			margin-right: auto;
 		}
-	
+
 		.section-subtitle::after {
 			content: "";
 			position: absolute;
 			left: 50%;
 			transform: translateX(-50%);
 			bottom: 0;
-			width: 60px;
+			width: 150px;
 			height: 3px;
 			background-color: var(--main-color);
 			border-radius: 2px;

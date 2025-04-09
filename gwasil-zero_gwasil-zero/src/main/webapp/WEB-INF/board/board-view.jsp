@@ -299,8 +299,7 @@
 	              background-color: #007bff;
 	              color: #fff;
 	           }
-	        </style>
-
+	        </style>      
    </head>
 
    <body>

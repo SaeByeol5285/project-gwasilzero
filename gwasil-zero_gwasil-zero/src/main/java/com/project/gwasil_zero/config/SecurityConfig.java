@@ -68,3 +68,4 @@ public class SecurityConfig {
         firewall.setAllowUrlEncodedDoubleSlash(true);
         return firewall;
     }
+}

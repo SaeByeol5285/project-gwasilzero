@@ -34,15 +34,15 @@
 											<div class="lawyer-icons">
 												<a><img src="../../img/common/call.png" class="icon"
 														@click.stop="startChat(lawyer.lawyerId)"></a>
-												<a @click="toggleBookmark(lawyer.lawyerId)">
+												<a @click.stop="toggleBookmark(lawyer.lawyerId)">
 													<img :src="isBookmarked(lawyer.lawyerId) ? '/img/selectedBookmark.png' : '/img/common/bookmark.png'"
 														class="icon" />
-												</a>
+												</a>	
 											</div>
 											<div class="icons-text">
 												<div class="card-txt-small" @click.stop="startChat(lawyer.lawyerId)">
 													전화상담</div>
-												<div class="card-txt-small" @click="fnBookmark(lawyer.lawyerId)">북마크
+												<div class="card-txt-small" @click.stop="toggleBookmark(lawyer.lawyerId)">북마크
 												</div>
 											</div>
 											<div class="lawyer-content">
@@ -400,7 +400,7 @@
 				},
 				goToBoardView(boardNo) {
 					location.href = "/board/view.do?boardNo=" + boardNo;
-				}
+				},
 			},
 			mounted() {
 				this.fnGetBoardList();

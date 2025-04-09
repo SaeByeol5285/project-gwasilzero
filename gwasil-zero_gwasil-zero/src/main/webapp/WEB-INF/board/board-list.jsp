@@ -487,8 +487,12 @@
 				var self = this;
 				const params = new URLSearchParams(window.location.search);
 				const categoryParam = params.get('category');
+				const keywordParam = params.get('keyword');
 				if (categoryParam) {
 					self.category = categoryParam;
+				}
+				if (keywordParam) {
+					self.keyword = keywordParam;
 				}
 				self.fnBoardList();
 			}

@@ -38,8 +38,9 @@
                     </div>
                     <div class="right-area">
                         <div class="header-search-bar">
-                            <input type="text" placeholder="비슷한 블랙박스 영상을 찾아보세요!" />
-                            <img src="/img/common/logo3.png" class="top-icon" />
+                            <!-- 새별수정 -->
+                            <input type="text" placeholder="비슷한 블랙박스 영상을 찾아보세요!" v-model="keyword" @keyup.enter="goToBoard" />
+                            <img src="/img/common/logo3.png" class="top-icon" @click="goToBoard"/>
                         </div>
                         <div class="header-icons">
                             <!-- 알림 -->
@@ -166,7 +167,9 @@
                             { name: '이용문의', url: '/totalDocs/list.do?kind=HELP' },
                             { name: '사건 종류 가이드', url: '/totalDocs/list.do?kind=GUIDE' }
                         ]
-                    ]
+                    ],
+                    //새별
+                    keyword: ""
                 };
             },
             methods: {
@@ -357,7 +360,15 @@
 				},
 				beforeUnmount() {
 				    document.removeEventListener('click', this.handleClickOutside);
-				}
+				},
+                //새별
+                goToBoard() {
+                    if (this.keyword) {
+                        location.href = "/board/list.do?keyword=" + encodeURIComponent(this.keyword) + "&searchType=all";
+                    } else {
+                        alert("검색어를 입력해주세요.");
+                    }
+                }
             },
             mounted() {
 				console.log(self.sessionid);

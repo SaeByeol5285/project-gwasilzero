@@ -29,25 +29,24 @@
 							<div class="swiper mySwiper">
 								<div class="swiper-wrapper">
 									<div class="swiper-slide" v-for="lawyer in lawyerList" :key="lawyer.lawyerId">
-										<div class="lawyer-card">
+										<div class="lawyer-card" @click.stop="goToProfile(lawyer.lawyerId)">
 											<img class="lawyer-img" :src="lawyer.lawyerImg" />
 											<div class="lawyer-icons">
 												<a v-if="sessionType === 'user'"><img src="../../img/common/call.png"
-														class="icon" @click="startChat(lawyer.lawyerId)"></a>
-												<a @click="toggleBookmark(lawyer.lawyerId)">
+														class="icon" @click.stop="startChat(lawyer.lawyerId)"></a>
+												<a @click.stop="toggleBookmark(lawyer.lawyerId)">
 													<img :src="isBookmarked(lawyer.lawyerId) ? '/img/selectedBookmark.png' : '/img/common/bookmark.png'"
 														class="icon" />
 												</a>
 											</div>
 											<div class="icons-text">
 												<div v-if="sessionType === 'user'" class="card-txt-small"
-													@click="startChat(lawyer.lawyerId)">전화상담</div>
-												<div class="card-txt-small" @click="fnBookmark(lawyer.lawyerId)">북마크
+													@click.stop="startChat(lawyer.lawyerId)">전화상담</div>
+												<div class="card-txt-small" @click.stop="fnBookmark(lawyer.lawyerId)">북마크
 												</div>
 											</div>
 											<div class="lawyer-content">
 												<div class="lawyer-tags">
-													<!-- 대표 카테고리 db에서 가져와서 넣기 -->
 													<span class="tag">{{lawyer.mainCategoryName1}}</span>
 													<span class="tag">{{lawyer.mainCategoryName2}}</span>
 												</div>
@@ -55,8 +54,7 @@
 													<h3 class="lawyer-name">{{ lawyer.lawyerName }}<span
 															class="card-txt-small">변호사</span></h3>
 													<p class="lawyer-info" v-html="lawyer.lawyerInfo"></p>
-													<a class="btn-detail" @click="goToProfile(lawyer.lawyerId)">자세히
-														보기</a>
+													<a class="btn-detail" @click="goToProfile(lawyer.lawyerId)">자세히 보기</a>
 												</div>
 											</div>
 										</div>
@@ -66,6 +64,7 @@
 							<div class="swiper-pagination"></div>
 							<div class="swiper-button-next" style="color: #ff57226b"></div>
 							<div class="swiper-button-prev" style="color: #ff57226b"></div>
+
 						</div>
 					</div>
 				</section>
@@ -144,15 +143,12 @@
 					<div class="swiper reviewSwiper">
 						<div class="swiper-wrapper">
 							<div class="swiper-slide" v-for="review in reviewList" :key="review.reviewNo">
-								<li class="review-card">
-									<!-- 로고영역: 카드 내부지만 절대위치로 띄움 -->
+								<li class="review-card" @click="goToProfile(review.lawyerId)">
 									<div class="review-logo">
 										<img src="/img/common/logo3.png" class="review-icon" />
-										<span class="review-lawyerName">{{ review.lawyerName }}</span><span
-											class="small">변호사</span>
+										<span class="review-lawyerName">{{ review.lawyerName }}</span>
+										<span class="small">변호사</span>
 									</div>
-
-									<!-- 나머지 본문 -->
 									<div class="review-body">
 										<p class="review-highlight">“{{ review.highlight }}”</p>
 										<p class="review-content">{{ review.contents }}</p>
@@ -162,8 +158,8 @@
 
 							</div>
 						</div>
-						<div class="swiper-button-next" style="color: #ff57226b"></div>
-						<div class="swiper-button-prev" style="color: #ff57226b"></div>
+						<div class="swiper-button-next" style="color: #ff57226b; top: 40%;"></div>
+						<div class="swiper-button-prev" style="color: #ff57226b; top: 40%;"></div>
 						<div class="swiper-review-pagination"></div>
 
 					</div>
@@ -242,6 +238,7 @@
 					});
 				},
 				initSwiper() {
+					//변호사 스와이퍼
 					new Swiper('.mySwiper', {
 						slidesPerView: 4,
 						spaceBetween: 30,
@@ -262,12 +259,13 @@
 						},
 						centeredSlides: false,
 					});
-					//리뷰 슬라이더
+					//리뷰 스와이퍼
 					new Swiper(".reviewSwiper", {
 						slidesPerView: 3,             // 한 화면에 3개 보여줌
 						spaceBetween: 20,             // 카드 간 간격
 						slidesPerGroup: 3,            // 몇 장씩 넘길지
 						loop: true,
+						speed: 1000,
 						centeredSlides: false,        // 양 옆 잘림 방지
 						navigation: {
 							nextEl: ".swiper-button-next",

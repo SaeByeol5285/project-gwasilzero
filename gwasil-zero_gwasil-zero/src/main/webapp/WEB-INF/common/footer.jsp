@@ -9,6 +9,15 @@
 
         <title>footer.jsp</title>
         <style>
+            body {
+                padding-bottom: 0 !important;
+                /* 전체 하단 여백 방지 */
+            }
+
+            .footer-container {
+                padding: 40px 20px 20px;
+                /* top: 40px, right/left: 20px, bottom: 20px */
+            }
         </style>
     </head>
 
@@ -21,7 +30,7 @@
                         <img src="/img/logo1.png" alt="법무법인 과실제로 로고" class="footer-logo" />
                         <div class="footer-links">
                             <a href="/common/terms.do">이용약관</a>
-                            <a href="#" class="highlight">고객만족센터</a>
+                            <a href="/totalDocs/list.do?kind=HELP" class="highlight">이용문의</a>
                         </div>
                     </div>
 
@@ -38,16 +47,7 @@
 
     </html>
     <script>
-        const footer = Vue.createApp({
-            data() {
-                return {
-                                    
-                }
-            },
-            mounted() {
-            }
-        });
-        footer.mount('#footer');
+
     </script>
 
     ​

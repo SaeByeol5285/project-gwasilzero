@@ -322,7 +322,6 @@
 						return;
 					}
 
-
 					if (self.sessionType !== 'user') {
 						alert("일반 사용자만 북마크를 사용할 수 있습니다.");
 						return;

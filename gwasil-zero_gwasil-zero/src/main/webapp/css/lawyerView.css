@@ -162,20 +162,31 @@ body {
 }
 
 .tab-content {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-	padding-left: 30px;
-	padding-right: 30px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	padding: 0 30px;
+	align-items: flex-start; 
 }
 
 .info-box {
+	flex: 0 1 calc(50% - 10px);
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 12px;
     padding: 20px 30px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+	box-sizing: border-box;
+}
 
+.info-box:nth-child(odd):last-child {
+    flex: 0 1 calc(50% - 10px);
+}
+
+@media (max-width: 768px) {
+    .info-box {
+        flex: 1 1 100%;
+    }
 }
 
 .info-box h3 {

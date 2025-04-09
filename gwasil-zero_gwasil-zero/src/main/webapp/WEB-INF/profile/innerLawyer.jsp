@@ -46,7 +46,7 @@
                                 <div v-else class="no-data">선택된 전문분야가 없습니다.</div>
                                 <div class="lawyer-name">{{item.lawyerName}}</div>
                                 <div class="intro">
-                                    <span v-if="item.lawyerInfo" v-html="item.lawyerInfo"></span>
+                                    <span v-if="item.lawyerInfo" v-html="truncateText(item.lawyerInfo, 100)"></span>
                                     <span v-else class="no-data">등록된 소개가 없습니다.</span>
                                 </div>
                             </div>
@@ -144,6 +144,12 @@
                 },
                 fnMove: function () {
                     location.href = "/profile/personalLawyer.do"
+                },
+                truncateText(text, maxLength) {
+                    if (text && text.length > 50) {
+                        return text.substring(0, 50) + '...';
+                    }
+                    return text;
                 }
             },
             mounted() {

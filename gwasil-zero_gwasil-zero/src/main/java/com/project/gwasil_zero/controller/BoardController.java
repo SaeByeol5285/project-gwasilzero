@@ -146,7 +146,7 @@ public class BoardController {
 	        boardData.put("title", title);
 	        boardData.put("contents", contents);
 	        boardData.put("userId", sessionId);
-	        boardData.put("boardStatus", "A");
+	        boardData.put("boardStatus", "WAIT");
 	        boardData.put("category", category);
 	        boardData.put("usedPayOrderId", usedPayOrderId);
 	        boardData.put("usePackage", usePackage);

@@ -11,7 +11,7 @@
 		<link rel="stylesheet" href="/css/common.css">
 		<script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
-
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 		<title>main.jsp</title>
 	</head>
 
@@ -19,7 +19,7 @@
 		<jsp:include page="../common/header.jsp" />
 		<div id="app">
 			<div class="container">
-				<!-- 변호사 소개 영역 -->
+				<!-- 변호사 소개  영역 -->
 				<section class="lawyer-intro">
 					<div class="lawyer-flex">
 						<div class="swiper-container-area">
@@ -29,25 +29,24 @@
 							<div class="swiper mySwiper">
 								<div class="swiper-wrapper">
 									<div class="swiper-slide" v-for="lawyer in lawyerList" :key="lawyer.lawyerId">
-										<div class="lawyer-card">
+										<div class="lawyer-card" @click.stop="goToProfile(lawyer.lawyerId)">
 											<img class="lawyer-img" :src="lawyer.lawyerImg" />
 											<div class="lawyer-icons">
-												<a v-if="sessionType === 'user'"><img src="../../img/common/call.png"
-														class="icon" @click="startChat(lawyer.lawyerId)"></a>
+												<a><img src="../../img/common/call.png" class="icon"
+														@click.stop="startChat(lawyer.lawyerId)"></a>
 												<a @click="toggleBookmark(lawyer.lawyerId)">
 													<img :src="isBookmarked(lawyer.lawyerId) ? '/img/selectedBookmark.png' : '/img/common/bookmark.png'"
 														class="icon" />
 												</a>
 											</div>
 											<div class="icons-text">
-												<div v-if="sessionType === 'user'" class="card-txt-small"
-													@click="startChat(lawyer.lawyerId)">전화상담</div>
+												<div class="card-txt-small" @click.stop="startChat(lawyer.lawyerId)">
+													전화상담</div>
 												<div class="card-txt-small" @click="fnBookmark(lawyer.lawyerId)">북마크
 												</div>
 											</div>
 											<div class="lawyer-content">
 												<div class="lawyer-tags">
-													<!-- 대표 카테고리 db에서 가져와서 넣기 -->
 													<span class="tag">{{lawyer.mainCategoryName1}}</span>
 													<span class="tag">{{lawyer.mainCategoryName2}}</span>
 												</div>
@@ -66,6 +65,7 @@
 							<div class="swiper-pagination"></div>
 							<div class="swiper-button-next" style="color: #ff57226b"></div>
 							<div class="swiper-button-prev" style="color: #ff57226b"></div>
+
 						</div>
 					</div>
 				</section>
@@ -144,15 +144,12 @@
 					<div class="swiper reviewSwiper">
 						<div class="swiper-wrapper">
 							<div class="swiper-slide" v-for="review in reviewList" :key="review.reviewNo">
-								<li class="review-card">
-									<!-- 로고영역: 카드 내부지만 절대위치로 띄움 -->
+								<li class="review-card" @click="goToProfile(review.lawyerId)">
 									<div class="review-logo">
 										<img src="/img/common/logo3.png" class="review-icon" />
-										<span class="review-lawyerName">{{ review.lawyerName }}</span><span
-											class="small">변호사</span>
+										<span class="review-lawyerName">{{ review.lawyerName }}</span>
+										<span class="small">변호사</span>
 									</div>
-
-									<!-- 나머지 본문 -->
 									<div class="review-body">
 										<p class="review-highlight">“{{ review.highlight }}”</p>
 										<p class="review-content">{{ review.contents }}</p>
@@ -162,8 +159,8 @@
 
 							</div>
 						</div>
-						<div class="swiper-button-next" style="color: #ff57226b"></div>
-						<div class="swiper-button-prev" style="color: #ff57226b"></div>
+						<div class="swiper-button-next" style="color: #ff57226b; top: 40%;"></div>
+						<div class="swiper-button-prev" style="color: #ff57226b; top: 40%;"></div>
 						<div class="swiper-review-pagination"></div>
 
 					</div>
@@ -242,6 +239,7 @@
 					});
 				},
 				initSwiper() {
+					//변호사 스와이퍼
 					new Swiper('.mySwiper', {
 						slidesPerView: 4,
 						spaceBetween: 30,
@@ -262,12 +260,13 @@
 						},
 						centeredSlides: false,
 					});
-					//리뷰 슬라이더
+					//리뷰 스와이퍼
 					new Swiper(".reviewSwiper", {
 						slidesPerView: 3,             // 한 화면에 3개 보여줌
 						spaceBetween: 20,             // 카드 간 간격
 						slidesPerGroup: 3,            // 몇 장씩 넘길지
 						loop: true,
+						speed: 1000,
 						centeredSlides: false,        // 양 옆 잘림 방지
 						navigation: {
 							nextEl: ".swiper-button-next",
@@ -283,12 +282,24 @@
 					let self = this;
 
 					if (!self.sessionId) {
-						alert("로그인이 필요합니다.");
+						Swal.fire({
+							icon: "warning",
+							title: "로그인 필요",
+							text: "로그인이 필요합니다.",
+							confirmButtonColor: "#ff5c00"
+						}).then(() => {
+							location.href = "/user/login.do";
+						});
 						return;
 					}
 
 					if (self.sessionType !== 'user') {
-						alert("일반 사용자만 채팅을 이용할 수 있습니다.");
+						Swal.fire({
+							icon: "warning",
+							title: "이용 불가",
+							text: "변호사 사용자는 이용 불가능합니다.",
+							confirmButtonColor: "#ff5c00"
+						});
 						return;
 					}
 
@@ -318,12 +329,24 @@
 					const self = this;
 
 					if (!self.sessionId) {
-						alert("로그인이 필요합니다.");
+						Swal.fire({
+							icon: "warning",
+							title: "로그인 필요",
+							text: "로그인이 필요합니다.",
+							confirmButtonColor: "#ff5c00"
+						}).then(() => {
+							location.href = "/user/login.do";
+						});
 						return;
 					}
 
 					if (self.sessionType !== 'user') {
-						alert("일반 사용자만 북마크를 사용할 수 있습니다.");
+						Swal.fire({
+							icon: "warning",
+							title: "이용 불가",
+							text: "변호사 사용자는 이용 불가능합니다.",
+							confirmButtonColor: "#ff5c00"
+						});
 						return;
 					}
 

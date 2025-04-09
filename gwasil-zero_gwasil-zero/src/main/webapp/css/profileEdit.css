@@ -1,8 +1,14 @@
-/* 20250403 css 수정 */
 body {
   background-color: #f4f4f4;
   margin: 0;
   padding: 0;
+}
+
+/* 공통 contanier 크기 조절 */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
 }
 
 .layout {

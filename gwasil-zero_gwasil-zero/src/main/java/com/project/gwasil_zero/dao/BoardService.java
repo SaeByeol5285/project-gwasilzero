@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.gwasil_zero.mapper.BoardMapper;
 import com.project.gwasil_zero.mapper.BookmarkMapper;
+import com.project.gwasil_zero.mapper.NotificationMapper;
 import com.project.gwasil_zero.model.Board;
 import com.project.gwasil_zero.model.BoardCmt;
 import com.project.gwasil_zero.model.BoardFile;
@@ -22,6 +23,9 @@ import com.project.gwasil_zero.model.Pay;
 public class BoardService {
 	@Autowired
 	BoardMapper boardMapper;
+	
+	@Autowired
+	NotificationMapper notificationMapper;
 
 	@Autowired
 	BookmarkMapper bookmarkMapper;
@@ -47,6 +51,20 @@ public class BoardService {
 			 // 패키지 사용 처리 로직
 			if ("Y".equals((String)map.get("usePackage")) && (String)map.get("usedPayOrderId") != null) {
 	            boardMapper.updatePayStatusToUsed(map);
+	            // 브로드캐스트 
+	            HashMap<String, Object> map2 = new HashMap<String, Object>();
+	            map2.put("status", "I");
+	            List<String> lawyerList = notificationMapper.selectLawyerIdsByStatus(map2);
+	            for (String lawyerId : lawyerList) {
+	                HashMap<String, Object> notiMap = new HashMap<>();
+	                notiMap.put("receiverId", lawyerId);
+	                notiMap.put("notiType", "BROADCAST");
+	                notiMap.put("contents", "새로운 빠른답변 적용 게시글이 있습니다.");
+	                notiMap.put("senderId", (String)map.get("userId"));
+	                notiMap.put("boardNo", (String)map.get("boardNo"));
+
+	                notificationMapper.boardcastNotification(notiMap);
+	            }
 	        }
 			
 

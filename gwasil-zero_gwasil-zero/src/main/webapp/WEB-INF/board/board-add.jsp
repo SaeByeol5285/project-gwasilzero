@@ -84,6 +84,68 @@
 				font-weight: bold;
 				color: #444;
 			}
+
+			.tooltip-container {
+				position: relative;
+				display: inline-block;
+				cursor: pointer;
+			}
+
+			.tooltip-icon {
+				display: inline-block;
+				background-color: #999;
+				color: #fff;
+				border-radius: 50%;
+				width: 18px;
+				height: 18px;
+				font-size: 12px;
+				text-align: center;
+				line-height: 18px;
+				margin-left: 5px;
+			}
+
+			.tooltip-text {
+				visibility: hidden;
+				width: 250px;
+				background-color: #333;
+				color: #fff;
+				text-align: left;
+				border-radius: 5px;
+				padding: 8px;
+				position: absolute;
+				z-index: 1;
+				bottom: 125%;
+				left: 0;
+				opacity: 0;
+				transition: opacity 0.3s;
+				font-size: 13px;
+			}
+
+			.tooltip-container:hover .tooltip-text {
+				visibility: visible;
+				opacity: 1;
+			}
+
+			.btn-guide {
+				padding: 8px 14px;
+				font-size: 13px;
+				font-weight: 600;
+				color: #ff5c00;
+				background-color: #fff6f1;
+				border: 1px solid #ffc7a6;
+				border-radius: 20px;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+				transition: all 0.25s ease;
+				text-decoration: none;
+				display: inline-block;
+			}
+
+			.btn-guide:hover {
+				background-color: #ff5c00;
+				color: white;
+				border-color: #ff5c00;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+			}
 		</style>
 	</head>
 
@@ -101,14 +163,32 @@
 				<div class="form-group">
 					<div class="flex-between mb-10">
 						<label for="category">사고 유형</label>
-						<a href="/totalDocs/guide.do" class="btn btn-outline" target="_blank"
-							rel="noopener noreferrer">가이드라인 보기</a>
+						<a href="/totalDocs/guide.do" class="btn-guide" target="_blank" rel="noopener noreferrer">가이드라인
+							보기</a>
 					</div>
 					<select v-model="selectedCategory" class="select-box">
 						<option disabled value="">-- 사고 유형 선택 --</option>
 						<option v-for="cat in categoryList" :key="cat.value" :value="cat.value">{{ cat.label }}</option>
 					</select>
 				</div>
+
+				<div class="form-group">
+					<label>패키지 적용 여부</label>
+					<div style="display: flex; align-items: center; gap: 20px;">
+						<label><input type="radio" value="N" v-model="usePackage"> 패키지 적용 안함</label>
+						<label><input type="radio" value="Y" v-model="usePackage">
+							빠른답변 패키지
+							<span class="tooltip-container">
+								<span class="tooltip-icon">?</span>
+								<span class="tooltip-text">
+									빠른답변 패키지를 적용하면<br>
+									24시간 내로 빠른 답변을 받을 수 있습니다.
+								</span>
+							</span>
+						</label>
+					</div>
+				</div>
+
 
 				<div class="form-group">
 					<label>내용</label>
@@ -142,6 +222,7 @@
 					list: [],
 					title: "",
 					contents: "",
+					usePackage: "N",
 					isLoading: false,
 					statusMessage: "",
 					categoryList: [
@@ -157,7 +238,10 @@
 						{ value: "10", label: "기타/복합 사고" }
 					],
 					selectedCategory: "",
-					sessionId: "${sessionScope.sessionId}"
+					sessionId: "${sessionScope.sessionId}",
+					packageCount: 0,
+					packageList: [],
+					orderId: ""
 				};
 			},
 			methods: {
@@ -185,6 +269,14 @@
 					form.append("contents", self.contents);
 					form.append("category", self.selectedCategory);
 					form.append("sessionId", self.sessionId);
+					if (self.usePackage === "Y") {
+						form.append("usedPayOrderId", self.orderId);
+					}
+					else if (self.usePackage === "N") {
+						form.append("usedPayOrderId", "");
+					}
+					// 패키지 사용여부
+					form.append("usePackage", self.usePackage);
 
 					self.isLoading = true;
 					self.statusMessage = "업로드 및 모자이크 처리 중입니다... 잠시만 기다려주세요";
@@ -208,6 +300,37 @@
 							self.isLoading = false;
 						}
 					});
+				},
+				fnGetPackage() {
+					let self = this;
+					$.ajax({
+						url: "/board/packageCount.dox",
+						type: "POST",
+						data: { userId: self.sessionId },
+						success: function (res) {
+							self.packageCount = res.packageCount;
+							self.packageList = res.packageList;
+							self.orderId = self.packageList[0].orderId;
+							console.log("사용 가능 패키지 수:", self.packageCount);
+							console.log("사용 가능 패키지 목록:", self.packageList);
+						}
+					});
+
+				}
+			},
+			watch: {
+				usePackage(newVal) {
+					const self = this;
+					if (newVal === "Y" && self.packageCount === 0) {
+						const goBuy = confirm("사용 가능한 패키지가 없습니다.\n패키지를 구매하러 가시겠습니까?");
+						if (!goBuy) {
+							self.usePackage = "N";
+						} else {
+							// 예를 누르면 이동할 페이지가 있다면 여기에 추가
+							// location.href = "/pay/list.do";
+							self.usePackage = "N"; // 현재는 그냥 되돌리기로
+						}
+					}
 				}
 			},
 			created() {
@@ -216,6 +339,8 @@
 				if (categoryParam) {
 					this.selectedCategory = categoryParam;
 				}
+				this.fnGetPackage();
+
 			}
 		});
 		app.mount('#app');

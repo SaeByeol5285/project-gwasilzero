@@ -10,6 +10,7 @@
 			<meta charset="UTF-8">
 			<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 			<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 			<script src="/js/page-change.js"></script>
 			<title>마이페이지</title>
 			<style>
@@ -258,29 +259,12 @@
 					opacity: 0.4;
 					cursor: default;
 				}
-
-				.alert-banner {
-					background-color: #ffefdb;
-					border: 1px solid #ffa66a;
-					color: #d35400;
-					padding: 15px 20px;
-					border-radius: 10px;
-					margin-bottom: 20px;
-					font-weight: bold;
-					box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-				}
 			</style>
 		</head>
 
 		<body>
 			<jsp:include page="../common/header.jsp" />
 			<div id="app">
-
-				<!-- 알림 배너 -->
-				<div v-if="alertMessage" class="alert-banner">
-					{{ alertMessage }}
-				</div>
-
 				<h2 class="section-subtitle">마이페이지</h2>
 
 				<!-- 내 정보 -->
@@ -421,7 +405,7 @@
 							<tr v-if="chatList.length" v-for="chat in chatList" :key="chat.chatNo">
 								<td><a href="javascript:;" @click="fnChat(chat.chatNo)" class="message">{{ chat.message
 										}}</a></td>
-								<td>{{ chat.partnerName }}</td>
+								<td><a href="javascript:;" @click="fnProfile(chat.partnerId)" class="message">{{ chat.partnerName }}</a></td>
 							</tr>
 							<tr v-else>
 								<td colspan="2" style="text-align: center; color: #999;">채팅 내역이 없습니다.</td>
@@ -517,7 +501,6 @@
 						pageSize: 3,  // 글 3개씩
 						index: 0,
 						contractList : [],
-						alertMessage: "",
 					};
 				},
 				methods: {
@@ -568,6 +551,7 @@
 							dataType: "json",
 							success: function (data) {
 								if (data.result === "success" && data.notifications.length > 0) {
+									console.log("알림", data);
 									const message = data.notifications[0].contents;
 									Swal.fire({
 										title: '📢 알림',
@@ -602,6 +586,10 @@
 
 					fnBoardView(boardNo) {
 						pageChange("/board/view.do", { boardNo: boardNo });
+					},
+
+					fnProfile(lawyerId) {
+						pageChange("/profile/view.do", {lawyerId : lawyerId});
 					},
 
 					fnGetChatList() {
@@ -675,7 +663,7 @@
 							case "PAID": return "결제 완료";
 							case "REQUEST": return "환불 요청";
 							case "REFUNDED": return "환불 완료";
-							case "CANCELLED_REFUND": return "환불 취소";
+							case "USED" : return "사용 완료";
 							default: return status;
 						}
 					},

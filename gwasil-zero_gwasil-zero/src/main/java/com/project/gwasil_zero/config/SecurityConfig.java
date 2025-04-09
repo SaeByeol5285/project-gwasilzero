@@ -8,6 +8,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import java.util.List;
+
 
 @Configuration
 public class SecurityConfig {
@@ -42,6 +47,24 @@ public class SecurityConfig {
         firewall.setAllowUrlEncodedDoubleSlash(true); // // 허용
         return firewall;
     }
+    
+    // CORS 설정 필터
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(List.of("http://localhost:8080")); // 허용할 프론트엔드 주소
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
+
+    
+    
     
     
 }

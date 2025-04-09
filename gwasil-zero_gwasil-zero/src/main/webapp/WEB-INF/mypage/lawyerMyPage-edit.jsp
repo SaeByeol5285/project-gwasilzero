@@ -11,38 +11,60 @@
             #app {
                 max-width: 500px;
                 margin: 80px auto;
-                font-family: Arial, sans-serif;
+                font-family: 'Segoe UI', sans-serif;
                 font-size: 16px;
+                padding: 40px;
+                border-radius: 12px;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
             }
-
+        
+            h2 {
+                text-align: center;
+                color: #444;
+                margin-bottom: 30px;
+            }
+        
             label {
                 display: block;
-                margin: 10px 0 5px;
+                margin: 10px 0 6px;
+                font-weight: 600;
+                color: #333;
             }
-
-            input {
+        
+            .full-width {
                 width: 100%;
-                padding: 10px;
-                margin-bottom: 15px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
+                padding: 12px 14px;
+                box-sizing: border-box;
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                background-color: #fdfdfd;
+                transition: border-color 0.3s;
             }
-
-            button {
+        
+            .full-width:focus {
+                border-color: #ff7a3d;
+                outline: none;
+            }
+        
+            .save-button {
                 width: 100%;
-                padding: 12px;
-                background-color: #FF5722;
+                padding: 14px;
+                background-color: #ff7a3d;
                 color: #fff;
                 font-size: 16px;
                 border: none;
-                border-radius: 8px;
+                border-radius: 10px;
                 cursor: pointer;
+                font-weight: bold;
+                margin-top: 20px;
+                transition: background-color 0.3s, box-shadow 0.3s;
             }
-
-            button:hover {
-                background-color: #e64a00;
+        
+            .save-button:hover {
+                background-color: #ff5a1a;
+                box-shadow: 0 4px 10px rgba(255, 122, 61, 0.3);
             }
-        </style>
+        </style> 
     </head>
 
     <body>
@@ -58,21 +80,21 @@
             </div>            
             <div>
                 <label>이름</label>
-                <input v-model="lawyerInfo.lawyerName">
+                <input v-model="lawyerInfo.lawyerName" class="full-width">
             </div>
             <div>
                 <label>핸드폰 번호</label>
-                <input v-model="lawyerInfo.lawyerPhone">
+                <input v-model="lawyerInfo.lawyerPhone" class="full-width">
             </div>
             <div>
                 <label>이메일</label>
-                <input v-model="lawyerInfo.lawyerEmail">
+                <input v-model="lawyerInfo.lawyerEmail" class="full-width">
             </div>
             <div>
                 <label>사무소 주소</label>
-                <input v-model="lawyerInfo.lawyerAddr">
+                <input v-model="lawyerInfo.lawyerAddr" class="full-width">
             </div>
-            <button @click="fnSave">저장</button>
+            <button @click="fnSave" class="save-button">저장</button>
         </div>
         <jsp:include page="../common/footer.jsp" />
     </body>

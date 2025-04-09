@@ -16,6 +16,7 @@ import com.project.gwasil_zero.model.Board;
 import com.project.gwasil_zero.model.BoardFile;
 import com.project.gwasil_zero.model.Lawyer;
 import com.project.gwasil_zero.model.License;
+import com.project.gwasil_zero.model.Review;
 
 @Service
 public class ProfileService {
@@ -62,8 +63,8 @@ public class ProfileService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			Lawyer info = profileMapper.selectLawyer(map);
-			System.out.println("mainCategoryName1 = " + info.getMainCategoryName1());
-			System.out.println("mainCategoryName2 = " + info.getMainCategoryName2());
+//			System.out.println("mainCategoryName1 = " + info.getMainCategoryName1());
+//			System.out.println("mainCategoryName2 = " + info.getMainCategoryName2());
 			List<License> license = profileMapper.lawyerLicenseList(map);
 			List<Board> boardList = profileMapper.lawyerBoardList(map);
 			List<BoardFile> boardFileList = profileMapper.lawyerBoardFileList(map);
@@ -92,6 +93,8 @@ public class ProfileService {
 	    List<HashMap<String, Object>> licenseList = (List<HashMap<String, Object>>) paramMap.get("licenseList");
 	    List<Map<String, String>> deletedLicenseList = (List<Map<String, String>>) paramMap.get("deletedLicenseList");
 	    String uploadPath = (String) paramMap.get("uploadPath");
+	    String mainCategories1 = (String) paramMap.get("mainCategories1");
+	    String mainCategories2 = (String) paramMap.get("mainCategories2");
 
 	    // 1. LAWYER 테이블 업데이트
 	    HashMap<String, Object> param = new HashMap<>();
@@ -100,6 +103,9 @@ public class ProfileService {
 	    param.put("lawyerCareer", lawyerCareer);
 	    param.put("lawyerTask", lawyerTask);
 	    param.put("lawyerEdu", lawyerEdu);
+	    param.put("mainCategories1", mainCategories1);
+	    param.put("mainCategories2", mainCategories2);
+	    
 	    profileMapper.updateLawyer(param);
 
 	    // 2. 삭제할 LICENSE 항목 처리
@@ -149,7 +155,17 @@ public class ProfileService {
 
 	    // 4. 대표 사건 업데이트
 	    editMainCases(paramMap);
-
+	    
+	    // 5. 전문 분야 업데이트 (NEW)
+//	    String mainCategories1 = (String) paramMap.get("mainCategories1");
+//	    String mainCategories2 = (String) paramMap.get("mainCategories2");
+//
+//	    HashMap<String, Object> categoriesParam = new HashMap<>();
+//	    categoriesParam.put("lawyerId", lawyerId);
+//	    categoriesParam.put("mainCategories1", mainCategories1);
+//	    categoriesParam.put("mainCategories2", mainCategories2);
+//	    profileMapper.updateLawyerCategories(categoriesParam);    
+	    
 	    resultMap.put("result", "success");
 	    return resultMap;
 	}
@@ -179,5 +195,28 @@ public class ProfileService {
 	        e.printStackTrace();
 	    }
 	}
+
+	public List<Map<String, Object>> getCategories() {
+		return profileMapper.selectCategories(); 
+	}
+  
+	public HashMap<String, Object> getLReviewList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+			List<Review> list = profileMapper.selectReviewList(map);
+			int count = profileMapper.selectReviewCnt(map);			
+			resultMap.put("list", list);
+			resultMap.put("count", count);
+			
+			resultMap.put("result", "success");
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", "failed");
+		}
+
+		return resultMap;	
+		}
 
 }

@@ -18,5 +18,7 @@ public interface PackageMapper {
 	List<Pay> selectpayList(HashMap<String, Object> map);
 
 	void insertPaymentLawyer(HashMap<String, Object> map);
+
+	void updateAuthEndTime(HashMap<String, Object> map);
   
 }

@@ -3,10 +3,16 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 	
 <mapper namespace="com.project.gwasil_zero.mapper.ProductMapper">
-	<select id = "selectProductList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Packages">
-		SELECT * 
-		FROM packages
-	</select>	
+	<select id="selectProductList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Packages">
+    SELECT * 
+	    FROM packages
+	    ORDER BY package_name ASC
+	    offset #{page} rows fetch next #{pageSize} rows only
+	</select>
+	
+	<select id="selectProductCount" parameterType="hashmap" resultType="int">
+	    SELECT COUNT(*) FROM packages
+	</select>
 	
 	<delete id = "deleteProductList" parameterType="hashmap" >
 		DELETE FROM PACKAGES WHERE PACKAGE_NAME IN 
@@ -36,7 +42,7 @@
 	</update>
 	
 	<select id="selectRefundList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
-		SELECT 
+	    SELECT 
 	        P.ORDER_ID,
 	        P.PACKAGE_NAME,
 	        P.PAY_TIME,
@@ -47,14 +53,23 @@
 	            WHEN P.USER_ID IS NOT NULL THEN 'U'
 	            WHEN P.LAWYER_ID IS NOT NULL THEN 'L'
 	        END AS USERTYPE,
-	        NVL(P.USER_ID, P.LAWYER_ID) AS RECEIVER_ID
+	        P.USER_ID,
+	        P.LAWYER_ID
 	    FROM PAY P
 	    LEFT JOIN TBL_USER U ON P.USER_ID = U.USER_ID
 	    LEFT JOIN LAWYER L ON P.LAWYER_ID = L.LAWYER_ID
 	    WHERE P.PAY_STATUS = 'REQUEST'
+	    ORDER BY P.PAY_TIME DESC
+	    offset #{refundPage} rows fetch next #{refundPageSize} rows only
 	</select>
 	
-	<update id="upadteRefund" parameterType="hashmap">
+	<select id="selectRefundCount" parameterType="hashmap" resultType="int">
+	    SELECT COUNT(*) 
+	    FROM PAY P
+	    WHERE P.PAY_STATUS = 'REQUEST'
+	</select>
+
+	<update id="updateRefund" parameterType="hashmap">
 	    UPDATE PAY
 	    SET 
 	        PAY_STATUS = 'REFUNDED',
@@ -74,7 +89,7 @@
 	    INSERT INTO NOTIFICATION (
 	        NOTI_NO, RECEIVER_ID, NOTI_TYPE, CONTENTS, IS_READ, CREATED_AT, SENDER_ID
 	    ) VALUES (
-	        SEQ_NOTIFICATION.NEXTVAL,
+	        NOTIFICATION_SEQ.NEXTVAL,
 	        #{receiverId},
 	        #{notiType},
 	        #{contents},

@@ -12,28 +12,33 @@ import com.project.gwasil_zero.model.User;
 @Mapper
 public interface UserMapper {
 
-	List<User> selectUser(HashMap<String, Object> map);
+   List<User> selectUser(HashMap<String, Object> map);
 
-	User searchUser(HashMap<String, Object> map);
+   User searchUser(HashMap<String, Object> map);
 
-	Lawyer searchLawyer(HashMap<String, Object> map);
+   Lawyer searchLawyer(HashMap<String, Object> map);
 
-	List<Lawyer> selectLawyer(HashMap<String, Object> map);
+   List<Lawyer> selectLawyer(HashMap<String, Object> map);
 
-	Lawyer selectLawyerId(HashMap<String, Object> map);
+   Lawyer selectLawyerId(HashMap<String, Object> map);
 
-	User CheckUser(HashMap<String, Object> map);
+   User CheckUser(HashMap<String, Object> map);
 
-	User selectUserId(HashMap<String, Object> map);
+   User selectUserId(HashMap<String, Object> map);
 
-	void selectUserPwd(HashMap<String, Object> map);
+   void selectUserPwd(HashMap<String, Object> map);
 
-	int updateUserStatus(HashMap<String, Object> map);
-	
-	int updateUserPassword(HashMap<String, Object> map);
+   int updateUserStatus(HashMap<String, Object> map);
+   
+   int updateUserPassword(HashMap<String, Object> map);
 
-	Lawyer CheckLawyer(HashMap<String, Object> map);
+   Lawyer CheckLawyer(HashMap<String, Object> map);
 
-	int updateLawyerPassword(HashMap<String, Object> map);
+   int updateLawyerPassword(HashMap<String, Object> map);
+
+   void insertGoogleUser(HashMap<String, Object> userMap);
+   
+   HashMap<String, Object> selectUserByEmail(HashMap<String, Object> map);
+
 
 }

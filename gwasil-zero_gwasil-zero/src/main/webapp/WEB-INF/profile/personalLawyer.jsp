@@ -20,6 +20,20 @@
                     <div>
                         <h2 class="section-subtitle">개인 변호사</h2>
                     </div>
+                    <div class="lawMove-menu">
+                        <button
+                            class="lawMove-btn"
+                            :class="{ 'active': currentPage === 'innerLawyer' }"
+                            @click="fnMove('innerLawyer')">
+                            <span>소속 변호사</span>
+                        </button>
+                        <button
+                            class="lawMove-btn"
+                            :class="{ 'active': currentPage === 'personalLawyer' }"
+                            @click="fnMove('personalLawyer')">
+                            <span>개인 변호사</span>
+                        </button>
+                    </div>
                     <div class="content-wrapper">
                         <div class="filter-bar">
                             <label>변호사 찾기</label>
@@ -30,7 +44,6 @@
                             </select>
                             <input type="text" v-model="keyword" @keyup.enter="fnGetList" placeholder="검색어">
                             <button @click="fnGetList">검색</button>
-                            <a href="javascript:;" @click="fnMove">소속 변호사 &gt;</a>
                         </div>
                         <div class="lawyer-list">
                             <div class="lawyer-card" v-for="item in list" :key="item.lawyerId"
@@ -74,7 +87,8 @@
                     keyword: "",
                     searchOption: "all",
                     index: 0,
-                    page: 1
+                    page: 1,
+                    currentPage: 'personalLawyer'
                 };
             },
             methods: {
@@ -131,8 +145,14 @@
 
                     pageChange("/profile/view.do", { lawyerId: lawyerId });
                 },
-                fnMove: function () {
-                    location.href = "/profile/innerLawyer.do"
+                fnMove(page) {
+                    if (page === 'innerLawyer') {
+                        this.currentPage = 'innerLawyer';
+                        location.href = "/profile/innerLawyer.do";  
+                    } else if (page === 'personalLawyer') {
+                        this.currentPage = 'personalLawyer';
+                        location.href = "/profile/personalLawyer.do";  
+                    }
                 },
                 truncateText(text, maxLength) {
                     if (text && text.length > 50) {

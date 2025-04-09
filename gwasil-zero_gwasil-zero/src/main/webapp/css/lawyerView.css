@@ -19,8 +19,6 @@ body {
 .content {
     max-width: 1200px;
     margin: 0px auto;
-	border-radius: 12px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 	padding-top: 20px;
 	padding-bottom: 40px;
 }
@@ -62,7 +60,7 @@ body {
 
 .profile-left,
 .profile-center {
-    height: 160px;
+    height: 300px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -176,7 +174,7 @@ body {
 
 .info-box {
     display: inline-block;
-    width: 90%;
+    width: 100%;
     margin-bottom: 20px;
     break-inside: avoid;
     background: #fff;
@@ -368,13 +366,9 @@ body {
 
 /* ai */
 /* AI 분석 결과 박스 */
-.llm-section label {
-	margin-right: 10px;
-}
-
 .llm-result {
 	background: linear-gradient(to right, #f4f2ff, #eceeff);
-	border-left: 5px solid #ff9900;
+	border-left: 5px solid #6a11cb;
 	border-radius: 10px;
 	padding: 18px 22px;
 	margin-top: 18px;
@@ -389,7 +383,7 @@ body {
 }
 
 .llm-result strong {
-	color: #ff9900;
+	color: #6a11cb;
 	font-weight: 600;
 	font-size: 14px;
 	display: block;
@@ -405,24 +399,23 @@ body {
 	font-size: 14px;
 	outline: none;
 	transition: border 0.3s ease;
-	margin-right: 10px;
 }
 
 #questionInput:focus {
-	border-color: #ff9900;
+	border-color: #6a11cb;
 	box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.15);
 }
 
 /* 버튼 */
 .ai-button {
 	background: transparent;
-	border: 2px solid #ff9900;
-	color: #ff9900;
+	border: 2px solid #6a11cb;
+	color: #6a11cb;
 	padding: 6px 14px;
 	border-radius: 6px;
 	font-weight: 500;
 	font-size: 14px;
-	margin-right: 6px;
+	margin-left: 6px;
 	cursor: pointer;
 	transition: all 0.3s ease;
 }

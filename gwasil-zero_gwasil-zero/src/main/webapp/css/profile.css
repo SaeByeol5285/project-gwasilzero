@@ -32,7 +32,7 @@ body {
 	left: 50%;
 	transform: translateX(-50%);
 	bottom: 0;
-	width: 150px;
+	width: 60px;
 	height: 3px;
 	background-color: var(--main-color);
 	border-radius: 2px;
@@ -42,8 +42,6 @@ body {
 	max-width: 1200px;
 	margin: 50px auto;
 	padding: 40px 20px;
-	border-radius: 12px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .lawyer-list {
@@ -156,7 +154,27 @@ body {
 }
 
 .filter-bar button:hover {
-	background-color: #e65100;
+	background-color: #ffe6db;
+	color: #ff5c00;
+}
+
+.filter-bar .btn.active {
+	background-color: #ff5c00;
+	color: white;
+	font-weight: bold;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-bar .btn:disabled {
+	opacity: 0.4;
+	cursor: default;
+}
+
+.filter-bar .btn.active {
+	background-color: #ff5c00;
+	color: white;
+	font-weight: bold;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* 페이징 */
@@ -209,6 +227,39 @@ body {
 	background-color: #ff6b1a;
 	/* 더 진한 주황 */
 	color: #fff;
+}
+
+/* 변호사 소속 이동버튼 */
+.lawMove-menu {
+	display: flex;
+	justify-content: center;
+	gap: 12px;
+	margin: 40px 0 30px;
+}
+
+.lawMove-btn {
+	padding: 12px 24px;
+	border: none;
+	border-radius: 999px;
+	background-color: #f6f6f6;
+	font-size: 16px;
+	font-weight: 500;
+	color: #444;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	box-shadow: inset 0 0 0 1px #ddd;
+}
+
+.lawMove-btn:hover {
+	background-color: #ffece1;
+	color: #ff5c00;
+}
+
+.lawMove-btn.active {
+	background-color: #ff5c00;
+	color: #fff;
+	font-weight: 600;
+	box-shadow: none;
 }
 
 /* 프로필 수정 전용 */

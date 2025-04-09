@@ -36,4 +36,9 @@ public interface UserMapper {
 
 	int updateLawyerPassword(HashMap<String, Object> map);
 
+	void insertGoogleUser(HashMap<String, Object> userMap);
+	
+	HashMap<String, Object> selectUserByEmail(HashMap<String, Object> map);
+
+
 }

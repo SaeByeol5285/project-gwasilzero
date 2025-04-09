@@ -323,11 +323,8 @@
                                 // logoutWindow.close();
                                 setTimeout(function () {
                                     logoutWindow.close();
-                                    location.href = "/common/main.do";
-
+                                    location.href = "/common/main.do";                                   
                                 }, 100);
-
-
                             } else {
                                 alert("로그아웃 실패");
                             }

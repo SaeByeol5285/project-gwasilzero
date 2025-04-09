@@ -38,7 +38,14 @@ public class CommonController {
 
 		return "/common/terms";
 	}
-	
+
+	// 에러페이지
+	@RequestMapping("/common/error.do")
+	public String error(Model model) throws Exception {
+
+		return "/common/error";
+	}
+
 
 	// 메인-최신게시글
 	@RequestMapping(value = "/common/boardList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -57,7 +64,7 @@ public class CommonController {
 		resultMap = commonService.getLawyerList(map);
 		return new Gson().toJson(resultMap);
 	}
-	
+
 	// 리뷰 리스트
 	@RequestMapping(value = "/common/reviewList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody

@@ -6,6 +6,10 @@
     <meta charset="UTF-8">
     <script src="https://code.jquery.com/jquery-3.7.1.js"
       integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
     <title>비밀번호 재설정</title>
     <style>
       .form-section {
@@ -19,7 +23,7 @@
       }
 
       input {
-        width: 100%;
+        width: 93%;
         padding: 12px;
         margin-bottom: 10px;
         border: 2px solid #e5e7eb;
@@ -39,12 +43,15 @@
   </head>
 
   <body>
+    <jsp:include page="../common/header.jsp" />
+
     <div class="form-section">
       <h2>비밀번호 재설정</h2>
       <input id="newPwd" type="password" placeholder="새 비밀번호 입력" />
       <input id="confirmPwd" type="password" placeholder="비밀번호 확인" />
       <button onclick="submitNewPassword()">변경하기</button>
     </div>
+    <jsp:include page="../common/footer.jsp" />
   </body>
 
   </html>

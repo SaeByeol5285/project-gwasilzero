@@ -7,7 +7,7 @@
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-	<title>상품 관리</title>
+	<title>과실 zero - 관리자 페이지</title>
     <style>
         .content-container a {
             color: #ff6b00;

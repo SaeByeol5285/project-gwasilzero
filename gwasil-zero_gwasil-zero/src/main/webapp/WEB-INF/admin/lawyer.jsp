@@ -49,15 +49,19 @@
                                 </td>
                             </tr>
                         </table>
-                        <!-- 승인 대기 목록 페이징 -->
-                        <div class="pagination">
-                            <a v-if="waitPage != 1" href="javascript:;" @click="fnWaitPageMove('prev')"
-                                class="page-btn">&lt;</a>
-                            <a v-for="num in waitPageCount" :class="{active: waitPage === num}" href="javascript:;"
-                                @click="fnWaitPage(num)" class="page-btn">{{ num }}</a>
-                            <a v-if="waitPage != waitPageCount" href="javascript:;" @click="fnWaitPageMove('next')"
-                                class="page-btn">&gt;</a>
+                        <!-- 승인 대기 목록 페이징 -->                     
+                        <div class="pagination-container">
+                            <button class="btn" @click="fnWaitPrevPage" :disabled="waitPage === 1">〈 이전</button>
+                            <button 
+                            v-for="n in waitPageCount" 
+                            :key="n" 
+                            @click="fnWaitPage(n)" 
+                            :class="['btn', waitPage === n ? 'active' : '']">
+                            {{ n }}
+                            </button>
+                            <button class="btn" @click="fnWaitNextPage" :disabled="waitPage === waitPageCount">다음 〉</button>
                         </div>
+
                         <!-- 승인 완료 변호사 목록 -->
                         <h3>현재 변호사 목록 (총 : {{ lawPassedTotal }}명 등록중)</h3>
                         <table>
@@ -86,14 +90,19 @@
                                 </td>
                             </tr>
                         </table>
-                        <div class="pagination">
-                            <a v-if="passedPage != 1" href="javascript:;" @click="fnPassedPageMove('prev')"
-                                class="page-btn">&lt;</a>
-                            <a v-for="num in passedPageCount" :class="{active: passedPage === num}" href="javascript:;"
-                                @click="fnPassedPage(num)" class="page-btn">{{ num }}</a>
-                            <a v-if="passedPage != passedPageCount" href="javascript:;"
-                                @click="fnPassedPageMove('next')" class="page-btn">&gt;</a>
+                        <!-- 승인 완료 변호사 목록 페이징 -->
+                        <div class="pagination-container">
+                            <button class="btn" @click="fnPassedPrevPage" :disabled="passedPage === 1">〈 이전</button>
+                            <button 
+                            v-for="n in passedPageCount" 
+                            :key="n" 
+                            @click="fnPassedPage(n)" 
+                            :class="['btn', passedPage === n ? 'active' : '']">
+                            {{ n }}
+                            </button>
+                            <button class="btn" @click="fnPassedNextPage" :disabled="passedPage === passedPageCount">다음 〉</button>
                         </div>
+
                         <!-- 탈퇴 변호사 목록 -->
                         <h3>탈퇴 변호사 목록 (총 : {{ lawOutTotal }}명 탈퇴)</h3>
                         <table>
@@ -116,13 +125,18 @@
                                 </td>
                             </tr>
                         </table>
-                        <div class="pagination">
-                            <a v-if="outPage != 1" href="javascript:;" @click="fnOutPageMove('prev')"
-                                class="page-btn">&lt;</a>
-                            <a v-for="num in outPageCount" :class="{active: outPage === num}" href="javascript:;"
-                                @click="fnOutPage(num)" class="page-btn">{{ num }}</a>
-                            <a v-if="outPage != outPageCount" href="javascript:;" @click="fnOutPageMove('next')"
-                                class="page-btn">&gt;</a>
+
+                        <!-- 탈퇴 변호사 목록 페이징 -->
+                        <div class="pagination-container">
+                            <button class="btn" @click="fnOutPrevPage" :disabled="outPage === 1">〈 이전</button>
+                            <button 
+                            v-for="n in outPageCount"
+                            :key="n" 
+                            @click="fnOutPage(n)" 
+                            :class="['btn', outPage === n ? 'active' : '']">
+                            {{ n }}
+                            </button>
+                            <button class="btn" @click="fnOutNextPage" :disabled="outPage === outPageCount">다음 〉</button>
                         </div>
                     </div>
                 </div>
@@ -183,16 +197,21 @@
                         }
                     });
                 },
-                fnWaitPage(num) {
-                    var self = this;
-                    self.waitPage = num;
-                    self.fnLawWaitList();
+                fnWaitPage(n) {
+                    this.waitPage = n;
+                    this.fnLawWaitList();
                 },
-                fnWaitPageMove(dir) {
-                    var self = this;
-                    if (dir === 'prev' && self.waitPage > 1) self.waitPage--;
-                    else if (dir === 'next' && self.waitPage < self.waitPageCount) self.waitPage++;
-                    self.fnLawWaitList();
+                fnWaitPrevPage() {
+                    if (this.waitPage > 1) {
+                    this.waitPage--;
+                    this.fnLawWaitList();
+                    }
+                },
+                fnWaitNextPage() {
+                    if (this.waitPage < this.waitPageCount) {
+                        this.waitPage++;
+                        this.fnLawWaitList();
+                    }
                 },
                 fnApprove(lawyerId) {
                     var self = this;
@@ -233,16 +252,21 @@
                         }
                     });
                 },
-                fnPassedPage(num) {
-                    var self = this;
-                    self.passedPage = num;
-                    self.fnLawPassedList();
+                fnPassedPage(n) {
+                    this.passedPage = n;
+                    this.fnLawPassedList();
                 },
-                fnPassedPageMove(dir) {
-                    var self = this;
-                    if (dir === 'prev' && self.passedPage > 1) self.passedPage--;
-                    else if (dir === 'next' && self.passedPage < self.passedPageCount) self.passedPage++;
-                    self.fnLawPassedList();
+                fnPassedPrevPage() {
+                    if (this.passedPage > 1) {
+                    this.passedPage--;
+                    this.fnLawPassedList();
+                    }
+                },
+                fnPassedNextPage() {
+                    if (this.passedPage < this.passedPageCount) {
+                        this.passedPage++;
+                        this.fnLawPassedList();
+                    }
                 },
                 fnCancel(lawyerId) {
                     var self = this;
@@ -283,16 +307,21 @@
                         }
                     });
                 },
-                fnOutPage(num) {
-                    var self = this;
-                    self.outPage = num;
-                    self.fnLawOutList();
+                fnOutPage(n) {
+                    this.outPage = n;
+                    this.fnLawOutList();
                 },
-                fnOutPageMove(dir) {
-                    var self = this;
-                    if (dir === 'prev' && self.outPage > 1) self.outPage--;
-                    else if (dir === 'next' && self.outPage < self.outPageCount) self.outPage++;
-                    self.fnLawOutList();
+                fnOutPrevPage() {
+                    if (this.outPage > 1) {
+                    this.outPage--;
+                    this.fnLawOutList();
+                    }
+                },
+                fnOutNextPage() {
+                    if (this.outPage < this.outPageCount) {
+                        this.outPage++;
+                        this.fnLawOutList();
+                    }
                 },
                 fnComeBack(lawyerId) {
                     var self = this;

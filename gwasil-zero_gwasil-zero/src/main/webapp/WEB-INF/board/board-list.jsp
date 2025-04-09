@@ -15,10 +15,18 @@
 
 	</head>
 	<style>
-		.card-container {
-			width: 66%;
+		.category-wrap,
+		.search-bar,
+		.card-container,
+		.pagination-container {
+			width: 1200px;
+			max-width: 100%;
 			margin: 0 auto;
-			padding: 1px 20px;
+			box-sizing: border-box;
+		}
+
+		.card-container {
+			padding: 20px;
 		}
 
 		.card-grid {
@@ -80,15 +88,12 @@
 		}
 
 		.category-wrap {
-			width: 66%;
-			margin: 30px auto;
-			/* 중앙 정렬 + 위아래 여백 */
+			margin: 20px auto;
 			display: flex;
-			flex-wrap: wrap;
-			gap: 12px;
-			/* 버튼 간 간격 */
 			justify-content: center;
-			/* 가운데 정렬 */
+			align-items: center;
+			gap: 10px;
+			flex-wrap: wrap;
 		}
 
 		.category-btn {
@@ -118,12 +123,11 @@
 		}
 
 		.search-bar {
+			margin: 20px auto;
 			display: flex;
 			justify-content: center;
 			align-items: center;
 			gap: 10px;
-			margin: 20px auto;
-			width: 66%;
 			flex-wrap: wrap;
 		}
 
@@ -240,11 +244,11 @@
 		}
 
 		.pagination-container {
+			margin-top: 40px;
+			margin-bottom: 40px;
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			margin-top: 30px;
-			margin-bottom: 20px;
 			gap: 6px;
 		}
 

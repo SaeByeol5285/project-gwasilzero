@@ -10,10 +10,12 @@
 	<script src="/js/page-change.js"></script>
 	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
 	<style>
-		.container { max-width: 900px; margin: 40px auto; padding: 30px; }
 		.tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-		* {
-		font-family: 'Noto Sans KR', sans-serif;
+		*,
+		*::before,
+		*::after {
+			font-family: 'Noto Sans KR', sans-serif;
+			box-sizing: border-box;
 		}
 
 		.tab-btn {
@@ -69,22 +71,28 @@
 		.section-subtitle {
 			font-size: 28px;
 			font-weight: bold;
-			margin-bottom: 5px;
+			margin-bottom: 30px;
 			text-align: center;
 			color: #222;
 			position: relative;
+			display: inline-block;
+			padding-top: 40px;
+			padding-bottom: 10px;
 			display: block;
 			text-align: center;
+			margin-left: auto;
+			margin-right: auto;
 		}
+
 		.section-subtitle::after {
 			content: "";
 			position: absolute;
 			left: 50%;
 			transform: translateX(-50%);
-			bottom: -8px;
+			bottom: 0;
 			width: 60px;
 			height: 3px;
-			background-color: #FF5722;
+			background-color: var(--main-color);
 			border-radius: 2px;
 		}
 		#map { width: 100%; height: 500px; border-radius: 10px; }

@@ -18,12 +18,14 @@
 			}
 
 			.view-container {
-				width: 65%;
+				width: 1200px;
+				max-width: 100%;
 				margin: 40px auto;
 				padding: 30px;
 				background-color: #fff;
 				border-radius: 10px;
 				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+				box-sizing: border-box;
 			}
 
 			.input-title {
@@ -94,9 +96,12 @@
 
 			/* 댓글 스타일 */
 			.comment-wrapper {
-				border-top: 1px solid #eee;
-				margin-top: 40px;
+				width: 1200px;
+				max-width: 100%;
+				margin: 60px auto 0;
 				padding-top: 30px;
+				border-top: 1px solid #eee;
+				box-sizing: border-box;
 			}
 
 			.comment-wrapper h4 {
@@ -201,17 +206,16 @@
 
 				<button @click="submitEdit" class="btn btn-write" style="margin-right: 5px;">✏️ 수정 완료</button>
 				<button @click="deleteBoard" class="btn btn-red">🗑️ 삭제</button>
+			</div>
+			<div class="comment-wrapper">
+				<h4>댓글</h4>
+				<textarea v-model="newComment" placeholder="댓글을 입력하세요" rows="3"></textarea>
+				<button @click="submitComment" class="btn btn-blue">💬 댓글 등록</button>
 
-				<div class="comment-wrapper">
-					<h4>댓글</h4>
-					<textarea v-model="newComment" placeholder="댓글을 입력하세요" rows="3"></textarea>
-					<button @click="submitComment" class="btn btn-blue">💬 댓글 등록</button>
-
-					<div class="comment-list" v-if="comments.length > 0">
-						<div class="comment-item" v-for="(cmt, index) in comments" :key="index">
-							<div class="comment-meta">{{ cmt.lawyerName }} | {{ cmt.cdate }}</div>
-							<div class="comment-text">{{ cmt.contents }}</div>
-						</div>
+				<div class="comment-list" v-if="comments.length > 0">
+					<div class="comment-item" v-for="(cmt, index) in comments" :key="index">
+						<div class="comment-meta">{{ cmt.lawyerName }} | {{ cmt.cdate }}</div>
+						<div class="comment-text">{{ cmt.contents }}</div>
 					</div>
 				</div>
 			</div>

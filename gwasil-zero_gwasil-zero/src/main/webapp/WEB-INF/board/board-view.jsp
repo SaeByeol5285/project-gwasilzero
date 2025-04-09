@@ -11,9 +11,11 @@
       <title>게시글 상세보기</title>
       <style>
          .view-container {
-            width: 65%;
+            width: 1200px;
+            max-width: 100%;
             margin: 40px auto;
             padding: 30px;
+            box-sizing: border-box;
             border: 1px solid #ddd;
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -83,10 +85,12 @@
 
          /* 댓글 영역 */
          .comment-list {
-            width: 70%;
+            width: 1200px;
+            max-width: 100%;
             margin: 40px auto;
             padding-top: 20px;
             border-top: 1px solid #eee;
+            box-sizing: border-box;
          }
 
          .comment-list h4 {
@@ -182,12 +186,14 @@
 
          /* 연관 게시글 영역 */
          .related-wrapper {
-            width: 70%;
+            width: 1200px;
+            max-width: 100%;
             margin: 60px auto;
             text-align: center;
             border-top: 3px double #FF5722;
             border-bottom: 3px double #FF5722;
             padding: 20px 0;
+            box-sizing: border-box;
          }
 
          .related-title {

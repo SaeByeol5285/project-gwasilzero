@@ -72,9 +72,9 @@
 
 
 	<insert id = "insertBoard" parameterType="hashmap"  useGeneratedKeys="true" keyColumn="board_no" keyProperty="boardNo">
-		insert into board (board_no, board_title, contents, user_id, cnt, cdate, udate, board_status, lawyer_id, lawyer_review) 
+		insert into board (board_no, board_title, contents, user_id, cnt, cdate, udate, board_status, lawyer_id, lawyer_review, use_package) 
 		values
-		(board_seq.nextval, #{title}, #{contents}, #{userId}, 0, SYSDATE, SYSDATE, #{boardStatus}, null, null)
+		(board_seq.nextval, #{title}, #{contents}, #{userId}, 0, SYSDATE, SYSDATE, #{boardStatus}, null, null,#{usePackage,jdbcType=VARCHAR})
 	</insert>
 	
 	<insert id="insertCategory" parameterType="hashmap">
@@ -157,28 +157,72 @@
 	
 	<!-- 키워드 기반 추출 -->
 	<select id="selectRelatedBoards" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Board">
-		   SELECT DISTINCT b.*,
-                  m.user_name as userName, l.lawyer_name as lawyerName,
-                  bf.file_path AS thumbnailPath
+		   SELECT b.*, 
+		         m.user_name AS userName, 
+		         l.lawyer_name AS lawyerName, 
+		         bf.file_path AS thumbnailPath
 		  FROM board b
 		  JOIN tbl_user m ON b.user_id = m.user_id
 		  LEFT JOIN lawyer l ON b.lawyer_id = l.lawyer_id
 		  LEFT JOIN (
-		    SELECT board_no, file_path
-		    FROM board_file
+		    SELECT board_no, file_path 
+		    FROM board_file 
 		    WHERE thumbnail = 'Y'
 		  ) bf ON b.board_no = bf.board_no
-		  JOIN keyword k1 ON b.board_no = k1.board_no
-		  JOIN categories c1 ON b.board_no = c1.board_no
-		  WHERE k1.keyword IN (
-		      SELECT keyword FROM keyword WHERE board_no = #{boardNo}
-		  )
-		  AND c1.category = (
-		      SELECT category FROM categories WHERE board_no = #{boardNo} FETCH FIRST 1 ROWS ONLY
-		  )
-		  AND b.board_no != #{boardNo}
-		  AND b.board_status != 'DELETE'
+		  JOIN (
+		    SELECT k2.board_no, COUNT(*) AS match_count
+		    FROM keyword k1
+		    JOIN keyword k2 ON k1.keyword = k2.keyword
+		    WHERE k1.board_no = #{boardNo} 
+		      AND k2.board_no != #{boardNo}
+		    GROUP BY k2.board_no
+		    HAVING COUNT(*) >= 2
+		  ) match_keyword ON b.board_no = match_keyword.board_no
+		  WHERE b.board_status != 'DELETE'
+		    AND EXISTS (
+		      SELECT 1 FROM categories c1 
+		      WHERE c1.board_no = b.board_no 
+		        AND c1.category = (
+		          SELECT category FROM categories 
+		          WHERE board_no = #{boardNo} 
+		          FETCH FIRST 1 ROWS ONLY
+		        )
+		    )
 		  AND ROWNUM &lt;= 3
 	</select>
 
+	<delete id="deleteBoardKeywords" parameterType="int">
+	    DELETE FROM keyword WHERE board_no = #{boardNo}
+	</delete>
+	
+	<update id="increaseViewCount" parameterType="int">
+	  UPDATE board
+	  SET cnt = NVL(cnt, 0) + 1
+	  WHERE board_no = #{boardNo}
+	</update>
+	
+	<select id="selectPackageCount" parameterType="hashmap" resultType="int">
+	    SELECT COUNT(*) 
+	    FROM pay
+	    WHERE user_id = #{userId}
+	      AND package_name = '빠른 답변 패키지'
+	      AND pay_status = 'PAID'
+	</select>
+	
+	<!-- 사용 가능한 패키지 리스트 반환 -->
+	<select id="selectAvailablePackages" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
+	    SELECT *
+	    FROM pay
+	    WHERE user_id = #{userId}
+	      AND package_name = '빠른 답변 패키지'
+	      AND pay_status = 'PAID'
+	    ORDER BY pay_time DESC
+	</select>
+	
+	<update id="updatePayStatusToUsed" parameterType="hashmap">
+	    UPDATE pay
+	    SET pay_status = 'USED'
+	    WHERE order_id = #{usedPayOrderId}
+	</update>
+	
 </mapper>

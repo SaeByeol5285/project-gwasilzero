@@ -130,8 +130,33 @@
                         data: nparmap,
                         success: function(data) {
                             console.log("결제 내역 저장 완료:", data);
-                            window.close();
-                            location.href = "/package/package.do";
+
+                            if (self.packageName === "월 회원권" && self.role === "lawyer") {
+                                $.ajax({
+                                    url: "/lawyer/updateAuthEndtime.dox",
+                                    type: "POST",
+                                    data: { lawyerId: self.sessionId },
+                                    success: function(res) {
+                                        Swal.fire({
+                                            title: "월 회원 등록 완료!",
+                                            text: `🗓️ ` + res.authEndtime + `까지 활동 가능합니다!`,
+                                            icon: "success",
+                                            confirmButtonText: "확인"
+                                        }).then(() => {
+                                            window.close();
+                                            location.href = "/package/package.do";
+                                        });
+                                    },
+                                    error: function(err) {
+                                        alert("회원 기간 갱신에 실패했습니다.");
+                                        window.close();
+                                        location.href = "/package/package.do";
+                                    }
+                                });
+                            } else {
+                                window.close();
+                                location.href = "/package/package.do";
+                            }
                         },
                         error: function(err) {
                             console.error("결제 내역 저장 실패", err);

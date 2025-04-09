@@ -46,6 +46,7 @@ public class CommonController {
 		return "/common/error";
 	}
 
+
 	// 메인-최신게시글
 	@RequestMapping(value = "/common/boardList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
@@ -61,6 +62,15 @@ public class CommonController {
 	public String lawyerList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap = commonService.getLawyerList(map);
+		return new Gson().toJson(resultMap);
+	}
+
+	// 리뷰 리스트
+	@RequestMapping(value = "/common/reviewList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String reviewList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = commonService.getReviewList(map);
 		return new Gson().toJson(resultMap);
 	}
 

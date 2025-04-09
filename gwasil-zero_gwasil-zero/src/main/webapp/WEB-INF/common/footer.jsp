@@ -20,10 +20,7 @@
                     <div class="footer-top">
                         <img src="/img/logo1.png" alt="법무법인 과실제로 로고" class="footer-logo" />
                         <div class="footer-links">
-                            <a href="#">면책공고</a>
-                            <a href="#">유한책임</a>
-                            <a href="#">개인정보처리방침</a>
-                            <a href="#">이메일무단수집거부</a>
+                            <a href="/common/terms.do">이용약관</a>
                             <a href="#" class="highlight">고객만족센터</a>
                         </div>
                     </div>

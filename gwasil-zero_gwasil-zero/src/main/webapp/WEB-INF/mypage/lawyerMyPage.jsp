@@ -7,6 +7,7 @@
       <script src="https://code.jquery.com/jquery-3.7.1.js"
          integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       <script src="/js/page-change.js"></script>
       <title>과실 ZERO - 교통사고 전문 법률 플랫폼</title>
    </head>
@@ -365,7 +366,13 @@
               <tbody>
                 <tr v-if="chatList.length" v-for="chat in chatList" :key="chat.chatNo">
                   <td><a href="javascript:;" @click="fnChat(chat.chatNo)" class="message">{{ chat.message }}</a></td>
-                  <td>{{ chat.partnerName }}</td>
+                  <td>
+                     {{ chat.partnerName }}
+                     <br>
+                     <button class="edit-btn" @click="fnUsePhoneConsult(chat.partnerId)">
+                        📞 전화 상담 차감
+                     </button>
+                  </td>
                 </tr>
                 <tr v-else>
                   <td colspan="2" style="text-align: center; color: #999;">채팅 내역이 없습니다.</td>
@@ -467,6 +474,35 @@
                   }
                });
             },
+
+            fnGetNotification() {
+					const self = this;
+					$.ajax({
+						url: "/mypage/notification.dox",
+						type: "POST",
+						data: { receiverId: self.sessionId },
+						dataType: "json",
+						success: function (data) {
+							if (data.result === "success" && data.notifications.length > 0) {
+								console.log("알림", data);
+								const message = data.notifications[0].contents;
+								Swal.fire({
+									title: '📢 알림',
+									text: message,
+									icon: 'info',
+									confirmButtonText: '확인'
+								}).then(() => {
+									$.ajax({
+										url: "/mypage/notificationRead.dox",
+										type: "POST",
+										data: { receiverId: self.sessionId }
+									});
+								});
+							}
+						}
+					});
+				},
+            
 
             fnUpdateStatus() {
                 const self = this;
@@ -603,6 +639,38 @@
                pageChange("/chat/chat.do", {chatNo : chatNo});
             },
 
+            fnUsePhoneConsult(userId) {
+               const self = this;
+               Swal.fire({
+                  title: '전화 상담 1회를 차감하시겠습니까?',
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonText: '차감',
+                  cancelButtonText: '취소'
+               }).then((result) => {
+                  if (result.isConfirmed) {
+                     console.log("아이디 : ", userId);
+                     $.ajax({
+                     url: '/lawyerMyPage/usePhoneConsult.dox',
+                     type: 'POST',
+                     data: {
+                        userId: userId
+                     },
+                     success: function (res) {
+                        if (res.result === 'success') {
+                           Swal.fire('차감 완료', '전화 상담 패키지 1회가 차감되었습니다.', 'success');
+                        } else {
+                           Swal.fire('실패', res.message || '차감 중 문제가 발생했습니다.', 'error');
+                        }
+                     },
+                     error: function () {
+                        Swal.fire('오류', '서버와의 통신 중 문제가 발생했습니다.', 'error');
+                     }
+                     });
+                  }
+               });
+            },
+
             getPayStatusText(status) {
                switch (status) {
                   case "PAID":
@@ -681,6 +749,7 @@
             this.fnLawyerBoard();
             this.fnGetPayments();
             this.fnGetChatList();
+            this.fnGetNotification();
          }
       });
       app.mount('#app');

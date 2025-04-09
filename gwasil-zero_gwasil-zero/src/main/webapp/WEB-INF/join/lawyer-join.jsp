@@ -183,7 +183,7 @@
             <div class="license-box">
                 <h3>변호사 자격 정보</h3>
                 <div class="form-group">
-                    <label>생년월일 (선택)</label>
+                    <label>생년월일. (선택)</label>
                     <input type="date" v-model="license.BIRTH" />
                 </div>
                 <div class="form-group">

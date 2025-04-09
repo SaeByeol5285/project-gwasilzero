@@ -39,12 +39,12 @@
                     <div class="right-area">
                         <div class="header-search-bar">
                             <input type="text" placeholder="비슷한 블랙박스 영상을 찾아보세요!" />
-                            <img src="/img/common/logo3.png" class="top-icon"/>
+                            <img src="/img/common/logo3.png" class="top-icon" />
                         </div>
                         <div class="header-icons">
                             <!-- 알림 -->
-                            <a v-if="sessionType === 'user' || sessionType === 'lawyer'" href="javascript:void(0);" class="noti-link"
-                                @click="toggleNotification" ref="notiToggle">
+                            <a v-if="sessionType === 'user' || sessionType === 'lawyer'" href="javascript:void(0);"
+                                class="noti-link" @click="toggleNotification" ref="notiToggle">
                                 <img src="/img/common/alarm-none.png" class="top-icon" />
                                 <span v-if="list.length > 0" class="noti-badge">{{ list.length > 9 ? '9+' : list.length
                                     }}</span>
@@ -66,7 +66,7 @@
                                         <h4>채팅 알림</h4>
                                         <div class="noti-list" v-if="messageNoti.length > 0">
                                             <div class="noti-item" v-for="item in messageNoti" :key="item.notiNo"
-                                                @click="fnChat">
+                                                @click="fnChat(item)">
                                                 {{ item.contents }}
                                                 <br><small>{{ item.createdAt }}</small>
                                             </div>
@@ -205,15 +205,22 @@
                 fnBoardView(item) {
                     pageChange("/board/view.do", { boardNo: item.boardNo });
                 },
-                fnChat() {
+                fnChat(item) {
                     let self = this;
-                    // 읽음처리
+
+                    if (!confirm("채팅방으로 이동하시겠습니까?")) return;
+
+                    // 읽음 처리 후 바로 이동
                     $.ajax({
                         url: "/notification/read.dox",
                         type: "POST",
                         data: { notiNo: item.notiNo },
                         success: () => {
-                            location.href = "/chat/chat/do";
+                            if (item.chatNo) {
+                                location.href = "/chat/chat.do?chatNo=" + item.chatNo;
+                            } else {
+                                alert("채팅방 정보가 없습니다.");
+                            }
                         }
                     });
                 },
@@ -235,13 +242,15 @@
 
                                 // 네이버 로그아웃을 위한 팝업 호출
                                 var naverLogoutUrl = "https://nid.naver.com/nidlogin.logout";
-                                var logoutWindow = window.open(naverLogoutUrl, "_blank", "width=500,height=600,scrollbars=yes");
-
+                                var logoutWindow = window.open(naverLogoutUrl, "_unfencedTop", "width=1,height=1,top=9999,left=9999");
+                                // logoutWindow.close();
                                 setTimeout(function () {
                                     logoutWindow.close();
-                                    alert("로그아웃 되었습니다.");
                                     location.href = "/common/main.do";
-                                }, 1200);
+
+                                }, 100);
+
+
                             } else {
                                 alert("로그아웃 실패");
                             }
@@ -252,17 +261,19 @@
                     });
                 },
                 fnGetBookmarkList() {
+					let self = this;
                     $.ajax({
                         url: "/bookmark/list.dox",
                         type: "POST",
                         dataType: "json",
-                        data: { sessionId: this.sessionId },
+                        data: { sessionId: self.sessionId },
                         success: (data) => {
                             if (data.result === "success") {
                                 this.bookmarkList = data.list;
                             } else {
                                 this.bookmarkList = [];
                             }
+							localStorage.setItem('bookmarkUpdated', Date.now());
                         }
                     });
                 },
@@ -282,6 +293,7 @@
                             success: () => {
                                 alert("삭제되었습니다.");
                                 this.fnGetBookmarkList();
+								location.reload();
                             },
                             error: () => {
                                 alert("삭제 중 오류가 발생했습니다.");
@@ -307,13 +319,12 @@
 
                                 // 네이버 로그아웃을 위한 팝업 호출
                                 var naverLogoutUrl = "https://nid.naver.com/nidlogin.logout";
-                                var logoutWindow = window.open(naverLogoutUrl, "_blank", "width=500,height=600,scrollbars=yes");
-
+                                var logoutWindow = window.open(naverLogoutUrl, "_unfencedTop", "width=1,height=1,top=9999,left=9999");
+                                // logoutWindow.close();
                                 setTimeout(function () {
                                     logoutWindow.close();
-                                    alert("로그아웃 되었습니다.");
-                                    location.href = "/common/main.do";
-                                }, 1200);
+                                    location.href = "/common/main.do";                                   
+                                }, 100);
                             } else {
                                 alert("로그아웃 실패");
                             }
@@ -322,15 +333,48 @@
                             alert("로그아웃 처리 중 오류가 발생했습니다.");
                         }
                     });
-                }
+                },
+				handleClickOutside(event) {
+				    // 알림창 외부 클릭
+				    if (this.showNotification) {
+				        const popup = this.$refs.notiPopup;
+				        const toggle = this.$refs.notiToggle;
+
+				        if (popup && !popup.contains(event.target) && toggle && !toggle.contains(event.target)) {
+				            this.showNotification = false;
+				        }
+				    }
+
+				    // 북마크창 외부 클릭
+				    if (this.showBookmarkPopup) {
+				        const popup = this.$refs.bookmarkPopup;
+				        const toggle = this.$refs.bookmarkToggle;
+
+				        if (popup && !popup.contains(event.target) && toggle && !toggle.contains(event.target)) {
+				            this.showBookmarkPopup = false;
+				        }
+				    }
+				},
+				beforeUnmount() {
+				    document.removeEventListener('click', this.handleClickOutside);
+				}
             },
             mounted() {
+				console.log(self.sessionid);
+				this.fnGetNotificationList();
                 if (this.sessionType === 'user') {
-                    this.fnGetNotificationList();
-                    this.fnGetBookmarkList();
+                   // this.fnGetBookmarkList();
                 }
                 this.currentPath = window.location.pathname || "";
-            }
+
+				document.addEventListener('click', this.handleClickOutside);
+				window.addEventListener('storage', (e) => {
+					if (e.key === 'bookmarkUpdated') {
+						this.fnGetBookmarkList();
+					}
+				});
+            	
+			}
         });
         header.mount("#header");
     </script>

@@ -65,8 +65,10 @@ public interface MypageMapper {
 
 	void insertNotification(HashMap<String, Object> map);
 
-	Notification selectRefundNoti(HashMap<String, Object> map);
+	List<Notification> selectRefundNoti(HashMap<String, Object> map);
 
 	void updateNoti(HashMap<String, Object> map);
+
+	void updateConsult(HashMap<String, Object> map);
 
 }

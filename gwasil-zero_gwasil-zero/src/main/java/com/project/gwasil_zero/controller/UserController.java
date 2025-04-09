@@ -1,5 +1,6 @@
 package com.project.gwasil_zero.controller;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import jakarta.servlet.http.HttpSession;
@@ -22,6 +23,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.gson.Gson;
 import com.project.gwasil_zero.dao.UserService;
 import com.project.gwasil_zero.model.User;
@@ -122,13 +127,6 @@ public class UserController {
 		return new Gson().toJson(resultMap);
 	}
 
-	// 중복 체크
-	@RequestMapping(value = "/user/check.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	@ResponseBody
-	public String check(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-		HashMap<String, Object> resultMap = userService.searchUser(map);
-		return new Gson().toJson(resultMap);
-	}
 
 	// 카카오 로그인 연동
 	@RequestMapping(value = "/kakao.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -204,4 +202,58 @@ public class UserController {
 		return new Gson().toJson(userService.checkUserIdExist(map));
 	}
 
+	// Google 로그인 처리
+	@RequestMapping("/googleCallback")
+	public String googleCallback(@RequestParam("credential") String credential, HttpSession session) {
+		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(),
+				GsonFactory.getDefaultInstance())
+				.setAudience(Collections
+						.singletonList("606230365694-vdm0p79esdfp0rr0ipdpvrp0k8n44sig.apps.googleusercontent.com"))
+				.build();
+
+		try {
+			GoogleIdToken idToken = verifier.verify(credential);
+			if (idToken != null) {
+				GoogleIdToken.Payload payload = idToken.getPayload();
+
+				String email = payload.getEmail();
+				String name = (String) payload.get("name");
+				String googleUserId = payload.getSubject();
+
+				HashMap<String, Object> map = new HashMap<>();
+				map.put("USER_EMAIL", email);
+
+				HashMap<String, Object> user = userService.selectUserByEmail(map);
+
+				if (user == null || user.isEmpty()) {
+					HashMap<String, Object> newUser = new HashMap<>();
+					newUser.put("USER_ID", "google_" + googleUserId);
+					newUser.put("USER_EMAIL", email);
+					newUser.put("USER_NAME", name);
+					newUser.put("USER_STATUS", "active");
+					newUser.put("USER_PASSWORD", "google-login"); // 🔐 NOT NULL 처리
+					newUser.put("USER_PHONE", "010-0000-0000"); // 📱 NOT NULL 처리
+
+					userService.insertGoogleUser(newUser);
+
+					session.setAttribute("sessionId", newUser.get("USER_ID"));
+					session.setAttribute("sessionType", "user"); // ✅ 여기 추가
+				} else {
+					session.setAttribute("sessionId", user.get("USER_ID"));
+					session.setAttribute("sessionType", "user"); // ✅ 여기 추가
+				}
+
+				session.setAttribute("loginType", "google");
+
+				System.out.println("✅ Google 로그인 성공: " + email + ", 이름: " + name);
+				return "redirect:/common/main.do";
+			} else {
+				System.out.println("Invalid ID token.");
+				return "redirect:/user/login.do";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "redirect:/user/login.do";
+		}
+	}
 }

@@ -23,77 +23,86 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class ProfileController {
-	
+
 	@Autowired
 	ProfileService profileService;
-	
-	@RequestMapping("/profile/innerLawyer.do") 
-    public String innerList(Model model) throws Exception{
 
-        return "/profile/innerLawyer"; 
-    }
-	
-	@RequestMapping("/profile/personalLawyer.do") 
-    public String personalList(Model model) throws Exception{
+	@RequestMapping("/profile/innerLawyer.do")
+	public String innerList(Model model) throws Exception {
 
-        return "/profile/personalLawyer"; 
-    }
-	
-	@RequestMapping("/profile/view.do") 
-	public String lawyerView(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		return "/profile/innerLawyer";
+	}
+
+	@RequestMapping("/profile/personalLawyer.do")
+	public String personalList(Model model) throws Exception {
+
+		return "/profile/personalLawyer";
+	}
+
+	@RequestMapping("/profile/view.do")
+	public String lawyerView(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map)
+			throws Exception {
 		request.setAttribute("map", map);
-        return "/profile/lawyerView"; 
-    }
-	
-	@RequestMapping("/profile/lawyerEdit.do") 
-	public String lawyerEdit(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		return "/profile/lawyerView";
+	}
+
+	@RequestMapping("/profile/lawyerEdit.do")
+	public String lawyerEdit(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map)
+			throws Exception {
 		request.setAttribute("map", map);
 
-        return "/profile/lawyerEdit"; 
-    }
-	
+		return "/profile/lawyerEdit";
+	}
+
+	// 리뷰
+	@RequestMapping("/profile/review.do")
+	public String terms(Model model) throws Exception {
+
+		return "/profile/review";
+	}
+
 	// 소속 변호사 목록 시작
 	@RequestMapping(value = "/profile/innerLawyer.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String innerList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-			
+
 		resultMap = profileService.getInnerList(map);
 		return new Gson().toJson(resultMap);
 	}
-	
+
 	// 소속 변호사 목록 시작 깃
 	@RequestMapping(value = "/profile/personalLawyer.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String personalList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-			
+
 		resultMap = profileService.getPersonalList(map);
 		return new Gson().toJson(resultMap);
 	}
-	
+
 	// 소속 변호사 상세보기
 	@RequestMapping(value = "/profile/info.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String lawyerInfo(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
+
 		resultMap = profileService.getLawyer(map);
 		return new Gson().toJson(resultMap);
 	}
-	
+
 	// 변호사 라이센스 리스트 및 자격증 이미지
 	@RequestMapping(value = "/profile/lawyerEdit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String lawyerEdit(MultipartHttpServletRequest request) throws Exception {
-	    HashMap<String, Object> resultMap = new HashMap<>();
+		HashMap<String, Object> resultMap = new HashMap<>();
 
-	    try {
-	        String lawyerId = request.getParameter("lawyerId");
-	        String uploadPath = request.getServletContext().getRealPath("/license/");
-	        Gson gson = new Gson();
-	        
-	        // 이미지 경로 로그
+		try {
+			String lawyerId = request.getParameter("lawyerId");
+			String uploadPath = request.getServletContext().getRealPath("/license/");
+			Gson gson = new Gson();
+
+			// 이미지 경로 로그
 //	        System.out.println("UploadPath: " + uploadPath);
 
 	        // 1. 프로필 정보 가져오기
@@ -123,7 +132,6 @@ public class ProfileController {
 	            // 로그 확인
 //	            System.out.println(">>> licenseName_" + i + ": " + licenseName);
 //	            System.out.println(">>> licenseFile_" + i + ": " + (licenseFile != null ? licenseFile.getOriginalFilename() : "null"));
-
 
 	            if (licenseName != null && !licenseName.trim().isEmpty() && licenseFile != null && !licenseFile.isEmpty()) {
 	                HashMap<String, Object> license = new HashMap<>();
@@ -165,25 +173,33 @@ public class ProfileController {
 	    }
 
 	    return new Gson().toJson(resultMap);
-	}
-	
-	// CATEGORIES_MASTER 테이블의 데이터 가져오기
-    @RequestMapping(value = "/profile/getCategories.dox", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public String getCategories() throws Exception {
-        HashMap<String, Object> resultMap = new HashMap<>();
-        
-        try {
-            // CATEGORIES_MASTER 데이터 조회
-            List<Map<String, Object>> categories = profileService.getCategories();
-            resultMap.put("categories", categories);
-            resultMap.put("result", "success");
-        } catch (Exception e) {
-            e.printStackTrace();
-            resultMap.put("result", "fail");
-        }
 
-        return new Gson().toJson(resultMap);
-    }
+    // 리뷰리스트
+	@RequestMapping(value = "/profile/reviewList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String reviewList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = profileService.getLReviewList(map);
+		return new Gson().toJson(resultMap);
+	}
+
+	// CATEGORIES_MASTER 테이블의 데이터 가져오기
+	@RequestMapping(value = "/profile/getCategories.dox", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getCategories() throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<>();
+
+		try {
+			// CATEGORIES_MASTER 데이터 조회
+			List<Map<String, Object>> categories = profileService.getCategories();
+			resultMap.put("categories", categories);
+			resultMap.put("result", "success");
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("result", "fail");
+		}
+
+		return new Gson().toJson(resultMap);
+	}
 
 }

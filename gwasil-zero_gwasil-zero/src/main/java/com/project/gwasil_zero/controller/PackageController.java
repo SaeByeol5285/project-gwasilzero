@@ -75,4 +75,13 @@ public class PackageController {
 		return new Gson().toJson(resultMap);
 	}
 	
+	// 변호사 월 정액 활동 패키지 구매
+	@RequestMapping(value = "/lawyer/updateAuthEndtime.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String lawyerPackage(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+		resultMap = packageService.editAuthEndtime(map);
+		return new Gson().toJson(resultMap);
+	}
 }

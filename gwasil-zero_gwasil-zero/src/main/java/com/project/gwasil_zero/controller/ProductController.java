@@ -136,7 +136,7 @@ public class ProductController {
 	}
 	
 	// 환불 처리 알림
-	@RequestMapping(value = "/admin/product/nofitication.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/admin/product/notification.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String addAlert(@RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<>();

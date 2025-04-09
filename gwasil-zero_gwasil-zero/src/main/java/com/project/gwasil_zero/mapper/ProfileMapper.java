@@ -10,6 +10,7 @@ import com.project.gwasil_zero.model.Board;
 import com.project.gwasil_zero.model.BoardFile;
 import com.project.gwasil_zero.model.Lawyer;
 import com.project.gwasil_zero.model.License;
+import com.project.gwasil_zero.model.Review;
 
 @Mapper
 public interface ProfileMapper {
@@ -45,6 +46,12 @@ public interface ProfileMapper {
 	
 	// 전문분야 업데이트
 //	void updateLawyerCategories(HashMap<String, Object> categoriesParam);
+
+  // 리뷰리스트
+	List<Review> selectReviewList(HashMap<String, Object> map);
+	
+	// 리뷰 개수
+	int selectReviewCnt(HashMap<String, Object> map);
 	
 	
 		

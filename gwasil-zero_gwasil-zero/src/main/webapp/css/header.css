@@ -84,11 +84,6 @@
   width: 280px;
 }
 
-.header-search-bar img {
-  width: 20px;
-  height: 20px;
-  padding-right: 12px;
-}
 
 /* 🛠 아이콘 */
 .header-icons {
@@ -100,6 +95,7 @@
 .top-icon {
   width: 20px;
   height: 20px;
+  padding: 5px;
 }
 
 
@@ -342,4 +338,10 @@ li {
   padding: 10px;
   width: 220px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/*포커스 해제용*/
+a:focus {
+  outline: none;
+  color: inherit;
 }

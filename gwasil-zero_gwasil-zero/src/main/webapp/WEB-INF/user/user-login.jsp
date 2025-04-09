@@ -4,14 +4,14 @@
 
     <head>
         <meta charset="UTF-8">
-        <script src="https://code.jquery.com/jquery-3.7.1.js"
-            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <link rel="stylesheet" href="/css/main.css">
         <link rel="stylesheet" href="/css/common.css">
         <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
         <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
         <title>로그인</title>
         <style>
             body {
@@ -30,6 +30,8 @@
                 margin: 5px 0;
                 border: 1px solid #ccc;
                 border-radius: 5px;
+                box-sizing: border-box;
+                font-size: 16px;
             }
 
             button {
@@ -41,34 +43,32 @@
                 border: none;
                 border-radius: 5px;
                 font-size: 16px;
+                box-sizing: border-box;
             }
 
             .social-login {
                 display: flex;
-                justify-content: space-between;
-                gap: 10px;
+                justify-content: center;
+                align-items: center;
+                gap: 12px;
                 margin-top: 20px;
             }
 
-            .social-login a {
-                flex: 1;
-                max-width: 180px;
-                height: 40px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
             .social-login img {
-                max-height: 100%;
-                object-fit: contain;
+                height: 40px;
+                width: 40px;
+                cursor: pointer;
             }
 
-            .naver-logout {
-                margin-top: 10px;
-                font-size: 14px;
-                color: #888;
-                text-decoration: underline;
+            .social-login img:nth-child(2) {
+                margin-left: 10px;
+            }
+
+            .g_id_signin {
+                width: 40px !important;
+                height: 40px;
+                border-radius: 5px;
+                margin: 0 !important;
             }
 
             .extra-links {
@@ -102,15 +102,25 @@
             </div>
 
             <div class="social-login">
-                <a href="javascript:void(0);" @click="naverLoginClick">
-                    <img src="/img/naver_login.png" alt="네이버 로그인">
-                </a>
-                <a :href="location">
-                    <img src="/img/kakao_login.png" alt="카카오 로그인">
-                </a>
+                <!-- 네이버 로그인 -->
+                <img src="/img/naver-icon.png" alt="Naver" @click="naverLoginClick">
+
+                <!-- 카카오 로그인 -->
+                <img src="/img/kakao-icon.png" alt="Kakao" @click="kakaoLoginClick">
+
+                <!-- 구글 로그인 -->
+                <div id="g_id_onload"
+                    data-client_id="606230365694-vdm0p79esdfp0rr0ipdpvrp0k8n44sig.apps.googleusercontent.com"
+                    data-context="signin" data-ux_mode="redirect" data-login_uri="http://localhost:8080/googleCallback"
+                    data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin" data-type="icon" data-shape="square" data-theme="outline"
+                    data-text="signin_with" data-size="large" data-logo_alignment="left">
+                </div>
             </div>
+
             <div class="extra-links">
-                <a href="/user/search.do">아이디/비밀번호 찾기</a>>
+                <a href="/user/search.do">아이디/비밀번호 찾기</a>
                 <a href="/join/select.do">회원가입</a>
             </div>
 
@@ -141,6 +151,24 @@
                             if (res.result === "success") {
                                 alert("로그인 성공");
                                 location.href = "/common/main.do";
+                            } else if (res.message && res.message.includes("탈퇴한 계정입니다")) {
+                                if (confirm("탈퇴한 계정입니다. 복구하시겠습니까?")) {
+                                    // 복구 요청
+                                    $.ajax({
+                                        url: "/user/user-login.dox",
+                                        type: "POST",
+                                        data: { id: self.id, pwd: self.pwd, recover: true },
+                                        dataType: "json",
+                                        success: function (res2) {
+                                            if (res2.result === "success") {
+                                                alert("계정이 복구되었습니다.");
+                                                location.href = "/common/main.do";
+                                            } else {
+                                                alert("계정 복구에 실패했습니다.");
+                                            }
+                                        }
+                                    });
+                                }
                             } else {
                                 alert("로그인 실패");
                             }
@@ -153,8 +181,7 @@
                         url: "/kakao.dox",
                         type: "POST",
                         data: { code: code },
-                        success: function (res) {
-                            console.log("카카오 세션 설정 성공:", res);
+                        success: function () {
                             location.href = "/common/main.do";
                         },
                         error: function () {
@@ -162,8 +189,23 @@
                         }
                     });
                 },
+                kakaoLoginClick() {
+                    window.location.href = this.location;
+                },
                 naverLoginClick() {
                     document.getElementById("naverIdLogin_loginButton").click();
+                },
+                googleLoginClick() {
+                    const state = Math.random().toString(36).substr(2, 10);
+                    const googleURL = "https://accounts.google.com/o/oauth2/v2/auth?" +
+                        "client_id=606230365694-vdm0p79esdfp0rr0ipdpvrp0k8n44sig.apps.googleusercontent.com" +
+                        "&redirect_uri=http://localhost:8080/googleCallback" +
+                        "&response_type=code" +
+                        "&scope=email%20profile" +
+                        "&state=" + state +
+                        "&access_type=offline" +
+                        "&prompt=consent";
+                    location.href = googleURL;
                 },
                 handleNaverCallback() {
                     setTimeout(() => {
@@ -191,7 +233,7 @@
                                 });
                             }
                         });
-                    }, 300); // 네이버 초기화 후 약간의 딜레이 주기
+                    }, 300);
                 }
             },
             mounted() {
@@ -199,7 +241,6 @@
                 if (code) {
                     this.kakaoLoginCallback(code);
                 } else {
-                    // 네이버 자동 로그인 처리
                     if (window.location.href.includes("login.do")) {
                         this.handleNaverCallback();
                     }
@@ -213,7 +254,7 @@
             clientId: "cHypMXQZj5CCSV0ShBQl",
             callbackUrl: "http://localhost:8080/user/login.do",
             isPopup: false,
-            callbackHandle: true // 네이버에서 인가코드 받을 때 필요
+            callbackHandle: true
         });
         naverLogin.init();
     </script>

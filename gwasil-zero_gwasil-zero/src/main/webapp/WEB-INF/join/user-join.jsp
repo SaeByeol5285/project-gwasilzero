@@ -17,8 +17,8 @@
                 border-radius: 15px;
                 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
                 padding: 20px;
-                text-align: center;
                 margin: 20px auto;
+                text-align: left;
             }
 
             input,
@@ -73,7 +73,6 @@
             }
 
             .terms-content {
-                text-align: left;
                 font-size: 0.85rem;
                 background: #f9f9f9;
                 padding: 12px;
@@ -88,9 +87,8 @@
     <body>
         <jsp:include page="../common/header.jsp" />
         <div id="app">
-            <h1>사용자 회원가입</h1>
+            <h1 style="text-align: center;">사용자 회원가입</h1>
 
-            <!-- ✅ 이용약관 동의 -->
             <div class="terms-check">
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <label for="agree">이용약관에 동의합니다</label>
@@ -99,7 +97,6 @@
                 <input type="checkbox" id="agree" v-model="agreeTerms">
             </div>
 
-            <!-- ✅ 약관 내용 -->
             <div v-if="showTerms" class="terms-content">
                 <strong>[이용약관]</strong><br />
                 제 1 조 (목적)<br />
@@ -110,33 +107,46 @@
                 회사는 관련 법령을 위반하지 않는 범위에서 이 약관을 변경할 수 있으며, 변경 시 공지사항을 통해 안내합니다.
             </div>
 
-            <!-- ✅ 가입 입력 항목 -->
-            <div>이름</div>
-            <input v-model="user.userName" placeholder="이름 입력" />
-            <div>아이디 (5자 이상)</div>
-            <input v-model="user.userId" placeholder="아이디 입력" />
-            <button @click="fnIdCheck" style="margin-bottom: 10px;">중복체크</button>
+            <div style="margin-bottom: 15px;">
+                <div>이름(닉네임)</div>
+                <input v-model="user.userName" placeholder="이름(닉네임) 입력" />
+            </div>
 
-            <div>비밀번호 (8자 이상)</div>
-            <input type="password" v-model="user.pwd" placeholder="비밀번호 입력" />
-            <div v-if="user.pwd.length > 0 && user.pwd.length < 8" class="error-text">비밀번호는 8자 이상이어야 합니다.</div>
+            <div style="margin-bottom: 15px;">
+                <div>아이디 (5자 이상)</div>
+                <input v-model="user.userId" placeholder="아이디 입력" @input="checkUserId" />
+                <div v-if="idError" class="error-text">영문/숫자만 입력해주세요.</div>
+                <button @click="fnIdCheck" style="margin-top: 5px;">중복체크</button>
+            </div>
 
-            <div>비밀번호 확인</div>
-            <input type="password" v-model="user.pwd2" placeholder="비밀번호 확인" />
-            <div v-if="user.pwd !== user.pwd2 && user.pwd2" class="error-text">비밀번호 불일치</div>
+            <div style="margin-bottom: 15px;">
+                <div>비밀번호 (8자 이상)</div>
+                <input type="password" v-model="user.pwd" placeholder="비밀번호 입력" />
+                <div v-if="user.pwd.length > 0 && user.pwd.length < 8" class="error-text">비밀번호는 8자 이상이어야 합니다.</div>
+            </div>
 
-            <div>이메일</div>
-            <input v-model="user.userEmail" placeholder="이메일 입력" />
-            <div>휴대폰 (11자리)</div>
-            <input v-model="user.userPhone" placeholder="휴대폰 번호 입력" />
-            <div v-if="user.userPhone.length > 11" class="error-text">휴대폰 번호는 11자리를 초과할 수 없습니다.</div>
+            <div style="margin-bottom: 15px;">
+                <div>비밀번호 확인</div>
+                <input type="password" v-model="user.pwd2" placeholder="비밀번호 확인" />
+                <div v-if="user.pwd !== user.pwd2 && user.pwd2" class="error-text">비밀번호 불일치</div>
+            </div>
 
-            <!-- 본인인증 및 회원가입 -->
+            <div style="margin-bottom: 15px;">
+                <div>이메일</div>
+                <input v-model="user.userEmail" placeholder="이메일 입력" />
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <div>휴대폰 (11자리)</div>
+                <input v-model="user.userPhone" placeholder="휴대폰 번호 입력" />
+                <div v-if="user.userPhone.length > 11" class="error-text">휴대폰 번호는 11자리를 초과할 수 없습니다.</div>
+            </div>
+
             <button @click="requestCert">📱 본인인증</button>
             <button @click="fnJoin" :disabled="!isAuthenticated" :style="{
-      backgroundColor: isAuthenticated ? '#FF5722' : '#ccc',
-      cursor: isAuthenticated ? 'pointer' : 'not-allowed'
-  }">
+        backgroundColor: isAuthenticated ? '#FF5722' : '#ccc',
+        cursor: isAuthenticated ? 'pointer' : 'not-allowed'
+    }">
                 회원가입
             </button>
         </div>
@@ -159,10 +169,18 @@
                         isAuthenticated: false,
                         isIdChecked: false,
                         agreeTerms: false,
-                        showTerms: false
+                        showTerms: false,
+                        nameError: false,
+                        isComposing: false,
+                        idError: false
                     };
                 },
                 methods: {
+                    checkUserId() {
+                        const val = this.user.userId;
+                        const validIdRegex = /^[a-zA-Z0-9]*$/;
+                        this.idError = val && !validIdRegex.test(val);
+                    },
                     requestCert() {
                         const self = this;
                         IMP.certification({

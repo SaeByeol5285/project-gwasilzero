@@ -291,5 +291,14 @@ public class MypageController {
 		resultMap = mypageService.updateNotificationRead(map);
 		return new Gson().toJson(resultMap);
 	}
+	
+	// 전화 상담 차감
+	@RequestMapping(value = "/lawyerMyPage/usePhoneConsult.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String upadatePhoneConsult(@RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		resultMap = mypageService.upadatePhoneConsult(map);
+		return new Gson().toJson(resultMap);
+	}
 
 }

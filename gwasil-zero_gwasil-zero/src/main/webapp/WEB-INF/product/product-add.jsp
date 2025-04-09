@@ -13,10 +13,9 @@
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-	<!-- 스타일 정리 -->
 	<style>
 		.form-wrapper {
-			max-width: 600px;
+			width: 1000px;
 			margin: 40px auto;
 			padding: 30px;
 			background: #fff;
@@ -25,26 +24,32 @@
 		}
 
 		.form-title {
-			text-align: center;
 			font-size: 24px;
 			font-weight: bold;
-			color: #333;
 			margin-bottom: 30px;
+			text-align: center;
+			color: #333;
 		}
 
-		.form-group {
-			margin-bottom: 20px;
+		.form-table {
+			width: 100%;
 		}
 
-		.form-group label {
-			display: block;
-			margin-bottom: 6px;
-			font-weight: bold;
+		.form-table th {
+			text-align: left;
+			padding: 10px 0 10px 16px;
 			color: #555;
+			width: 130px;
+			vertical-align: top;
+		}
+
+		.form-table td {
+			padding: 10px 16px;
 		}
 
 		.input-box {
 			width: 100%;
+			box-sizing: border-box;
 			padding: 10px;
 			border: 1px solid #ddd;
 			border-radius: 6px;
@@ -52,8 +57,8 @@
 		}
 
 		.textarea-box {
-			min-height: 100px;
 			resize: vertical;
+			min-height: 100px;
 			line-height: 1.5;
 		}
 
@@ -62,34 +67,30 @@
 			margin-top: 30px;
 		}
 
-		.btn-submit {
-			padding: 10px 30px;
-			background-color: #ff5c00;
-			color: white;
-			border: none;
-			border-radius: 5px;
+		.btn {
+			padding: 10px 24px;
 			font-size: 14px;
-			cursor: pointer;
 			font-weight: bold;
-			transition: background-color 0.2s ease;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+			margin: 0 8px;
 		}
 
-		.btn-submit:hover {
+		.btn-save {
+			background-color: #ff5c00;
+			color: #fff;
+		}
+
+		.btn-save:hover {
 			background-color: #e55300;
 		}
 
 		.btn-cancel {
-			padding: 10px 30px;
 			background-color: #ccc;
 			color: #333;
-			border: none;
-			border-radius: 5px;
-			font-size: 14px;
-			cursor: pointer;
-			font-weight: bold;
-			transition: background-color 0.2s ease;
-			margin-left: 10px;
 		}
+
 		.btn-cancel:hover {
 			background-color: #bbb;
 		}
@@ -97,44 +98,47 @@
 </head>
 <body>
 	<jsp:include page="../common/header.jsp" />
-	<div id="productApp" class="layout">
-		<jsp:include page="../admin/layout.jsp" />
-
-		<div class="content">
-			<div class="header">
-				<div>상품 등록</div>
-				<div>Admin님</div>
-			</div>
-
-			<div class="form-wrapper">
-				<div class="form-title">패키지 정보 입력</div>
-
-				<div class="form-group">
-					<label>패키지 명</label>
-					<input type="text" v-model="packageName" class="input-box">
+	<div id="productApp">
+		<div class="layout">
+			<jsp:include page="../admin/layout.jsp" />
+			<div class="content">
+				<div class="header">
+					<div>상품 등록</div>
+					<div>Admin님</div>
 				</div>
 
-				<div class="form-group">
-					<label>패키지 설명</label>
-					<textarea v-model="packageInfo" rows="3" class="input-box textarea-box"></textarea>
-				</div>
+				<div class="form-wrapper">
+					<div class="form-title">패키지 정보 입력</div>
+					<table class="form-table">
+						<tr>
+							<th>패키지명</th>
+							<td><input type="text" v-model="packageName" class="input-box"></td>
+						</tr>
+						<tr>
+							<th>패키지 설명</th>
+							<td>
+								<textarea v-model="packageInfo" rows="4" class="input-box textarea-box"></textarea>
+							</td>
+						</tr>
+						<tr>
+							<th>패키지 가격</th>
+							<td><input type="number" v-model="packagePrice" class="input-box"></td>
+						</tr>
+						<tr>
+							<th>사용자</th>
+							<td>
+								<select v-model="packageStatus" class="input-box">
+									<option value="U">일반 사용자용</option>
+									<option value="L">변호사용</option>
+								</select>
+							</td>
+						</tr>
+					</table>
 
-				<div class="form-group">
-					<label>패키지 가격</label>
-					<input type="text" v-model="packagePrice" class="input-box">
-				</div>
-
-				<div class="form-group">
-					<label>사용자</label>
-					<select v-model="packageStatus" class="input-box">
-						<option value="U">일반 사용자용</option>
-						<option value="L">변호사용</option>
-					</select>
-				</div>
-
-				<div class="btn-area">
-					<button @click="fnSave" class="btn-submit">등록</button>
-					<button @click="fnBack" class="btn-cancel">뒤로가기</button>
+					<div class="btn-area">
+						<button @click="fnSave" class="btn btn-save">등록</button>
+						<button @click="fnBack" class="btn btn-cancel">뒤로가기</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -196,7 +200,6 @@
 			fnBack() {
 				location.href = "/admin/product.do?page=product";
 			}
-
 		}
 	});
 	productApp.mount('#productApp');

@@ -31,42 +31,45 @@
 	
 	<select id="selectUserChatList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
 	    SELECT
-		    cm.chat_no,
-		    cm.sender_id,
-		    cm.message,
-		    TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
-		
-		    CASE 
-		        WHEN c.sender_id = #{sessionId} THEN l2.lawyer_name
-		        ELSE l1.lawyer_name
-		    END AS partner_name
-		
-		FROM chat_message cm
-		
-		JOIN (
-		    SELECT chat_no, MAX(time) AS max_time
-		    FROM chat_message
-		    WHERE chat_no IN (
-		        SELECT chat_no
-		        FROM chat
-		        WHERE sender_id = #{sessionId}
-		           OR receiver_id = #{sessionId}
-		    )
-		    GROUP BY chat_no
-		) latest 
-		    ON cm.chat_no = latest.chat_no 
-		   AND cm.time = latest.max_time
-		
-		JOIN chat c ON cm.chat_no = c.chat_no
-		
-		LEFT JOIN lawyer l1 ON c.sender_id = l1.lawyer_id
-		LEFT JOIN lawyer l2 ON c.receiver_id = l2.lawyer_id
-		
-		ORDER BY cm.time DESC
+	        cm.chat_no,
+	        cm.sender_id,
+	        cm.message,
+	        TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
 
+	        CASE 
+	            WHEN c.sender_id = #{sessionId} THEN l2.lawyer_name
+	            ELSE l1.lawyer_name
+	        END AS partner_name,
+	
+	        CASE 
+	            WHEN c.sender_id = #{sessionId} THEN c.receiver_id
+	            ELSE c.sender_id
+	        END AS partner_id
+	
+	    FROM chat_message cm
+	
+	    JOIN (
+	        SELECT chat_no, MAX(time) AS max_time
+	        FROM chat_message
+	        WHERE chat_no IN (
+	            SELECT chat_no
+	            FROM chat
+	            WHERE sender_id = #{sessionId}
+	               OR receiver_id = #{sessionId}
+	        )
+	        GROUP BY chat_no
+	    ) latest 
+	        ON cm.chat_no = latest.chat_no 
+	       AND cm.time = latest.max_time
+	
+	    JOIN chat c ON cm.chat_no = c.chat_no
+	
+	    LEFT JOIN lawyer l1 ON c.sender_id = l1.lawyer_id
+	    LEFT JOIN lawyer l2 ON c.receiver_id = l2.lawyer_id
+	
+	    ORDER BY cm.time DESC
 	</select>
-	
-	
+
 	<select id="selectMyPayList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
 	    SELECT *
 	    FROM PAY
@@ -213,13 +216,18 @@
       WHERE ORDER_ID = #{orderId}
     </update>
     
-    <select id="selectLastChat" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
+   <select id="selectLastChat" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
 	    SELECT
 	        cm.chat_no,
 	        cm.sender_id,
 	        su.user_name AS sender_name,
 	        cm.message,
 	        TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
+	
+	        CASE 
+	            WHEN c.sender_id = #{sessionId} THEN c.receiver_id
+	            ELSE c.sender_id
+	        END AS partner_id,
 	
 	        CASE 
 	            WHEN c.sender_id = #{sessionId} THEN ru.user_name
@@ -243,7 +251,6 @@
 	    JOIN chat c ON cm.chat_no = c.chat_no
 	
 	    LEFT JOIN tbl_user su ON cm.sender_id = su.user_id
-	
 	    LEFT JOIN tbl_user su2 ON c.sender_id = su2.user_id
 	    LEFT JOIN tbl_user ru ON c.receiver_id = ru.user_id
 	
@@ -288,15 +295,24 @@
 	    WHERE 
 	        RECEIVER_ID = #{receiverId}
 	    AND 
-	        IS_READ = 'N'
+	        IS_READ = 'N' AND NOTI_TYPE IN ('REFUND', 'CANCEL_REFUND')
 	    ORDER BY CREATED_AT DESC
 	</select>
 	
-	<update id="updateNotificationRead" parameterType="hashmap">
-	    UPDATE NOTIFICATION
+	<update id="updateNoti" parameterType="hashmap">
+    	UPDATE NOTIFICATION
 	    SET IS_READ = 'Y'
 	    WHERE RECEIVER_ID = #{receiverId}
 	    AND IS_READ = 'N'
+	    AND NOTI_TYPE IN ('REFUND', 'CANCEL_REFUND')
+	</update>
+	
+	<update id="updateConsult" parameterType="hashmap">
+	    UPDATE PAY
+	    SET PAY_STATUS = 'USED'
+	    WHERE USER_ID = #{userId} 
+	    AND PACKAGE_NAME = '전화 상담 패키지'
+	    AND PAY_STATUS = 'PAID'
 	</update>
 
 

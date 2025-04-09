@@ -32,14 +32,9 @@
     </head>
 
     <body>
-        <jsp:include page="../common/header.jsp" />
         <div id="chartApp">
             <jsp:include page="layout.jsp" />
             <div class="content">
-                <div class="header">
-                    <div>관리자페이지</div>
-                    <div>{{sessionId}}님</div>
-                </div>
                 <h2>통계 자료</h2>
                 <div class="content-container">
                     <div class="filter-bar" style="margin-bottom: 20px;">
@@ -66,11 +61,6 @@
                                     {{ showGrouped ? '숨기기' : '펼치기' }}
                                 </button>
                             </span>
-                            <span>
-                                <button @click="fnDownloadChart('groupedChart')" class="chart-button">
-                                    엑셀로 저장
-                                </button>
-                            </span>
                         </h3>
                     </div>
                     <div v-show="showGrouped" class="chart-wrapper">
@@ -83,11 +73,6 @@
                             <span>
                                 <button @click="showStacked = !showStacked" class="chart-button">
                                     {{ showStacked ? '숨기기' : '펼치기' }}
-                                </button>
-                            </span>
-                            <span>
-                                <button @click="fnDownloadChart('stackedChart')" class="chart-button">
-                                    엑셀로 저장
                                 </button>
                             </span>
                         </h3>
@@ -104,11 +89,6 @@
                                     {{ showLine ? '숨기기' : '펼치기' }}
                                 </button>
                             </span>
-                            <span>
-                                <button @click="fnDownloadChart('lineChart')" class="chart-button">
-                                    엑셀로 저장
-                                </button>
-                            </span>
                         </h3>
                     </div>
                     <div v-show="showLine" class="chart-wrapper">
@@ -121,11 +101,6 @@
                             <span>
                                 <button @click="showPie = !showPie" class="chart-button">
                                     {{ showPie ? '숨기기' : '펼치기' }}
-                                </button>
-                            </span>
-                            <span>
-                                <button @click="fnDownloadChart('pieChart')" class="chart-button">
-                                    엑셀로 저장
                                 </button>
                             </span>
                         </h3>
@@ -168,11 +143,6 @@
                                     {{ showUserLine ? '숨기기' : '펼치기' }}
                                 </button>
                             </span>
-                            <span>
-                                <button @click="fnDownloadChart('userLineChart')" class="chart-button">
-                                    엑셀로 저장
-                                </button>
-                            </span>
                         </h3>
                     </div>
 
@@ -187,11 +157,6 @@
                                     {{ showLawyerLine ? '숨기기' : '펼치기' }}
                                 </button>
                             </span>
-                            <span>
-                                <button @click="fnDownloadChart('lawyerLineChart')" class="chart-button">
-                                    엑셀로 저장
-                                </button>
-                            </span>
                         </h3>
                     </div>
 
@@ -202,7 +167,6 @@
             </div>
             </div> <!-- 여기서 layout 닫기  -->
         </div>
-        <jsp:include page="../common/footer.jsp" />
     </body>
 
     </html>
@@ -285,7 +249,7 @@
                                 }
                             },
                             dataLabels: {
-                                enabled: true,
+                                enabled: false,
                                 offsetX: -6,
                                 style: {
                                     fontSize: '12px',

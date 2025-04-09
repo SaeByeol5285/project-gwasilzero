@@ -7,7 +7,7 @@ body, html {
 	min-height: 100%;
 	height: auto;
 	overflow-y: auto; 
-	font-family: var(--font-main);
+	font-family: 'Noto Sans KR', sans-serif;
 	background-color: #f8f8f8;
 	color: #333;
 }
@@ -24,16 +24,59 @@ body, html {
 *,
 *::before,
 *::after {
-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
+/* 전체 헤더 컨테이너 */
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 30px;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border-bottom: 1px solid #eee;
+  min-height: 80px;
+}
+
+/* 로고 영역 */
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo img {
+  max-height: 45px;
+  width: auto;
+  cursor: pointer;
+}
+
+/* 로그인 사용자 정보 */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 14px;
+  color: #444;
+}
+
+.page-title {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.session-id {
+  font-size: 14px;
+}
 /* =============================
     사이드바
 ============================= */
 .sidebar {
     width: 250px;
 	flex-shrink: 0;
-    background: var(--main-color);
+    background: #ff5c00;
     color: white;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
@@ -52,7 +95,7 @@ box-sizing: border-box;
     padding: 10px 16px;
     margin-bottom: 10px;
     background: white;
-    color: var(--main-color);
+    color: #ff5c00;
     border: none;
     border-radius: 5px;
     font-weight: bold;
@@ -66,7 +109,8 @@ box-sizing: border-box;
 
 .sidebar button.active {
     background-color: #fff3e0;
-    border-left: 5px solid #ff8a33;
+    border-left: 10px solid #ff8a33;
+	border-right: 10px solid #ff8a33;
 }
 
 .logout {
@@ -82,21 +126,10 @@ box-sizing: border-box;
 ============================= */
 .content {
     flex: 1;
-    padding: 30px;
+    padding: 0px 30px;
     background-color: #f8f8f8;
 	display: flex;
 	flex-direction: column;
-}
-
-.header {
-    background: white;
-    padding: 16px 20px;
-    border-radius: 6px;
-    margin-bottom: 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .content-container {
@@ -140,17 +173,38 @@ h3 {
 }
 
 .filter-bar button {
-    background-color: var(--main-color);
+    background-color: #ff5c00;
     color: white;
     border: none;
     padding: 8px 16px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
+	transition: all 0.2s ease;
 }
 
 .filter-bar button:hover {
-    background-color: #e65100;
+	background-color: #ffe6db;
+	color: #ff5c00;
+}
+
+.filter-bar .button.active {
+	background-color: #ff5c00;
+	color: white;
+	font-weight: bold;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-bar .button:disabled {
+	opacity: 0.4;
+	cursor: default;
+}
+
+.filter-bar .button.active {
+	background-color: #ff5c00;
+	color: white;
+	font-weight: bold;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* =============================

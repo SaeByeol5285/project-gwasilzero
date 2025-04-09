@@ -9,15 +9,10 @@
 	<title>관리자 메인</title>
 </head>
 <body>
-    <jsp:include page="../common/header.jsp" />
     <div id="mainApp">
         <jsp:include page="layout.jsp" />
 
         <div class="content">
-            <div class="header">
-                <div>관리자페이지</div>
-                <div>{{sessionId}}님</div>
-            </div>
             <h2>관리자 메인 페이지</h2>
             <div class="content-container">
                 <div>
@@ -26,12 +21,16 @@
                         <tr>
                             <th>이름</th>
                             <th>아이디</th>
+                            <th>전화번호</th>
+                            <th>이메일</th>
                             <th>등급</th>
                             <th>가입일자</th>
                         </tr>
                         <tr v-for="newMem in newMemList">
                             <td>{{newMem.userName}}</td>
                             <td>{{newMem.userId}}</td>
+                            <td>{{newMem.userPhone}}</td>
+                            <td>{{newMem.userEmail}}</td>
                             <td>
                                 <span v-if="newMem.userStatus === 'ADMIN'">관리자</span>
                                 <span v-else-if="newMem.userStatus === 'NORMAL'">일반 회원</span>
@@ -48,11 +47,16 @@
                         <tr>
                             <th>이름</th>
                             <th>아이디</th>
+                            <th>소속 법무 법인</th>
+                            <th>변호사 등록번호</th>
+                            <th>변호사 취득일시</th>
                             <th>승인여부</th>
                         </tr>
                         <tr v-for="lawWait in lawAdminWaitList">
                             <td>{{lawWait.lawyerName}}</td>
                             <td>{{lawWait.lawyerId}}</td>
+                            <td>{{lawWait.officproofName}}</td>
+                            <td>{{lawWait.lawyerNumber}}</td>
                             <td>{{lawWait.lawyerPass}}</td>
                         </tr>
                     </table>
@@ -83,8 +87,7 @@
             </div>
         </div>
         </div> <!-- 여기서 layout 닫기  -->
-    </div>  
-    <jsp:include page="../common/footer.jsp" />
+    </div> 
 </body>
 </html>
 <script>

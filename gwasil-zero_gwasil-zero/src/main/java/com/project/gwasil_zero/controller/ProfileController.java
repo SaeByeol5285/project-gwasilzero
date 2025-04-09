@@ -173,6 +173,7 @@ public class ProfileController {
 	    }
 
 	    return new Gson().toJson(resultMap);
+	}
 
     // 리뷰리스트
 	@RequestMapping(value = "/profile/reviewList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")

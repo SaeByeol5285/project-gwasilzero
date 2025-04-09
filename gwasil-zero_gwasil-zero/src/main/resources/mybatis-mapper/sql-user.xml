@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.project.gwasil_zero.mapper.UserMapper">
-	<select id = "selectUser" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+   <select id = "selectUser" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
       SELECT * 
       FROM TBL_USER
       WHERE user_id = #{id}
@@ -27,19 +27,19 @@
       WHERE lawyer_id = #{id}
    </select>
    
-	<select id="CheckUser" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
-	  SELECT * 
-	  FROM TBL_USER
-	  WHERE USER_NAME = #{userName}
-	    AND USER_PHONE = #{userPhone}
-	</select>
-	
-	<select id="CheckLawyer" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
-	  SELECT * 
-	  FROM LAWYER
-	  WHERE LAWYER_NAME = #{userName}
-	    AND LAWYER_PHONE = #{userPhone}
-	</select>   
+   <select id="CheckUser" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+     SELECT * 
+     FROM TBL_USER
+     WHERE USER_NAME = #{userName}
+       AND USER_PHONE = #{userPhone}
+   </select>
+   
+   <select id="CheckLawyer" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+     SELECT * 
+     FROM LAWYER
+     WHERE LAWYER_NAME = #{userName}
+       AND LAWYER_PHONE = #{userPhone}
+   </select>   
    <select id="selectUserId" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
        SELECT *
        FROM TBL_USER
@@ -57,40 +57,40 @@
       FROM TBL_USER
       WHERE USER_PHONE = #{userPhone}
    </select>
-	<update id="updateUserStatus" parameterType="hashmap">
-	    UPDATE TBL_USER
-	    SET USER_STATUS = 'NORMAL'
-	    WHERE USER_ID = #{id}
-	</update>
-	
-	<update id="updateUserPassword" parameterType="hashmap">
-		UPDATE TBL_USER 
-		SET 
-			  USER_PASSWORD = #{pwd} 
-		WHERE USER_ID = #{id}
-	</update>
+   <update id="updateUserStatus" parameterType="hashmap">
+       UPDATE TBL_USER
+       SET USER_STATUS = 'NORMAL'
+       WHERE USER_ID = #{id}
+   </update>
+   
+   <update id="updateUserPassword" parameterType="hashmap">
+      UPDATE TBL_USER 
+      SET 
+           USER_PASSWORD = #{pwd} 
+      WHERE USER_ID = #{id}
+   </update>
 
-	<update id="updateLawyerPassword" parameterType="hashmap">
-		UPDATE LAWYER 
-		SET 
-			  LAWYER_PWD = #{pwd} 
-		WHERE LAWYER_ID = #{id}
-	</update>
-	<insert id="insertGoogleUser" parameterType="hashmap">
-	    INSERT INTO TBL_USER (
-	        USER_ID, USER_EMAIL, USER_NAME, USER_STATUS, USER_PASSWORD, USER_PHONE, CDATE
-	    ) VALUES (
-	        #{USER_ID}, #{USER_EMAIL}, #{USER_NAME}, #{USER_STATUS}, 'google-login', '010-0000-0000', SYSDATE
-	    )
-	</insert>
+   <update id="updateLawyerPassword" parameterType="hashmap">
+      UPDATE LAWYER 
+      SET 
+           LAWYER_PWD = #{pwd} 
+      WHERE LAWYER_ID = #{id}
+   </update>
+   <insert id="insertGoogleUser" parameterType="hashmap">
+       INSERT INTO TBL_USER (
+           USER_ID, USER_EMAIL, USER_NAME, USER_STATUS, USER_PASSWORD, USER_PHONE, CDATE
+       ) VALUES (
+           #{USER_ID}, #{USER_EMAIL}, #{USER_NAME}, #{USER_STATUS}, 'google-login', '010-0000-0000', SYSDATE
+       )
+   </insert>
 
-	
-	<select id="selectUserByEmail" parameterType="hashmap" resultType="hashmap">
-	    SELECT *
-	    FROM TBL_USER
-	    WHERE USER_EMAIL = #{USER_EMAIL, jdbcType=VARCHAR}
-	</select>
-	
+   
+   <select id="selectUserByEmail" parameterType="hashmap" resultType="hashmap">
+       SELECT *
+       FROM TBL_USER
+       WHERE USER_EMAIL = #{USER_EMAIL, jdbcType=VARCHAR}
+   </select>
+   
 </mapper>
 
 

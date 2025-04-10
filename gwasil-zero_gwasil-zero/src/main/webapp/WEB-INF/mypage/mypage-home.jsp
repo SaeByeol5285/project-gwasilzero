@@ -88,6 +88,10 @@
 					color: #ffffff;
 					cursor: pointer;
 				}
+				
+				button:hover {
+					background-color: #e64a19;
+				}
 
 				/* 리뷰 작성 카드 전용 스타일 */
 				.review-section {

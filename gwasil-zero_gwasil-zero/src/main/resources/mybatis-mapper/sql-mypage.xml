@@ -14,7 +14,7 @@
        LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
        LEFT JOIN LAWYER L ON L.LAWYER_ID = B.LAWYER_ID
        WHERE
-           B.USER_ID = #{userId}
+           B.USER_ID = #{userId} AND BOARD_STATUS != 'DELETE'
        ORDER BY B.CDATE DESC
        offset #{page} rows fetch next #{pageSize} rows only
    </select>
@@ -26,7 +26,7 @@
        LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
        LEFT JOIN LAWYER L ON L.LAWYER_ID = B.LAWYER_ID
        WHERE
-           B.USER_ID = #{userId}
+           B.USER_ID = #{userId} AND BOARD_STATUS != 'DELETE'
    </select>
    
    <select id="selectUserChatList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
@@ -70,7 +70,7 @@
    <select id="selectMyPayList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
        SELECT *
        FROM PAY
-         WHERE USER_ID = #{sessionId}
+       WHERE USER_ID = #{sessionId}
        
    </select>
    

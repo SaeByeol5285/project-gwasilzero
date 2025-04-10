@@ -9,7 +9,8 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/common.css">
     <!-- 상품 관리 선택 유지 -->
     <%
     request.setAttribute("currentPage", "product");
@@ -70,6 +71,7 @@
         }
 
         .btn {
+            font-family: 'Noto Sans KR', sans-serif !important;
             padding: 10px 24px;
             font-size: 14px;
             font-weight: bold;
@@ -99,7 +101,6 @@
     </style>
 </head>
 <body>
-    <jsp:include page="../common/header.jsp" />
     <div id="editApp">
         <div class="layout">
             <jsp:include page="../admin/layout.jsp" />
@@ -145,7 +146,6 @@
             </div>
         </div>
     </div>
-    <jsp:include page="../common/footer.jsp" />
 </body>
 
 <script>

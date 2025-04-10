@@ -12,7 +12,8 @@
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/common.css">
 	<style>
 		.form-wrapper {
 			width: 1000px;
@@ -97,7 +98,6 @@
 	</style>
 </head>
 <body>
-	<jsp:include page="../common/header.jsp" />
 	<div id="productApp">
 		<div class="layout">
 			<jsp:include page="../admin/layout.jsp" />
@@ -136,14 +136,13 @@
 					</table>
 
 					<div class="btn-area">
-						<button @click="fnSave" class="btn btn-save">등록</button>
-						<button @click="fnBack" class="btn btn-cancel">뒤로가기</button>
+						<button @click="fnSave" class="btn btn-save" style="font-family: 'Noto Sans KR', sans-serif !important;">등록</button>
+						<button @click="fnBack" class="btn btn-cancel" style="font-family: 'Noto Sans KR', sans-serif !important;">뒤로가기</button>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<jsp:include page="../common/footer.jsp" />
 </body>
 <script>
 	const productApp = Vue.createApp({

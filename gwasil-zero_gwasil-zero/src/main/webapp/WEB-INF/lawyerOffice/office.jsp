@@ -8,6 +8,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b58f49b3384edf05982d77a3259c7afb&libraries=services"></script>
 	<script src="/js/page-change.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
 	<style>
 		.tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
@@ -56,8 +57,8 @@
 		}
 		.btn-search {
 			padding: 8px 16px;
-			background-color: #f6f6f6; 
-			color: #444;
+			background-color: #ff5c00; 
+			color: white;
 			border: none;
 			border-radius: 6px;
 			font-weight: bold;
@@ -65,13 +66,13 @@
 			transition: background-color 0.2s;
 		}
 		.btn-search:hover {
-			background-color: #ff5c00; 
-			color: white;
+			background-color: #ffe6db; 
+			color: #ff5c00;
 		}
 		.section-subtitle {
 			font-size: 28px;
 			font-weight: bold;
-			margin-bottom: 30px;
+			margin-bottom: 1px;
 			text-align: center;
 			color: #222;
 			position: relative;
@@ -99,9 +100,10 @@
 		
 		.lawyer-list {
 			margin-top: 30px;
-			background-color: #f8f8f8;
+			background-color: white;
+	        border-radius: 10px;
+	        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 			padding: 20px;
-			border-radius: 10px;
 		}
 		.lawyer-list h3 {
 			margin-bottom: 15px;
@@ -136,9 +138,9 @@
 		}
 
 		.find-me-btn {
-			background-color: #f6f6f6;
+			background-color: #ff5c00;
 			margin-bottom: 20px;
-			color: #444;
+			color: white;
 			border: none;
 			padding: 10px 20px;
 			border-radius: 8px;
@@ -148,8 +150,8 @@
 		}
 
 		.find-me-btn:hover {
-			background-color: #ff5c00;
-			color: white;
+			background-color: #ffe6db;
+			color: #ff5c00;
 		}
 
 		.status-badge {
@@ -186,7 +188,7 @@
 			gap: 6px;
 		}
 
-			.btn {
+		.btn {
 			padding: 10px 18px;
 			font-size: 15px;
 			border: none;
@@ -198,25 +200,22 @@
 			transition: all 0.2s ease;
 		}
 
-			.btn:hover {
+		.btn:hover {
 			background-color: #ffe6db;
 			color: #ff5c00;
 		}
 
-			.btn.active {
+		.btn.active {
 			background-color: #ff5c00;
 			color: white;
 			font-weight: bold;
 			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 		}
 
-			.btn:disabled {
+		.btn:disabled {
 			opacity: 0.4;
 			cursor: default;
 		}
-
-
-
 	</style>
 </head>
 <body>
@@ -257,7 +256,7 @@
 
 	<!-- ✅ 근처 법률 사무소 버튼 -->
 	<div class="right-align">
-		<button class="find-me-btn" @click="geoFindMe">📍 내 위치 보기</button>
+		<button class="find-me-btn" @click="geoFindMe" title="실제 위치와 차이가 있을 수 있습니다.">📍 내 위치 보기</button>
 	</div>
 
 
@@ -331,9 +330,6 @@
 		</div>	  
 		
 	</div>
-
-	
-
 </div>
 <jsp:include page="../common/footer.jsp" />
 </body>
@@ -591,6 +587,11 @@ const mapApp = Vue.createApp({
 			self.calculateDistances();
 		},
 
+		formatPhone(phone) {
+			if (!phone) return "";
+			return phone.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+		},
+
 		loadLawyers(status) {
 			const self = this;
 			self.lawyerList = [];
@@ -671,7 +672,9 @@ const mapApp = Vue.createApp({
 									">
 										<h4 style="margin: 0 0 8px 0; font-size: 16px; color: #333;">` + lawyer.lawyerName + `</h4>
 										<p style="margin: 0 0 4px 0; font-size: 13px; color: #666;">📍 ` + lawyer.lawyerAddr + `</p>
-										<p style="margin: 0 0 8px 0; font-size: 13px; color: #666;">📞 ` + lawyer.lawyerPhone + `</p>
+										<p style="margin: 0 0 8px 0; font-size: 13px; color: #666;">
+										📞 ` + self.formatPhone(lawyer.lawyerPhone) + `
+										</p>
 									</div>
 								`;
 
@@ -780,14 +783,15 @@ const mapApp = Vue.createApp({
 									<div style="
 										width: 230px;
 										padding: 12px;
-										border-radius: 10px;
 										box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 										background-color: white;
 										font-family: 'Noto Sans KR', sans-serif;
 									">
 										<h4 style="margin: 0 0 8px 0; font-size: 16px; color: #333;">` + lawyer.lawyerName + `</h4>
 										<p style="margin: 0 0 4px 0; font-size: 13px; color: #666;">📍 ` + lawyer.lawyerAddr + `</p>
-										<p style="margin: 0 0 8px 0; font-size: 13px; color: #666;">📞 ` + lawyer.lawyerPhone + `</p>
+										<p style="margin: 0 0 8px 0; font-size: 13px; color: #666;">
+										📞 ` + self.formatPhone(lawyer.lawyerPhone) + `
+										</p>
 									</div>
 								`;
 
@@ -844,8 +848,18 @@ const mapApp = Vue.createApp({
 			   const self = this;
 
 			   if (!self.sessionId) {
-			     alert("로그인이 필요합니다.");
-			     return;
+				Swal.fire({
+					icon: 'warning',
+					title: '로그인이 필요합니다',
+					text: '북마크 기능은 로그인 후 이용하실 수 있습니다.',
+					confirmButtonColor: '#ff5c00',
+					confirmButtonText: '확인'
+				}).then((result) => {
+						if (result.isConfirmed) {
+							location.href = "/user/login.do";
+						}
+					});
+			    return;
 			   }
 
 			   const isMarked = self.isBookmarked(lawyerId);
@@ -871,9 +885,7 @@ const mapApp = Vue.createApp({
 			       alert("북마크 처리 중 오류가 발생했습니다.");
 			     }
 			   });
-			 },
-
-
+		},
 	},
 	mounted() {
 

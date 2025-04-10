@@ -7,7 +7,7 @@
    <select id="selectUserBoardList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Board">
        SELECT
            B.*,
-           F.FILE_PATH || '/' || F.FILE_REALNAME AS thumb,
+           F.FILE_PATH AS thumbnailPath,
              L.LAWYER_NAME
        FROM
            BOARD B
@@ -160,8 +160,9 @@
    </update>
    
    <select id="selectLawyerBoard" parameterType="hashmap" resultType="Board">
-       SELECT B.*, U.USER_NAME
+       SELECT B.*, U.USER_NAME, F.FILE_PATH AS thumbnailPath
        FROM BOARD B
+       LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
        INNER JOIN TBL_USER U ON B.USER_ID = U.USER_ID
        WHERE 1=1
        <if test="sessionId != null and sessionId != ''">
@@ -176,6 +177,7 @@
    <select id="selectBoardCnt" parameterType="hashmap" resultType="int">
        SELECT COUNT(*)
        FROM BOARD B
+       LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
        INNER JOIN TBL_USER U ON B.USER_ID = U.USER_ID
        WHERE 1=1
        <if test="sessionId != null and sessionId != ''">

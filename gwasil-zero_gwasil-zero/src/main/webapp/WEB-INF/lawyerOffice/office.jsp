@@ -222,22 +222,18 @@
 <jsp:include page="../common/header.jsp" />
 <h2 class="section-subtitle">법률 사무소 찾기</h2>
 <div id="mapApp" class="container">
-	
-	<!-- ✅ 탭 -->
-	<div class="tabs">
+
+		<div class="tabs">
 		<a href="?tab=area"><button class="tab-btn" :class="{active: currentTab =='area'}">지역별</button></a>
 		<a href="?tab=inner"><button class="tab-btn" :class="{active: currentTab =='inner'}">소속 변호사</button></a>
 		<a href="?tab=personal"><button class="tab-btn" :class="{active: currentTab =='personal'}">개인 변호사</button></a>
 	</div>
 	
-
-	<!-- ✅ 검색창  -->
 	<div class="select-row" v-if="currentTab !== 'area'" style="margin-top: 10px;">
 		<input v-model="keyword" class="select-box" style="flex: 1; min-width: 200px;"  @keyup.enter="fnSearchByKeyword" placeholder="지역명을 입력하세요 (예: 강남역)">
 		<button class="btn-search" @click="fnSearchByKeyword">지도 이동</button>
 	</div>
 
-	<!-- ✅ 지역 선택 -->
 	<div v-if="currentTab==='area'" class="select-row">
 		<select v-model="selectSi" @change="fnGu" class="select-box">
 			<option value="">:: 시 선택 ::</option>
@@ -254,19 +250,19 @@
 		<button class="btn-search" @click="fnSearchArea">검색</button>
 	</div>
 
-	<!-- ✅ 근처 법률 사무소 버튼 -->
+	<!--  내 위치 보기 버튼 -->
 	<div class="right-align">
 		<button class="find-me-btn" @click="geoFindMe" title="실제 위치와 차이가 있을 수 있습니다.">📍 내 위치 보기</button>
 	</div>
 
-
-	<!-- ✅ 지도 -->
+	<!-- 카카오 지도 -->
 	<div id="map"></div>
 
-	<!-- ✅ 거리순 리스트 -->
+	<!-- 법률 사무소 목록 -->
 	<div class="lawyer-list">
 		<h3>{{ listTitle }}</h3>
-		<!-- ✅ 상담 상태 필터 select 박스 -->
+
+		<!-- 상담 상태 확인 -->
 		<div style="text-align: right; margin-bottom: 10px; display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
 			<span style="font-weight: bold; font-size: 14px;">현재 상담 가능 여부</span>
 			<select v-model="filterStatus" class="select-box" style="width: 160px;">
@@ -280,7 +276,6 @@
 		<div class="lawyer-card" v-for="lawyer in pagedLawyers" :key="lawyer.lawyerId"  @click="goToLawyerMarker(lawyer)">
 			<div style="display: flex; justify-content: space-between; align-items: flex-start;">
 			  
-			  <!-- 왼쪽: 사진 + 텍스트 -->
 			  <div style="display: flex; gap: 16px; align-items: flex-start;">
 				<!-- 변호사 사진 -->
 				<img :src="lawyer.lawyerImg" alt="변호사 사진"
@@ -302,7 +297,7 @@
 				</div>
 			  </div>
 		  
-			  <!-- 오른쪽: 북마크 아이콘 -->
+			  <!-- 북마크 -->
 			  <div v-if="sessionType != 'lawyer'" style="display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; height: 100%;">
 				<img
 				  :src="isBookmarked(lawyer.lawyerId) ? '/img/selectedBookmark.png' : '/img/Bookmark.png'"

@@ -24,9 +24,20 @@
 	<link rel="stylesheet" href="/css/admin-style.css">
 </head>
 <body>
+    <div class="header-container">
+        <div class="logo-area">
+            <a href="/common/main.do" class="logo">
+                <img src="/img/logo1.png" alt="로고 이미지" />
+            </a>
+        </div>
+        <div class="user-info">
+            <div class="page-title">관리자페이지</div>
+            <div class="session-id">${sessionId}님</div>
+        </div>
+    </div>
     <div class="layout">
-        <!-- 사이드바 -->
-        <div class="sidebar">
+        <!-- 사이드바 -->        
+        <div class="sidebar">            
             <button onclick="fnPageMove('main')" class="${currentPage == 'main' ? 'active' : ''}">관리자 메인</button>
             <button onclick="fnPageMove('user')" class="${currentPage == 'user' ? 'active' : ''}">회원 관리</button>
             <button onclick="fnPageMove('lawyer')" class="${currentPage == 'lawyer' ? 'active' : ''}">변호사 관리</button>

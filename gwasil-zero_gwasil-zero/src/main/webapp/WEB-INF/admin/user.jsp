@@ -9,14 +9,9 @@
 	<title>관리자 회원관리</title>
 </head>
 <body>
-    <jsp:include page="../common/header.jsp" />
     <div id="userApp">
         <jsp:include page="layout.jsp" />
         <div class="content">
-            <div class="header">
-                <div>관리자페이지</div>
-                <div>{{sessionId}}님</div>
-            </div>
             <h2>회원 관리</h2>
             <div class="content-container">
                 <div>
@@ -25,12 +20,16 @@
                         <tr>
                             <th>이름</th>
                             <th>아이디</th>
+                            <th>전화번호</th>
+                            <th>이메일</th>
                             <th>등급</th>
                             <th>가입일자</th>
                         </tr>
                         <tr v-for="newMem in newMemList">
                             <td>{{newMem.userName}}</td>
                             <td>{{newMem.userId}}</td>
+                            <td>{{newMem.userPhone}}</td>
+                            <td>{{newMem.userEmail}}</td>
                             <td>
                                 <span v-if="newMem.userStatus === 'ADMIN'">관리자</span>
                                 <span v-else-if="newMem.userStatus === 'NORMAL'">일반 회원</span>
@@ -43,7 +42,7 @@
                 </div>
                 <div>
                     <h3>회원 목록</h3>
-                    <div class="filter-bar">
+                    <div class="filter-bar" style="margin-bottom: 30px;">
                         <select v-model="searchPeriod">
                             <option value="ALL">기간설정</option>
                             <option value="WEEK">1주</option>
@@ -104,7 +103,6 @@
         </div>
         </div> <!-- 여기서 layout 닫기  -->
     </div> 
-    <jsp:include page="../common/footer.jsp" /> 
 </body>
 </html>
 <script>

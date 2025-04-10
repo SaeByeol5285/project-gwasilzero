@@ -306,12 +306,38 @@
 	         /* 더 진한 주황 */
 	         color: #fff;
 	      }
-		  
+		  .section-subtitle {
+			font-size: 28px;
+			font-weight: bold;
+			margin-bottom: 30px;
+			text-align: center;
+			color: #222;
+			position: relative;
+			display: inline-block;
+			padding-top: 40px;
+			padding-bottom: 10px;
+			display: block;
+			text-align: center;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+  		.section-subtitle::after {
+  			content: "";
+  			position: absolute;
+  			left: 50%;
+  			transform: translateX(-50%);
+  			bottom: 0;
+  			width: 150px;
+  			height: 3px;
+  			background-color: var(--main-color);
+  			border-radius: 2px;
+  		}
 	   </style>
 	<body>
 		<jsp:include page="../common/header.jsp" />
 		<div id="app">
-
+			<h2 class="section-subtitle">게시글 목록</h2>
 			<!-- 👇 슬라이더 멘트 영역 -->
 			<div class="swiper-container slogan-slider">
 				<div class="swiper-wrapper">
@@ -353,8 +379,8 @@
 							class="thumbnail" @error="e => e.target.src='/img/common/image_not_exist.jpg'" />
 						<img v-else src="/img/common/image_not_exist.jpg" alt="기본 썸네일" class="thumbnail" />
 						<h3>{{ item.boardTitle }}</h3>
-						<p>작성자: {{ item.userId }}</p>
-						<p>상태: {{ item.boardStatus }}</p>
+					 <p>작성자: {{ item.userId.slice(0, 3) + '***' }}</p>
+						<p>상태: {{ getStatusLabel(item.boardStatus) }}</p>
 						<p>담당 변호사: {{ item.lawyerName }}</p>
 					</div>
 				</div>
@@ -484,6 +510,18 @@
 				,
 				fnBoardView: function (boardNo) {
 					pageChange("/board/view.do", { boardNo: boardNo })
+				},
+				getStatusLabel(status) {
+				  switch (status) {
+				    case 'WAIT':
+				      return '대기 중';
+				    case 'DOING':
+				      return '진행 중';
+				    case 'END':
+				      return '종료';
+				    default:
+				      return status;
+				  }
 				}
 
 			},

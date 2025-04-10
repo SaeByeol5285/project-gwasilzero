@@ -37,12 +37,13 @@
 												<a @click.stop="toggleBookmark(lawyer.lawyerId)">
 													<img :src="isBookmarked(lawyer.lawyerId) ? '/img/selectedBookmark.png' : '/img/common/bookmark.png'"
 														class="icon" />
-												</a>	
+												</a>
 											</div>
 											<div class="icons-text">
 												<div class="card-txt-small" @click.stop="startChat(lawyer.lawyerId)">
 													전화상담</div>
-												<div class="card-txt-small" @click.stop="toggleBookmark(lawyer.lawyerId)">북마크
+												<div class="card-txt-small"
+													@click.stop="toggleBookmark(lawyer.lawyerId)">북마크
 												</div>
 											</div>
 											<div class="lawyer-content">
@@ -282,43 +283,66 @@
 				},
 				startChat(lawyerId) {
 					let self = this;
-
-					if (!self.sessionId) {
-						Swal.fire({
-							icon: "warning",
-							title: "로그인 필요",
-							text: "로그인이 필요합니다.",
-							confirmButtonColor: "#ff5c00"
-						}).then(() => {
-							location.href = "/user/login.do";
-						});
-						return;
-					}
-
-					if (self.sessionType !== 'user') {
-						Swal.fire({
-							icon: "warning",
-							title: "이용 불가",
-							text: "변호사 사용자는 이용 불가능합니다.",
-							confirmButtonColor: "#ff5c00"
-						});
-						return;
-					}
-
 					$.ajax({
-						url: "/chat/findOrCreate.dox",
+						url: "/board/checkLawyerStatus.dox",
 						type: "POST",
 						data: {
-							userId: self.sessionId,
-							lawyerId: lawyerId
+							sessionId: lawyerId
 						},
+						dataType: "json",
 						success: function (res) {
-							let chatNo = res.chatNo;
-							pageChange("/chat/chat.do", {
-								chatNo: chatNo
+							const isApproved = res.result === "true";
+							const isAuthValid = res.authResult === "true";
+
+							if (!isApproved) {
+								Swal.fire({
+									icon: "error",
+									title: "승인되지 않음",
+									text: "아직 승인되지 않은 변호사 계정입니다.",
+									confirmButtonColor: "#ff5c00"
+								});
+								return;
+							}
+
+							if (!isAuthValid) {
+								Swal.fire({
+									icon: "info",
+									title: "채팅 불가능",
+									text: "변호사 등록기간이 만료된 변호사와는 채팅할 수 없습니다.",
+									confirmButtonColor: "#ff5c00"
+								});
+								return;
+							}
+
+							// 조건 통과
+							$.ajax({
+								url: "/chat/findOrCreate.dox",
+								type: "POST",
+								data: {
+									userId: self.sessionId,
+									lawyerId: lawyerId
+								},
+								success: function (res) {
+									let chatNo = res.chatNo;
+									pageChange("/chat/chat.do", {
+										chatNo: chatNo
+									});
+								}
+							});
+
+						},
+						error: function () {
+							Swal.fire({
+								icon: "error",
+								title: "요청 실패",
+								text: "변호사 상태 확인 요청에 실패했습니다.",
+								confirmButtonColor: "#ff5c00"
 							});
 						}
 					});
+
+
+
 				},
 				EditBoard: function () {
 					let self = this;
@@ -365,10 +389,8 @@
 						success: function (data) {
 							if (isMarked) {
 								self.bookmarkList = self.bookmarkList.filter(b => b.lawyerId !== lawyerId);
-								alert(data.result);
 							} else {
 								self.bookmarkList.push({ lawyerId: lawyerId });
-								alert(data.result);
 							}
 							localStorage.setItem('bookmarkUpdated', Date.now());
 						},

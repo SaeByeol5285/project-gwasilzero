@@ -1,10 +1,11 @@
-#footer{
+
+#footer {
 	width: 100%;
 }
+
 .footer-container {
 	width: 100%;
 	clear: both;
-
 	background-color: #f8f9fa;
 	color: #333;
 	border-top: 1px solid #ddd;
@@ -17,6 +18,7 @@
 	margin: 0 auto;
 }
 
+/* 상단 영역: 로고 + 링크 */
 .footer-top {
 	display: flex;
 	flex-wrap: wrap;
@@ -30,6 +32,7 @@
 	margin-bottom: 10px;
 }
 
+/* 링크 영역 */
 .footer-links {
 	display: flex;
 	flex-wrap: wrap;
@@ -39,18 +42,23 @@
 .footer-links a {
 	color: #333;
 	text-decoration: none;
+	font-size: 14px;
 }
 
 .footer-links .highlight {
-	color: #0d47a1;
+	color: #FF5722;
 	font-weight: bold;
 }
 
+/* 주소 및 회사 정보 */
 .footer-info {
 	margin-top: 20px;
 	line-height: 1.6;
+	font-size: 13px;
+	color: #777;
 }
 
+/* 하단 추가 요소들 */
 .footer-bottom {
 	display: flex;
 	flex-wrap: wrap;
@@ -64,6 +72,7 @@
 	margin-right: 12px;
 }
 
+/* 브로슈어 버튼 */
 .brochure-buttons {
 	display: flex;
 	gap: 12px;
@@ -79,18 +88,20 @@
 	color: #333;
 	font-weight: 500;
 	transition: background-color 0.2s;
+	font-size: 14px;
 }
 
 .brochure-btn:hover {
 	background-color: #f0f0f0;
 }
 
+/* 인증서 영역 */
 .footer-cert img {
 	height: 64px;
 	margin-top: 20px;
 }
 
-/* Quick Menu */
+/* 퀵 메뉴 */
 .quick-menu {
 	position: fixed;
 	bottom: 80px;

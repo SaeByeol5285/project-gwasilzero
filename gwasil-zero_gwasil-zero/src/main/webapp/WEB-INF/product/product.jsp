@@ -9,7 +9,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<title>상품 관리</title>
     <style>
-        /* a 태그 기본 스타일 개선 */
         .content-container a {
             color: #ff6b00;
             text-decoration: none;

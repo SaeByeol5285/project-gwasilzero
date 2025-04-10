@@ -10,7 +10,6 @@
         <link rel="stylesheet" href="/css/lawyerView.css">
         <title>변호사 상세보기</title>        
     </head>
-
     <body>
         <jsp:include page="../common/header.jsp" />
         <div id="lawInfoApp">
@@ -182,7 +181,6 @@
         <jsp:include page="/WEB-INF/profile/recentViewBox.jsp" />
         <jsp:include page="../common/footer.jsp" />
     </body>
-
     </html>
     <script>
         const lawInfoApp = Vue.createApp({

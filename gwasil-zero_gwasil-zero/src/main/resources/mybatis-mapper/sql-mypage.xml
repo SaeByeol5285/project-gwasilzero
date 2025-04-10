@@ -129,19 +129,19 @@
    </select>
    
    <update id="updateLawyer" parameterType="hashmap">
-      UPDATE LAWYER
-      SET
-         LAWYER_NAME = #{lawyerName},
-         LAWYER_PHONE = #{lawyerPhone},
-         LAWYER_EMAIL = #{lawyerEmail},
-         LAWYER_ADDR = #{lawyerAddr},
-         LAWYER_IMG = #{lawyerImg}
-      WHERE LAWYER_ID = #{sessionId}
-   </update>
+	  UPDATE LAWYER
+	  SET
+	     LAWYER_NAME = #{lawyerName},
+	     LAWYER_PHONE = #{lawyerPhone},
+	     LAWYER_EMAIL = #{lawyerEmail},
+	     LAWYER_ADDR = #{lawyerAddr},
+	     LAWYER_IMG = #{lawyerImg, jdbcType=VARCHAR}
+	  WHERE LAWYER_ID = #{sessionId}
+	</update>
    
    <update id="updateLawyerImg" parameterType="hashmap">
        UPDATE lawyer
-       SET lawyer_img = #{lawyerImg}
+       SET lawyer_img = #{lawyerImg, jdbcType=VARCHAR}
        WHERE lawyer_id = #{lawyerId}
    </update>
 

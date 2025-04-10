@@ -8,88 +8,113 @@
 		<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 		<script src="/js/page-change.js"></script>
 		<link rel="stylesheet" href="/css/common.css">
+		<link rel="stylesheet" href="/css/totalDocs.css">
 		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
 		<title>상세 페이지</title>
+		<style>
+
+		</style>
 	</head>
 
 	<body>
 		<jsp:include page="../common/header.jsp" />
 		<div id="app" class="container">
-			<div class="card" v-if="info">
-				<h2 class="section-title">{{ info.totalTitle }}</h2>
-				<div class="view-meta mb-20">
-					작성자: {{ info.userId }} | 작성일: {{ info.cdate }} | 조회수: {{ info.cnt }}
-				</div>
-				<div class="form-group mb-20" v-if="fileList.length > 0">
-					<label>첨부파일</label>
-					<ul>
-						<li v-for="(file, idx) in fileList" :key="idx">
-							📎 {{ file.fileName }}
-							<template v-if="isPreviewable(file.fileName)">
-								<a :href="file.filePath" target="_blank" style="margin-left: 10px;">보기</a>
+			<div class="container-detail">
+				<!-- 본문 전체 -->
+				<section class="post-wrapper" v-if="info">
+					<!-- 제목 + 메타 -->
+					<div class="post-header">
+						<h2 class="section-title">{{ info.totalTitle }}</h2>
+						<div class="detail-meta">
+							작성자: {{ info.userId }} | 작성일: {{ info.cdate }} | 조회수: {{ info.cnt }}
+						</div>
+					</div>
+
+					<!-- 첨부파일 -->
+					<div class="post-file" v-if="fileList.length > 0">
+						<div class="attachment-box">
+							<label><strong>첨부파일</strong></label>
+							<ul class="file-list">
+								<li v-for="(file, idx) in fileList" :key="idx">
+									<img src="../../img/common/file-attached.png" class="file-icon"> {{ file.fileName }}
+									<template v-if="isPreviewable(file.fileName)">
+										<a :href="file.filePath" target="_blank" style="margin-left: 10px;">보기</a>
+									</template>
+									<a :href="file.filePath" :download="file.fileName"
+										style="margin-left: 10px;">다운로드</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+
+					<!-- 본문 내용 -->
+					<div class="post-body">
+						<div class="detail-contents" v-html="info.totalContents"></div>
+					</div>
+
+					<!-- 버튼 영역 -->
+					<div class="post-actions">
+						<div class="left-buttons" v-if="sessionStatus == 'ADMIN'">
+							<button class="btn btn-write" @click="fnEdit(info.totalNo)" style="margin-right: 5px;">✏️ 수정</button>
+							<button class="btn btn-red" @click="fnRemove(info.totalNo)">🗑️ 삭제</button>
+						</div>
+						<div class="right-buttons">
+							<button @click="goToListPage" class="btn btn-outline">목록보기</button>
+						</div>
+					</div>
+				</section>
+
+				<!-- 댓글 전체 -->
+				<!-- 관리자 댓글 리스트 -->
+				<div class="admin-comments">
+					<h3 class="section-title">관리자 댓글</h3>
+
+					<ul class="comment-list" v-if="cmtList.length > 0">
+						<li v-for="comment in cmtList" :key="comment.cmtNo" class="comment-item">
+							<!-- 수정 중일 때 -->
+							<div v-if="editCmtNo === comment.cmtNo" class="comment-edit">
+								<textarea v-model="editContents" class="edit-textarea"></textarea>
+								<div class="edit-actions">
+									<button class="btn btn-outline btn-sm" @click="fnSaveCmt(comment.cmtNo)">수정
+										완료</button>
+									<button class="btn btn-gray btn-sm" @click="editCmtNo = null">취소</button>
+								</div>
+							</div>
+
+							<!-- 일반 상태 -->
+							<template v-else>
+								<div class="comment-content">
+									<strong>[관리자]</strong> {{ comment.contents }}
+									<small class="cmt-time">{{ comment.cdate }}</small>
+								</div>
+								<div class="cmt-actions" v-if="sessionStatus == 'ADMIN'">
+									<span @click="fnEditCmt(comment)">수정</span>
+									<span @click="fnRemoveCmt(comment.cmtNo)">삭제</span>
+								</div>
 							</template>
-							<a :href="file.filePath" :download="file.fileName" style="margin-left: 10px;">다운로드</a>
 						</li>
 					</ul>
-				</div>
+					<p v-else class="no-comment">아직 등록된 댓글이 없습니다.</p>
 
-				<div class="view-content mb-20">
-					<div class="detail-contents" v-html="info.totalContents"></div>
-				</div>
-
-				<div class="button-wrap" style="display: flex; justify-content: space-between; margin-top: 20px;">
-					<div class="left-buttons">
-						<button class="btn btn-outline" v-if="info.userId == sessionId" @click="fnEdit(info.totalNo)">수정</button>
-						<button class="btn btn-outline" v-if="info.userId == sessionId || sessionStatus == 'ADMIN'" @click="fnRemove(info.totalNo)">삭제</button>
-					</div>
-					<div class="right-buttons">
-						<button @click="goToListPage" class="btn btn-primary">목록보기</button>
-					</div>
-				</div>
-			</div>
-
-		
-			<!-- 댓글 영역: 관리자만 보임 -->
-			<div class="mt-40" v-if="sessionStatus == 'ADMIN'">
-				<h3 class="section-title">관리자 댓글</h3>
-				<div class="form-group mb-10">
-					<textarea v-model="cmtContents" rows="3" placeholder="댓글을 입력하세요"
-						style="width: 100%; padding: 10px;"></textarea>
-				</div>
-				<div>
-					<button @click="fnAddCmt" class="btn btn-primary">댓글 등록</button>
-				</div>
-			</div>
-			<!-- 댓글 리스트 -->
-			<ul class="mt-20" v-if="cmtList.length > 0">
-				<li v-for="(comment, idx) in cmtList" :key="idx" style="margin-bottom: 10px;">
-					<div v-if="editCmtNo === comment.cmtNo">
-						<textarea v-model="editContents" rows="3" style="width: 100%; padding: 10px;"></textarea>
-						<div style="margin-top: 5px;">
-							<button @click="fnSaveCmt(comment.cmtNo)" class="btn btn-outline">수정 완료</button>
-							<button @click="editCmtNo = null" class="btn btn-danger">취소</button>
+					<div v-if="sessionStatus == 'ADMIN'">
+						<h3 class="section-title">댓글 작성</h3>
+						<div class="comment-form">
+							<textarea v-model="cmtContents" placeholder="댓글을 입력하세요"></textarea>
+							<button @click="fnAddCmt" class="btn btn-blue">💬 댓글 등록</button>
 						</div>
 					</div>
-					<div v-else>
-						<strong>[관리자 댓글]</strong>: {{ comment.contents }}
-						<small style="color: #aaa;">{{ comment.cdate }}</small>
-						<div style="margin-top: 5px;" v-if="sessionStatus == 'ADMIN'">
-							<button @click="fnEditCmt(comment)" class="btn btn-outline btn-sm">수정</button>
-							<button @click="fnRemoveCmt(comment.cmtNo)" class="btn btn-danger btn-sm">삭제</button>
-						</div>
-					</div>
-				</li>
-			</ul>
-			<p v-else class="mt-20" style="color: #888;">아직 등록된 댓글이 없습니다.</p>
-			<div class="mt-40 pt-10" style="border-top: 1px solid #eee;">
-				<div v-if="prev" class="mb-10">
-					⬅️ 이전글: <a href="javascript:void(0)" @click="moveTo(prev.totalNo)">{{ prev.totalTitle }}</a>
-				</div>
-				<div v-if="next">
-					➡️ 다음글: <a href="javascript:void(0)" @click="moveTo(next.totalNo)">{{ next.totalTitle }}</a>
-				</div>
-			</div>
 
+				</div>
+
+				<!-- 이전/다음글은 여기 아래로 분리 -->
+				<div class="adjacent-links">
+					<div v-if="prev">⬅️ 이전글: <a @click="moveTo(prev.totalNo)">{{ prev.totalTitle }}</a></div>
+					<div v-if="next">➡️ 다음글: <a @click="moveTo(next.totalNo)">{{ next.totalTitle }}</a></div>
+				</div>
+
+				<!--  -->
+
+			</div>
 		</div>
 		<jsp:include page="../common/footer.jsp" />
 	</body>
@@ -221,7 +246,7 @@
 								self.editContents = '';
 								self.fnGetCmtList();
 							} else {
-								alert("수정 실패");							
+								alert("수정 실패");
 							}
 						}
 					});
@@ -230,7 +255,7 @@
 					const self = this;
 					if (!confirm("정말 삭제하시겠습니까?")) return;
 					var nparmap = {
-						cmtNo : cmtNo,
+						cmtNo: cmtNo,
 					};
 					$.ajax({
 						url: "/totalDocs/removeCmt.dox",
@@ -242,7 +267,7 @@
 								alert("댓글이 삭제되었습니다.");
 								self.fnGetCmtList();
 							} else {
-								alert("삭제 실패");						
+								alert("삭제 실패");
 							}
 						}
 					});

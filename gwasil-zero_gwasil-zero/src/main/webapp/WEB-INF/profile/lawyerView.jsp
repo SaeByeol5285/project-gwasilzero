@@ -61,6 +61,9 @@
                             <p><strong>이름:</strong> {{ info.lawyerName }}</p>
                             <p><strong>이메일:</strong> {{ info.lawyerEmail }}</p>
                             <p><strong>전화번호:</strong> {{ info.lawyerPhone }}</p>
+                            <div v-if="info.officproofName">
+                                <p><strong>사무실:</strong> {{ info.officproofName }}</p>
+                            </div>
                             <div v-if="info.officproofPath">
                                 <p><strong>소속 인증:</strong></p>
                                 <img :src="info.officproofPath" alt="소속 인증" class="proof-img">
@@ -119,60 +122,64 @@
                     <!-- 감사의 말 탭 -->
                     <div v-if="currentTab === 'review'" class="tab-content">
                         <!-- 후기 목록 -->
-                        <h3>후기 목록</h3>
-                        <div id="lawyerReviewApp" class="mypage-review">
-                            <div v-if="reviewList.length > 0" class="review-summary">
-                                총 {{reviewCnt}} 건의 리뷰
-                            </div>
-                            <div v-if="reviewList.length > 0">
-                                <div class="review-card" v-for="item in reviewList" :key="item.reviewNo">
-                                    <div class="review-header">
-                                        <strong>작성자:</strong> {{ item.userId.slice(0, 3) + '***' }}
-                                        <span class="review-date">{{ item.cdate }}</span>
-                                    </div>
-                                    <div class="review-score">
-                                        <span v-for="n in 5" :key="n" class="star"
-                                            :class="{ filled: n <= item.score }">⭐</span>
-                                        <span class="score-text">({{ item.score }}점)</span>
-                                    </div>
-                                    <div class="review-content">
-                                        {{ item.contents }}
+                        <div class="info-box">
+                            <h3>후기 목록</h3>
+                            <div id="lawyerReviewApp" class="mypage-review">
+                                <div v-if="reviewList.length > 0" class="review-summary">
+                                    총 {{reviewCnt}} 건의 리뷰
+                                </div>
+                                <div v-if="reviewList.length > 0">
+                                    <div class="review-card" v-for="item in reviewList" :key="item.reviewNo">
+                                        <div class="review-header">
+                                            <strong>작성자:</strong> {{ item.userId.slice(0, 3) + '***' }}
+                                            <span class="review-date">{{ item.cdate }}</span>
+                                        </div>
+                                        <div class="review-score">
+                                            <span v-for="n in 5" :key="n" class="star"
+                                                :class="{ filled: n <= item.score }">⭐</span>
+                                            <span class="score-text">({{ item.score }}점)</span>
+                                        </div>
+                                        <div class="review-content">
+                                            {{ item.contents }}
+                                        </div>
                                     </div>
                                 </div>
+                                <!-- 페이징 -->
+                                <div class="pagination" style="margin-top: 20px; display: flex; gap: 10px;"
+                                    v-if="reviewList.length > 0">
+                                    <button :disabled="page === 1" @click="pageChange(page - 1)">이전</button>
+                                    <span>페이지 {{ page }} / {{ index }}</span>
+                                    <button :disabled="page === index" @click="pageChange(page + 1)">다음</button>
+                                </div>
+                                <div v-else class="no-data">아직 후기가 존재하지 않습니다.</div>
                             </div>
-                            <!-- 페이징 -->
-                            <div class="pagination" style="margin-top: 20px; display: flex; gap: 10px;"
-                                v-if="reviewList.length > 0">
-                                <button :disabled="page === 1" @click="pageChange(page - 1)">이전</button>
-                                <span>페이지 {{ page }} / {{ index }}</span>
-                                <button :disabled="page === index" @click="pageChange(page + 1)">다음</button>
-                            </div>
-                            <div v-else class="no-data">아직 후기가 존재하지 않습니다.</div>
                         </div>
 
                         <!-- AI 후기 분석 -->
-                        <h3 style="color: #6a11cb;">AI 후기 분석</h3>
-                        <!-- 자연어 질문 -->
-                        <div class="llm-section">
-                            <label for="questionInput"><strong>🤖 AI에게 자유롭게 질문하기</strong></label>
-                            <input type="text" id="questionInput" v-model="question"
-                            placeholder="예: 해당 변호사의 후기 중 가장 인상 깊은 내용을 알려줘" style="width: 400px;">
-                            <button class="ai-button" @click="sendCustomLLMRequest">질문하기</button>
-                        </div>
+                        <div class="info-box">
+                            <h3 style="color: #6a11cb;">AI 후기 분석</h3>
+                            <!-- 자연어 질문 -->
+                            <div class="llm-section">
+                                <label for="questionInput"><strong>🤖 AI에게 자유롭게 질문하기</strong></label>
+                                <input type="text" id="questionInput" v-model="question"
+                                    placeholder="예: 해당 변호사의 후기 중 가장 인상 깊은 내용을 알려줘" style="width: 400px;">
+                                <button class="ai-button" @click="sendCustomLLMRequest">질문하기</button>
+                            </div>
 
-                        <!-- 또는 버튼 사용 -->
-                        <div class="ai-buttons" style="margin-top: 16px;">
-                            <strong>또는 아래 버튼 중 하나를 눌러보세요:</strong><br>
-                            <button class="ai-button" @click="getReviewAverage">평균 별점 보기</button>
-                            <button class="ai-button" @click="getKeywordFromReviews">키워드 보기</button>
-                            <button class="ai-button" @click="getRepresentativeReview">대표 후기 보기</button>
-                        </div>
+                            <!-- 또는 버튼 사용 -->
+                            <div class="ai-buttons" style="margin-top: 16px;">
+                                <strong>또는 아래 버튼 중 하나를 눌러보세요:</strong><br>
+                                <button class="ai-button" @click="getReviewAverage">평균 별점 보기</button>
+                                <button class="ai-button" @click="getKeywordFromReviews">키워드 보기</button>
+                                <button class="ai-button" @click="getRepresentativeReview">대표 후기 보기</button>
+                            </div>
 
-                        <!-- 결과 -->
-                        <div class="llm-result" v-if="answer">
-                            <strong>🤖 AI 분석 결과</strong>
-                            <p v-if="loading" class="loading-text">AI가 분석 중입니다...</p>
-                            <p v-else>{{ answer }}</p>
+                            <!-- 결과 -->
+                            <div class="llm-result" v-if="answer">
+                                <strong>🤖 AI 분석 결과</strong>
+                                <p v-if="loading" class="loading-text">AI가 분석 중입니다...</p>
+                                <p v-else>{{ answer }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -218,13 +225,31 @@
                         type: "POST",
                         data: { lawyerId: self.lawyerId },
                         success: function (data) {
-                            console.log(data.info);
+                            console.log(`.
+　 ∧_∧　！
+　(´ﾞﾟωﾟ')
+＿(_つ/￣￣￣/＿
+　 ＼/　　　/
+　　　￣￣￣
+
+　 ∧_∧
+　(;ﾞﾟωﾟ')
+＿(_つ__ミ　헉
+　＼￣￣￣＼ミ
+　　￣￣￣￣
+
+　 .:∧_∧:
+＿:(;ﾞﾟωﾟ'): 에러잖아!
+　＼￣￣￣＼
+　　￣￣￣￣
+`);
+
                             self.info = data.info;
                             self.lawyerId = data.info.lawyerId;
                             self.license = data.license;
                             self.mainCaseList = data.mainCaseList || [];
                             self.fnGetReviewList();
-                            console.log("✅ 변호사 정보 로딩 완료:", data.info.lawyerId);
+                            // console.log("✅ 변호사 정보 로딩 완료:", data.info.lawyerId);
                         }
                     });
                 },

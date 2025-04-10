@@ -29,7 +29,7 @@
 							<div class="swiper mySwiper">
 								<div class="swiper-wrapper">
 									<div class="swiper-slide" v-for="lawyer in lawyerList" :key="lawyer.lawyerId">
-										<div class="lawyer-card" @click.stop="goToProfile(lawyer.lawyerId)">
+										<div class="lawyer-card" >
 											<img class="lawyer-img" :src="lawyer.lawyerImg" />
 											<div class="lawyer-icons" >
 												<a><img src="../../img/common/call.png" class="icon"
@@ -239,45 +239,47 @@
 					});
 				},
 				initSwiper() {
-					//변호사 스와이퍼
-					new Swiper('.mySwiper', {
-						slidesPerView: 4,
-						spaceBetween: 30,
-						slidesPerGroup: 4,
-						speed: 1000,
-						loop: true,
-						autoplay: {
-							delay: 5000,
-							disableOnInteraction: true,
-						},
-						pagination: {
-							el: '.swiper-pagination',
-							clickable: true,
-						},
-						navigation: {
-							nextEl: '.swiper-button-next',
-							prevEl: '.swiper-button-prev',
-						},
-						centeredSlides: false,
-					});
-					//리뷰 스와이퍼
-					new Swiper(".reviewSwiper", {
-						slidesPerView: 3,             // 한 화면에 3개 보여줌
-						spaceBetween: 20,             // 카드 간 간격
-						slidesPerGroup: 3,            // 몇 장씩 넘길지
-						loop: true,
-						speed: 1000,
-						centeredSlides: false,        // 양 옆 잘림 방지
-						navigation: {
-							nextEl: ".swiper-button-next",
-							prevEl: ".swiper-button-prev",
-						},
-						pagination: {
-							el: ".swiper-review-pagination",
-							clickable: true,
-						},
-					});
-				},
+				               //변호사 스와이퍼
+				               new Swiper('.mySwiper', {
+				                  slidesPerView: 4,
+				                  spaceBetween: 30,
+				                  slidesPerGroup: 4,
+				                  speed: 1000,
+				                  loop: true,
+				                  allowTouchMove: false,
+				                  autoplay: {
+				                     delay: 5000,
+				                     disableOnInteraction: true,
+				                  },
+				                  pagination: {
+				                     el: '.swiper-pagination',
+				                     clickable: true,
+				                  },
+				                  navigation: {
+				                     nextEl: '.swiper-button-next',
+				                     prevEl: '.swiper-button-prev',
+				                  },
+				                  centeredSlides: false,
+				               });
+				               //리뷰 스와이퍼
+				               new Swiper(".reviewSwiper", {
+				                  slidesPerView: 3,             // 한 화면에 3개 보여줌
+				                  spaceBetween: 20,             // 카드 간 간격
+				                  slidesPerGroup: 3,            // 몇 장씩 넘길지
+				                  loop: true,
+				                  speed: 1000,
+				                  centeredSlides: false,        // 양 옆 잘림 방지
+				                  allowTouchMove: false,
+				                  navigation: {
+				                     nextEl: ".swiper-button-next",
+				                     prevEl: ".swiper-button-prev",
+				                  },
+				                  pagination: {
+				                     el: ".swiper-review-pagination",
+				                     clickable: true,
+				                  },
+				               });
+				            },
 				startChat(lawyerId) {
 	              let self = this;
 			   $.ajax({

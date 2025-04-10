@@ -15,7 +15,7 @@
         <link href="https://cdn.jsdelivr.net/npm/quill-emoji@0.1.7/dist/quill-emoji.css" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/quill-emoji@0.1.7/dist/quill-emoji.js"></script>
         
-        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <title>변호사 프로필 수정</title>
     </head>
     <body>
@@ -84,21 +84,22 @@
                                 <div v-if="license.length > 0" class="license-list">
                                     <div v-for="(item, index) in license" :key="index" class="license-card">
                                         <template v-if="item.isExisting">
-                                            <img :src="item.licensePreview" class="license-img" />
-                                            <div class="license-name">{{ item.licenseName }}</div>
-                                            <button type="button" @click="removeExistingLicense(item, index)" class="lawyer-btn lawyer-btn-primary" style="margin-top: 10px;">삭제</button>
+                                            <img :src="item.licensePreview" class="license-img" /> 
+                                            <div class="license-name">{{ item.licenseName }}</div> 
+                                            <button type="button" @click="removeExistingLicense(item, index)" 
+                                                    class="lawyer-btn lawyer-btn-primary" style="margin-top: 10px;">삭제</button> 
                                         </template>
                                         <template v-else>
                                             <input type="text" v-model="item.licenseName" placeholder="자격증 이름 입력" style="margin-bottom: 6px;" />
-                                            <input type="file" accept="image/png, image/jpeg" @change="onFileChange($event, index)" />
-                                            <img v-if="item.licensePreview" :src="item.licensePreview" class="license-img" />
-                                        </template>
-                                    </div>
-                                </div>
-                                <div v-else class="no-data">등록된 자격증이 없습니다.</div>
-                                <div style="margin-top: 16px;">
-                                    <button type="button" @click="addLicense" class="lawyer-btn lawyer-btn-primary">+ 자격 추가</button>
-                                </div>
+                                            <input type="file" accept="image/png, image/jpeg" @change="onFileChange($event, index)" /> 
+                                            <img v-if="item.licensePreview" :src="item.licensePreview" class="license-img" /> 
+                                        </template> 
+                                    </div> 
+                                </div> 
+                                <div v-else class="no-data">등록된 자격증이 없습니다.</div> 
+                                <div style="margin-top: 16px;"> 
+                                    <button type="button" @click="addLicense" class="lawyer-btn lawyer-btn-primary">+ 자격 추가</button> 
+                                </div> 
                             </div>
     
                             <div class="info-box">
@@ -161,7 +162,8 @@
                     selectedBoards: [],
                     deletedLicenseIds: [],
                     categoryList: [],  
-                    selectedCategories: [] 
+                    selectedCategories: [],
+                    isLicenseValid: false
                 };
             },
             computed: {
@@ -178,19 +180,6 @@
                         dataType: "json",
                         data: { lawyerId: self.lawyerId },
                         success(data) {
-                            console.log("%c" +
-"╔════════════════════════════╗\n" +
-"║ 🐾✨ 마법사 고양이 등장! ✨🐾 ║\n" +
-"╚════════════════════════════╝\n" +
-"        /\\__/\\\n" +
-"      (=｀ω´=)  🔮\n" +
-"     /       \\  🧙‍♂️\n" +
-"    (  )   (  )\n" +
-"   (__(__)___)\n" +
-"\n" +
-"📦 박스 안에서 마법 준비 완료!\n" +
-"💥 오늘도 냥펀치와 마법을 드립니다!", 
-"color: hotpink; font-size: 16px; font-weight: bold; font-family: monospace");
                             // console.log(data.info);
                             self.info = data.info;
                             // Quill에 값 설정
@@ -251,7 +240,6 @@
                     formData.append("selectedCategories", JSON.stringify(self.selectedCategories));
 
                     let count = 0;
-                    let invalid = false;
 
                     self.license.forEach((item, i) => {
                         if (item.isExisting) return;
@@ -262,7 +250,7 @@
                                 icon: "warning",
                                 confirmButtonText: "확인"
                             });
-                            invalid = true;
+                            
                             return;
                         }
 
@@ -271,12 +259,19 @@
 
                         formData.append(nameKey, item.licenseName.trim());
                         formData.append(fileKey, item.licenseFile);
+                        // console.log("🧪", nameKey, ":", item.licenseName); 
+                        // console.log("🧪", fileKey, ":", item.licenseFile.name);
                         count++;
                     });
 
-                    if (invalid) return;
+                   
 
                     formData.append("licenseCount", count);
+                    // DEBUG 로그
+                    // console.log("🧾 삭제 예정 리스트:", self.deletedLicenseIds); 
+                    // for (let pair of formData.entries()) { 
+                    //     console.log("📦", pair[0], pair[1]); 
+                    // }
 
                     $.ajax({
                         url: "/profile/lawyerEdit.dox",

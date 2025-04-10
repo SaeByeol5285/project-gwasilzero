@@ -160,7 +160,6 @@ h3 {
     align-items: center;
     flex-wrap: wrap;
     gap: 12px;
-    margin-bottom: 30px;
 }
 
 .filter-bar select,
@@ -181,6 +180,7 @@ h3 {
     font-weight: bold;
     cursor: pointer;
 	transition: all 0.2s ease;
+	justify-content: center;
 }
 
 .filter-bar button:hover {
@@ -222,7 +222,7 @@ table {
 th, td {
     padding: 12px 14px;
     border: 1px solid #e0e0e0;
-    text-align: left;
+    text-align: center;
 }
 
 th {

@@ -8,6 +8,7 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <title>관리자 변호사 관리</title>
         <style>
             .content-container a {
@@ -21,6 +22,43 @@
                 color: #d64d00;
                 text-decoration: underline;
             }
+
+            .button {
+				padding: 10px 18px;
+				/* margin-bottom: 10px; */
+				font-size: 13px;
+				border: none;
+				border-radius: 8px;
+				background-color: #ff5c00;
+				color: white;
+				font-weight: 500;
+				cursor: pointer;
+				transition: all 0.2s ease;
+			}
+
+			.button:hover {
+				background-color: #ffe6db;
+				color: #ff5c00;
+			}
+
+			.button.active {
+				background-color: #ff5c00;
+				color: white;
+				font-weight: bold;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			}
+
+			.button:disabled {
+				opacity: 0.4;
+				cursor: default;
+			}
+
+			.button.active {
+				background-color: #ff5c00;
+				color: white;
+				font-weight: bold;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			}
         </style>  
     </head>
 
@@ -37,7 +75,7 @@
                             <tr>
                                 <th>이름</th>
                                 <th>아이디</th>
-                                <th>소속 법무 법인</th>
+                                <th>전화번호</th>
                                 <th>변호사 등록번호</th>
                                 <th>변호사 취득일시</th>
                                 <th>소속 유형</th>
@@ -47,7 +85,7 @@
                                     <a :href="'waitLawyerView.do?lawyerId=' + lawWait.lawyerId + '&page=lawyer'">{{ lawWait.lawyerName }}</a>
                                 </td>
                                 <td>{{lawWait.lawyerId}}</td>
-                                <td>{{lawWait.officproofName}}</td>
+                                <td>{{lawWait.lawyerPhone}}</td>
                                 <td>{{lawWait.lawyerNumber}}</td>
                                 <td>{{lawWait.passYears}}</td>
                                 <td>
@@ -76,7 +114,7 @@
                             <tr>
                                 <th>이름</th>
                                 <th>아이디</th>
-                                <th>소속 법무 법인</th>
+                                <th>전화번호</th>
                                 <th>변호사 등록번호</th>
                                 <th>변호사 취득일시</th>
                                 <th>소속 유형</th>
@@ -85,7 +123,7 @@
                             <tr v-for="lawPassed in lawPassedList" :key="lawPassed.lawyerId">
                                 <td>{{lawPassed.lawyerName}}</td>
                                 <td>{{lawPassed.lawyerId}}</td>
-                                <td>{{lawPassed.officproofName}}</td>
+                                <td>{{lawPassed.lawyerPhone}}</td>
                                 <td>{{lawPassed.lawyerNumber}}</td>
                                 <td>{{lawPassed.passYears}}</td>
                                 <td>
@@ -94,7 +132,7 @@
                                     <span v-else>-</span>
                                 </td>
                                 <td>
-                                    <button @click="fnCancel(lawPassed.lawyerId)">승인취소</button>
+                                    <button @click="fnCancel(lawPassed.lawyerId)" class="button">승인취소</button>
                                 </td>
                             </tr>
                         </table>
@@ -117,7 +155,7 @@
                             <tr>
                                 <th>이름</th>
                                 <th>아이디</th>
-                                <th>소속 법무 법인</th>
+                                <th>전화번호</th>
                                 <th>변호사 등록번호</th>
                                 <th>변호사 취득일시</th>
                                 <th>재가입 승인</th>
@@ -125,11 +163,11 @@
                             <tr v-for="lawOut in lawOutList" :key="lawOut.lawyerId">
                                 <td>{{lawOut.lawyerName}}</td>
                                 <td>{{lawOut.lawyerId}}</td>
-                                <td>{{lawOut.officproofName}}</td>
+                                <td>{{lawOut.lawyerPhone}}</td>
                                 <td>{{lawOut.lawyerNumber}}</td>
                                 <td>{{lawOut.passYears}}</td>
                                 <td>
-                                    <button @click="fnComeBack(lawOut.lawyerId)">재가입</button>
+                                    <button @click="fnComeBack(lawOut.lawyerId)" class="button">재가입</button>
                                 </td>
                             </tr>
                         </table>
@@ -219,22 +257,7 @@
                         this.waitPage++;
                         this.fnLawWaitList();
                     }
-                },
-                fnApprove(lawyerId) {
-                    var self = this;
-                    if (confirm("승인하시겠습니까?")) {
-                        $.ajax({
-                            url: "/admin/lawApprove.dox",
-                            type: "POST",
-                            data: { lawyerId: lawyerId },
-                            success: function (data) {
-                                alert("승인되었습니다.");
-                                self.fnLawWaitList(); // 목록 새로고침
-                                self.fnLawPassedList();
-                            }
-                        });
-                    }
-                },
+                },                
                 // 현재 변호사 목록, 페이징, 승인취소 처리
                 fnLawPassedList() {
                     var self = this;
@@ -277,18 +300,26 @@
                 },
                 fnCancel(lawyerId) {
                     var self = this;
-                    if (confirm("승인취소 하시겠습니까?")) {
-                        $.ajax({
-                            url: "/admin/lawCencel.dox",
-                            type: "POST",
-                            data: { lawyerId: lawyerId },
-                            success: function (data) {
-                                alert("승인취소 되었습니다.");
-                                self.fnLawWaitList();
-                                self.fnLawPassedList();
-                            }
-                        });
-                    }
+                    Swal.fire({
+                        title: "승인취소 하시겠습니까?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "예",
+                        cancelButtonText: "아니오"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "/admin/lawCencel.dox",
+                                type: "POST",
+                                data: { lawyerId: lawyerId },
+                                success: function (data) {
+                                    Swal.fire("처리 완료", "승인취소 되었습니다.", "success");
+                                    self.fnLawWaitList();
+                                    self.fnLawPassedList();
+                                }
+                            });
+                        }
+                    });
                 },
                 // 탈퇴 변호사 목록, 페이징
                 fnLawOutList() {
@@ -332,19 +363,27 @@
                 },
                 fnComeBack(lawyerId) {
                     var self = this;
-                    if (confirm("재가입 승인 하시겠습니까?")) {
-                        $.ajax({
-                            url: "/admin/lawComeBack.dox",
-                            type: "POST",
-                            data: { lawyerId: lawyerId },
-                            success: function (data) {
-                                alert("재가입 되었습니다.");
-                                self.fnLawOutList();
-                                self.fnLawWaitList();
-                                self.fnLawPassedList();
-                            }
-                        });
-                    }
+                    Swal.fire({
+                        title: "재가입 승인 하시겠습니까?",
+                        icon: "question",
+                        showCancelButton: true,
+                        confirmButtonText: "예",
+                        cancelButtonText: "아니오"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "/admin/lawComeBack.dox",
+                                type: "POST",
+                                data: { lawyerId: lawyerId },
+                                success: function (data) {
+                                    Swal.fire("처리 완료", "재가입 되었습니다.", "success");
+                                    self.fnLawOutList();
+                                    self.fnLawWaitList();
+                                    self.fnLawPassedList();
+                                }
+                            });
+                        }
+                    });
                 },
             },
             mounted() {

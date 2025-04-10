@@ -7,6 +7,7 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <title>승인 대기 변호사 상세보기</title>
         <style>
             .profile-container {
@@ -364,12 +365,26 @@
                     });
                 },
                 fnApprove() {
-                    if (confirm("이 변호사를 승인하시겠습니까?")) {
-                        $.post("/admin/lawApprove.dox", { lawyerId: lawyerId }, function () {
-                            alert("승인 처리되었습니다.");
-                            location.href = "lawyer.do";
-                        });
-                    }
+                    Swal.fire({
+                        title: "이 변호사를 승인하시겠습니까?",
+                        icon: "question",
+                        showCancelButton: true,
+                        confirmButtonText: "승인",
+                        cancelButtonText: "취소"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.post("/admin/lawApprove.dox", { lawyerId: lawyerId }, function () {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "승인 완료",
+                                    text: "승인 처리되었습니다.",
+                                    confirmButtonText: "확인"
+                                }).then(() => {
+                                    location.href = "/admin/lawyer.do?page=lawyer";
+                                });
+                            });
+                        }
+                    });
                 },
                 fnBack() {
                     history.back();

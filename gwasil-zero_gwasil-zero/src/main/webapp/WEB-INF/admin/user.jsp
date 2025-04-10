@@ -42,7 +42,7 @@
                 </div>
                 <div>
                     <h3>회원 목록</h3>
-                    <div class="filter-bar">
+                    <div class="filter-bar" style="margin-bottom: 30px;">
                         <select v-model="searchPeriod">
                             <option value="ALL">기간설정</option>
                             <option value="WEEK">1주</option>

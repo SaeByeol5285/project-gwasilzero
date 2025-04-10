@@ -47,7 +47,7 @@
                         <tr>
                             <th>이름</th>
                             <th>아이디</th>
-                            <th>소속 법무 법인</th>
+                            <th>전화번호</th>
                             <th>변호사 등록번호</th>
                             <th>변호사 취득일시</th>
                             <th>승인여부</th>
@@ -55,8 +55,9 @@
                         <tr v-for="lawWait in lawAdminWaitList">
                             <td>{{lawWait.lawyerName}}</td>
                             <td>{{lawWait.lawyerId}}</td>
-                            <td>{{lawWait.officproofName}}</td>
+                            <td>{{lawWait.lawyerPhone}}</td>
                             <td>{{lawWait.lawyerNumber}}</td>
+                            <td>{{lawWait.passYears}}</td>
                             <td>{{lawWait.lawyerPass}}</td>
                         </tr>
                     </table>

@@ -6,7 +6,8 @@
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-	<title>게시글 신고 관리</title>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>게시글 신고 관리</title>
 </head>
 <body>
     <div id="reportApp">
@@ -34,14 +35,16 @@
                                 <span v-else-if="item.reportStatus === 'WAIT'">처리 대기</span>
                             </td>
                             <td>
-                                <select v-model="item.actionStatus">
-                                    <option disabled value="">선택</option>
-                                    <option value="DELETE">게시글 삭제</option>
-                                    <option value="REJECT">신고기각</option>
-                                    <option value="WAIT">처리대기</option>
-                                </select>&nbsp;
-                                <button @click="fnHandleReport(item)">처리하기</button>
-                            </td>
+                                <div class="filter-bar">
+                                    <select v-model="item.actionStatus">
+                                        <option disabled value="">선택</option>
+                                        <option value="DELETE">게시글 삭제</option>
+                                        <option value="REJECT">신고기각</option>
+                                        <option value="WAIT">처리대기</option>
+                                    </select>
+                                    <button @click="fnHandleReport(item)">처리하기</button>
+                                </div>
+                            </td>                              
                         </tr>
                     </table>
                     <div class="pagination-container">
@@ -122,9 +125,15 @@
             },
             fnHandleReport(item) {
                 if (!item.actionStatus) {
-                    alert("처리 상태를 선택해주세요.");
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '처리 상태 선택 필요',
+                        text: '처리 상태를 선택해주세요.',
+                        confirmButtonText: '확인'
+                    });
                     return;
                 }
+
                 $.ajax({
                     url: "/admin/updateReportStatus.dox",
                     type: "POST",
@@ -133,11 +142,17 @@
                         reportStatus: item.actionStatus
                     },
                     success: (data) => {
-                        alert("처리되었습니다.");
+                        Swal.fire({
+                            icon: 'success',
+                            title: '처리 완료',
+                            text: '신고가 성공적으로 처리되었습니다.',
+                            confirmButtonText: '확인'
+                        });
                         this.fnGetReports(); // 새로고침
                     }
                 });
             }
+
         },
         mounted() {
             var self = this;

@@ -10,6 +10,7 @@
         <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
         <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
         <link rel="stylesheet" href="/css/common.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <style>
             #app {
                 width: 100%;
@@ -114,6 +115,64 @@
                 margin-bottom: 5px;
                 font-weight: bold;
             }
+
+            .email-row {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .email-row span {
+                margin: 0 5px;
+            }
+
+            .email-row select {
+                height: 42px;
+                padding: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                font-size: 14px;
+                background-color: white;
+                appearance: none;
+                /* 기본 화살표 없애기 */
+                background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><polygon points="0,0 10,0 5,6" style="fill:%23666;" /></svg>');
+                background-repeat: no-repeat;
+                background-position: right 10px center;
+                background-size: 10px 6px;
+            }
+
+            /* 전문 분야 체크박스 그룹 스타일 */
+            .category-box {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px 12px;
+                margin-top: 8px;
+            }
+
+            /* 체크박스 + 라벨 */
+            .category-box label {
+                font-size: 13px;
+                display: inline-flex;
+                align-items: center;
+                /* ✅ 이거랑 같이 써야 깔끔 */
+                gap: 6px;
+                width: 45%;
+                margin-bottom: 6px;
+                line-height: 1.2;
+                vertical-align: middle;
+
+            }
+
+            /* 체크박스 스타일 - 기본 색상 적용 */
+            .category-box input[type="checkbox"] {
+                accent-color: #FF5722;
+                width: 16px;
+                height: 16px;
+                margin-bottom: 0px;
+                cursor: pointer;
+                vertical-align: middle;
+                /* ✅ 중앙 정렬 포인트 */
+            }
         </style>
     </head>
     </head>
@@ -147,9 +206,8 @@
             <!-- 입력 필드들 -->
             <div style="margin-bottom: 15px;">
                 <label>이름</label>
-                <input v-model="lawyer.lawyerName" placeholder="이름 입력" @compositionstart="isComposing = true"
-                    @compositionend="checkKoreanName" @input="handleTyping" />
-                <div v-if="nameError" class="error-text">한글만 입력해주세요.</div>
+                <input v-model="lawyer.lawyerName" placeholder="이름 입력" />
+                <div v-if="lawyer.lawyerName.trim().length === 0" class="error-text">이름을 입력해주세요.</div>
             </div>
 
             <div style="margin-bottom: 15px;">
@@ -167,8 +225,26 @@
             <input type="password" v-model="lawyer.pwd2" placeholder="비밀번호 확인">
             <div v-if="lawyer.pwd !== lawyer.pwd2 && lawyer.pwd2" class="error-text">비밀번호가 일치하지 않습니다.</div>
 
-            <div style="margin-bottom: 15px;">이메일</div>
-            <input v-model="lawyer.lawyerEmail" placeholder="이메일 입력">
+            <!-- 이메일 -->
+            <div>
+                <div>이메일</div>
+                <div class="email-row">
+                    <input v-model="emailId" @blur="emailIdTouched = true" placeholder="이메일 아이디" style="flex: 1;" />
+                    <span>@</span>
+                    <select v-model="emailDomain" class="email-select" style="flex: 1;">
+                        <option value="">선택</option>
+                        <option value="naver.com">naver.com</option>
+                        <option value="gmail.com">gmail.com</option>
+                        <option value="daum.net">daum.net</option>
+                        <option value="hanmail.net">hanmail.net</option>
+                        <option value="nate.com">nate.com</option>
+                        <option value="직접입력">직접입력</option>
+                    </select>
+                </div>
+                <input v-if="emailDomain === '직접입력'" v-model="customDomain" placeholder="도메인 입력"
+                    style="margin-top: 8px;" />
+                <div v-if="emailIdTouched && !isEmailValid" class="error-text">이메일 형식이 아닙니다.</div>
+            </div>
 
             <div style="margin-bottom: 15px;">휴대폰 번호 (11자리)</div>
             <input v-model="lawyer.lawyerPhone" placeholder="휴대폰 번호 입력">
@@ -178,12 +254,23 @@
             <input type="text" v-model="address" placeholder="주소" readonly @click="execDaumPostcode">
             <input type="text" v-model="detailAddress" placeholder="상세주소">
             <input type="hidden" :value="lawyer.lawyerStatus">
+            <div class="form-group">
+                <label>메인 전문 분야 (2개 선택 필수)</label>
+                <div class="category-box">
+                    <label v-for="(item, index) in categoryOptions" :key="index">
+                        <input type="checkbox" :value="item" v-model="mainCategories"
+                            :disabled="mainCategories.length >= 2 && !mainCategories.includes(item)" />
+                        {{ item }}
+                    </label>
+                </div>
+                <div v-if="mainCategories.length !== 2" class="error-text">2개의 분야를 선택해야 합니다.</div>
+            </div>
 
             <!-- 자격 정보 -->
             <div class="license-box">
                 <h3>변호사 자격 정보</h3>
                 <div class="form-group">
-                    <label>생년월일. (선택)</label>
+                    <label>생년월일 (선택)</label>
                     <input type="date" v-model="license.BIRTH" />
                 </div>
                 <div class="form-group">
@@ -203,6 +290,12 @@
                     <label>사무실 재직증명서</label>
                     <input type="file" @change="handleOfficeProofFile" />
                     <p class="file-name" v-if="officeProofFileName">📎 {{ officeProofFileName }}</p>
+                </div>
+                <!-- 프로필 사진 -->
+                <div class="form-group">
+                    <label>프로필 사진</label>
+                    <input type="file" @change="handleProfileImg" />
+                    <p class="file-name" v-if="profileImgFileName">📎 {{ profileImgFileName }}</p>
                 </div>
             </div>
 
@@ -229,46 +322,84 @@
                         license: { BIRTH: "", LAWYER_NUMBER: "", PASS_YEARS: "" },
                         licenseFile: null, licenseFileName: "",
                         officeProofFile: null, officeProofFileName: "",
+                        profileImgFile: null, profileImgFileName: "", // ✅ 프로필 사진 관련
                         isAuthenticated: false, isIdChecked: false,
                         agreeTerms: false, showTerms: false,
-                        isComposing: false, nameError: false, idError: false
+                        isComposing: false, nameError: false, idError: false,
+                        emailId: "", emailDomain: "", customDomain: "",
+                        emailIdTouched: false,
+                        mainCategories: [],
+                        categoryOptions: [
+                            "신호 위반", "보행자 사고", "음주/무면허 사고", "끼어들기/진로 변경",
+                            "주차/문 개방", "중앙선 침범", "과속/안전거리 미확보", "역주행/일방통행",
+                            "불법 유턴/좌회전", "기타/복합 사고"
+                        ],
+                        categoryMap: {
+                            "신호 위반": "01",
+                            "보행자 사고": "02",
+                            "음주/무면허 사고": "03",
+                            "끼어들기/진로 변경": "04",
+                            "주차/문 개방": "05",
+                            "중앙선 침범": "06",
+                            "과속/안전거리 미확보": "07",
+                            "역주행/일방통행": "08",
+                            "불법 유턴/좌회전": "09",
+                            "기타/복합 사고": "10"
+                        }
                     };
                 },
+                computed: {
+                    fullEmail() {
+                        const domain = this.emailDomain === '직접입력' ? this.customDomain : this.emailDomain;
+                        return this.emailId && domain ? this.emailId + "@" + domain : '';
+                    },
+                    isEmailValid() {
+                        const email = this.fullEmail;
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        return emailRegex.test(email);
+                    }
+                },
                 methods: {
-                    handleTyping() {
-                        if (!this.isComposing) this.checkKoreanName();
-                    },
-                    checkKoreanName() {
-                        this.isComposing = false;
-                        const val = this.lawyer.lawyerName;
-                        const koreanRegex = /^[가-힣ㄱ-ㅎㅏ-ㅣ\s]*$/;
-                        this.nameError = val && !koreanRegex.test(val);
-                    },
-                    checkUserId() {
-                        const val = this.lawyer.lawyerId;
-                        const validIdRegex = /^[a-zA-Z0-9]*$/;
-                        this.idError = val && !validIdRegex.test(val);
+                    handleProfileImg(event) {
+                        const file = event.target.files[0];
+                        this.profileImgFile = file;
+                        this.profileImgFileName = file ? file.name : "";
                     },
                     fnJoin() {
-                        if (!this.agreeTerms) return alert("이용약관에 동의해주세요.");
-                        if (!this.isIdChecked) return alert("중복체크를 먼저 해주세요.");
-                        if (!this.isAuthenticated) return alert("본인인증을 먼저 해주세요.");
+                        // ...기존 유효성 검사 및 기본 값 조립
+                        if (!this.agreeTerms) return alert("⚠️ 이용약관에 동의해주세요.");
+                        if (!this.isIdChecked) return alert("⚠️ 중복체크 하세요.");
+                        if (!this.isAuthenticated) return alert("⚠️ 본인인증 하세요.");
                         if (!this.lawyer.lawyerName.trim()) return alert("이름을 입력하세요.");
                         if (this.lawyer.lawyerId.length < 5) return alert("아이디는 5자 이상이어야 합니다.");
                         if (this.lawyer.pwd.length < 8) return alert("비밀번호는 8자 이상이어야 합니다.");
                         if (this.lawyer.pwd !== this.lawyer.pwd2) return alert("비밀번호가 일치하지 않습니다.");
-                        if (!this.lawyer.lawyerEmail.trim()) return alert("이메일을 입력하세요.");
-                        if (this.lawyer.lawyerPhone.length !== 11 || !/^[0-9]+$/.test(this.lawyer.lawyerPhone)) return alert("휴대폰 번호는 11자리 숫자여야 합니다.");
-
+                        if (!this.fullEmail || !this.isEmailValid) return alert("유효한 이메일을 입력하세요.");
+                        if (this.lawyer.lawyerPhone.length !== 11 || !/^[0-9]+$/.test(this.lawyer.lawyerPhone)) {
+                            return alert("휴대폰 번호는 11자리 숫자여야 합니다.");
+                        }
+                        if (this.mainCategories.length !== 2) return alert("전문 분야는 2개를 선택해야 합니다.");
+                        this.lawyer.lawyerEmail = this.fullEmail;
                         this.lawyer.lawyerAddr = this.address + " " + this.detailAddress;
 
                         const formData = new FormData();
-                        Object.entries(this.lawyer).forEach(([key, val]) => formData.append(key, val));
-                        Object.entries(this.license).forEach(([key, val]) => formData.append(key, val));
 
+                        Object.entries(this.lawyer).forEach(([k, v]) => formData.append(k, v));
+                        formData.append("lawyerEmail", this.fullEmail);
+                        Object.entries(this.license).forEach(([k, v]) => formData.append(k, v));
+                        formData.append("mainCategoryName1", this.categoryMap[this.mainCategories[0]]);
+                        formData.append("mainCategoryName2", this.categoryMap[this.mainCategories[1]]);
+
+                        // 프로필 이미지 경로 저장
+                        if (this.profileImgFile) {
+                            formData.append("LAWYER_IMG", "/img/" + this.profileImgFile.name); // 💡 DB 경로로 저장
+                            formData.append("profileImgFile", this.profileImgFile); // 💡 파일 자체도 업로드
+                        }
+
+                        // 라이선스/재직 파일들도 동일하게 추가
                         if (this.licenseFile) {
-                            formData.append("LAWYER_LICENS_NAME", this.licenseFile.name);
-                            formData.append("LAWYER_LICENS_PATH", this.licenseFile.name);
+                            formData.append("LAWYER_LICENSE_NAME", this.licenseFile.name);
+                            formData.append("LAWYER_LICENSE_PATH", this.licenseFile.name);
                             formData.append("licenseFile", this.licenseFile);
                         }
 
@@ -285,16 +416,33 @@
                             processData: false,
                             contentType: false,
                             success: () => {
-                                alert("회원가입 완료되었습니다.");
-                                location.href = "/user/login.do";
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "회원가입 완료",
+                                    text: "회원가입이 정상적으로 처리되었습니다.",
+                                    confirmButtonText: "확인"
+                                }).then(() => {
+                                    location.href = "/user/login.do";
+                                });
                             },
                             error: () => {
-                                alert("회원가입 실패. 다시 시도해주세요.");
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "회원가입 실패",
+                                    text: "다시 시도해주세요.",
+                                    confirmButtonText: "확인"
+                                });
                             }
                         });
                     },
+                    checkUserId() {
+                        const val = this.lawyer.lawyerId;
+                        const validIdRegex = /^[a-zA-Z0-9]*$/;
+                        this.idError = val && !validIdRegex.test(val);
+                        this.isIdChecked = false;  // ✅ 아이디 입력시 중복체크 상태 초기화
+                    },
                     fnIdCheck() {
-                        if (!this.lawyer.lawyerId) return alert("아이디를 입력하세요.");
+                        if (!this.lawyer.lawyerId) return alert("아이디를 입력해주세요.");
                         $.ajax({
                             url: "/join/checkLawyer.dox",
                             type: "POST",
@@ -333,6 +481,12 @@
                         this.officeProofFile = file;
                         this.officeProofFileName = file ? file.name : "";
                     },
+                    // ✅ 프로필 이미지 처리 메서드
+                    handleProfileImgFile(event) {
+                        const file = event.target.files[0];
+                        this.profileImgFile = file;
+                        this.profileImgFileName = file ? file.name : "";
+                    },
                     requestCert() {
                         const self = this;
                         IMP.init("imp29272276");
@@ -341,7 +495,6 @@
                         }, function (rsp) {
                             if (rsp.success) {
                                 self.isAuthenticated = true;
-                                alert("✅ 본인 인증 성공");
                             } else {
                                 alert("❌ 인증 실패: " + rsp.error_msg);
                             }

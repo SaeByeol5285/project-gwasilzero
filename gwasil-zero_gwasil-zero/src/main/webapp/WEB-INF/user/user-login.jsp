@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
     <!DOCTYPE html>
     <html>
-
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <head>
         <meta charset="UTF-8">
         <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
@@ -81,6 +82,17 @@
                 color: #555;
                 text-decoration: underline;
             }
+
+            .form-group {
+                text-align: left;
+                margin-bottom: 15px;
+            }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
         </style>
     </head>
 
@@ -89,13 +101,13 @@
 
         <div id="app">
             <h1>로그인</h1>
-            <div>
-                <label>아이디</label>
-                <input v-model="id" placeholder="아이디 입력">
+            <div class="form-group">
+                <label for="id">아이디</label>
+                <input v-model="id" id="id" placeholder="아이디 입력">
             </div>
-            <div>
-                <label>비밀번호</label>
-                <input v-model="pwd" type="password" placeholder="비밀번호 입력" @keyup.enter="fnLogin">
+            <div class="form-group">
+                <label for="pwd">비밀번호</label>
+                <input v-model="pwd" id="pwd" type="password" placeholder="비밀번호 입력" @keyup.enter="fnLogin">
             </div>
             <div>
                 <button @click="fnLogin">로그인</button>
@@ -149,28 +161,59 @@
                         dataType: "json",
                         success: function (res) {
                             if (res.result === "success") {
-                                alert("로그인 성공");
-                                location.href = "/common/main.do";
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "로그인 성공",
+                                    text: "환영합니다!",
+                                    confirmButtonText: "확인"
+                                }).then(() => {
+                                    location.href = "/common/main.do";
+                                });
                             } else if (res.message && res.message.includes("탈퇴한 계정입니다")) {
-                                if (confirm("탈퇴한 계정입니다. 복구하시겠습니까?")) {
-                                    // 복구 요청
-                                    $.ajax({
-                                        url: "/user/user-login.dox",
-                                        type: "POST",
-                                        data: { id: self.id, pwd: self.pwd, recover: true },
-                                        dataType: "json",
-                                        success: function (res2) {
-                                            if (res2.result === "success") {
-                                                alert("계정이 복구되었습니다.");
-                                                location.href = "/common/main.do";
-                                            } else {
-                                                alert("계정 복구에 실패했습니다.");
+                                Swal.fire({
+                                    icon: "warning",
+                                    title: "탈퇴한 계정입니다",
+                                    text: "복구하시겠습니까?",
+                                    showCancelButton: true,
+                                    confirmButtonText: "복구하기",
+                                    cancelButtonText: "취소"
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        $.ajax({
+                                            url: "/user/user-login.dox",
+                                            type: "POST",
+                                            data: { id: self.id, pwd: self.pwd, recover: true },
+                                            dataType: "json",
+                                            success: function (res2) {
+                                                if (res2.result === "success") {
+                                                    Swal.fire({
+                                                        icon: "success",
+                                                        title: "복구 완료",
+                                                        text: "계정이 복구되었습니다.",
+                                                        confirmButtonText: "확인"
+                                                    }).then(() => {
+                                                        location.href = "/common/main.do";
+                                                    });
+                                                } else {
+                                                    Swal.fire({
+                                                        icon: "error",
+                                                        title: "복구 실패",
+                                                        text: "계정 복구에 실패했습니다.",
+                                                        confirmButtonText: "확인"
+                                                    });
+                                                }
                                             }
-                                        }
-                                    });
-                                }
+                                        });
+                                    }
+                                });
                             } else {
-                                alert("로그인 실패");
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "로그인 실패",
+                                    text: "아이디 또는 비밀번호를 확인해주세요.",
+                                    confirmButtonText: "확인"
+                                });
+                                self.pwd = "";  // ✅ 비밀번호 초기화
                             }
                         }
                     });

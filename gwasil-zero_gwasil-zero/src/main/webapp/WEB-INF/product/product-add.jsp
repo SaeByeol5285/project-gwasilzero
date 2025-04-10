@@ -102,11 +102,6 @@
 		<div class="layout">
 			<jsp:include page="../admin/layout.jsp" />
 			<div class="content">
-				<div class="header">
-					<div>상품 등록</div>
-					<div>Admin님</div>
-				</div>
-
 				<div class="form-wrapper">
 					<div class="form-title">패키지 정보 입력</div>
 					<table class="form-table">

@@ -105,11 +105,6 @@
         <div class="layout">
             <jsp:include page="../admin/layout.jsp" />
             <div class="content">
-                <div class="header">
-                    <div>관리자페이지</div>
-                    <div>Admin님</div>
-                </div>
-
                 <div class="form-wrapper">
                     <div class="form-title">패키지 수정</div>
                     <table class="form-table">

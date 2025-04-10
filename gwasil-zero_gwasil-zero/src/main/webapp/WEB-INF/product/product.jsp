@@ -31,10 +31,6 @@
         <jsp:include page="../admin/layout.jsp" />
 
         <div class="content">
-            <div class="header">
-                <div>관리자페이지</div>
-                <div>{{sessionId}}님</div>
-            </div>
             <h2>상품 관리</h2>
 
             <div class="content-container">

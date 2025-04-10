@@ -8,7 +8,20 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-        <title>admin main</title>
+        <title>관리자 변호사 관리</title>
+        <style>
+            .content-container a {
+                color: #ff6b00;
+                text-decoration: none;
+                font-weight: 600;
+                transition: color 0.2s ease;
+            }
+            
+            .content-container a:hover {
+                color: #d64d00;
+                text-decoration: underline;
+            }
+        </style>  
     </head>
 
     <body>

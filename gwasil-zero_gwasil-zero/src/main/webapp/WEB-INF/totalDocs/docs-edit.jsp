@@ -9,50 +9,103 @@
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <script src="/js/page-change.js"></script>
         <link rel="stylesheet" href="/css/common.css">
-        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/totalDocs.css">
         <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
         <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+        <style>
+            .input-box {
+                width: 100%;
+                padding: 12px;
+                font-size: 15px;
+                border-radius: 6px;
+                border: 1px solid #ccc;
+            }
+
+            .attachment-box {
+                background-color: #f9f9f9;
+                border: 1px solid #eee;
+                padding: 16px 20px;
+                border-radius: 8px;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+
+            .file-list {
+                padding-left: 20px;
+                margin-bottom: 0;
+            }
+
+            .file-list li {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 8px;
+                font-size: 14px;
+                color: #333;
+            }
+
+            .btn-red-small {
+                background-color: #ffe1e1;
+                color: #e60000;
+                border: none;
+                font-size: 13px;
+                padding: 4px 10px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            .btn-red-small:hover {
+                background-color: #e60000;
+                color: #fff;
+            }
+        </style>
     </head>
 
     <body>
         <jsp:include page="../common/header.jsp" />
         <div id="app" class="container">
-            <div class="card">
-                <h2 class="section-title">통합자료실 게시물 수정</h2>
+            <div class="container-detail">
+                <div class="detail-box">
+                    <div class="post-header">
+                        <h2 class="section-title">공지사항 수정</h2>
+                    </div>
 
-                <div class="form-group mb-20">
-                    <label>제목</label>
-                    <input v-model="info.totalTitle" class="input-box">
-                </div>
+                    <div class="form-group">
+                        <input v-model="info.totalTitle" class="input-box" placeholder="제목을 입력하세요" />
+                    </div>
 
-                <div class="form-group mb-20">
-                    <label>내용</label>
-                    <div id="quill-editor" style="height: 300px;"></div>
-                </div>
+                    <div class="form-group">
+                        <div id="quill-editor" style="height: 300px;"></div>
+                    </div>
 
-                <div class="form-group mb-20">
-                    <label>기존 첨부파일</label>
-                    <ul>
-                        <li v-for="(file, idx) in fileList" :key="idx">
-                            {{ file.fileName }}
-                            <template v-if="isPreviewable(file.fileName)">
-                                <a :href="file.filePath" target="_blank" style="margin-left: 10px;">보기</a>
-                            </template>
-                            <a :href="file.filePath" target="_blank" download style="margin-left: 10px;">다운로드</a>
-                            <a href="javascript:void(0)" @click="removeFile(file)"
-                                style="color: red; margin-left: 10px;">삭제</a>
-                        </li>
-                    </ul>
-                </div>
+                    <div class="attachment-box">
+                        <label><strong>기존 채워진 파일</strong></label>
+                        <ul class="file-list">
+                            <li v-for="(file, idx) in fileList" :key="idx">
+                                <img src="/img/common/file-attached.png" class="file-icon" />
+                                {{ file.fileName }}
+                                <template v-if="isPreviewable(file.fileName)">
+                                    <a :href="file.filePath" target="_blank">보기</a>
+                                </template>
+                                <a :href="file.filePath" target="_blank" download>다운로드</a>
+                                <button @click="removeFile(file)" class="btn-red-small">삭제</button>
+                            </li>
+                        </ul>
+                    </div>
 
-                <div class="form-group mb-20">
-                    <label>새 파일 업로드</label>
-                    <input type="file" id="file1" name="file1" multiple>
-                </div>
+                    <div class="attachment-box">
+                        <label><strong>새 파일 업로드</strong></label>
+                        <input type="file" id="file1" name="file1" multiple />
+                    </div>
 
-                <div class="btn-area">
-                    <button @click="fnEdit" class="btn btn-primary">저장</button>
-                    <button @click="goToListPage" class="btn btn-outline">목록</button>
+                    <div class="post-actions">
+                        <div class="left-buttons">
+                            <button @click="fnEdit" class="btn btn-write">저장</button>
+                        </div>
+                        <div class="right-buttons">
+                            <button @click="goToListPage" class="btn btn-outline">목록</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -145,6 +198,7 @@
                     const self = this;
                     self.quill = new Quill("#quill-editor", {
                         theme: "snow",
+                        placeholder: "내용을 입력하세요",
                         modules: {
                             toolbar: {
                                 container: [

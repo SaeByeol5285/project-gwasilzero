@@ -54,66 +54,65 @@
 
 					<!-- 버튼 영역 -->
 					<div class="post-actions">
-						<div class="left-buttons">
-							<button class="btn btn-write" v-if="info.userId == sessionId" @click="fnEdit(info.totalNo)"
-								style="margin-right: 5px;">✏️ 수정</button>
-							<button class="btn btn-red" v-if="info.userId == sessionId || sessionStatus == 'ADMIN'"
-								@click="fnRemove(info.totalNo)">🗑️ 삭제</button>
+						<div class="left-buttons" v-if="sessionStatus == 'ADMIN'">
+							<button class="btn btn-write" @click="fnEdit(info.totalNo)" style="margin-right: 5px;">✏️ 수정</button>
+							<button class="btn btn-red" @click="fnRemove(info.totalNo)">🗑️ 삭제</button>
 						</div>
 						<div class="right-buttons">
-							<button @click="goToListPage" class="btn btn-primary">목록보기</button>
+							<button @click="goToListPage" class="btn btn-outline">목록보기</button>
 						</div>
 					</div>
 				</section>
 
 				<!-- 댓글 전체 -->
-				<section class="comment-wrapper">
+				<!-- 관리자 댓글 리스트 -->
+				<div class="admin-comments">
 					<h3 class="section-title">관리자 댓글</h3>
 
-					<!-- 댓글 리스트 -->
-					<ul class="mt-20" v-if="cmtList.length > 0">
-						<li v-for="(comment, idx) in cmtList" :key="idx" class="comment-item">
-							<div v-if="editCmtNo === comment.cmtNo">
-								<textarea v-model="editContents" rows="3" class="cmtContents"></textarea>
-								<div class="comment-actions">
-									<button @click="fnSaveCmt(comment.cmtNo)" class="btn btn-outline">수정 완료</button>
-									<button @click="editCmtNo = null" class="btn btn-danger">취소</button>
+					<ul class="comment-list" v-if="cmtList.length > 0">
+						<li v-for="comment in cmtList" :key="comment.cmtNo" class="comment-item">
+							<!-- 수정 중일 때 -->
+							<div v-if="editCmtNo === comment.cmtNo" class="comment-edit">
+								<textarea v-model="editContents" class="edit-textarea"></textarea>
+								<div class="edit-actions">
+									<button class="btn btn-outline btn-sm" @click="fnSaveCmt(comment.cmtNo)">수정
+										완료</button>
+									<button class="btn btn-gray btn-sm" @click="editCmtNo = null">취소</button>
 								</div>
 							</div>
-							<div v-else>
-								<strong>[관리자 댓글]</strong>: {{ comment.contents }}
-								<small class="comment-date">{{ comment.cdate }}</small>
-								<div class="comment-actions">
-									<button @click="fnEditCmt(comment)" class="btn btn-outline btn-sm">수정</button>
-									<button @click="fnRemoveCmt(comment.cmtNo)"
-										class="btn btn-danger btn-sm">삭제</button>
+
+							<!-- 일반 상태 -->
+							<template v-else>
+								<div class="comment-content">
+									<strong>[관리자]</strong> {{ comment.contents }}
+									<small class="cmt-time">{{ comment.cdate }}</small>
 								</div>
-							</div>
+								<div class="cmt-actions" v-if="sessionStatus == 'ADMIN'">
+									<span @click="fnEditCmt(comment)">수정</span>
+									<span @click="fnRemoveCmt(comment.cmtNo)">삭제</span>
+								</div>
+							</template>
 						</li>
 					</ul>
-
 					<p v-else class="no-comment">아직 등록된 댓글이 없습니다.</p>
 
-					<!-- 이전/다음글 -->
-					<div class="post-nav">
-						<div v-if="prev">
-							⬅️ 이전글: <a href="javascript:void(0)" @click="moveTo(prev.totalNo)">{{ prev.totalTitle }}</a>
-						</div>
-						<div v-if="next">
-							➡️ 다음글: <a href="javascript:void(0)" @click="moveTo(next.totalNo)">{{ next.totalTitle }}</a>
+					<div v-if="sessionStatus == 'ADMIN'">
+						<h3 class="section-title">댓글 작성</h3>
+						<div class="comment-form">
+							<textarea v-model="cmtContents" placeholder="댓글을 입력하세요"></textarea>
+							<button @click="fnAddCmt" class="btn btn-blue">💬 댓글 등록</button>
 						</div>
 					</div>
 
-					<!-- 댓글 영역: 관리자만 보임 -->
-					<div class="mt-40 detail" v-if="sessionStatus == 'ADMIN'">
-						<h3 class="section-title">관리자 댓글</h3>
-						<div class="comment-box">
-							<textarea v-model="cmtContents" rows="3" placeholder="댓글을 입력하세요"
-								class="cmtContents"></textarea>
-							<button @click="fnAddCmt" class="btn cmt-btn btn-blue">💬 댓글 등록</button>
-						</div>
-					</div>
-				</section>
+				</div>
+
+				<!-- 이전/다음글은 여기 아래로 분리 -->
+				<div class="adjacent-links">
+					<div v-if="prev">⬅️ 이전글: <a @click="moveTo(prev.totalNo)">{{ prev.totalTitle }}</a></div>
+					<div v-if="next">➡️ 다음글: <a @click="moveTo(next.totalNo)">{{ next.totalTitle }}</a></div>
+				</div>
+
+				<!--  -->
 
 			</div>
 		</div>

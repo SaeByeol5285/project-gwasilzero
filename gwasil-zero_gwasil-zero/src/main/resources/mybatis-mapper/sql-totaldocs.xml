@@ -145,6 +145,8 @@
 		SELECT * 
 		FROM TOTAL_CMT
 		WHERE TOTAL_NO = #{totalNo}
+		ORDER BY CMT_NO DESC, CDATE DESC
+
 	</select>
 	
 	<!--댓글 수정-->

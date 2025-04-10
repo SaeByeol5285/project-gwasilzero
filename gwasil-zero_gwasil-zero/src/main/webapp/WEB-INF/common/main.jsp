@@ -29,9 +29,9 @@
 							<div class="swiper mySwiper">
 								<div class="swiper-wrapper">
 									<div class="swiper-slide" v-for="lawyer in lawyerList" :key="lawyer.lawyerId">
-										<div class="lawyer-card" @click.stop="goToProfile(lawyer.lawyerId)">
+										<div class="lawyer-card" >
 											<img class="lawyer-img" :src="lawyer.lawyerImg" />
-											<div class="lawyer-icons">
+											<div class="lawyer-icons" >
 												<a><img src="../../img/common/call.png" class="icon"
 														@click.stop="startChat(lawyer.lawyerId)"></a>
 												<a @click.stop="toggleBookmark(lawyer.lawyerId)">
@@ -239,85 +239,110 @@
 					});
 				},
 				initSwiper() {
-					//변호사 스와이퍼
-					new Swiper('.mySwiper', {
-						slidesPerView: 4,
-						spaceBetween: 30,
-						slidesPerGroup: 4,
-						speed: 1000,
-						loop: true,
-						autoplay: {
-							delay: 5000,
-							disableOnInteraction: true,
-						},
-						pagination: {
-							el: '.swiper-pagination',
-							clickable: true,
-						},
-						navigation: {
-							nextEl: '.swiper-button-next',
-							prevEl: '.swiper-button-prev',
-						},
-						centeredSlides: false,
-					});
-					//리뷰 스와이퍼
-					new Swiper(".reviewSwiper", {
-						slidesPerView: 3,             // 한 화면에 3개 보여줌
-						spaceBetween: 20,             // 카드 간 간격
-						slidesPerGroup: 3,            // 몇 장씩 넘길지
-						loop: true,
-						speed: 1000,
-						centeredSlides: false,        // 양 옆 잘림 방지
-						navigation: {
-							nextEl: ".swiper-button-next",
-							prevEl: ".swiper-button-prev",
-						},
-						pagination: {
-							el: ".swiper-review-pagination",
-							clickable: true,
-						},
-					});
-				},
+				               //변호사 스와이퍼
+				               new Swiper('.mySwiper', {
+				                  slidesPerView: 4,
+				                  spaceBetween: 30,
+				                  slidesPerGroup: 4,
+				                  speed: 1000,
+				                  loop: true,
+				                  allowTouchMove: false,
+				                  autoplay: {
+				                     delay: 5000,
+				                     disableOnInteraction: true,
+				                  },
+				                  pagination: {
+				                     el: '.swiper-pagination',
+				                     clickable: true,
+				                  },
+				                  navigation: {
+				                     nextEl: '.swiper-button-next',
+				                     prevEl: '.swiper-button-prev',
+				                  },
+				                  centeredSlides: false,
+				               });
+				               //리뷰 스와이퍼
+				               new Swiper(".reviewSwiper", {
+				                  slidesPerView: 3,             // 한 화면에 3개 보여줌
+				                  spaceBetween: 20,             // 카드 간 간격
+				                  slidesPerGroup: 3,            // 몇 장씩 넘길지
+				                  loop: true,
+				                  speed: 1000,
+				                  centeredSlides: false,        // 양 옆 잘림 방지
+				                  allowTouchMove: false,
+				                  navigation: {
+				                     nextEl: ".swiper-button-next",
+				                     prevEl: ".swiper-button-prev",
+				                  },
+				                  pagination: {
+				                     el: ".swiper-review-pagination",
+				                     clickable: true,
+				                  },
+				               });
+				            },
 				startChat(lawyerId) {
-					let self = this;
+	              let self = this;
+			   $.ajax({
+	                url: "/board/checkLawyerStatus.dox",
+	                type: "POST",
+	                data: {
+	                   sessionId: lawyerId
+	                },
+	                dataType: "json",
+	                success: function (res) {
+	                   const isApproved = res.result === "true";
+	                   const isAuthValid = res.authResult === "true";
 
-					if (!self.sessionId) {
-						Swal.fire({
-							icon: "warning",
-							title: "로그인 필요",
-							text: "로그인이 필요합니다.",
-							confirmButtonColor: "#ff5c00"
-						}).then(() => {
-							location.href = "/user/login.do";
-						});
-						return;
-					}
+	                   if (!isApproved) {
+	                      Swal.fire({
+	                         icon: "error",
+	                         title: "승인되지 않음",
+	                         text: "아직 승인되지 않은 변호사 계정입니다.",
+	                         confirmButtonColor: "#ff5c00"
+	                      });
+	                      return;
+	                   }
 
-					if (self.sessionType !== 'user') {
-						Swal.fire({
-							icon: "warning",
-							title: "이용 불가",
-							text: "변호사 사용자는 이용 불가능합니다.",
-							confirmButtonColor: "#ff5c00"
-						});
-						return;
-					}
+	                   if (!isAuthValid) {
+	                      Swal.fire({
+	                         icon: "info",
+	                         title: "채팅 불가능",
+	                         text: "변호사 등록기간이 만료된 변호사와는 채팅할 수 없습니다.",
+	                         confirmButtonColor: "#ff5c00"
+	                      });
+	                      return;
+	                   }
 
+	                   // 조건 통과
 					$.ajax({
-						url: "/chat/findOrCreate.dox",
-						type: "POST",
-						data: {
-							userId: self.sessionId,
-							lawyerId: lawyerId
-						},
-						success: function (res) {
-							let chatNo = res.chatNo;
-							pageChange("/chat/chat.do", {
-								chatNo: chatNo
-							});
-						}
-					});
-				},
+	                  url: "/chat/findOrCreate.dox",
+	                  type: "POST",
+	                  data: {
+	                     userId: self.sessionId,
+	                     lawyerId: lawyerId
+	                  },
+	                  success: function (res) {
+	                     let chatNo = res.chatNo;
+	                     pageChange("/chat/chat.do", {
+	                        chatNo: chatNo
+	                     });
+	                  }
+	               });
+					
+	                },
+	                error: function () {
+	                   Swal.fire({
+	                      icon: "error",
+	                      title: "요청 실패",
+	                      text: "변호사 상태 확인 요청에 실패했습니다.",
+	                      confirmButtonColor: "#ff5c00"
+	                   });
+	                }
+	             });
+			   
+			   
+	              
+	           },
 				EditBoard: function () {
 					let self = this;
 					pageChange("/board/edit.do", { boardNo: self.boardNo, userId: self.sessionId });
@@ -363,10 +388,8 @@
 						success: function (data) {
 							if (isMarked) {
 								self.bookmarkList = self.bookmarkList.filter(b => b.lawyerId !== lawyerId);
-								alert(data.result);
 							} else {
 								self.bookmarkList.push({ lawyerId: lawyerId });
-								alert(data.result);
 							}
 							localStorage.setItem('bookmarkUpdated', Date.now());
 						},

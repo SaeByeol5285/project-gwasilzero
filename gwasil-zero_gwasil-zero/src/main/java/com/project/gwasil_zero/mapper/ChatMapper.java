@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.project.gwasil_zero.model.Chat;
 import com.project.gwasil_zero.model.ChatFile;
 import com.project.gwasil_zero.model.ChatMessage;
 
@@ -26,4 +27,10 @@ public interface ChatMapper {
 	  Integer findChatNoByParticipants(HashMap<String, Object> map);
 
 	  void createChat(HashMap<String, Object> map);
+	  
+	 public Chat getChatByNo(Object chatNo);
+	 
+	 public String getUserNameById(String targetId);
+	 
+	 public String getLawyerNameById(String targetId);
 }

@@ -62,4 +62,8 @@ public interface BoardMapper {
 	
 	void updatePayStatusToUsed(HashMap<String, Object> map);
 	
+	void insertReport(HashMap<String, Object> map);
+	
+	void updateReview(HashMap<String, Object> map);
+	
 }

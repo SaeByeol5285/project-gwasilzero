@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project.gwasil_zero.mapper.ScheduleMapper">
+    <!-- 조건에 맞는 게시글 번호 가져오기 -->
+    <select id="selectExpiringBoards" resultType="int">
+        SELECT board_no
+        FROM board
+        WHERE use_package = 'Y'
+          AND cdate >= SYSDATE - 1
+          AND cdate + 1 - (1/8) &lt;= SYSDATE
+    </select>
+
+    <!-- 댓글 개수 -->
+    <select id="selectCommentCount" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM board_cmt WHERE board_no = #{boardNo}
+    </select>
+
+    <!-- 상태가 'I'인 변호사 아이디 목록 -->
+    <select id="selectActiveLawyers" resultType="string">
+        SELECT lawyer_id FROM lawyer WHERE lawyer_status = 'I'
+    </select>
+
+    <!-- 알림 등록 -->
+    <insert id="insertNotification" parameterType="hashmap">
+        INSERT INTO notification (
+            noti_no, receiver_id, noti_type, contents, is_read, created_at, sender_id, board_no, chat_no
+        ) VALUES (
+            notification_seq.nextval,
+            #{receiverId}, #{notiType}, #{contents}, #{isRead}, SYSDATE,
+            #{senderId}, #{boardNo}, null
+        )
+    </insert>
+</mapper>

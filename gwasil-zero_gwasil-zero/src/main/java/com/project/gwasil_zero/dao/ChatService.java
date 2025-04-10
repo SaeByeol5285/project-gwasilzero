@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.gwasil_zero.mapper.ChatMapper;
 import com.project.gwasil_zero.mapper.NotificationMapper;
+import com.project.gwasil_zero.model.Chat;
 import com.project.gwasil_zero.model.ChatFile;
 import com.project.gwasil_zero.model.ChatMessage;
 
@@ -121,5 +122,33 @@ public class ChatService {
         }
     }
     
+    public HashMap<String, Object> getTargetName(HashMap<String, Object> map) {
+    	HashMap<String, Object> resultMap = new HashMap<>();
+        try {
+            Object chatNo = map.get("chatNo");
+            String senderId = (String) map.get("senderId");
+
+            // chat 테이블에서 senderId와 receiverId를 가져온다
+            Chat chat = chatMapper.getChatByNo(map);
+            String id1 = (String) chat.getSenderId();
+            String id2 = (String) chat.getReceiverId();
+            System.out.println(id1 + id2+ senderId);
+
+            // 요청한 ID와 다른 쪽 ID가 상대방 ID
+            String targetId = senderId.equals(id1) ? id2 : id1;
+
+            // 상대방 이름을 user 또는 lawyer 테이블에서 조회
+            String name = chatMapper.getUserNameById(targetId);
+            if (name == null) {
+                name = chatMapper.getLawyerNameById(targetId);
+            }
+
+            resultMap.put("targetName", name);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put("targetName", "알 수 없음");
+        }
+        return resultMap;
+    }
 	    
 }

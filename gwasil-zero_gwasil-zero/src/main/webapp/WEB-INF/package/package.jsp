@@ -110,7 +110,7 @@
 			left: 50%;
 			transform: translateX(-50%);
 			bottom: 0;
-			width: 150px;
+			width: 60px;
 			height: 3px;
 			background-color: var(--main-color);
 			border-radius: 2px;

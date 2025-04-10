@@ -287,27 +287,33 @@
             handleFileUpload(event) {
                this.newFiles = Array.from(event.target.files);
             },
-            submitEdit() {
-               const formData = new FormData();
-               formData.append("boardNo", this.board.boardNo);
-               formData.append("boardTitle", this.board.boardTitle);
-               formData.append("contents", this.board.contents);
+			submitEdit() {
+			    const formData = new FormData();
+			    formData.append("boardNo", this.board.boardNo);
+			    formData.append("boardTitle", this.board.boardTitle);
+			    formData.append("contents", this.board.contents);
 
-               this.newFiles.forEach(f => formData.append("files", f));
-               this.deletedFiles.forEach(f => formData.append("deletedFiles", f));
+			    this.newFiles.forEach(f => formData.append("files", f));
+			    this.deletedFiles.forEach(f => formData.append("deletedFiles", f));
 
-               $.ajax({
-                  url: "/board/edit.dox",
-                  method: "POST",
-                  data: formData,
-                  processData: false,
-                  contentType: false,
-                  success: function () {
-                     alert("수정 완료!");
-                     location.href = "/board/list.do";
-                  }
-               });
-            },
+			    $.ajax({
+			        url: "/board/edit.dox",
+			        method: "POST",
+			        data: formData,
+			        processData: false,
+			        contentType: false,
+			        success: function () {
+			            Swal.fire({
+			                icon: "success",
+			                title: "수정 완료!",
+			                text: "게시글이 성공적으로 수정되었습니다.",
+			                confirmButtonText: "확인"
+			            }).then(() => {
+			                location.href = "/board/list.do";
+			            });
+			        }
+			    });
+			},
             deleteBoard() {
                let self = this;
 

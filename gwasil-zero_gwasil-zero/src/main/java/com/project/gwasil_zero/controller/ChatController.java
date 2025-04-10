@@ -119,4 +119,12 @@ public class ChatController {
 	    result.put("chatNo", chatNo);
 	    return result;
 	}
+	
+	@RequestMapping(value = "/chat/getTargetName.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public HashMap<String, Object> getTargetName(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = chatService.getTargetName(map);
+	    return resultMap;
+	}
 }

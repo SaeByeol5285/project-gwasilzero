@@ -60,8 +60,8 @@ public class BoardService {
 	                notiMap.put("receiverId", lawyerId);
 	                notiMap.put("notiType", "BROADCAST");
 	                notiMap.put("contents", "새로운 빠른답변 적용 게시글이 있습니다.");
-	                notiMap.put("senderId", (String)map.get("userId"));
-	                notiMap.put("boardNo", (String)map.get("boardNo"));
+	                notiMap.put("senderId", map.get("userId"));
+	                notiMap.put("boardNo", map.get("boardNo"));
 
 	                notificationMapper.boardcastNotification(notiMap);
 	            }
@@ -229,7 +229,7 @@ public class BoardService {
 	}
 	
 	public HashMap<String, Object> checkLawyerStatus(HashMap<String, Object> map) {
-        HashMap<String, Object> resultMap = new HashMap<>();
+        HashMap<String, Object> resultMap = new HashMap<>();;
         try {
 	        Lawyer lawyer = boardMapper.checkLawyerStatus(map);
 	        String result = "";
@@ -239,7 +239,7 @@ public class BoardService {
 	        
 	        if (authEndTimeStr != null && !authEndTimeStr.isEmpty()) {
 	            LocalDate today = LocalDate.now();
-	            LocalDate authEndDate = LocalDate.parse(authEndTimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+	            LocalDate authEndDate = LocalDate.parse(authEndTimeStr.substring(0, 10));
 	            if (!authEndDate.isBefore(today)) {
 	                authResult = "true";
 	            }
@@ -249,6 +249,7 @@ public class BoardService {
 	        	result = "true";
 	        else
 	        	result = "false";
+	        
 	        resultMap.put("result", result);
 	        resultMap.put("authResult", authResult);
 	    } catch (Exception e) {
@@ -307,4 +308,33 @@ public class BoardService {
 	    }
 	    return resultMap;
 	}
+	
+	public HashMap<String, Object> boardReport(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<>();
+		try {
+	        boardMapper.insertReport(map);
+
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> addReview(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<>();
+		try {
+	        boardMapper.updateReview(map);
+
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+		
+		return resultMap;
+	}
+	
 }

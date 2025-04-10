@@ -153,7 +153,17 @@
 		<jsp:include page="../common/header.jsp" />
 		<div id="app">
 			<div class="board-form-wrapper">
-				<div class="board-form-title">게시글 등록</div>
+				<div class="board-form-title">게시글 등록
+					<span class="tooltip-container">
+					    <span class="tooltip-icon">?</span>
+					    <span class="tooltip-text" style="width: 300px;">
+					      동영상은 초상권 침해를 막기 위해 자동으로 모자이크 처리되며,<br>
+					      화질이 일부 제한될 수 있습니다.<br>
+					      영상 길이는 각 영상당 최대 40초로 제한되며 초과 시 자동으로 편집됩니다.
+					    </span>
+					  </span>
+					
+				</div>
 
 				<div class="form-group">
 					<label>제목</label>

@@ -14,20 +14,22 @@
       WHERE USER_ID = #{userId}
    </select>
    
-   <insert id="insertLawyer" parameterType="hashmap">
+  <insert id="insertLawyer" parameterType="hashmap">
 	    INSERT INTO LAWYER(
 	        LAWYER_NAME, LAWYER_ID, LAWYER_PWD, LAWYER_EMAIL, LAWYER_PHONE, 
 	        LAWYER_STATUS, LAWYER_ADDR, LAWYER_PASS,
 	        BIRTH, LAWYER_NUMBER, PASS_YEARS,
-	        LAWYER_LICENS_NAME, LAWYER_LICENS_PATH,
-	        OFFICEPROOF_NAME, OFFICEPROOF_PATH
+	        LAWYER_LICENSE_NAME, LAWYER_LICENSE_PATH,
+	        OFFICEPROOF_NAME, OFFICEPROOF_PATH,
+	        LAWYER_IMG,MAIN_CATEGORIES1,MAIN_CATEGORIES2
 	    )
 	    VALUES (
 	        #{lawyerName}, #{lawyerId}, #{pwd}, #{lawyerEmail}, #{lawyerPhone}, 
 	        #{lawyerStatus}, #{lawyerAddr}, 'N',
 	        #{BIRTH}, #{LAWYER_NUMBER}, #{PASS_YEARS},
-	        #{LAWYER_LICENS_NAME}, #{LAWYER_LICENS_PATH},
-	        #{OFFICEPROOF_NAME}, #{OFFICEPROOF_PATH}
+	        #{LAWYER_LICENSE_NAME, jdbcType=VARCHAR}, #{LAWYER_LICENSE_PATH, jdbcType=VARCHAR},
+	        #{OFFICEPROOF_NAME, jdbcType=VARCHAR}, #{OFFICEPROOF_PATH, jdbcType=VARCHAR},
+	        #{LAWYER_IMG, jdbcType=VARCHAR}, #{mainCategoryName1}, #{mainCategoryName2}
 	    )
 	</insert>
    

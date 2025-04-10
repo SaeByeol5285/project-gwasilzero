@@ -21,5 +21,6 @@ public class Board {
 	private String category;
 	private int cmtCount;
 	private String usePackage;
+	private int contractPrice;
 
 }

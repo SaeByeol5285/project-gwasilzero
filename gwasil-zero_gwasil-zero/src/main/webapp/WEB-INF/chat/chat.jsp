@@ -36,7 +36,7 @@
       border: 1px solid #ccc;
       border-radius: 10px;
       padding: 15px;
-      background-color: #ffffff;
+      background-color: #eee;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       margin-bottom: 15px;
     }
@@ -106,11 +106,75 @@
       margin-bottom: 6px;
       display: block;
     }
+	.section-subtitle {
+		font-size: 28px;
+		font-weight: bold;
+		margin-bottom: 30px;
+		text-align: center;
+		color: #222;
+		position: relative;
+		display: inline-block;
+		padding-top: 40px;
+		padding-bottom: 10px;
+		display: block;
+		text-align: center;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	
+	.section-subtitle::after {
+		content: "";
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+		bottom: 0;
+		width: 150px;
+		height: 3px;
+		background-color: var(--main-color);
+		border-radius: 2px;
+	}
+	.chat-notice {
+	  background-color: #888; /* 회색 배경 */
+	  color: #fff;            /* 흰색 글씨 */
+	  font-size: 14px;
+	  text-align: center;
+	  padding: 12px 20px;
+	  border-radius: 8px;
+	  margin: 10px auto 30px auto;
+	  max-width: 800px;
+	  line-height: 1.6;
+	}
+	.bubble.me {
+	  background-color: #fdc4b3; /* 내 메시지는 주황 */
+	  color: #333;
+	}
+
+	.bubble.other {
+	  background-color: #FFFFFF; 
+	  color: #333;
+	}
+
+	.sender-name {
+	  font-weight: bold;
+	  font-size: 15px;
+	  color: #000;
+	  margin-bottom: 6px;
+	  display: block;
+	}
   </style>
 </head>
 <body>
 	<jsp:include page="../common/header.jsp"/>
   <div id="app">
+	<h2 class="section-subtitle">
+	  {{ targetName }}{{ sessionType === 'user' ? ' 변호사' : '' }} 님과의 채팅
+	</h2>
+	
+	<div class="chat-notice">
+	  이 채팅은 <strong>본격적인 상담 전</strong> 간단한 <strong>사고 설명</strong>과 <strong>상담 일정 조율</strong>을 위한 용도로 제공됩니다. <br>
+	  개인정보나 중요한 서류는 정식 상담 시작 후에 공유해주세요.
+	</div>
+	
     <div class="chat-wrapper">
       <div id="chatBox">
         <div
@@ -119,7 +183,10 @@
           class="bubble-container"
           :style="{ justifyContent: msg.senderId === senderId ? 'flex-end' : 'flex-start' }"
         >
-          <div class="bubble">
+		<div
+		  class="bubble"
+		  :class="msg.senderId === senderId ? 'me' : 'other'"
+		>
             <span class="sender-name">{{ msg.senderName }}</span>
             <span v-if="msg.type === 'text'">{{ msg.message }}</span>
             <img v-if="msg.type === 'file' && isImage(msg.filePath)" :src="msg.filePath" />
@@ -134,7 +201,7 @@
       </div>
 
       <div class="input-area">
-        <input type="text" v-model="message" placeholder="메시지를 입력하세요..." />
+        <input type="text" v-model="message" placeholder="채팅을 입력하세요..." />
         <input type="file" id="chatFile" multiple @change="handleFileChange" />
         <button @click="handleSend">전송</button>
       </div>
@@ -150,7 +217,9 @@
         stompClient: null,
         message: "",
         files: [],
-        messages: []
+        messages: [],
+		targetName : "",
+		sessionType : "${role}"
       };
     },
     methods: {
@@ -253,7 +322,10 @@
 	    this.messages.push({
 	      type: message.type,
 	      senderId: msg.senderId,
-	      senderName: msg.senderId === this.senderId ? "나" : msg.senderName,
+		  senderName:
+		      msg.senderId === this.senderId
+		        ? "나"
+		        : (this.sessionType === "user" ? msg.senderName + " 변호사" : msg.senderName),
 	      message: msg.message,
 	      filePath: msg.chatFilePath
 	    });
@@ -280,7 +352,7 @@
 	          const baseMessage = {
 	            type: item.message ? "text" : "file",
 	            senderId: item.senderId,
-	            senderName: isMe ? "나" : item.senderName,
+	            senderName: isMe ? "나" : (this.sessionType === "user" ? item.senderName + " 변호사" : item.senderName),
 	            message: item.message || null,
 	            filePath: item.chatFilePath || null
 	          };
@@ -298,12 +370,28 @@
 	        });
 	      }
 	    });
-	  }
+	  },
+	 	getTargetName(){
+			$.ajax({
+		      url: "/chat/getTargetName.dox",
+		      type: "POST",
+		      data: { 
+				chatNo: this.chatNo,
+				senderId : this.senderId
+			  },
+		      success: (data) => {
+				console.log(data.targetName);
+		        this.targetName = data.targetName;
+		      }
+		    });
+		}
 
     },
     mounted() {
+		console.log(this.sessionType);
       this.connect();
       this.loadChatHistory();
+	  this.getTargetName();
     }
   });
 

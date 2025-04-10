@@ -31,7 +31,7 @@
 		OFFSET 0 ROWS FETCH NEXT 6 ROWS ONLY
 	</select>
 	
-	<!--리뷰리스트-->
+	<!--리뷰리스트  -->
 	<select id="selectReviewList" resultType="com.project.gwasil_zero.model.Review">
 		SELECT R.*, LAWYER_NAME AS lawyerName
 		FROM REVIEW R

@@ -7,7 +7,9 @@
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-	<title>상품 관리</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/common.css">
+	<title>과실 zero - 관리자 페이지</title>
     <style>
         .content-container a {
             color: #ff6b00;
@@ -20,19 +22,15 @@
             color: #d64d00;
             text-decoration: underline;
         }
+
     </style>        
 </head>
 <body>
-<jsp:include page="../common/header.jsp" />
 <div id="mainApp">
     <div class="layout">
         <jsp:include page="../admin/layout.jsp" />
 
         <div class="content">
-            <div class="header">
-                <div>관리자페이지</div>
-                <div>{{sessionId}}님</div>
-            </div>
             <h2>상품 관리</h2>
 
             <div class="content-container">
@@ -51,20 +49,20 @@
                         <tr v-for="(item, index) in list" :key="index">
                             <td><input type="checkbox" :value="item.packageName" v-model="selectList"/></td>
                             <td><a href="javascript:;" @click="fnEdit(item.packageName)">{{ item.packageName }}</a></td>
-                            <td>{{ item.packageInfo }}</td>
+                            <td >{{ item.packageInfo }}</td>
                             <td>{{ item.packagePrice.toLocaleString() }}원</td>
                             <td>{{ item.packageStatus === 'U' ? '일반' : '변호사' }}</td>
                         </tr>
                     </tbody>
                 </table>
                 <div class="pagination-container">
-                    <button class="btn" @click="prevPage" :disabled="page === 1">〈 이전</button>
+                    <button class="btn" @click="prevPage" :disabled="page === 1" style="font-family: 'Noto Sans KR', sans-serif !important;">〈 이전</button>
                     <button v-for="n in pageCount" :key="n" @click="goToPage(n)" :class="['btn', page === n ? 'active' : '']">{{ n }}</button>
-                    <button class="btn" @click="nextPage" :disabled="page === pageCount">다음 〉</button>
+                    <button class="btn" @click="nextPage" :disabled="page === pageCount" style="font-family: 'Noto Sans KR', sans-serif !important;">다음 〉</button>
                 </div>
                 <div class="btn-area">
-                    <button class="btn" @click="fnDelete" style="margin-right: 5px;">선택 삭제</button>
-                    <button class="btn" @click="fnAdd">신규 등록</button>
+                    <button class="btn" @click="fnDelete" style="margin-right: 5px; font-family: 'Noto Sans KR', sans-serif !important;">선택 삭제</button>
+                    <button class="btn" @click="fnAdd" style="font-family: 'Noto Sans KR', sans-serif !important;">신규 등록</button>
                 </div>
             </div>
 
@@ -92,8 +90,8 @@
                             <td>{{ getRefundStatusText(item.payStatus) }}</td>
                             <td>
                                 <div v-if="item.payStatus === 'REQUEST'">
-                                    <button class="btn" @click="fnCompleteRefund(item.orderId)" style="margin-right: 5px;">환불 완료 처리</button>
-                                    <button class="btn btn-cancel" @click="fnCancelRefund(item.orderId)">환불 취소</button>
+                                    <button class="btn" @click="fnCompleteRefund(item.orderId)" style="margin-right: 5px; font-family: 'Noto Sans KR', sans-serif !important;">환불 완료 처리</button>
+                                    <button class="btn btn-cancel" @click="fnCancelRefund(item.orderId)" style="font-family: 'Noto Sans KR', sans-serif !important;">환불 취소</button>
                                 </div>
                                 <span v-else>완료됨</span>
                             </td>                                
@@ -104,15 +102,14 @@
                     </tbody>
                 </table>
                 <div class="pagination-container">
-                    <button class="btn" @click="prevRefundPage" :disabled="refundPage === 1">〈 이전</button>
+                    <button class="btn" @click="prevRefundPage" :disabled="refundPage === 1" style="font-family: 'Noto Sans KR', sans-serif !important;">〈 이전</button>
                     <button v-for="n in refundPageCount" :key="n" @click="goToRefundPage(n)" :class="['btn', refundPage === n ? 'active' : '']">{{ n }}</button>
-                    <button class="btn" @click="nextRefundPage" :disabled="refundPage === refundPageCount">다음 〉</button>
+                    <button class="btn" @click="nextRefundPage" :disabled="refundPage === refundPageCount" style="font-family: 'Noto Sans KR', sans-serif !important;">다음 〉</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<jsp:include page="../common/footer.jsp" />
 </body>
 </html>
 

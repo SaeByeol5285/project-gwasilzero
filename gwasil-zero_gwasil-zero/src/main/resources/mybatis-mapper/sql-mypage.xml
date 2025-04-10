@@ -7,14 +7,14 @@
    <select id="selectUserBoardList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Board">
        SELECT
            B.*,
-           F.FILE_PATH || '/' || F.FILE_REALNAME AS thumb,
+           F.FILE_PATH AS thumbnailPath,
              L.LAWYER_NAME
        FROM
            BOARD B
        LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
        LEFT JOIN LAWYER L ON L.LAWYER_ID = B.LAWYER_ID
        WHERE
-           B.USER_ID = #{userId}
+           B.USER_ID = #{userId} AND BOARD_STATUS != 'DELETE'
        ORDER BY B.CDATE DESC
        offset #{page} rows fetch next #{pageSize} rows only
    </select>
@@ -26,7 +26,7 @@
        LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
        LEFT JOIN LAWYER L ON L.LAWYER_ID = B.LAWYER_ID
        WHERE
-           B.USER_ID = #{userId}
+           B.USER_ID = #{userId} AND BOARD_STATUS != 'DELETE'
    </select>
    
    <select id="selectUserChatList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
@@ -70,7 +70,7 @@
    <select id="selectMyPayList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
        SELECT *
        FROM PAY
-         WHERE USER_ID = #{sessionId}
+       WHERE USER_ID = #{sessionId}
        
    </select>
    
@@ -160,8 +160,9 @@
    </update>
    
    <select id="selectLawyerBoard" parameterType="hashmap" resultType="Board">
-       SELECT B.*, U.USER_NAME
+       SELECT B.*, U.USER_NAME, F.FILE_PATH AS thumbnailPath
        FROM BOARD B
+       LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
        INNER JOIN TBL_USER U ON B.USER_ID = U.USER_ID
        WHERE 1=1
        <if test="sessionId != null and sessionId != ''">
@@ -176,6 +177,7 @@
    <select id="selectBoardCnt" parameterType="hashmap" resultType="int">
        SELECT COUNT(*)
        FROM BOARD B
+       LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
        INNER JOIN TBL_USER U ON B.USER_ID = U.USER_ID
        WHERE 1=1
        <if test="sessionId != null and sessionId != ''">

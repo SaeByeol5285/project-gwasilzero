@@ -7,23 +7,29 @@
 	<!-- 리스트, 답변 개수 조회 -->
 	<select id="selectDocsList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.TotalDocs">
 		SELECT D.*, 
-				(SELECT COUNT(*) FROM TOTAL_CMT C WHERE C.TOTAL_NO = D.TOTAL_NO) AS ANSWER_COUNT
-		FROM TOTALDOCS D 
+		       (SELECT COUNT(*) FROM TOTAL_CMT C WHERE C.TOTAL_NO = D.TOTAL_NO) AS ANSWER_COUNT,
+		       CASE 
+		           WHEN EXISTS (
+		               SELECT 1 FROM TOTAL_FILE F WHERE F.TOTAL_NO = D.TOTAL_NO
+		           ) THEN 1
+		           ELSE 0
+		       END AS FILE_ATTACHED
+		FROM TOTALDOCS D
 		WHERE KIND = #{kind}
 		
 		<if test="searchOption != null and searchOption == 'all'">
-			AND (TOTAL_TITLE LIKE '%' || #{keyword} || '%' OR USER_ID LIKE '%' || #{keyword} || '%')
+		  AND (TOTAL_TITLE LIKE '%' || #{keyword} || '%' OR USER_ID LIKE '%' || #{keyword} || '%')
 		</if>
-	
+		
 		<if test="searchOption != null and searchOption == 'title'">
-			AND (TOTAL_TITLE LIKE '%' || #{keyword} || '%')
+		  AND (TOTAL_TITLE LIKE '%' || #{keyword} || '%')
 		</if>
-	
+		
 		<if test="searchOption != null and searchOption == 'writer'">
-			AND (USER_ID LIKE '%' || #{keyword} || '%')
+		  AND (USER_ID LIKE '%' || #{keyword} || '%')
 		</if>
-	
-		ORDER BY CDATE DESC 
+		
+		ORDER BY CDATE DESC, TOTAL_NO DESC
 		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
 	</select>
 

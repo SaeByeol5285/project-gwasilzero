@@ -29,7 +29,7 @@
 							<div class="swiper mySwiper">
 								<div class="swiper-wrapper">
 									<div class="swiper-slide" v-for="lawyer in lawyerList" :key="lawyer.lawyerId">
-										<div class="lawyer-card" @click.stop="goToProfile(lawyer.lawyerId)">
+										<div class="lawyer-card">
 											<img class="lawyer-img" :src="lawyer.lawyerImg" />
 											<div class="lawyer-icons">
 												<a><img src="../../img/common/call.png" class="icon"
@@ -246,6 +246,7 @@
 						slidesPerGroup: 4,
 						speed: 1000,
 						loop: true,
+						allowTouchMove: false,
 						autoplay: {
 							delay: 5000,
 							disableOnInteraction: true,
@@ -268,6 +269,7 @@
 						loop: true,
 						speed: 1000,
 						centeredSlides: false,        // 양 옆 잘림 방지
+						allowTouchMove: false,
 						navigation: {
 							nextEl: ".swiper-button-next",
 							prevEl: ".swiper-button-prev",

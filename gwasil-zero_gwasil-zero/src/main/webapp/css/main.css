@@ -76,12 +76,6 @@
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 	position: relative;
 	transition: transform 0.3s ease, box-shadow 0.3s ease;
-	cursor: pointer;
-}
-
-.lawyer-card:hover {
-	transform: translateY(-6px) scale(1.03);
-	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
 .lawyer-img {

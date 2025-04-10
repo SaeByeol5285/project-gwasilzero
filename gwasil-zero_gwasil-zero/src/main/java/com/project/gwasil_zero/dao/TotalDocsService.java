@@ -26,8 +26,7 @@ public class TotalDocsService {
 			for (TotalDocs doc : list) {
 			    int cmtCount = doc.getAnswerCount();
 			    doc.setAnswerStatus(cmtCount > 0 ? "답변완료" : "답변대기");
-			}
-			
+			}			
 			resultMap.put("list", list);			
 			resultMap.put("count", count);
 			resultMap.put("result", "success");

@@ -111,6 +111,30 @@
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
+                            console.log(`.             |
+  　╲　　　　　　　　　　　╱
+  　　　　　　　　/
+  　　　╲　　　　　　　　╱
+  　　╲　　    　　　　　╱
+  -　-　　　　저기요　　　-　-
+  　　╱　   　　　　　　╲
+  　╱　　/             .
+  　　╱　　　　　　　　╲
+  　　　　　/　|　　　
+  　　　　　　　.
+         
+.           |
+　╲　　　　　　　　　　　╱
+　　　　　　　　　/
+　　　╲　　　　　　　　╱
+　　╲　　    설마...　　　╱
+-　-　　　제 목소리가　　-　-　-
+　　╱　   들리시나요?　　╲
+　╱　　/               .
+　　╱　　　　　　　　╲
+　　　　　/　|　　　
+　　　　　　　.
+`, "color: #7b68ee; font-size: 14px; font-family: monospace; font-weight: bold;");
                             self.list = data.list;
                             self.index = Math.ceil(data.count / 4);
                         }

@@ -225,13 +225,31 @@
                         type: "POST",
                         data: { lawyerId: self.lawyerId },
                         success: function (data) {
-                            console.log(data.info);
+                            console.log(`.
+　 ∧_∧　！
+　(´ﾞﾟωﾟ')
+＿(_つ/￣￣￣/＿
+　 ＼/　　　/
+　　　￣￣￣
+
+　 ∧_∧
+　(;ﾞﾟωﾟ')
+＿(_つ__ミ　헉
+　＼￣￣￣＼ミ
+　　￣￣￣￣
+
+　 .:∧_∧:
+＿:(;ﾞﾟωﾟ'): 에러잖아!
+　＼￣￣￣＼
+　　￣￣￣￣
+`);
+
                             self.info = data.info;
                             self.lawyerId = data.info.lawyerId;
                             self.license = data.license;
                             self.mainCaseList = data.mainCaseList || [];
                             self.fnGetReviewList();
-                            console.log("✅ 변호사 정보 로딩 완료:", data.info.lawyerId);
+                            // console.log("✅ 변호사 정보 로딩 완료:", data.info.lawyerId);
                         }
                     });
                 },

@@ -15,6 +15,7 @@
         <link href="https://cdn.jsdelivr.net/npm/quill-emoji@0.1.7/dist/quill-emoji.css" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/quill-emoji@0.1.7/dist/quill-emoji.js"></script>
         
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
         <title>변호사 프로필 수정</title>
     </head>
     <body>
@@ -62,7 +63,7 @@
     
                             <div class="info-box">
                                 <h3>전문 분야 선택</h3>
-                                <p class="lawyer-board-note">{{ selectedCategories.length }}개 선택됨 (최대 2개)</p>
+                                <p class="lawyer-board-note">{{ selectedCategories.length }}개 선택됨 (2개 모두 선택하세요!)</p>
                                 <div class="lawyer-category-checkbox-container">
                                     <div v-for="(category, index) in categoryList" :key="category.CATEGORY_NO" class="lawyer-category-checkbox-item">
                                         <input type="checkbox" 
@@ -177,7 +178,20 @@
                         dataType: "json",
                         data: { lawyerId: self.lawyerId },
                         success(data) {
-                            console.log(data.info);
+                            console.log("%c" +
+"╔════════════════════════════╗\n" +
+"║ 🐾✨ 마법사 고양이 등장! ✨🐾 ║\n" +
+"╚════════════════════════════╝\n" +
+"        /\\__/\\\n" +
+"      (=｀ω´=)  🔮\n" +
+"     /       \\  🧙‍♂️\n" +
+"    (  )   (  )\n" +
+"   (__(__)___)\n" +
+"\n" +
+"📦 박스 안에서 마법 준비 완료!\n" +
+"💥 오늘도 냥펀치와 마법을 드립니다!", 
+"color: hotpink; font-size: 16px; font-weight: bold; font-family: monospace");
+                            // console.log(data.info);
                             self.info = data.info;
                             // Quill에 값 설정
                             quillInfo.root.innerHTML = self.info.lawyerInfo || '';
@@ -210,6 +224,16 @@
                     const self = this;
 
                     // 전문분야 선택
+                    if (self.selectedCategories.length < 2) {
+                        swal.fire({
+                            title: "전문 분야 선택 오류",
+                            text: "전문 분야를 2개 모두 선택해야 합니다.",
+                            icon: "warning",
+                            confirmButtonText: "확인"
+                        });
+                        return;
+                    }
+
                     self.info.mainCategories1 = self.selectedCategories[0] || null;
                     self.info.mainCategories2 = self.selectedCategories[1] || null;
 
@@ -227,10 +251,18 @@
                     formData.append("selectedCategories", JSON.stringify(self.selectedCategories));
 
                     let count = 0;
+                    let invalid = false;
+
                     self.license.forEach((item, i) => {
                         if (item.isExisting) return;
                         if (!item.licenseName || !item.licenseFile) {
-                            alert("자격증 항목의 이름과 파일을 확인하세요.");
+                            swal.fire({
+                                title: "자격증 입력 오류",
+                                text: "자격증 항목의 이름과 파일을 확인하세요.",
+                                icon: "warning",
+                                confirmButtonText: "확인"
+                            });
+                            invalid = true;
                             return;
                         }
 
@@ -239,16 +271,12 @@
 
                         formData.append(nameKey, item.licenseName.trim());
                         formData.append(fileKey, item.licenseFile);
-                        // console.log("🧪", nameKey, ":", item.licenseName);
-                        // console.log("🧪", fileKey, ":", item.licenseFile.name);
                         count++;
                     });
+
+                    if (invalid) return;
+
                     formData.append("licenseCount", count);
-                    // DEBUG 로그
-                    // console.log("🧾 삭제 예정 리스트:", self.deletedLicenseIds);
-                    // for (let pair of formData.entries()) {
-                    //     console.log("📦", pair[0], pair[1]);
-                    // }
 
                     $.ajax({
                         url: "/profile/lawyerEdit.dox",
@@ -258,17 +286,29 @@
                         processData: false,
                         success(data) {
                             if (data.result === "success") {
-                                alert("수정되었습니다.");
-                                self.deletedLicenseIds = [];
-                                location.href = "/common/main.do"
+                                swal.fire({
+                                    title: "변호사 프로필이 성공적으로 수정되었습니다!",
+                                    icon: "success",
+                                    confirmButtonText: "확인"
+                                }).then(() => {
+                                    self.deletedLicenseIds = [];
+                                    location.href = "/common/main.do";
+                                });
                             } else {
-                                alert("수정에 실패했습니다.");
-                                // console.log("🚨 서버 응답 실패:", data);
+                                swal.fire({
+                                    title: "프로필 수정 중 오류가 발생했습니다.",
+                                    icon: "error",
+                                    confirmButtonText: "확인"
+                                });
                             }
                         },
                         error(err) {
-                            alert("서버 오류 발생!");
                             console.error(err);
+                            swal.fire({
+                                title: "서버와의 통신 중 오류가 발생했습니다.",
+                                icon: "error",
+                                confirmButtonText: "확인"
+                            });
                         }
                     });
                 },
@@ -281,19 +321,38 @@
                     });
                 },
                 removeExistingLicense(item, index) {
-                    if (confirm("해당 자격증을 삭제하시겠습니까?")) {
-                        this.deletedLicenseIds.push({
-                            licenseName: item.licenseName,
-                            lawyerId: item.lawyerId
-                        });
-                        this.license.splice(index, 1);
-                    }
+                    swal.fire({
+                        title: "정말 삭제하시겠습니까?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "삭제",
+                        cancelButtonText: "취소",
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            this.deletedLicenseIds.push({
+                                licenseName: item.licenseName,
+                                lawyerId: item.lawyerId
+                            });
+                            this.license.splice(index, 1);
+                            swal.fire({
+                                title: "자격증이 삭제되었습니다.",
+                                icon: "success",
+                                confirmButtonText: "확인"
+                            });
+                        }
+                    });
                 },
                 onFileChange(event, index) {
                     const file = event.target.files[0];
                     if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
                         if (file.size > 5 * 1024 * 1024) {
-                            alert("5MB 이하의 파일만 업로드 가능합니다.");
+                            swal.fire({
+                                title: "파일 크기 오류",
+                                text: "5MB 이하의 파일만 업로드 가능합니다.",
+                                icon: "warning",
+                                confirmButtonText: "확인"
+                            });
                             return;
                         }
 
@@ -304,7 +363,12 @@
                         this.license[index].licenseFile = file;
                         this.license[index].licensePreview = URL.createObjectURL(file);
                     } else {
-                        alert("JPG 또는 PNG 파일만 업로드 가능합니다.");
+                        swal.fire({
+                            title: "파일 형식 오류",
+                            text: "JPG 또는 PNG 파일만 업로드 가능합니다.",
+                            icon: "warning",
+                            confirmButtonText: "확인"
+                        });
                         event.target.value = '';
                         this.license[index].licenseFile = null;
                         this.license[index].licensePreview = null;

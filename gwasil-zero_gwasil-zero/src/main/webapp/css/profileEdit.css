@@ -160,7 +160,12 @@ body {
 	overflow: visible !important;
 	position: relative;
 	z-index: 1;
-	min-height: 300px;
+	min-height: 200px;
+	height: auto;
+}
+
+.lawyer-quill-editor .ql-editor {
+    min-height: 200px;
 }
 
 #emoji-palette {
@@ -185,7 +190,7 @@ body {
 	border-radius: 12px;
 	overflow: visible;
 	margin-bottom: 20px;
-	height: 200px;
+	height: auto;
 }
 
 #emoji-palette-clone {

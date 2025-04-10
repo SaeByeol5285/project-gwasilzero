@@ -105,6 +105,15 @@
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
+                            console.log(`˚∧＿∧  　+        —̳͟͞͞💗
+(  •‿• )つ  —̳͟͞͞ 💗         —̳͟͞͞💗 +
+(つ　 <                —̳͟͞͞💗
+｜　 _つ      +  —̳͟͞͞💗         —̳͟͞͞💗 ˚
+し´
+   🐱: "나는 아무 생각이 없다.
+        왜냐하면 아무생각이 없기 때문이다."
+
+`, "color: orange; font-weight: bold; font-size: 14px; font-family: monospace;");
                             self.list = data.list;
                             self.index = Math.ceil(data.count / 4);
                         }

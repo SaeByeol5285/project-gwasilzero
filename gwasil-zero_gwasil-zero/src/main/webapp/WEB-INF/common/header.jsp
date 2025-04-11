@@ -126,7 +126,14 @@
 				<div class="bottom-line">
 					<ul class="main-menu">
 						<li class="menu-item" v-for="(item, index) in menuItems" :key="index">
-							<a :href="item.url" :class="{ active: currentPath.includes(item.url) }">{{ item.name }}</a>
+							<a :href="item.url" :class="{
+							  active:
+								currentPath.startsWith(item.url) ||
+								(sections[index] &&
+								  sections[index].some(sub => currentPath === sub.url))
+							}">
+								{{ item.name }}
+							</a>
 							<div class="dropdown" v-if="sections[index] && sections[index].length">
 								<ul>
 									<li v-for="(sub, i) in sections[index]" :key="i">
@@ -176,7 +183,7 @@
 						[
 							{ name: '소속 변호사', url: '/profile/innerLawyer.do' },
 							{ name: '개인 변호사', url: '/profile/personalLawyer.do' },
-							{ name: '사무소 위치', url: '/lawyer/office.do' }
+							{ name: '법률 사무소 찾기', url: '/lawyer/office.do' }
 						],
 						[],
 						[

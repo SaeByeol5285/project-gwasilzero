@@ -40,10 +40,13 @@
                 cursor: pointer;
                 background-color: #FF5722;
                 color: #fff;
+                font-weight: bold;
+                transition: background-color 0.3s, color 0.3s;
             }
 
             button:hover {
-                background-color: #FF7043;
+                background-color: #ffece1;
+                color: #FF5722;
             }
 
             .error-text {

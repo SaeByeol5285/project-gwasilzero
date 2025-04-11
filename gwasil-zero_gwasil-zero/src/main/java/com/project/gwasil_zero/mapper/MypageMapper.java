@@ -37,8 +37,6 @@ public interface MypageMapper {
 
 	void updateLawyer(HashMap<String, Object> map);
 
-	void deleteLawyer(HashMap<String, Object> map);
-
 	void updateCounsel(HashMap<String, Object> map);
 
 	List<Board> selectLawyerBoard(HashMap<String, Object> map);
@@ -70,5 +68,9 @@ public interface MypageMapper {
 	void updateNoti(HashMap<String, Object> map);
 
 	void updateConsult(HashMap<String, Object> map);
+
+	Lawyer selectLawyerById(HashMap<String, Object> map);
+
+	int deleteLawyerByAdmin(HashMap<String, Object> map);
 
 }

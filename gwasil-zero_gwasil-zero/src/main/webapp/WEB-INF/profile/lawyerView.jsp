@@ -50,7 +50,7 @@
                     <!-- 탭 영역 -->
                     <div class="lawyer-tabs">
                         <button :class="{ active: currentTab === 'home' }" @click="currentTab = 'home'">변호사 홈</button>
-                        <button :class="{ active: currentTab === 'review' }" @click="currentTab = 'review'">감사의 말</button>
+                        <button :class="{ active: currentTab === 'review' }" @click="currentTab = 'review'">후기 목록</button>
                     </div>
 
                     <!-- 탭 내용 -->
@@ -120,7 +120,7 @@
                     </div>
 
                     <!-- 감사의 말 탭 -->
-                    <div v-if="currentTab === 'review'" class="tab-content">
+                    <div v-if="currentTab === 'review'" class="tab-content review-column">
                         <!-- 후기 목록 -->
                         <div class="info-box">
                             <h3>후기 목록</h3>
@@ -296,8 +296,7 @@
                         "이 텍스트들을 기반으로 자주 등장하는 단어 3개를 뽑아주세요. " +
                         "단어만 콤마(,)로 구분해서 간단히 적어주세요.\n" +
                         allContents;
-                    self.loading = true;  // 🔵 로딩 시작
-                    // 서버로 전송
+                    self.loading = true; 
                     $.ajax({
                         url: "http://localhost:5000/qa",
                         type: "POST",
@@ -305,11 +304,11 @@
                         data: JSON.stringify({ question: question }),
                         success: function (res) {
                             self.answer = res.answer;
-                            self.loading = false; // ✅ 로딩 끝
+                            self.loading = false; 
                         },
                         error: function () {
                             self.answer = "키워드 추출에 실패했습니다.";
-                            self.loading = false; // ✅ 로딩 끝
+                            self.loading = false; 
                         }
                     });
                 },
@@ -375,7 +374,7 @@
                     };
 
                     let list = JSON.parse(localStorage.getItem('recentViewed') || '[]');
-                    list = list.filter(i => !(i.type === item.type && i.id === item.id)); // 중복 제거
+                    list = list.filter(i => !(i.type === item.type && i.id === item.id)); 
                     list.unshift(item);
                     if (list.length > 5) list = list.slice(0, 5);
                     localStorage.setItem('recentViewed', JSON.stringify(list));

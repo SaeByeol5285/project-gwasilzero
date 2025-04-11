@@ -43,21 +43,6 @@
                 font-size: 14px;
                 color: #333;
             }
-
-            .btn-red-small {
-                background-color: #ffe1e1;
-                color: #e60000;
-                border: none;
-                font-size: 13px;
-                padding: 4px 10px;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-
-            .btn-red-small:hover {
-                background-color: #e60000;
-                color: #fff;
-            }
         </style>
     </head>
 
@@ -79,15 +64,15 @@
                     </div>
 
                     <div class="attachment-box">
-                        <label><strong>기존 채워진 파일</strong></label>
+                        <label><strong>기존 첨부파일</strong></label>
                         <ul class="file-list">
                             <li v-for="(file, idx) in fileList" :key="idx">
                                 <img src="/img/common/file-attached.png" class="file-icon" />
                                 {{ file.fileName }}
                                 <template v-if="isPreviewable(file.fileName)">
-                                    <a :href="file.filePath" target="_blank">보기</a>
+                                    <a :href="file.filePath" target="_blank" class="btn-blue-small">보기</a>
                                 </template>
-                                <a :href="file.filePath" target="_blank" download>다운로드</a>
+                                <a :href="file.filePath" target="_blank" download class="btn-blue-small">다운로드</a>
                                 <button @click="removeFile(file)" class="btn-red-small">삭제</button>
                             </li>
                         </ul>
@@ -95,15 +80,22 @@
 
                     <div class="attachment-box">
                         <label><strong>새 파일 업로드</strong></label>
-                        <input type="file" id="file1" name="file1" multiple />
+                        <div>
+                            <input type="file" id="file1" name="file1" multiple @change="handleFileChange" />
+                        </div>
+                        <ul class="file-list">
+                            <li v-for="(file, i) in selectedFiles" :key="i">
+                                <img src="/img/common/file-attached.png" class="file-icon" />
+                                {{ file.name }}
+                                <button @click="removeNewFile(i)" class="btn-red-small">삭제</button>
+                            </li>
+                        </ul>
                     </div>
 
                     <div class="post-actions">
-                        <div class="left-buttons">
-                            <button @click="fnEdit" class="btn btn-write">저장</button>
-                        </div>
                         <div class="right-buttons">
-                            <button @click="goToListPage" class="btn btn-outline">목록</button>
+                            <button @click="fnEdit" class="btn btn-write">저장</button>
+                            <button @click="goToListPage" class="btn btn-red" style="margin-left: 10px;">취소</button>
                         </div>
                     </div>
                 </div>
@@ -121,7 +113,9 @@
                     fileList: [],
                     deleteList: [],
                     quill: null,
-                    isSubmitting: false
+                    isSubmitting: false,
+                    selectedFiles: [],
+
                 };
             },
             methods: {
@@ -134,6 +128,7 @@
                         data: { totalNo: self.totalNo },
                         success(data) {
                             if (data.result === "success") {
+                                console.log(data);
                                 self.info = data.info;
                                 self.fileList = data.fileList;
                                 if (self.quill) {
@@ -148,6 +143,14 @@
                 removeFile(file) {
                     this.deleteList.push(file);
                     this.fileList = this.fileList.filter(f => f !== file);
+                },
+                //선택한 파일 리스트로
+                handleFileChange(event) {
+                    this.selectedFiles = Array.from(event.target.files);
+                },
+                //첨부파일 삭제
+                removeNewFile(index) {
+                    this.selectedFiles.splice(index, 1);
                 },
                 fnEdit() {
                     const self = this;
@@ -170,6 +173,7 @@
                         form.append("deleteList", file.filePath);
                     });
 
+
                     $.ajax({
                         url: "/totalDocs/edit.dox",
                         type: "POST",
@@ -179,21 +183,53 @@
                         success(data) {
                             self.isSubmitting = false;
                             if (data.result === "success") {
-                                alert("수정 완료!");
-                                pageChange("/totalDocs/list.do", { kind: "NOTICE" });
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "수정 완료",
+                                    text: "게시글이 성공적으로 수정되었습니다.",
+                                    confirmButtonText: "확인"
+                                }).then(() => {
+                                    pageChange("/totalDocs/list.do", { kind: self.info.kind });
+                                });
                             } else {
-                                alert("수정 실패!");
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "수정 실패",
+                                    text: "수정 중 문제가 발생했습니다.",
+                                    confirmButtonText: "확인"
+                                });
                             }
                         },
                         error() {
                             self.isSubmitting = false;
-                            alert("서버 오류 발생");
+                            Swal.fire({
+                                icon: "error",
+                                title: "서버 오류",
+                                text: "서버와의 통신 중 오류가 발생했습니다.",
+                                confirmButtonText: "확인"
+                            });
                         }
                     });
                 },
                 goToListPage() {
-                    pageChange("/totalDocs/detail.do", { totalNo: this.totalNo, kind: "NOTICE" });
+                    const self = this;
+                    Swal.fire({
+                        title: "수정을 취소하시겠습니까?",
+                        text: "작성한 내용은 저장되지 않습니다.",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "네, 취소할게요",
+                        cancelButtonText: "아니오",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            pageChange("/totalDocs/detail.do", {
+                                totalNo: self.totalNo,
+                                kind: self.info.kind
+                            });
+                        }
+                    });
                 },
+
                 initQuill() {
                     const self = this;
                     self.quill = new Quill("#quill-editor", {

@@ -15,7 +15,7 @@
         <link href="https://cdn.jsdelivr.net/npm/quill-emoji@0.1.7/dist/quill-emoji.css" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/quill-emoji@0.1.7/dist/quill-emoji.js"></script>
         
-        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <title>변호사 프로필 수정</title>
     </head>
     <body>
@@ -84,21 +84,25 @@
                                 <div v-if="license.length > 0" class="license-list">
                                     <div v-for="(item, index) in license" :key="index" class="license-card">
                                         <template v-if="item.isExisting">
-                                            <img :src="item.licensePreview" class="license-img" />
-                                            <div class="license-name">{{ item.licenseName }}</div>
-                                            <button type="button" @click="removeExistingLicense(item, index)" class="lawyer-btn lawyer-btn-primary" style="margin-top: 10px;">삭제</button>
+                                            <img :src="item.licensePreview" class="license-img" /> 
+                                            <div class="license-name">{{ item.licenseName }}</div> 
+                                            <button type="button" @click="removeExistingLicense(item, index)" 
+                                                    class="lawyer-btn lawyer-btn-primary" style="margin-top: 10px;">삭제</button> 
                                         </template>
                                         <template v-else>
                                             <input type="text" v-model="item.licenseName" placeholder="자격증 이름 입력" style="margin-bottom: 6px;" />
-                                            <input type="file" accept="image/png, image/jpeg" @change="onFileChange($event, index)" />
-                                            <img v-if="item.licensePreview" :src="item.licensePreview" class="license-img" />
-                                        </template>
-                                    </div>
-                                </div>
-                                <div v-else class="no-data">등록된 자격증이 없습니다.</div>
-                                <div style="margin-top: 16px;">
-                                    <button type="button" @click="addLicense" class="lawyer-btn lawyer-btn-primary">+ 자격 추가</button>
-                                </div>
+                                            <input type="file" accept="image/png, image/jpeg" @change="onFileChange($event, index)" /> 
+                                            <img v-if="item.licensePreview" :src="item.licensePreview" class="license-img" /> 
+                                            <button type="button" @click="removeLicense(index)" class="lawyer-btn lawyer-btn-danger">
+                                                입력취소
+                                            </button>
+                                        </template> 
+                                    </div> 
+                                </div> 
+                                <div v-else class="no-data">등록된 자격증이 없습니다.</div> 
+                                <div style="margin-top: 16px;"> 
+                                    <button type="button" @click="addLicense" class="lawyer-btn lawyer-btn-primary">+ 자격 추가</button> 
+                                </div> 
                             </div>
     
                             <div class="info-box">
@@ -161,13 +165,13 @@
                     selectedBoards: [],
                     deletedLicenseIds: [],
                     categoryList: [],  
-                    selectedCategories: [] 
+                    selectedCategories: []
                 };
             },
             computed: {
                 safeBoardList() {
                     return this.boardList.filter(item => item != null);
-                }
+                }        
             },
             methods: {
                 fnGetLawyerInfo() {
@@ -178,19 +182,6 @@
                         dataType: "json",
                         data: { lawyerId: self.lawyerId },
                         success(data) {
-                            console.log("%c" +
-"╔════════════════════════════╗\n" +
-"║ 🐾✨ 마법사 고양이 등장! ✨🐾 ║\n" +
-"╚════════════════════════════╝\n" +
-"        /\\__/\\\n" +
-"      (=｀ω´=)  🔮\n" +
-"     /       \\  🧙‍♂️\n" +
-"    (  )   (  )\n" +
-"   (__(__)___)\n" +
-"\n" +
-"📦 박스 안에서 마법 준비 완료!\n" +
-"💥 오늘도 냥펀치와 마법을 드립니다!", 
-"color: hotpink; font-size: 16px; font-weight: bold; font-family: monospace");
                             // console.log(data.info);
                             self.info = data.info;
                             // Quill에 값 설정
@@ -214,13 +205,12 @@
                             if (self.info.mainCase2No) self.selectedBoards.push(self.info.mainCase2No);
                             if (self.info.mainCase3No) self.selectedBoards.push(self.info.mainCase3No);
 
-                            // LAWYER의 MAIN_CATEGORIES1, 2를 categoryList로 변환하여 선택된 값 세팅
                             self.selectedCategories = [self.info.mainCategories1, self.info.mainCategories2].filter(category => category !== null);
                             self.fnGetCategories();
                         }
                     });
                 },
-                fnEdit() {
+                fnEdit() {   
                     const self = this;
 
                     // 전문분야 선택
@@ -274,7 +264,7 @@
                         count++;
                     });
 
-                    if (invalid) return;
+                    if (invalid) return;                   
 
                     formData.append("licenseCount", count);
 
@@ -312,13 +302,16 @@
                         }
                     });
                 },
-                addLicense() {
+                addLicense() {                    
                     this.license.push({
-                        licenseName: '',
-                        isExisting: false,
-                        licenseFile: null,
-                        licensePreview: null
+                            licenseName: '',
+                            isExisting: false,
+                            licenseFile: null,
+                            licensePreview: null
                     });
+                },
+                removeLicense(index) {
+                    this.license.splice(index, 1); 
                 },
                 removeExistingLicense(item, index) {
                     swal.fire({
@@ -387,11 +380,6 @@
                 },                
             }, // 메소드 영역 끝
             mounted() {
-                // if (!this.lawyerId || this.lawyerId === "") {
-                //     alert("로그인이 필요합니다.");
-                //     location.href = "/user/login.do"; 
-                //     return;
-                // } 🚨 로그인 없이 접근 불가. 마지막에 추가할것!!! 🚨
                 const self = this;
 
                 self.fnGetLawyerInfo();
@@ -415,7 +403,6 @@
                         }
                     }, 300);
 
-                    // 이모지 버튼 클릭 시 위치 조정 및 보이기
                     document.querySelectorAll('.ql-emoji').forEach(function (btn) {
                         btn.addEventListener('click', function (e) {
                             e.preventDefault();

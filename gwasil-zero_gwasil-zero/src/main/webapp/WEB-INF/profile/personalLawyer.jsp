@@ -18,7 +18,7 @@
             <div class="layout">
                 <div class="content">
                     <div>
-                        <h2 class="section-subtitle">개인 변호사</h2>
+                        <h2 class="section-subtitle">변호사</h2>
                     </div>
                     <div class="lawMove-menu">
                         <button
@@ -32,6 +32,12 @@
                             :class="{ 'active': currentPage === 'personalLawyer' }"
                             @click="fnMove('personalLawyer')">
                             <span>개인 변호사</span>
+                        </button>
+                        <button
+                            class="lawMove-btn"
+                            :class="{ 'active': currentPage === 'searchLawyer' }"
+                            @click="fnMove('searchLawyer')">
+                            <span>법률 사무소 찾기</span>
                         </button>
                     </div>
                     <div class="content-wrapper">
@@ -161,6 +167,9 @@
                     } else if (page === 'personalLawyer') {
                         this.currentPage = 'personalLawyer';
                         location.href = "/profile/personalLawyer.do";  
+                    } else if (page === 'searchLawyer') {
+                        this.currentPage = 'searchLawyer';
+                        location.href = "/lawyer/office.do";  
                     }
                 },
                 truncateText(text, maxLength) {

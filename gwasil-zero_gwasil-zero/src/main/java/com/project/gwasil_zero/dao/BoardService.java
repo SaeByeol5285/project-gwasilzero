@@ -337,4 +337,32 @@ public class BoardService {
 		return resultMap;
 	}
 	
+	public HashMap<String, Object> updateReview(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<>();
+		try {
+	        boardMapper.updateReview(map);
+
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> reportCheck(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<>();
+		try {
+	        int count = boardMapper.selectReport(map);
+	        resultMap.put("count", count);
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+		
+		return resultMap;
+	}
+	
 }

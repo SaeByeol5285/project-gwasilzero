@@ -178,6 +178,11 @@ public class AdminService {
 		// TODO Auto-generated method stub
 		try {
 	        adminMapper.updateReportStatus(map);
+	        System.out.println("boardStatus: " + (String)map.get("boardStatus"));
+	        if("DELETE".equals(map.get("boardStatus"))) {
+	        	adminMapper.updateBoardStatus(map);
+	        }
+	        
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }

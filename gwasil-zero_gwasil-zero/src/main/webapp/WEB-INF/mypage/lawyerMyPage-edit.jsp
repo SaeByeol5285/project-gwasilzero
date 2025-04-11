@@ -17,20 +17,20 @@
                 border-radius: 12px;
                 box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
             }
-        
+
             h2 {
                 text-align: center;
                 color: #444;
                 margin-bottom: 30px;
             }
-        
+
             label {
                 display: block;
                 margin: 10px 0 6px;
                 font-weight: 600;
                 color: #333;
             }
-        
+
             .full-width {
                 width: 100%;
                 padding: 12px 14px;
@@ -40,12 +40,12 @@
                 background-color: #fdfdfd;
                 transition: border-color 0.3s;
             }
-        
+
             .full-width:focus {
                 border-color: #ff7a3d;
                 outline: none;
             }
-        
+
             .save-button {
                 width: 100%;
                 padding: 14px;
@@ -59,12 +59,12 @@
                 margin-top: 20px;
                 transition: background-color 0.3s, box-shadow 0.3s;
             }
-        
+
             .save-button:hover {
                 background-color: #ff5a1a;
                 box-shadow: 0 4px 10px rgba(255, 122, 61, 0.3);
             }
-        </style> 
+        </style>
     </head>
 
     <body>
@@ -73,11 +73,11 @@
             <h2>내 정보 수정</h2>
             <div>
                 <label>프로필 사진</label>
-                <input type="file" @change="fnUploadImg" ref="fileInput">
+                <input type="file" @change="handleProfileImg">
                 <div v-if="lawyerInfo.lawyerImg">
                     <img :src="lawyerInfo.lawyerImg" style="width: 100px; height: 100px; margin-top: 10px;">
                 </div>
-            </div>            
+            </div>
             <div>
                 <label>이름</label>
                 <input v-model="lawyerInfo.lawyerName" class="full-width">
@@ -110,6 +110,13 @@
                 };
             },
             methods: {
+                handleProfileImg(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        this.fnUploadImg(file);
+                        this.lawyerInfo.lawyerImg = "/img/" + file.name;
+                    }
+                },
                 fnGetInfo() {
                     const self = this;
                     $.ajax({
@@ -123,9 +130,8 @@
                     });
                 },
 
-                fnUploadImg(event) {
+                fnUploadImg(file) {
                     const self = this;
-                    const file = event.target.files[0];
                     const formData = new FormData();
                     formData.append("uploadFile", file);
                     formData.append("lawyerId", self.sessionId);
@@ -152,8 +158,8 @@
                         lawyerName: self.lawyerInfo.lawyerName,
                         lawyerPhone: self.lawyerInfo.lawyerPhone,
                         lawyerEmail: self.lawyerInfo.lawyerEmail,
-                        lawyerAddr : self.lawyerInfo.lawyerAddr,
-                        lawyerImg : self.lawyerInfo.lawyerImg
+                        lawyerAddr: self.lawyerInfo.lawyerAddr,
+                        lawyerImg: self.lawyerInfo.lawyerImg
                     };
                     $.ajax({
                         url: "/lawyerMyPage/edit.dox",

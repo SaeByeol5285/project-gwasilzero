@@ -25,7 +25,6 @@
 
             .button {
 				padding: 10px 18px;
-				/* margin-bottom: 10px; */
 				font-size: 13px;
 				border: none;
 				border-radius: 8px;
@@ -237,7 +236,7 @@
                             // 현재 페이지에 데이터가 하나만 있고 삭제된 경우 페이지 이동
                             if (self.lawWaitList.length === 0 && self.waitPage > 1) {
                                 self.waitPage--;
-                                self.fnLawWaitList(); // 다시 불러오기
+                                self.fnLawWaitList(); 
                             }
                         }
                     });
@@ -277,7 +276,7 @@
 
                             if (self.lawPassedList.length === 0 && self.passedPage > 1) {
                                 self.passedPage--;
-                                self.fnLawPassedList(); // 다시 불러오기
+                                self.fnLawPassedList(); 
                             }
                         }
                     });
@@ -340,7 +339,7 @@
 
                             if (self.lawOutList.length === 0 && self.outPage > 1) {
                                 self.outPage--;
-                                self.fnLawOutList(); // 다시 불러오기
+                                self.fnLawOutList(); 
                             }
                         }
                     });

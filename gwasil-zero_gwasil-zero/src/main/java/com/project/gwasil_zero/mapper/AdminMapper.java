@@ -45,6 +45,8 @@ public interface AdminMapper {
 	int selectReportCount(HashMap<String, Object> map);
 
 	void updateReportStatus(HashMap<String, Object> map);
+	
+	void updateBoardStatus(HashMap<String, Object> map);
 
 	List<HashMap<String, Object>> selectStatChart(HashMap<String, Object> map);
 

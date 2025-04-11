@@ -51,11 +51,9 @@
                     </div>
 
                     <div class="post-actions">
-                        <div class="left-buttons">
-                            <button @click="fnAddNotice" class="btn btn-write" :disabled="isSubmitting">✏️ 등록</button>
-                        </div>
                         <div class="right-buttons">
-                            <button @click="goToListPage" class="btn btn-red">취소</button>
+                            <button @click="fnAddNotice" class="btn btn-write" :disabled="isSubmitting">✏️ 등록</button>
+                            <button @click="goToListPage" class="btn btn-red" style="margin-left: 10px;">취소</button>
                         </div>
                     </div>
                 </div>
@@ -110,32 +108,56 @@
                         data: nparmap,
                         success: function (data) {
                             if (data.result === "forbidden") {
-                                alert(data.message || "권한이 없습니다.");
-                                pageChange("/totalDocs/list.do", { kind: "NOTICE" });
+                                Swal.fire({
+                                    icon: "warning",
+                                    title: "권한 없음",
+                                    text: data.message || "권한이 없습니다.",
+                                    confirmButtonText: "확인"
+                                }).then(() => {
+                                    pageChange("/totalDocs/list.do", { kind: "NOTICE" });
+                                });
                                 return;
                             }
+
                             if (data.result === "success") {
                                 if ($("#file1")[0].files.length > 0) {
                                     const form = new FormData();
                                     for (let i = 0; i < $("#file1")[0].files.length; i++) {
                                         form.append("file1", $("#file1")[0].files[i]);
                                     }
-                                    form.append("totalNo", data.totalNo);
-                                    self.upload(form);
+                                    form.append("totalNo", data.totalNo); // 서버에서 리턴한 PK
+                                    self.upload(form); // 별도 swal은 upload 내부에서 처리됨
                                 } else {
-                                    alert("글쓰기가 완료되었습니다.");
-                                    location.href = "/totalDocs/list.do?kind=NOTICE";
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "글쓰기 완료",
+                                        text: "정상적으로 작성되었습니다.",
+                                        confirmButtonText: "확인"
+                                    }).then(() => {
+                                        location.href = "/totalDocs/list.do?kind=NOTICE";
+                                    });
                                 }
                             } else {
-                                alert("글쓰기 실패!");
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "실패",
+                                    text: "글쓰기에 실패했습니다.",
+                                    confirmButtonText: "확인"
+                                });
                                 self.isSubmitting = false;
                             }
                         },
                         error: function () {
-                            alert("서버 오류가 발생했습니다.");
+                            Swal.fire({
+                                icon: "error",
+                                title: "서버 오류",
+                                text: "서버 통신 중 오류가 발생했습니다.",
+                                confirmButtonText: "확인"
+                            });
                             self.isSubmitting = false;
                         }
                     });
+
                 },
                 //선택한 파일 리스트로
                 handleFileChange(event) {
@@ -146,6 +168,8 @@
                     this.selectedFiles.splice(index, 1);
                 },
                 upload(form) {
+                    const self = this;
+
                     $.ajax({
                         url: "/fileUpload.dox",
                         type: "POST",
@@ -153,21 +177,49 @@
                         contentType: false,
                         data: form,
                         success: function (data) {
+                            self.isSubmitting = false;
                             if (data.result === "success") {
-                                alert("글쓰기가 완료되었습니다.");
-                                self.isSubmitting = false;
-                                pageChange("/totalDocs/list.do", { kind: "NOTICE" });
-
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "글쓰기 완료",
+                                    text: "파일이 업로드되었고 글쓰기가 완료되었습니다.",
+                                    confirmButtonText: "확인"
+                                }).then(() => {
+                                    pageChange("/totalDocs/list.do", { kind: "NOTICE" });
+                                });
                             } else {
-                                alert("파일 업로드 실패.");
-                                self.isSubmitting = false;
-
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "업로드 실패",
+                                    text: "파일 업로드 중 문제가 발생했습니다.",
+                                    confirmButtonText: "확인"
+                                });
                             }
+                        },
+                        error: function () {
+                            self.isSubmitting = false;
+                            Swal.fire({
+                                icon: "error",
+                                title: "서버 오류",
+                                text: "서버 통신 중 오류가 발생했습니다.",
+                                confirmButtonText: "확인"
+                            });
                         }
                     });
                 },
                 goToListPage() {
-                    pageChange("/totalDocs/list.do", { kind: "NOTICE" });
+                    Swal.fire({
+                        title: "작성을 취소하시겠습니까?",
+                        text: "작성 중인 내용은 저장되지 않습니다.",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "네, 취소할게요",
+                        cancelButtonText: "계속 작성할게요"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            pageChange("/totalDocs/list.do", { kind: "NOTICE" });
+                        }
+                    });
                 },
                 initQuill() {
                     const self = this;
@@ -225,13 +277,20 @@
 
                 },
                 checkAdmin(sessionStatus) {
-                    if (sessionStatus != 'ADMIN') {
-                        alert("관리자만 접근할 수 있습니다.");
-                        pageChange("/totalDocs/list.do", { kind: "NOTICE" });
+                    if (sessionStatus !== 'ADMIN') {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: '접근 제한',
+                            text: '관리자만 접근할 수 있습니다.',
+                            confirmButtonText: '확인'
+                        }).then(() => {
+                            pageChange("/totalDocs/list.do", { kind: "NOTICE" });
+                        });
                         return false;
                     }
                     return true;
-                }
+                },
+
             },
             mounted() {
                 this.initQuill();

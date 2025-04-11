@@ -210,7 +210,7 @@
 	</update>
 	
 	<select id="selectReportList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Report">
-		SELECT *
+		SELECT * 
 		FROM REPORT
 		ORDER BY BOARD_NO
 		OFFSET #{repoPage} ROWS FETCH NEXT #{repoPageSize} ROWS ONLY
@@ -225,6 +225,10 @@
 	    UPDATE REPORT
 	    SET REPORT_STATUS = #{reportStatus}
 	    WHERE REPORT_NO = #{reportNo}
+	</update>
+	
+	<update id="updateBoardStatus" parameterType="hashmap">
+	    update board set board_status = #{boardStatus} where board_no = #{boardNo}
 	</update>
 	
 	<select id="selectStatChart" parameterType="hashmap" resultType="hashmap">

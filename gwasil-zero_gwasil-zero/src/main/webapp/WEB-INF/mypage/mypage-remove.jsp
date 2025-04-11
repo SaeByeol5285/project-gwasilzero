@@ -7,6 +7,7 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <title>회원탈퇴</title>
         <style>
             #app {
@@ -99,16 +100,24 @@
             methods: {
                 fnDeleteAccount() {
                     const self = this;
+
                     if (!self.password.trim()) {
-                        alert("비밀번호를 입력해주세요");
+                        Swal.fire({
+                            icon: "warning",
+                            title: "입력 필요",
+                            text: "비밀번호를 입력해주세요.",
+                            confirmButtonColor: "#ff5c00"
+                        });
                         return;
                     }
+
                     const params = {
                         userId: self.sessionId,
                         password: self.password,
                         reason: self.reason,
                         comments: self.comments
                     };
+
                     $.ajax({
                         url: "/mypage/mypage-remove.dox",
                         type: "POST",
@@ -116,34 +125,60 @@
                         dataType: "json",
                         success: function (data) {
                             if (data.result === "success") {
-                                // 로그아웃 요청 보내기
+                                // 로그아웃 요청
                                 $.ajax({
                                     url: "/user/logout.dox",
                                     type: "POST",
                                     dataType: "json",
                                     success: function (logoutRes) {
                                         if (logoutRes.result === "success") {
-                                            alert("탈퇴되었습니다.");
-                                            location.href = "/common/main.do";
+                                            Swal.fire({
+                                                icon: "success",
+                                                title: "탈퇴 완료",
+                                                text: "정상적으로 탈퇴되었습니다.",
+                                                confirmButtonColor: "#ff5c00"
+                                            }).then(() => {
+                                                location.href = "/common/main.do";
+                                            });
                                         } else {
-                                            alert("세션 정리에 실패했습니다.");
+                                            Swal.fire({
+                                                icon: "error",
+                                                title: "실패",
+                                                text: "세션 정리에 실패했습니다.",
+                                                confirmButtonColor: "#ff5c00"
+                                            });
                                         }
                                     },
                                     error: function () {
-                                        alert("로그아웃 중 오류 발생");
+                                        Swal.fire({
+                                            icon: "error",
+                                            title: "오류",
+                                            text: "로그아웃 중 오류가 발생했습니다.",
+                                            confirmButtonColor: "#ff5c00"
+                                        });
                                     }
                                 });
                             } else {
-                                alert("탈퇴 실패: " + data.message);
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "탈퇴 실패",
+                                    text: data.message || "탈퇴 요청에 실패했습니다.",
+                                    confirmButtonColor: "#ff5c00"
+                                });
                             }
                         },
                         error: function () {
-                            alert("서버 오류 발생");
+                            Swal.fire({
+                                icon: "error",
+                                title: "서버 오류",
+                                text: "서버와 통신 중 문제가 발생했습니다.",
+                                confirmButtonColor: "#ff5c00"
+                            });
                         }
                     });
                 },
+
                 fnCancel() {
-                    alert("취소되었습니다");
                     location.href = "/mypage-home.do";
                 }
             }

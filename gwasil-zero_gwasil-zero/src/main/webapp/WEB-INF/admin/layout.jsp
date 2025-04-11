@@ -20,6 +20,7 @@
 	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <script src="/js/page-change.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<title>admin sider</title>
 	<link rel="stylesheet" href="/css/admin-style.css">
 </head>
@@ -63,14 +64,29 @@
             dataType: "json",
             success: function (data) {
                 if (data.result === "success") {
-                    alert("로그아웃 되었습니다.");
-                    location.href = "/common/main.do";
+                    Swal.fire({
+                        icon: "success",
+                        title: "로그아웃 되었습니다.",
+                        confirmButtonColor: "#ff5c00"
+                    }).then(() => {
+                        location.href = "/common/main.do";
+                    });
                 } else {
-                    alert("로그아웃 실패");
+                    Swal.fire({
+                        icon: "error",
+                        title: "로그아웃 실패",
+                        text: "잠시 후 다시 시도해주세요.",
+                        confirmButtonColor: "#ff5c00"
+                    });
                 }
             },
             error: function () {
-                alert("로그아웃 요청 중 오류가 발생했습니다.");
+                Swal.fire({
+                    icon: "error",
+                    title: "요청 오류",
+                    text: "로그아웃 요청 중 오류가 발생했습니다.",
+                    confirmButtonColor: "#ff5c00"
+                });
             }
         });
     }

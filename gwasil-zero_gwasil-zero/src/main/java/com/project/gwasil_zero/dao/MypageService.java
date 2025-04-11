@@ -142,14 +142,6 @@ public class MypageService {
 	   resultMap.put("result", "success");      
 	   return resultMap;
    }
-	
-   public HashMap<String, Object> removeLawyer(HashMap<String, Object> map) {
-	   // TODO Auto-generated method stub
-	   HashMap<String, Object> resultMap = new HashMap<String, Object>();
-	   mypageMapper.deleteLawyer(map);
-	   resultMap.put("result", "success");      
-	   return resultMap;
-   }
    
    public HashMap<String, Object> counselUpdate(HashMap<String, Object> map) {
 	      // TODO Auto-generated method stub
@@ -270,6 +262,26 @@ public class MypageService {
 	    mypageMapper.updateConsult(map);
 	    resultMap.put("result", "success");      
 	    return resultMap;
+	}
+
+	public HashMap<String, Object> lawyerRemove(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<>();
+
+		    // 변호사 정보 조회
+		    Lawyer lawyer = mypageMapper.selectLawyerById(map);
+
+		    // 비밀번호 비교
+		    String rawPassword = (String) map.get("pwd");
+		    if (lawyer != null && passwordEncoder.matches(rawPassword, lawyer.getLawyerPwd())) {
+		        int result = mypageMapper.deleteLawyerByAdmin(map);
+		        resultMap.put("result", result > 0 ? "success" : "fail");
+		    } else {
+		        resultMap.put("result", "fail");
+		        resultMap.put("message", "비밀번호가 일치하지 않습니다.");
+		    }
+
+		    return resultMap;
 	}
 
 }

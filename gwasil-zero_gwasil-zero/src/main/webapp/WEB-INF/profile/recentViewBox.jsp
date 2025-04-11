@@ -92,7 +92,7 @@
                 if (item.type === 'lawyer') {
                     location.href = "/profile/view.do?lawyerId=" + item.id;
                 } else if (item.type === 'board') {
-                    location.href = "/board/boardView.jsp?boardNo=" + item.id;
+                    location.href = "/board/view.do?boardNo=" + item.id;
                 }
             }
 		},

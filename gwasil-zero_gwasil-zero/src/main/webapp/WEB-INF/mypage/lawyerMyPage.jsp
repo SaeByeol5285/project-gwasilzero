@@ -247,7 +247,6 @@
       }
 
    </style>
-
    <body>
       <jsp:include page="../common/header.jsp" />
       <div id="app">
@@ -264,13 +263,13 @@
                <!-- 프로필 사진 -->
                <div v-if="view">
                  <img :src="view.lawyerImg" alt="변호사 사진"
-                   style="width: 130px; height: 130px; border-radius: 10px; object-fit: cover; border: 1px solid #ccc;" />
+                   style="width: 200px; height: 220px; border-radius: 10px; object-fit: cover; border: 1px solid #ccc;" />
                </div>
              
                <!-- 텍스트 정보 + 상담 상태 -->
                <div class="info-details" v-if="view.lawyerId" style="flex: 1;">
                  <div style="display: flex; justify-content: space-between; align-items: center;">
-                   <p style="margin: 0;">이름: {{ view.lawyerName }}</p>
+                   <p style="margin: 0;">이름 : {{ view.lawyerName }}</p>
                    <div>
                      <label for="counselStatus" style="font-weight: bold; margin-right: 8px;">상담 상태 |</label>
                      <select id="counselStatus" v-model="view.counsel" @change="fnUpdateStatus" class="status-select">
@@ -281,9 +280,9 @@
                      </select>
                    </div>
                  </div>
-                 <p>핸드폰 번호: {{ view.lawyerPhone }}</p>
-                 <p>이메일: {{ view.lawyerEmail }}</p>
-                 <p>사무소: {{ view.lawyerAddr }}</p>
+                 <p>핸드폰 번호 : {{ view.lawyerPhone }}</p>
+                 <p>이메일 : {{ view.lawyerEmail }}</p>
+                 <p>사무소 : {{ view.lawyerAddr }}</p>
                </div>
             </div>
              
@@ -503,7 +502,6 @@
 					});
 				},
             
-
             fnUpdateStatus() {
                 const self = this;
                 $.ajax({
@@ -740,7 +738,7 @@
             },
 
             fnRemoveUser() {
-               pageChange("/lawyerMyPage/remove.dox", { sessionId: this.sessionId });
+               pageChange("/lawyerMyPage/out.do", { sessionId: this.sessionId });
             }
 
          },

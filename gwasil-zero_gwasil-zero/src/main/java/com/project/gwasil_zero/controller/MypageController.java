@@ -40,18 +40,18 @@ public class MypageController {
 		return "/mypage/mypage-edit";
 	}
 
-	// 회원탈퇴
+	// 일반 사용자 회원탈퇴
 	@RequestMapping("/mypage/remove.do")
 	public String remove(@RequestParam Map<String, Object> map, Model model) throws Exception {
 		model.addAttribute("map", map);
 		return "/mypage/mypage-remove";
 	}
-
-	// 마이페이지 회원탈퇴
-	@RequestMapping("/mypage-remove.do")
-	public String delete(Model model) throws Exception {
-
-		return "/mypage/mypage-remove";
+	
+	// 변호사 회원탈퇴
+	@RequestMapping("/lawyerMyPage/out.do")
+	public String out(@RequestParam Map<String, Object> map, Model model) throws Exception {
+		model.addAttribute("map", map);
+		return "/mypage/lawyerMyPage-out";
 	}
 
 	@RequestMapping("/mypage-edit.do")
@@ -144,16 +144,6 @@ public class MypageController {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
 		resultMap = mypageService.editLawyer(map);
-		return new Gson().toJson(resultMap);
-	}
-
-	// 변호사 마이페이지 정보 삭제
-	@RequestMapping(value = "/lawyerMyPage/remove.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	@ResponseBody
-	public String lawyerRemove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-
-		resultMap = mypageService.removeLawyer(map);
 		return new Gson().toJson(resultMap);
 	}
 
@@ -298,6 +288,14 @@ public class MypageController {
 	public String upadatePhoneConsult(@RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<>();
 		resultMap = mypageService.upadatePhoneConsult(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 변호사 마이페이지 회원 탈퇴
+	@RequestMapping(value = "/lawyerMyPage/out.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String removeLawyer(@RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = mypageService.lawyerRemove(map);
 		return new Gson().toJson(resultMap);
 	}
 

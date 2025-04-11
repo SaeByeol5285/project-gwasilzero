@@ -8,6 +8,8 @@
 	<script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 	<script src="/js/page-change.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 	<style>
 		* {
 			font-family: 'Noto Sans KR', sans-serif;
@@ -302,24 +304,46 @@
 					if (this.showBookmarkPopup) this.fnGetBookmarkList();
 				},
 				confirmBookmarkDelete(lawyerId) {
-					if (confirm("정말 이 변호사를 관심목록에서 삭제하시겠습니까?")) {
-						$.ajax({
-							url: "/bookmark/remove.dox",
-							type: "POST",
-							data: {
-								userId: this.sessionId,
-								lawyerId: lawyerId
-							},
-							success: () => {
-								this.fnGetBookmarkList();
-								location.reload();
-							},
-							error: () => {
-								alert("삭제 중 오류가 발생했습니다.");
-							}
-						});
-					}
+					Swal.fire({
+						title: "정말 삭제하시겠습니까?",
+						text: "이 변호사를 관심목록에서 삭제합니다",
+						icon: "warning",
+						showCancelButton: true,
+						confirmButtonText: "삭제",
+						cancelButtonText: "취소",
+						confirmButtonColor: "#d33"
+					}).then((result) => {
+						if (result.isConfirmed) {
+							$.ajax({
+								url: "/bookmark/remove.dox",
+								type: "POST",
+								data: {
+									userId: this.sessionId,
+									lawyerId: lawyerId
+								},
+								success: () => {
+									Swal.fire({
+										icon: "success",
+										title: "삭제 완료",
+										text: "관심목록에서 삭제되었습니다.",
+										confirmButtonText: "확인"
+									}).then(() => {
+										this.fnGetBookmarkList();
+										location.reload();
+									});
+								},
+								error: () => {
+									Swal.fire({
+										icon: "error",
+										title: "오류 발생",
+										text: "삭제 중 오류가 발생했습니다."
+									});
+								}
+							});
+						}
+					});
 				},
+
 				handleClickOutside(event) {
 					// 알림창 외부 클릭
 					if (this.showNotification) {

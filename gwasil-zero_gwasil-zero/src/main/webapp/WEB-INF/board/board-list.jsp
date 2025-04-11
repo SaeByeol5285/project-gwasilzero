@@ -19,7 +19,7 @@
 	      .search-bar,
 	      .card-container,
 	      .pagination-container {
-	         width: 1200px;
+	         width: 1100px;
 	         max-width: 100%;
 	         margin: 0 auto;
 	         box-sizing: border-box;
@@ -328,7 +328,7 @@
   			left: 50%;
   			transform: translateX(-50%);
   			bottom: 0;
-  			width: 150px;
+  			width: 60px;
   			height: 3px;
   			background-color: var(--main-color);
   			border-radius: 2px;

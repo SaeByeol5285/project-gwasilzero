@@ -283,6 +283,17 @@
                 },
                 startChat(lawyerId) {
                     let self = this;
+                    if(self.sessionId == null || self.sessionId == ""){
+                        Swal.fire({
+                                    icon: "error",
+                                    title: "로그인 필요",
+                                    text: "로그인 후 이용해주세요.",
+                                    confirmButtonColor: "#ff5c00"
+                                }).then(() => {
+                            location.href = "/user/login.do";
+                        });
+                        return; 
+                    }
                     $.ajax({
                         url: "/board/checkLawyerStatus.dox",
                         type: "POST",

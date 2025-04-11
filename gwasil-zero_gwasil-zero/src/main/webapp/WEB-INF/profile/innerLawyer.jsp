@@ -18,7 +18,7 @@
             <div class="layout">
                 <div class="content">
                     <div>
-                        <h2 class="section-subtitle">소속 변호사</h2>
+                        <h2 class="section-subtitle">변호사</h2>
                     </div>
                     <div class="lawMove-menu">
                         <button
@@ -32,6 +32,12 @@
                             :class="{ 'active': currentPage === 'personalLawyer' }"
                             @click="fnMove('personalLawyer')">
                             <span>개인 변호사</span>
+                        </button>
+                        <button
+                            class="lawMove-btn"
+                            :class="{ 'active': currentPage === 'searchLawyer' }"
+                            @click="fnMove('searchLawyer')">
+                            <span>법률 사무소 찾기</span>
                         </button>
                     </div>
                     
@@ -160,7 +166,6 @@
                 fnView: function (lawyerId) {
                     const target = this.list.find(item => item.lawyerId === lawyerId);
                     if (!target) {
-                        console.log("변호사 정보가 없습니다.");
                         return;
                     }
 
@@ -169,9 +174,7 @@
                         id: target.lawyerId,
                         name: target.lawyerName
                     };
-
-                    console.log("저장할 아이템: ", item);
-
+                    
                     var list = JSON.parse(localStorage.getItem('recentViewed') || '[]');
                     list = list.filter(i => !(i.type === item.type && i.id === item.id));
                     list.unshift(item);
@@ -188,6 +191,9 @@
                     } else if (page === 'personalLawyer') {
                         this.currentPage = 'personalLawyer';
                         location.href = "/profile/personalLawyer.do";  
+                    } else if (page === 'searchLawyer') {
+                        this.currentPage = 'searchLawyer';
+                        location.href = "/lawyer/office.do";  
                     }
                 },
                 truncateText(text, maxLength) {

@@ -84,8 +84,9 @@
 												{{ item.contents }}
 												<br><small>{{ item.createdAt }}</small>
 											</div>
-
+											
 										</div>
+										<div v-else class="noti-empty">게시글 알림이 없습니다.</div>
 									</div>
 								</div>
 							</a>

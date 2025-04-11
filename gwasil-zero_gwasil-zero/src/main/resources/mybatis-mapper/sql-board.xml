@@ -26,6 +26,7 @@
 		  </if>
 		  where 1 = 1
 		  AND b.board_status != 'DELETE'
+		  and m.user_status = 'NORMAL'
 		 <if test="searchOption != null and searchOption == 'all'">
 		  AND (
 		    b.BOARD_TITLE LIKE '%' || #{keyword} || '%' 

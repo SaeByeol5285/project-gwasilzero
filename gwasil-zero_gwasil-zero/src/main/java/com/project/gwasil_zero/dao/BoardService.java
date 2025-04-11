@@ -337,4 +337,18 @@ public class BoardService {
 		return resultMap;
 	}
 	
+	public HashMap<String, Object> updateReview(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<>();
+		try {
+	        boardMapper.updateReview(map);
+
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+		
+		return resultMap;
+	}
+	
 }

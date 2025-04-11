@@ -10,363 +10,334 @@
       <script src="/js/page-change.js"></script>
       <title>게시글 상세보기</title>
 	  <style>
-	           .view-container {
-	              width: 1200px;
-	              max-width: 100%;
-	              margin: 40px auto;
-	              padding: 30px;
-	              box-sizing: border-box;
-	              border: 1px solid #ddd;
-	              border-radius: 10px;
-	              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-	              background-color: #fff;
-	              font-family: 'Arial', sans-serif;
-	           }
+	     .view-container {
+	        width: 1200px;
+	        max-width: 100%;
+	        margin: 40px auto;
+	        padding: 30px;
+	        box-sizing: border-box;
+	        border: 1px solid #ddd;
+	        border-radius: 10px;
+	        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+	        background-color: #fff;
+	        font-family: 'Arial', sans-serif;
+	     }
 
-	           /* 제목 */
-	           .view-title {
-	              font-size: 30px;
-	              font-weight: 800;
-	              margin-bottom: 16px;
-	              color: #333;
-	              display: flex;
-	              align-items: center;
-	              gap: 10px;
-	           }
-			   
-			   /*신고버튼*/
-			   .btn-report {
-			      padding: 6px 10px;
-			      font-size: 13px;
-			      background-color: #ffcccc;
-			      color: #c00;
-			      border: none;
-			      border-radius: 6px;
-			      cursor: pointer;
-			      margin-left: 10px;
-			      white-space: nowrap;
-			      transition: all 0.2s ease;
-			   }
+	     .view-title {
+	        font-size: 32px;
+	        font-weight: 800;
+	        margin-bottom: 18px;
+	        color: #333;
+	        display: flex;
+	        align-items: center;
+	        gap: 10px;
+	     }
 
-	           /* 아이콘 */
-	           .title-icon {
-	              font-size: 32px;
-	              color: #FF5722;
-	           }
+	     .btn-report {
+	        padding: 8px 12px;
+	        font-size: 14px;
+	        background-color: #ffcccc;
+	        color: #c00;
+	        border: none;
+	        border-radius: 6px;
+	        cursor: pointer;
+	        margin-left: 10px;
+	        white-space: nowrap;
+	        transition: all 0.2s ease;
+	     }
 
-	           .view-meta {
-	              display: flex;
-	              justify-content: space-between;
-	              flex-wrap: wrap;
-	              font-size: 14px;
-	              color: #666;
-	              margin-bottom: 20px;
-	           }
+	     .title-icon {
+	        font-size: 34px;
+	        color: #FF5722;
+	     }
 
-	           .view-meta small {
-	              font-size: 13px;
-	              color: #888;
-	           }
+	     .view-meta {
+	        display: flex;
+	        justify-content: space-between;
+	        flex-wrap: wrap;
+	        font-size: 15px;
+	        color: #666;
+	        margin-bottom: 20px;
+	     }
 
-	           .view-content {
-	              font-size: 16px;
-	              line-height: 1.6;
-	              white-space: pre-line;
-	              margin-bottom: 30px;
-	           }
+	     .view-meta small {
+	        font-size: 14px;
+	        color: #888;
+	     }
 
-	           /* 첨부 이미지/비디오 */
-	           .media-section {
-	              display: flex;
-	              flex-wrap: wrap;
-	              gap: 20px;
-	              margin-bottom: 30px;
-	           }
+	     .view-content {
+	        font-size: 17px;
+	        line-height: 1.7;
+	        white-space: pre-line;
+	        margin-bottom: 30px;
+	     }
 
-	           .media-section img {
-	              width: 250px;
-	              height: auto;
-	              border-radius: 8px;
-	              border: 1px solid #ccc;
-	           }
+	     .media-section {
+	        display: flex;
+	        flex-wrap: wrap;
+	        gap: 24px;
+	        margin-bottom: 30px;
+	     }
 
-	           .media-section video {
-	              width: 100%;
-	              max-width: 480px;
-	              border-radius: 8px;
-	              border: 1px solid #ccc;
-	           }
+	     .media-section img {
+	        width: 280px;
+	        height: auto;
+	        border-radius: 8px;
+	        border: 1px solid #ccc;
+	     }
 
-	           /* 댓글 영역 */
-	           .comment-list {
-	              width: 1200px;
-	              max-width: 100%;
-	              margin: 40px auto;
-	              padding-top: 20px;
-	              border-top: 1px solid #eee;
-	              box-sizing: border-box;
-	           }
+	     .media-section video {
+	        width: 100%;
+	        max-width: 520px;
+	        border-radius: 8px;
+	        border: 1px solid #ccc;
+	     }
 
-	           .comment-list h4 {
-	              margin-bottom: 12px;
-	              font-size: 18px;
-	           }
+	     /* 댓글 영역 개선 */
+	     .comment-list {
+	        width: 1200px;
+	        max-width: 100%;
+	        margin: 60px auto;
+	        padding-top: 30px;
+	        border-top: 2px solid #eee;
+	        box-sizing: border-box;
+	     }
 
-	           .comment-item {
-	              margin-bottom: 12px;
-	              padding: 10px;
-	              border: 1px solid #ddd;
-	              border-radius: 6px;
-	              background-color: #f9f9f9;
-	           }
+	     .comment-list h4 {
+	        margin-bottom: 20px;
+	        font-size: 22px;
+	        font-weight: bold;
+	     }
 
-	           .comment-meta {
-	              font-size: 13px;
-	              color: #666;
-	              display: flex;
-	              justify-content: space-between;
-	              align-items: center;
-	              margin-bottom: 4px;
-	           }
+	     .comment-item {
+	        margin-bottom: 18px;
+	        padding: 16px;
+	        border: 1px solid #ddd;
+	        border-radius: 8px;
+	        background-color: #f9f9f9;
+	     }
 
-	           .comment-actions {
-	              display: flex;
-	              gap: 12px;
-	              font-size: 13px;
-	              color: #FF5722;
-	              cursor: pointer;
-	           }
+	     .comment-meta {
+	        font-size: 15px;
+	        color: #555;
+	        display: flex;
+	        justify-content: space-between;
+	        align-items: center;
+	        margin-bottom: 8px;
+	     }
 
-	           .comment-actions span:hover {
-	              text-decoration: underline;
-	           }
+	     .comment-actions {
+	        display: flex;
+	        gap: 14px;
+	        font-size: 14px;
+	        color: #FF5722;
+	        cursor: pointer;
+	     }
 
-	           .comment-text {
-	              font-size: 14px;
-	           }
+	     .comment-text {
+	        font-size: 16px;
+	        line-height: 1.6;
+	     }
 
-	           textarea {
-	              width: 100%;
-	              max-width: 100%;
-	              box-sizing: border-box;
-	              padding: 10px;
-	              font-size: 14px;
-	              border-radius: 6px;
-	              border: 1px solid #ccc;
-	              margin-bottom: 10px;
-	              resize: vertical;
-	           }
+	     .comment-flex {
+	        display: flex;
+	        align-items: flex-start;
+	        gap: 16px;
+	     }
 
-	           .btn-orange {
-	              padding: 6px 12px;
-	              font-size: 14px;
-	              background-color: #FF5722;
-	              color: white;
-	              border: none;
-	              border-radius: 4px;
-	              cursor: pointer;
-	           }
+	     .comment-profile {
+	        width: 52px;
+	        height: 52px;
+	        border-radius: 50%;
+	        object-fit: cover;
+	        border: 1px solid #ccc;
+	     }
 
-	           .btn-green {
-	              padding: 6px 12px;
-	              font-size: 14px;
-	              background-color: #28a745;
-	              color: white;
-	              border: none;
-	              border-radius: 4px;
-	              cursor: pointer;
-	           }
+	     textarea {
+	        width: 100%;
+	        max-width: 100%;
+	        box-sizing: border-box;
+	        padding: 12px;
+	        font-size: 16px;
+	        border-radius: 6px;
+	        border: 1px solid #ccc;
+	        margin-bottom: 14px;
+	        resize: vertical;
+	     }
 
-	           .btn-orange:hover {
-	              background-color: #e64a19;
-	           }
+	     .btn-orange,
+	     .btn-green,
+	     .btn-blue {
+	        padding: 8px 14px;
+	        font-size: 15px;
+	        border-radius: 6px;
+	        border: none;
+	        cursor: pointer;
+	        transition: all 0.2s ease;
+	     }
 
-	           .action-buttons {
-	              margin-top: 5px;
-	              display: flex;
-	              justify-content: flex-end;
-	              gap: 6px;
-	           }
+	     .btn-orange {
+	        background-color: #FF5722;
+	        color: white;
+	     }
 
-	           .text-green {
-	              color: #28a745;
-	              font-weight: 500;
-	              cursor: pointer;
-	           }
+	     .btn-orange:hover {
+	        background-color: #e64a19;
+	     }
 
-	           .text-green:hover {
-	              text-decoration: underline;
-	           }
+	     .btn-green {
+	        background-color: #28a745;
+	        color: white;
+	     }
 
-	           /* 연관 게시글 영역 */
-	           .related-wrapper {
-	              width: 1200px;
-	              max-width: 100%;
-	              margin: 60px auto;
-	              text-align: center;
-	              border-top: 3px double #FF5722;
-	              border-bottom: 3px double #FF5722;
-	              padding: 20px 0;
-	              box-sizing: border-box;
-	           }
+	     .btn-blue {
+	        background-color: #e3f2ff;
+	        color: #007bff;
+	        font-weight: 600;
+	     }
 
-	           .related-title {
-	              font-size: 22px;
-	              font-weight: bold;
-	              color: #333;
-	              margin-bottom: 24px;
-	              display: flex;
-	              align-items: center;
-	              justify-content: center;
-	              gap: 6px;
-	              position: relative;
-	           }
+	     .btn-blue:hover {
+	        background-color: #007bff;
+	        color: #fff;
+	     }
 
-	           .related-cards {
-	              display: flex;
-	              justify-content: center;
-	              flex-wrap: wrap;
-	              gap: 20px;
-	              margin-top: 30px;
-	           }
+	     .text-green {
+	        color: #28a745;
+	        font-weight: 500;
+	        cursor: pointer;
+	     }
 
-	           
-	           .related-card {
-	              width: 200px;
-	              border: 1px solid #ddd;
-	              border-radius: 12px;
-	              overflow: hidden;
-	              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-	              cursor: pointer;
-	              transition: transform 0.25s, box-shadow 0.25s;
-	              background-color: #fff;
-	           }
+	     .text-green:hover {
+	        text-decoration: underline;
+	     }
 
+	     .related-wrapper {
+	        width: 1200px;
+	        max-width: 100%;
+	        margin: 60px auto;
+	        text-align: center;
+	        border-top: 3px double #FF5722;
+	        border-bottom: 3px double #FF5722;
+	        padding: 20px 0;
+	        box-sizing: border-box;
+	     }
 
-	           .related-card:hover {
-	              transform: translateY(-6px);
-	              box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-	           }
+	     .related-title {
+	        font-size: 22px;
+	        font-weight: bold;
+	        color: #333;
+	        margin-bottom: 24px;
+	        display: flex;
+	        align-items: center;
+	        justify-content: center;
+	        gap: 6px;
+	     }
 
-	           .related-card img {
-	              width: 100%;
-	              height: 130px;
-	              object-fit: cover;
-	              border-bottom: 1px solid #eee;
-	              background-color: #f2f2f2;
-	           }
+	     .related-cards {
+	        display: flex;
+	        justify-content: center;
+	        flex-wrap: wrap;
+	        gap: 20px;
+	        margin-top: 30px;
+	     }
 
-	           .card-info {
-	              padding: 12px;
-	           }
+	     .related-card {
+	        width: 220px;
+	        border: 1px solid #ddd;
+	        border-radius: 12px;
+	        overflow: hidden;
+	        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	        cursor: pointer;
+	        transition: transform 0.25s, box-shadow 0.25s;
+	        background-color: #fff;
+	     }
 
-	           .card-info h5 {
-	              font-size: 15px;
-	              margin: 0 0 6px;
-	              color: #333;
-	              white-space: nowrap;
-	              overflow: hidden;
-	              text-overflow: ellipsis;
-	           }
+	     .related-card:hover {
+	        transform: translateY(-6px);
+	        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+	     }
 
-	           .card-info p {
-	              font-size: 13px;
-	              color: #777;
-	              margin: 0;
-	           }
+	     .related-card img {
+	        width: 100%;
+	        height: 140px;
+	        object-fit: cover;
+	        border-bottom: 1px solid #eee;
+	        background-color: #f2f2f2;
+	     }
 
-	           .btn {
-	              padding: 8px 16px;
-	              font-size: 14px;
-	              font-weight: 500;
-	              border-radius: 6px;
-	              border: none;
-	              cursor: pointer;
-	              transition: all 0.2s ease;
-	           }
+	     .card-info {
+	        padding: 12px;
+	     }
 
-	           .btn-write {
-	              background-color: #ffece4;
-	              color: #ff5c00;
-	              font-weight: 600;
-	           }
+	     .card-info h5 {
+	        font-size: 15px;
+	        margin: 0 0 6px;
+	        color: #333;
+	        white-space: nowrap;
+	        overflow: hidden;
+	        text-overflow: ellipsis;
+	     }
 
-	           .btn-write:hover {
-	              background-color: #ff6b1a;
-	              color: #fff;
-	           }
+	     .card-info p {
+	        font-size: 13px;
+	        color: #777;
+	        margin: 0;
+	     }
 
-	           .btn-blue {
-	              padding: 8px 16px;
-	              font-size: 14px;
-	              font-weight: 500;
-	              border-radius: 6px;
-	              cursor: pointer;
-	              transition: all 0.2s ease;
-	              background-color: #e3f2ff;
-	              color: #007bff;
-	              font-weight: 600;
-	              border: none;
-	           }
+	     .review-section {
+	        width: 1200px;
+	        max-width: 100%;
+	        margin: 60px auto 0 auto;
+	        padding: 20px;
+	        border-top: 2px solid #ccc;
+	        font-family: 'Arial', sans-serif;
+	        box-sizing: border-box;
+	     }
 
-	           .btn-blue:hover {
-	              background-color: #007bff;
-	              color: #fff;
-	           }
-			   .review-section {
-			      margin-top: 40px;
-			      padding: 20px;
-			      border-top: 2px solid #ccc;
-			      font-family: 'Arial', sans-serif;
-			   }
+	     .review-textarea {
+	        width: 100%;
+	        padding: 12px;
+	        font-size: 16px;
+	        border-radius: 6px;
+	        border: 1px solid #ccc;
+	        resize: vertical;
+	        margin-bottom: 10px;
+	        box-sizing: border-box;
+	     }
 
-			   .review-textarea {
-			      width: 100%;
-			      padding: 12px;
-			      font-size: 14px;
-			      border-radius: 6px;
-			      border: 1px solid #ccc;
-			      resize: vertical;
-			      margin-bottom: 10px;
-			      box-sizing: border-box;
-			   }
+	     .review-display {
+	        background-color: #f4f8ff;
+	        padding: 18px;
+	        border: 1px solid #d0e3ff;
+	        border-radius: 6px;
+	        margin-top: 20px;
+	     }
 
-			   .review-display {
-			      background-color: #f4f8ff;
-			      padding: 15px;
-			      border: 1px solid #d0e3ff;
-			      border-radius: 6px;
-			      margin-top: 16px;
-			   }
+	     .review-content {
+	        font-size: 16px;
+	        line-height: 1.6;
+	        white-space: pre-wrap;
+	     }
 
-			   .review-content {
-			      font-size: 15px;
-			      line-height: 1.6;
-			      white-space: pre-wrap;
-			   }
+	     .review-meta {
+	        font-size: 13px;
+	        color: #666;
+	        margin-top: 12px;
+	        text-align: right;
+	        display: flex;
+	        justify-content: space-between;
+	        align-items: center;
+	     }
+	     .comment-actions img,
+	     .comment-meta img {
+	        width: 22px;
+	        height: 22px;
+	     }
+		 
 
-			   .review-meta {
-			      font-size: 12px;
-			      color: #666;
-			      margin-top: 8px;
-			      text-align: right;
-			   }
-			   .comment-flex {
-			     display: flex;
-			     align-items: flex-start;
-			     gap: 14px;
-			   }
+	  </style>
 
-			   .comment-profile {
-			     width: 42px;
-			     height: 42px;
-			     border-radius: 50%;
-			     object-fit: cover;
-			     border: 1px solid #ccc;
-			   }
-
-
-	        </style>      
+    
    </head>
 
    <body>
@@ -477,7 +448,7 @@
 				               v-if="sessionType === 'user'"
 				               :src="isBookmarked(cmt.lawyerId) ? '/img/selectedBookmark.png' : '/img/Bookmark.png'"
 				               @click="toggleBookmark(cmt.lawyerId)"
-				               style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
+				               style="width: 25px; height: 25px; margin-left: 8px; cursor: pointer;"
 				             />
 
 				             <!-- 계약 아이콘 -->
@@ -486,7 +457,7 @@
 				               src="/img/contract.png"
 				               @click="startContract(cmt.lawyerId)"
 				               title="계약하기"
-				               style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
+				               style="width: 25px; height: 25px; margin-left: 8px; cursor: pointer;"
 				             />
 
 				             <!-- 채팅 아이콘 -->
@@ -495,7 +466,7 @@
 				               src="/img/icon-chat.png"
 				               @click="startChat(cmt.lawyerId)"
 				               title="채팅하기"
-				               style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
+				               style="width: 25px; height: 25px; margin-left: 8px; cursor: pointer;"
 				             />
 				           </div>
 				         </div>
@@ -515,40 +486,57 @@
 				       </div>
 				     </div>
 				   </div>
+				   
+					   	<div v-if="sessionType === 'lawyer' ">
+	                       <textarea v-model="newComment" placeholder="댓글을 입력하세요." rows="3"></textarea>
+	                       <button class="btn-blue" @click="checkLawyerAndSubmit">💬 댓글 등록</button>
+	                     </div>
                    </div>
 				   
 				   
 				   
-				   <div v-if="sessionType === 'lawyer' ">
-                    <textarea v-model="newComment" placeholder="댓글을 입력하세요." rows="3"></textarea>
-                    <button class="btn-blue" @click="checkLawyerAndSubmit">💬 댓글 등록</button>
-                  </div>
 				   
 				   
-				   <!-- 리뷰 영역 -->
+				   <!-- 리뷰 전체 영역 -->
 				   <div class="review-section" v-if="board && board.boardStatus === 'END'">
-				      <h4>사건 리뷰</h4>
+				     <h4>변호사의 사건 리뷰</h4>
 
-				      <!-- 작성 영역 -->
-				      <div v-if="sessionId === boardLawyer">
+				     <!-- 리뷰가 없고, 내가 담당 변호사일 때만 작성창 보여줌 -->
+				     <div v-if="!lawyerReview && sessionId === boardLawyer">
+				       <textarea 
+				         v-model="reviewContent"
+				         class="review-textarea"
+				         placeholder="이번 사건에 대한 설명이나 처리 과정을 입력해주세요."
+				         rows="4"
+				       ></textarea>
+				       <button class="btn-green" @click="submitReview">리뷰 등록</button>
+				     </div>
+
+				     <!-- 리뷰가 이미 존재할 경우 -->
+				     <div v-if="lawyerReview" class="review-display">
+				       <!-- 수정 중이면 textarea -->
+				       <div v-if="isEditingReview && sessionId === boardLawyer">
 				         <textarea 
-				            v-model="reviewContent"
-				            class="review-textarea"
-				            placeholder="이번 사건에 대한 설명이나 처리 과정을 입력해주세요."
-				            rows="4"
+				           v-model="reviewContent"
+				           class="review-textarea"
+				           placeholder="리뷰 내용을 수정해주세요."
+				           rows="4"
 				         ></textarea>
-				         <button class="btn-green" @click="submitReview">리뷰 등록</button>
-				      </div>
+				         <button class="btn-green" @click="updateReview">리뷰 수정</button>
+				         <button class="btn-orange" @click="cancelReviewEdit" style="margin-left: 5px;">취소</button>
+				       </div>
 
-				      <!-- 모든 사용자에게 노출 -->
-				      <div class="review-display" v-if="lawyerReview">
+				       <!-- 수정 중 아닐 때는 리뷰 보여주기 -->
+				       <div v-else>
 				         <p class="review-content">{{ lawyerReview }}</p>
-						 
-						 <div class="review-meta" style="display: flex; justify-content: space-between; align-items: center;">
-						       <span>계약 금액: {{ contractPrice.toLocaleString() }}원</span>
-						       <span>담당 변호사 리뷰</span>
-						    </div>
-				      </div>
+				         <div class="review-meta" style="display: flex; justify-content: space-between; align-items: center;">
+				           <span>계약 금액: {{ contractPrice.toLocaleString() }}원</span>
+				           <span v-if="sessionId === boardLawyer">
+				             <span class="text-green" style="cursor: pointer;" @click="editReview">✏️ 수정</span>
+				           </span>
+				         </div>
+				       </div>
+				     </div>
 				   </div>
 
          </div>
@@ -581,6 +569,7 @@
 			   reviewContent: "",
 			   boardLawyer : "",
 			   contractPrice : 0,
+			   isEditingReview: false,
             };
          },
          methods: {
@@ -756,6 +745,17 @@
             },
             startContract(lawyerId) {
                let self = this;
+			   // 작성자가 아닌 경우 계약 불가
+			     if (self.sessionId !== self.makerId) {
+			        Swal.fire({
+			           icon: "warning",
+			           title: "계약 불가",
+			           text: "게시글 작성자만 변호사와 계약할 수 있습니다.",
+			           confirmButtonColor: "#ff5c00"
+			        });
+			        return;
+			     }
+			   
                pageChange("/contract/newContract.do", { lawyerId: lawyerId, boardNo: self.boardNo, userId: self.makerId });
             },
             startChat(lawyerId) {
@@ -984,11 +984,10 @@
 			   Swal.fire({
 			      title: "🚨 게시글 신고",
 			      html: `
-				  <textarea id="reportReason" 
-				     class="swal2-textarea" 
-				     placeholder="신고 사유를 입력하세요"
-				     style="width: 100%; max-width: 400px; height: 120px; box-sizing: border-box; margin-top: 10px;">
-				  </textarea>
+			        <textarea id="reportReason" 
+			          class="swal2-textarea" 
+			          placeholder="신고 사유를 입력하세요"
+			          style="width: 100%; max-width: 400px; height: 120px; box-sizing: border-box; margin-top: 10px;"></textarea>
 			      `,
 			      icon: "warning",
 			      showCancelButton: true,
@@ -1054,6 +1053,45 @@
 			      }
 			   });
 			},
+			editReview() {
+			  this.isEditingReview = true;
+			  this.reviewContent = this.lawyerReview;
+			},
+			cancelReviewEdit() {
+			  this.isEditingReview = false;
+			  this.reviewContent = "";
+			},
+			updateReview() {
+			  const self = this;
+
+			  if (!self.reviewContent.trim()) {
+			    Swal.fire("입력 필요", "리뷰 내용을 입력해주세요.", "warning");
+			    return;
+			  }
+
+			  $.ajax({
+			    url: "/board/updateReview.dox",
+			    type: "POST",
+			    data: {
+			      boardNo: self.boardNo,
+			      lawyerReview: self.reviewContent
+			    },
+			    success: function (res) {
+			      if (res.result === "success") {
+			        Swal.fire("수정 완료", "리뷰가 수정되었습니다.", "success");
+			        self.isEditingReview = false;
+			        self.reviewContent = "";
+			        self.fnGetBoard(); // 다시 불러와서 갱신
+			      } else {
+			        Swal.fire("오류", "리뷰 수정 중 문제가 발생했습니다.", "error");
+			      }
+			    },
+			    error: function () {
+			      Swal.fire("오류", "서버 요청 중 문제가 발생했습니다.", "error");
+			    }
+			  });
+			}
+
          },
          mounted() {
             let self = this;

@@ -513,5 +513,13 @@ public class BoardController {
 	    resultMap = boardService.addReview(map);
 	    return resultMap;
 	}
+
+	@PostMapping("/board/updateReview.dox")
+	@ResponseBody
+	public HashMap<String, Object> updateReview(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = boardService.updateReview(map);
+	    return resultMap;
+	}
 	
 }

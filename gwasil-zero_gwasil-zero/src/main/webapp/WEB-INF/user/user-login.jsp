@@ -2,7 +2,8 @@
 
     <!DOCTYPE html>
     <html>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <head>
         <meta charset="UTF-8">
         <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
@@ -39,12 +40,20 @@
                 width: 100%;
                 padding: 10px;
                 margin: 10px 0;
-                background-color: #FF5722;
+                background-color: #ff5c00;
                 color: white;
                 border: none;
                 border-radius: 5px;
                 font-size: 16px;
                 box-sizing: border-box;
+                transition: background-color 0.2s ease-in-out;
+                /* 부드럽게 전환 */
+            }
+
+            button:hover {
+                background-color: #ffece1;
+                color: #ff5c00;
+                /* 텍스트 색상도 반전하면 더 예쁨 */
             }
 
             .social-login {

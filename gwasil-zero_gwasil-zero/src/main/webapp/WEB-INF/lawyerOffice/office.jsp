@@ -11,7 +11,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
 	<style>
-		.tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+		.tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; }
 		*,
 		*::before,
 		*::after {
@@ -64,6 +64,7 @@
 			font-weight: bold;
 			cursor: pointer;
 			transition: background-color 0.2s;
+			margin-right: 40px;
 		}
 		.btn-search:hover {
 			background-color: #ffe6db; 
@@ -223,14 +224,24 @@
 <h2 class="section-subtitle">법률 사무소 찾기</h2>
 <div id="mapApp" class="container">
 
-		<div class="tabs">
-		<a href="?tab=area"><button class="tab-btn" :class="{active: currentTab =='area'}">지역별</button></a>
-		<a href="?tab=inner"><button class="tab-btn" :class="{active: currentTab =='inner'}">소속 변호사</button></a>
-		<a href="?tab=personal"><button class="tab-btn" :class="{active: currentTab =='personal'}">개인 변호사</button></a>
+	<!-- ✅ 탭 + 버튼 묶는 wrapper -->
+	<div style="position: relative; margin-bottom: 30px;">
+		<!-- 가운데 정렬된 탭들 -->
+		<div class="tabs" style="justify-content: center;">
+			<a href="?tab=area"><button class="tab-btn" :class="{active: currentTab =='area'}">지역별</button></a>
+			<a href="?tab=inner"><button class="tab-btn" :class="{active: currentTab =='inner'}">소속 변호사</button></a>
+			<a href="?tab=personal"><button class="tab-btn" :class="{active: currentTab =='personal'}">개인 변호사</button></a>
+		</div>
+
+		<!-- 오른쪽 끝에 고정된 버튼 -->
+		<button class="find-me-btn"
+			style="position: absolute; top: 1; right: 0; height: 75%; margin-bottom: 10px;"
+			@click="geoFindMe"
+			title="실제 위치와 차이가 있을 수 있습니다;">📍 내 위치 보기</button>
 	</div>
-	
+
 	<div class="select-row" v-if="currentTab !== 'area'" style="margin-top: 10px;">
-		<input v-model="keyword" class="select-box" style="flex: 1; min-width: 200px;"  @keyup.enter="fnSearchByKeyword" placeholder="지역명을 입력하세요 (예: 강남역)">
+		<input v-model="keyword" class="select-box" style="flex: 1; max-width: 800px;"  @keyup.enter="fnSearchByKeyword" placeholder="지역명을 입력하세요 (예: 강남역)">
 		<button class="btn-search" @click="fnSearchByKeyword">지도 이동</button>
 	</div>
 
@@ -248,11 +259,6 @@
 			<option v-for="item in dongList" :value="item.dong">{{ item.dong }}</option>
 		</select>
 		<button class="btn-search" @click="fnSearchArea">검색</button>
-	</div>
-
-	<!--  내 위치 보기 버튼 -->
-	<div class="right-align">
-		<button class="find-me-btn" @click="geoFindMe" title="실제 위치와 차이가 있을 수 있습니다.">📍 내 위치 보기</button>
 	</div>
 
 	<!-- 카카오 지도 -->

@@ -65,7 +65,7 @@
             <h2>회원탈퇴</h2>
             <div>
                 <label for="password">비밀번호 확인</label>
-                <input type="password" id="password" v-model="password" placeholder="비밀번호를 입력하세요">
+                <input type="password" id="password" v-model="pwd" placeholder="비밀번호를 입력하세요">
 
                 <label for="reason">탈퇴 사유 (선택)</label>
                 <select id="reason" v-model="reason">
@@ -92,7 +92,7 @@
             data() {
                 return {
                     sessionId: "${sessionId}",
-                    password: "",
+                    pwd: "",
                     reason: "",
                     comments: ""
                 };
@@ -100,8 +100,7 @@
             methods: {
                 fnDeleteAccount() {
                     const self = this;
-
-                    if (!self.password.trim()) {
+                    if (!self.pwd.trim()) {
                         Swal.fire({
                             icon: "warning",
                             title: "입력 필요",
@@ -110,16 +109,14 @@
                         });
                         return;
                     }
-
                     const params = {
-                        userId: self.sessionId,
-                        password: self.password,
+                        sessionId: self.sessionId,
+                        pwd: self.pwd,
                         reason: self.reason,
                         comments: self.comments
                     };
-
                     $.ajax({
-                        url: "/mypage/mypage-remove.dox",
+                        url: "/lawyerMyPage/out.dox",
                         type: "POST",
                         data: params,
                         dataType: "json",
@@ -135,7 +132,7 @@
                                             Swal.fire({
                                                 icon: "success",
                                                 title: "탈퇴 완료",
-                                                text: "정상적으로 탈퇴되었습니다.",
+                                                text: "탈퇴가 정상적으로 처리되었습니다.",
                                                 confirmButtonColor: "#ff5c00"
                                             }).then(() => {
                                                 location.href = "/common/main.do";
@@ -171,7 +168,7 @@
                             Swal.fire({
                                 icon: "error",
                                 title: "서버 오류",
-                                text: "서버와 통신 중 문제가 발생했습니다.",
+                                text: "서버 통신 중 문제가 발생했습니다.",
                                 confirmButtonColor: "#ff5c00"
                             });
                         }
@@ -179,7 +176,7 @@
                 },
 
                 fnCancel() {
-                    location.href = "/mypage-home.do";
+                    location.href = "/mypage/lawyerMyPage.do";
                 }
             }
         });

@@ -314,7 +314,7 @@ body {
 
 /* 리뷰 */
 .mypage-review {
-	padding: 20px;
+	padding: 10px;
 	font-family: '맑은 고딕', sans-serif;
 }
 
@@ -443,4 +443,16 @@ body {
 	50% {
 		opacity: 0.4;
 	}
+}
+
+.tab-content.review-column {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 20px;
+    padding: 0 30px;
+}
+
+.review-summary, .llm-result {
+    flex: 1;
+    margin-bottom: 20px; 
 }

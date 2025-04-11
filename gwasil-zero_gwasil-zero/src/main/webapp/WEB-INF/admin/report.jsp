@@ -158,7 +158,7 @@
                         // 페이지에 내용 없을 경우 이전 페이지로 이동
                         if (self.reportList.length === 0 && self.repoPage > 1) {
                             self.repoPage--;
-                            self.fnGetReports();
+                            self.fnGetReports(); 
                         }
                     }
                 });
@@ -212,7 +212,7 @@
                             text: '신고가 성공적으로 처리되었습니다.',
                             confirmButtonText: '확인'
                         });
-                        this.fnGetReports(); // 새로고침
+                        this.fnGetReports(); 
                     }
                 });
             },

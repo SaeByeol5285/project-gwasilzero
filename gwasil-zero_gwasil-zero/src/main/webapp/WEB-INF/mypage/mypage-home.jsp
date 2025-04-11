@@ -676,7 +676,7 @@
 						location.href = "/mypage-edit.do";
 					},
 					fnRemoveUser() {
-						location.href = "/mypage-remove.do";
+						pageChange("/mypage/remove.do", {sessionId : this.sessionId});
 					},
 					//리뷰리스트
 					fnLoadReview() {

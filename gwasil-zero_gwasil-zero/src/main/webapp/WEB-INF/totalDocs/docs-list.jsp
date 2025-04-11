@@ -141,7 +141,7 @@
 								{{ item.answerStatus }}
 							</span>
 						</div>
-						<div class="col-writer">{{ item.userId }}</div>
+						<div class="col-writer">{{ item.userId ? item.userId.slice(0, 3) + '***' : '' }}</div>
 						<div class="col-date">{{ item.cdate }}</div>
 						<div class="col-views">{{ item.cnt }}</div>
 					</div>
@@ -214,7 +214,7 @@
 					keyword: "",
 					searchOption: "all",
 					page: 1,
-					pageSize: 5,
+					pageSize: 10,
 					index: 0,
 					showScrollBtn: false, // 맨위로 버튼
 					currentTab: "notice", // 기본 탭,
@@ -418,7 +418,8 @@
 					this.fnHelpList();
 				}
 				window.addEventListener("scroll", this.handleScroll);
-			}
+			},
+			
 		});
 		app.mount("#app");
 	</script>

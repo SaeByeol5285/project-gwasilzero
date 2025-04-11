@@ -270,7 +270,8 @@
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
-                            console.log(data.list);
+                            
+                            console.log("리뷰리스트 ===>" + data.list);
                             self.reviewList = data.list;
                             self.index = Math.ceil(data.count / self.pageSize);
                             self.reviewCnt = data.count;

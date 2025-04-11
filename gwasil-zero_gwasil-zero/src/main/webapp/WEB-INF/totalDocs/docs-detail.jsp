@@ -26,7 +26,7 @@
 					<div class="post-header">
 						<h2 class="section-title">{{ info.totalTitle }}</h2>
 						<div class="detail-meta">
-							작성자: {{ info.userId }} | 작성일: {{ info.cdate }} | 조회수: {{ info.cnt }}
+							작성자: {{ maskedUserId }} | 작성일: {{ info.cdate }} | 조회수: {{ info.cnt }}
 						</div>
 					</div>
 
@@ -38,10 +38,10 @@
 								<li v-for="(file, idx) in fileList" :key="idx">
 									<img src="../../img/common/file-attached.png" class="file-icon"> {{ file.fileName }}
 									<template v-if="isPreviewable(file.fileName)">
-										<a :href="file.filePath" target="_blank" style="margin-left: 10px;">보기</a>
+										<a :href="file.filePath" target="_blank" class="btn-blue-small"
+											style="margin-left: 10px;">보기</a>
 									</template>
-									<a :href="file.filePath" :download="file.fileName"
-										style="margin-left: 10px;">다운로드</a>
+									<a :href="file.filePath" :download="file.fileName" class="btn-blue-small">다운로드</a>
 								</li>
 							</ul>
 						</div>
@@ -54,9 +54,11 @@
 
 					<!-- 버튼 영역 -->
 					<div class="post-actions">
-						<div class="left-buttons" v-if="sessionStatus == 'ADMIN'">
-							<button class="btn btn-write" @click="fnEdit(info.totalNo)" style="margin-right: 5px;">✏️ 수정</button>
-							<button class="btn btn-red" @click="fnRemove(info.totalNo)">🗑️ 삭제</button>
+						<div class="left-buttons">
+							<button class="btn btn-write" @click="fnEdit(info.totalNo)" style="margin-right: 5px;"
+								v-if="sessionId == info.userId">✏️ 수정</button>
+							<button class="btn btn-red" @click="fnRemove(info.totalNo)"
+								v-if="sessionStatus == 'ADMIN' || sessionId == info.userId">🗑️ 삭제</button>
 						</div>
 						<div class="right-buttons">
 							<button @click="goToListPage" class="btn btn-outline">목록보기</button>
@@ -84,12 +86,13 @@
 							<!-- 일반 상태 -->
 							<template v-else>
 								<div class="comment-content">
-									<strong>[관리자]</strong> {{ comment.contents }}
+									<strong>[관리자]</strong>
+									<div class="comment-content" v-html="comment.contents.replace(/\n/g, '<br>')"></div>
 									<small class="cmt-time">{{ comment.cdate }}</small>
-								</div>
-								<div class="cmt-actions" v-if="sessionStatus == 'ADMIN'">
-									<span @click="fnEditCmt(comment)">수정</span>
-									<span @click="fnRemoveCmt(comment.cmtNo)">삭제</span>
+									<span class="cmt-actions" v-if="sessionStatus == 'ADMIN'">
+										<span @click="fnEditCmt(comment)">수정</span>
+										<span @click="fnRemoveCmt(comment.cmtNo)">삭제</span>
+									</span>
 								</div>
 							</template>
 						</li>
@@ -99,7 +102,7 @@
 					<div v-if="sessionStatus == 'ADMIN'">
 						<h3 class="section-title">댓글 작성</h3>
 						<div class="comment-form">
-							<textarea v-model="cmtContents" placeholder="댓글을 입력하세요"></textarea>
+							<textarea v-model="cmtContents" placeholder="댓글을 입력하세요" rows="5"></textarea>
 							<button @click="fnAddCmt" class="btn btn-blue">💬 댓글 등록</button>
 						</div>
 					</div>
@@ -253,25 +256,56 @@
 				},
 				fnRemoveCmt(cmtNo) {
 					const self = this;
-					if (!confirm("정말 삭제하시겠습니까?")) return;
-					var nparmap = {
-						cmtNo: cmtNo,
-					};
-					$.ajax({
-						url: "/totalDocs/removeCmt.dox",
-						type: "POST",
-						dataType: "json",
-						data: nparmap,
-						success(data) {
-							if (data.result == "success") {
-								alert("댓글이 삭제되었습니다.");
-								self.fnGetCmtList();
-							} else {
-								alert("삭제 실패");
-							}
+
+					Swal.fire({
+						title: "댓글 삭제",
+						text: "정말 삭제하시겠습니까?",
+						icon: "warning",
+						showCancelButton: true,
+						confirmButtonColor: "#d33",
+						cancelButtonColor: "#aaa",
+						confirmButtonText: "삭제",
+						cancelButtonText: "취소"
+					}).then((result) => {
+						if (result.isConfirmed) {
+							const nparmap = { cmtNo: cmtNo };
+
+							$.ajax({
+								url: "/totalDocs/removeCmt.dox",
+								type: "POST",
+								dataType: "json",
+								data: nparmap,
+								success(data) {
+									if (data.result === "success") {
+										Swal.fire({
+											icon: "success",
+											title: "삭제 완료",
+											text: "댓글이 삭제되었습니다.",
+											confirmButtonText: "확인"
+										});
+										self.fnGetCmtList();
+									} else {
+										Swal.fire({
+											icon: "error",
+											title: "삭제 실패",
+											text: "댓글 삭제에 실패했습니다.",
+											confirmButtonText: "확인"
+										});
+									}
+								},
+								error() {
+									Swal.fire({
+										icon: "error",
+										title: "서버 오류",
+										text: "댓글 삭제 중 오류가 발생했습니다.",
+										confirmButtonText: "확인"
+									});
+								}
+							});
 						}
 					});
 				},
+
 				isImage(fileName) { //이미지 파일인지
 					const ext = fileName.split('.').pop().toLowerCase();
 					return ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].includes(ext);
@@ -285,24 +319,55 @@
 				},
 				fnRemove(totalNo) {
 					const self = this;
-					if (!confirm("정말 삭제하시겠습니까?")) {
-						return;
-					}
-					$.ajax({
-						url: "/totalDocs/remove.dox",
-						type: "POST",
-						dataType: "json",
-						data: { totalNo: totalNo },
-						success(data) {
-							if (data.result == "success") {
-								alert("삭제되었습니다.");
-								pageChange("/totalDocs/list.do", { kind: self.kind });
-							} else {
-								alert("삭제 중 오류발생");
-							}
+
+					Swal.fire({
+						title: "정말 삭제하시겠습니까?",
+						text: "삭제 후 복구할 수 없습니다.",
+						icon: "warning",
+						showCancelButton: true,
+						confirmButtonColor: "#d33",
+						cancelButtonColor: "#aaa",
+						confirmButtonText: "삭제",
+						cancelButtonText: "취소"
+					}).then((result) => {
+						if (result.isConfirmed) {
+							$.ajax({
+								url: "/totalDocs/remove.dox",
+								type: "POST",
+								dataType: "json",
+								data: { totalNo: totalNo },
+								success(data) {
+									if (data.result === "success") {
+										Swal.fire({
+											icon: "success",
+											title: "삭제 완료",
+											text: "게시글이 삭제되었습니다.",
+											confirmButtonText: "확인"
+										}).then(() => {
+											pageChange("/totalDocs/list.do", { kind: self.kind });
+										});
+									} else {
+										Swal.fire({
+											icon: "error",
+											title: "오류 발생",
+											text: "삭제 중 오류가 발생했습니다.",
+											confirmButtonText: "확인"
+										});
+									}
+								},
+								error() {
+									Swal.fire({
+										icon: "error",
+										title: "서버 오류",
+										text: "서버와의 통신 중 문제가 발생했습니다.",
+										confirmButtonText: "확인"
+									});
+								}
+							});
 						}
 					});
 				},
+
 				moveTo(no) {
 					this.totalNo = no;
 					this.fnDocsView();
@@ -316,6 +381,11 @@
 			mounted() {
 				this.fnDocsView();
 				this.fnGetCmtList();
+			},
+			computed: {
+				maskedUserId() {
+					return this.info?.userId?.slice(0, 3) + '***';
+				}
 			}
 		});
 		app.mount("#app");

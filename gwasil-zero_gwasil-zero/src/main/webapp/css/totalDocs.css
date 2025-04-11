@@ -649,3 +649,33 @@
 	background-color: #e60000;
 	color: #fff;
 }
+
+.btn-red-small {
+	background-color: #ffe1e1;
+	color: #e60000;
+	border: none;
+	font-size: 13px;
+	padding: 4px 10px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.btn-red-small:hover {
+	background-color: #e60000;
+	color: #fff;
+}
+
+.btn-blue-small {
+	background-color: #e3f2ff;
+	color: #007bff;
+	border: none;
+	font-size: 13px;
+	padding: 4px 10px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.btn-blue-small:hover {
+	background-color: #007bff;
+	color: #fff;
+}

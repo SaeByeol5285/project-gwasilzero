@@ -198,12 +198,14 @@
                 this.refundPage = n;
                 this.fnGetRefundList();
             },
+
             prevRefundPage() {
                 if (this.refundPage > 1) {
                     this.refundPage--;
                     this.fnGetRefundList();
                 }
             },
+            
             nextRefundPage() {
                 if (this.refundPage < this.refundPageCount) {
                     this.refundPage++;

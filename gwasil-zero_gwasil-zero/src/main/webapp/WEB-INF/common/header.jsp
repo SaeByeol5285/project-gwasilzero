@@ -200,7 +200,7 @@
 								this.commentNoti = data.list.filter(n => n.notiType === 'C');
 								this.messageNoti = data.list.filter(n => n.notiType === 'M');
 
-								this.broadcastNoti - data.list.filter(n => n.notiType === 'BROADCAST');
+								this.broadcastNoti = data.list.filter(n => n.notiType === 'BROADCAST');
 							}
 						}
 					});
@@ -311,7 +311,6 @@
 								lawyerId: lawyerId
 							},
 							success: () => {
-								alert("삭제되었습니다.");
 								this.fnGetBookmarkList();
 								location.reload();
 							},

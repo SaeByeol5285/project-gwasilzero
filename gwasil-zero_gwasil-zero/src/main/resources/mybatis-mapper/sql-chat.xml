@@ -83,4 +83,21 @@
 	    INSERT INTO chat (chat_no, sender_id, receiver_id)
 	    VALUES (chat_seq.nextval,#{userId}, #{lawyerId})
 	</insert>
+	
+	<select id="getChatByNo" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Chat">
+	    SELECT *
+	    FROM chat
+	    WHERE chat_no = #{chatNo}
+	</select>
+	
+	<!-- 사용자 이름 조회 -->
+	<select id="getUserNameById" resultType="string">
+	    SELECT user_name FROM tbl_user WHERE user_id = #{targetId, jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 변호사 이름 조회 -->
+	<select id="getLawyerNameById" resultType="string">
+	    SELECT lawyer_name FROM lawyer WHERE lawyer_id = #{targetId, jdbcType=VARCHAR}
+	</select>
+	
 </mapper>

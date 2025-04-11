@@ -15,5 +15,6 @@ public class TotalDocs {
 	private int cnt;
 	private int answerCount;
 	private String answerStatus;
+	private boolean fileAttached;
 	
 }

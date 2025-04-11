@@ -91,6 +91,8 @@
   line-height: 40px;
   vertical-align: middle;
   appearance: none;
+  margin: 0px;
+
 }
 
 img.top-icon {
@@ -343,7 +345,16 @@ li {
 }
 
 /*포커스 해제용*/
-a:focus {
-  outline: none;
+a {
   color: inherit;
+  text-decoration: none;
+}
+a:focus,
+a:focus-visible,
+a:active {
+  color: inherit !important;
+  text-decoration: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
 }

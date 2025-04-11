@@ -92,7 +92,8 @@
 	</insert>
 	
 	<select id="selectBoard" parameterType="hashmap"  resultType="com.project.gwasil_zero.model.Board">
-		select b.*,u.user_name , lawyer_name  from board b left join lawyer l on l.lawyer_id = b.lawyer_id inner join tbl_user u on u.user_id = b.user_id where b.board_no = #{boardNo}
+		select b.*,u.user_name , lawyer_name ,contract_price from board b left join lawyer l on l.lawyer_id = b.lawyer_id inner join tbl_user u on u.user_id = b.user_id 
+		left join contract c on c.board_no = b.board_no where b.board_no = #{boardNo}
 	</select>
 	
 	<select id="selectBoardFiles" parameterType="hashmap"  resultType="com.project.gwasil_zero.model.BoardFile">
@@ -107,7 +108,8 @@
 	    c.contents,
 	    c.cdate,
 	    c.udate,
-	    l.lawyer_name AS lawyerName
+	    l.lawyer_name AS lawyerName,
+	    l.lawyer_img as lawyerImg
 	FROM board_cmt c 
 	INNER JOIN lawyer l ON c.lawyer_id = l.lawyer_id 
 	WHERE board_no = #{boardNo}
@@ -223,6 +225,15 @@
 	    UPDATE pay
 	    SET pay_status = 'USED'
 	    WHERE order_id = #{usedPayOrderId}
+	</update>
+	
+	<insert id="insertReport" parameterType="hashmap">
+		insert into report(report_no, user_id, board_no, report_status, cdate, contents)
+		values(report_seq.nextval, #{sessionId}, #{boardNo}, 'WAIT', sysdate, #{reason})
+	</insert>
+	
+	<update id="updateReview" parameterType="hashmap">
+		update board set lawyer_review = #{lawyerReview} where board_no = #{boardNo}
 	</update>
 	
 </mapper>

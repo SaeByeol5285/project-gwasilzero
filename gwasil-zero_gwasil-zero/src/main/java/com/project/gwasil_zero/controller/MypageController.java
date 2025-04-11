@@ -237,6 +237,7 @@ public class MypageController {
 	}
 	
 	// 변호사 마이페이지 사진 수정
+	
 	@PostMapping("/lawyerMyPage/uploadImg.dox")
 	@ResponseBody
 	public Map<String, Object> uploadImg(@RequestParam("uploadFile") MultipartFile file,

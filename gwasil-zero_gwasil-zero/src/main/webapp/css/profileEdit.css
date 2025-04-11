@@ -1,10 +1,10 @@
 body {
-  background-color: #f4f4f4;
-  margin: 0;
-  padding: 0;
+	background-color: #f4f4f4;
+	margin: 0;
+	padding: 0;
+	font-family: '맑은 고딕', sans-serif;
 }
 
-/* 공통 contanier 크기 조절 */
 *,
 *::before,
 *::after {
@@ -12,15 +12,16 @@ body {
 }
 
 .layout {
-  padding: 40px 20px;
+	padding: 40px 20px;
 }
 
 .content {
-  max-width: 1200px;
-  margin: 0 auto;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding-top: 20px;
+	padding-bottom: 40px;
 }
 
-/* 타이틀 */
 .section-subtitle {
 	font-size: 28px;
 	font-weight: bold;
@@ -28,12 +29,10 @@ body {
 	text-align: center;
 	color: #222;
 	position: relative;
-	display: inline-block;
-	padding-bottom: 10px;
 	display: block;
-	text-align: center;
 	margin-left: auto;
 	margin-right: auto;
+	padding-bottom: 10px;
 }
 
 .section-subtitle::after {
@@ -42,204 +41,306 @@ body {
 	left: 50%;
 	transform: translateX(-50%);
 	bottom: 0;
-	width: 230px;
+	width: 60px;
 	height: 3px;
-	background-color: var(--main-color);
+	background-color: #ff5c00;
 	border-radius: 2px;
 }
 
-/* =============================
- Profile Page 스타일
-============================= */
-
-.profile-container {
-  display: flex;
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 12px;
-  margin-top: 30px;
-  gap: 30px;
-  background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.lawyer-header {
+	display: flex;
+	align-items: flex-start;
+	gap: 30px;
+	margin-top: 40px;
 }
 
-.profile-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
+.profile-left,
+.profile-center {
+	height: 300px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	flex-shrink: 0;
+	padding-left: 30px;
 }
 
-.profile-table th,
-.profile-table td {
-  padding: 12px;
-  text-align: left;
-  vertical-align: top;
-  border: 1px solid #ccc;
-  font-size: 14px;
+.profile-left img {
+	width: 190px;
+	height: 230px;
+	object-fit: cover;
+	border-radius: 12px;
+	border: 2px solid #ff5c00;
 }
 
-/* 컬러 변경할것 주황색으로 */
-.profile-table th {
-  background-color: #ff5c002b;
-  color: #333;
-  font-weight: bold;
-  width: 160px;
+.profile-center .lawyer-name {
+	font-size: 22px;
+	font-weight: bold;
+	color: #222;
+	margin: 0;
+	display: flex;
+	align-items: center;
+	gap: 6px;
 }
 
-.profile-table td {
-  background-color: #f9f9f9;
+.lawyer-title {
+	font-size: 16px;
+	font-weight: 400;
+	color: #777;
 }
 
-/* 자격증 섹션 */
-.license-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 15px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
+.category-badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 8px;
 }
 
-.readonly-input {
-  background-color: #f1f1f1;
-  border: 1px solid #ccc;
-  padding: 6px;
-  border-radius: 5px;
-  width: 200px;
+.badge {
+	font-size: 13px;
+	padding: 6px 10px;
+	background-color: #ff5c00;
+	color: white;
+	border-radius: 12px;
+	font-weight: 500;
 }
 
-.badge-existing {
-  font-size: 12px;
-  color: green;
-  margin-top: 6px;
+.profile-right {
+	flex: 1;
+	margin: -20px 30px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
-.preview-img {
-  border: 1px solid #ccc;
-  width: 100px;
-  height: auto;
-  border-radius: 4px;
+.intro-title {
+	font-size: 18px;
+	font-weight: 700;
+	color: #ff5c00;
+	margin-bottom: 10px;
 }
 
-.add-license-btn,
-.delete-license-btn {
-  height: 32px;
-  padding: 6px 10px;
-  background-color: #ff5c00;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+.divider {
+	border: none;
+	height: 2px;
+	background-image: linear-gradient(to right, #ccc 50%, rgba(255, 255, 255, 0) 0%);
+	background-size: 10px 2px;
+	background-repeat: repeat-x;
+	margin: 40px 0;
 }
 
-.add-license-btn:hover,
-.delete-license-btn:hover {
-  background-color: #e04e00;
+.tab-content {
+	column-count: 2;
+	column-gap: 20px;
+	padding: 0 30px;
 }
 
-/* 사건 테이블 */
-.case-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
+.info-box {
+	display: inline-block;
+	width: 100%;
+	margin-bottom: 20px;
+	break-inside: avoid;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 12px;
+	padding: 20px 30px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+	position: relative;
+	overflow: visible !important;
+	z-index: 1;
 }
 
-.case-table th,
-.case-table td {
-  padding: 10px;
-  border: 1px solid #ccc;
-  font-size: 14px;
+.info-box h3 {
+	font-size: 18px;
+	color: #ff5c00;
+	margin-bottom: 16px;
 }
 
-.case-table th {
-  background-color: #ff5c002b;
-  color: #333;
-  font-weight: 600;
+/* quill */
+.lawyer-quill-editor .ql-container {
+	overflow: visible !important;
+	position: relative;
+	z-index: 1;
+	min-height: 200px;
+	height: auto;
 }
 
-.case-table tr:nth-child(even) {
-  background-color: #f9f9f9;
+.lawyer-quill-editor .ql-editor {
+    min-height: 200px;
 }
 
-/* 안내 텍스트 */
-.board-note {
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 10px;
-}
+#emoji-palette {
+  position: fixed !important;
+  z-index: 99999 !important;
+  display: none;
 
-/* ===== Quill 에디터 스타일 ===== */
-.quill-editor {
-  background: white;
-  margin-bottom: 20px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  padding: 0;
-  overflow: hidden;
-  font-family: '맑은 고딕', sans-serif;
-}
-
-.quill-editor .ql-toolbar {
-  border-bottom: 1px solid #ccc;
-  border-radius: 6px 6px 0 0;
-}
-
-.quill-editor .ql-container {
-  height: 500px !important;
-  border: none !important;
-  font-size: 14px;
-  font-family: inherit;
-  background-color: #fff;
-}
-
-.quill-editor .ql-editor {
-  height: 100% !important;
-  padding: 14px;
-  font-size: 14px;
-  line-height: 1.6;
-  color: #333;
+  width: 320px;
+  max-height: 300px;
   overflow-y: auto;
+  overflow-x: hidden;
+
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
-#editor-info.ql-container {
-  height: 200px !important;
+.lawyer-quill-editor {
+	background: white;
+	border: 1px solid #ccc;
+	border-radius: 12px;
+	overflow: visible;
+	margin-bottom: 20px;
+	height: auto;
 }
 
-#editor-career.ql-container {
-  height: 250px !important;
+#emoji-palette-clone {
+  max-height: 300px;
+  max-width: 300px;
+  overflow: auto;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  position: absolute;
+  z-index: 99999;
 }
 
-#editor-task.ql-container {
-  height: 250px !important;
+.lawyer-category-checkbox-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
 }
 
-#editor-edu.ql-container {
-  height: 200px !important;
+.lawyer-category-checkbox-item {
+	flex: 0 0 48%;
+	margin-bottom: 10px;
+}
+
+.lawyer-category-checkbox-item input[type="checkbox"] {
+	margin-right: 5px;
+}
+
+.lawyer-highlighted {
+	font-weight: bold;
+	color: #ff5c00;
+}
+
+.license-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+}
+
+.license-card {
+	width: 160px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: #fff;
+	border-radius: 10px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+	padding: 16px;
+	transition: transform 0.2s ease;
+}
+
+.license-card:hover {
+	transform: translateY(-4px);
+}
+
+.license-img {
+	width: 120px;
+	height: 120px;
+	object-fit: cover;
+	border-radius: 8px;
+	background-color: #f9f9f9;
+}
+
+.license-name {
+	margin-top: 12px;
+	font-size: 14px;
+	font-weight: 600;
+	color: #333;
+	text-align: center;
+}
+
+.lawyer-case-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 10px;
+}
+
+.lawyer-case-table th,
+.lawyer-case-table td {
+	padding: 10px;
+	border: 1px solid #ccc;
+	font-size: 14px;
+}
+
+.lawyer-case-table th {
+	background-color: #ff5c002b;
+	font-weight: 600;
+	color: #333;
+}
+
+.lawyer-case-table tr:nth-child(even) {
+	background-color: #f9f9f9;
+}
+
+.lawyer-board-note {
+	font-size: 12px;
+	color: #666;
+	margin-bottom: 10px;
+}
+
+.lawyer-btn {
+	height: 36px;
+	padding: 0 16px;
+	background-color: #ff5c00;
+	color: white;
+	border: none;
+	border-radius: 6px;
+	font-weight: bold;
+	font-size: 14px;
+	cursor: pointer;
+	transition: 0.2s eas	
+}
+
+.lawyer-btn:hover {
+	background-color: #ffe6db;
+	color: #ff5c00;
+}
+
+.lawyer-btn.active {
+	background-color: #ff5c00;
+	color: white;
+	font-weight: bold;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.lawyer-btn:disabled {
+	opacity: 0.4;
+	cursor: default;
 }
 
 .no-data {
-  color: #999;
-  font-style: italic;
-  font-size: 14px;
-  padding: 6px 0;
+	color: #999;
+	font-style: italic;
+	font-size: 14px;
+	padding: 6px 0;
 }
 
-/* 전문 분야 */
-.category-checkbox-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px; 
+.lawyer-flex-center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
-.category-checkbox-item {
-    flex: 0 0 48%;  
-    margin-bottom: 10px; 
+.lawyer-mt-20 {
+	margin-top: 20px;
 }
 
-.category-checkbox-item input[type="checkbox"] {
-    margin-right: 5px;
-}
-
-.highlighted {
-    font-weight: bold;
-    color: #ff5c00;  
+@media (max-width: 768px) {
+	.tab-content {
+		column-count: 1;
+	}
 }

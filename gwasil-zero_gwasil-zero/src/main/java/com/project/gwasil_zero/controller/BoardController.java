@@ -415,13 +415,19 @@ public class BoardController {
 	            	System.out.println("📌 본문 키워드 분석 결과:");
 	                System.out.println(output.toString());
 
-	                String[] keywords = output.toString().split(",");
-	                List<String> keywordList = Arrays.stream(keywords)
-	                    .map(String::trim)
-	                    .filter(s -> !s.isEmpty())
-	                    .collect(Collectors.toList());
+	                Gson gson = new Gson();
+	                Type type = new TypeToken<Map<String, Double>>() {}.getType();
+	                Map<String, Double> keywordMap = gson.fromJson(output.toString(), type);
 
-	                boardService.updateBoardKeywords(boardNo, keywordList);
+	                List<String> keywords = new ArrayList<>(keywordMap.keySet());
+
+	                // 최대 3개까지만 저장
+	                if (keywords.size() > 3) {
+	                    keywords = keywords.subList(0, 3);
+	                }
+
+
+					boardService.updateBoardKeywords(boardNo, keywords);
 	            } else {
 	                System.out.println(" 키워드 분석 실패 (code: " + exitCode + ")");
 	            }
@@ -491,4 +497,21 @@ public class BoardController {
 	    resultMap = boardService.getPackageCount(map);
 	    return resultMap;
 	}
+	
+	@PostMapping("/board/boardReport.dox")
+	@ResponseBody
+	public HashMap<String, Object> boardReport(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = boardService.boardReport(map);
+	    return resultMap;
+	}
+	
+	@PostMapping("/board/addReview.dox")
+	@ResponseBody
+	public HashMap<String, Object> addReview(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = boardService.addReview(map);
+	    return resultMap;
+	}
+	
 }

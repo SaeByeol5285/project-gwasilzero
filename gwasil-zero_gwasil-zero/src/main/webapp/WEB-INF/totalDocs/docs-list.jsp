@@ -17,80 +17,6 @@
 				font-family: 'Noto Sans KR', sans-serif;
 				box-sizing: border-box !important;
 			}
-
-			.section-subtitle {
-				font-size: 28px;
-				font-weight: bold;
-				margin-bottom: 30px;
-				text-align: center;
-				color: #222;
-				position: relative;
-				display: inline-block;
-				padding-bottom: 10px;
-
-				display: block;
-				text-align: center;
-				margin-left: auto;
-				margin-right: auto;
-			}
-
-			.section-subtitle::after {
-				content: "";
-				position: absolute;
-				left: 50%;
-				transform: translateX(-50%);
-				bottom: 0;
-				width: 60px;
-				height: 3px;
-				background-color: var(--main-color);
-				border-radius: 2px;
-			}
-
-			.pagination-container {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				margin-top: 30px;
-				margin-bottom: 20px;
-				gap: 6px;
-			}
-
-			.btn {
-				padding: 10px 18px;
-				/* margin-bottom: 10px; */
-				font-size: 15px;
-				border: none;
-				border-radius: 8px;
-				background-color: #f2f2f2;
-				color: #444;
-				font-weight: 500;
-				cursor: pointer;
-				transition: all 0.2s ease;
-			}
-
-			.btn:hover {
-				background-color: #ffe6db;
-				color: #ff5c00;
-			}
-
-			.btn.active {
-				background-color: #ff5c00;
-				color: white;
-				font-weight: bold;
-				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-			}
-
-			.btn:disabled {
-				opacity: 0.4;
-				cursor: default;
-			}
-
-			.btn.active {
-				background-color: #ff5c00;
-				color: white;
-				font-weight: bold;
-				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-			}
 		</style>
 
 	</head>
@@ -133,13 +59,28 @@
 				</div>
 
 				<div class="doc-list-wrapper">
+					<!-- 상단 컬럼 -->
+					<div class="doc-list-header">
+						<div class="col-no">번호</div>
+						<div class="col-title" style="text-align: center;">제목</div>
+						<div class="col-writer">작성자</div>
+						<div class="col-date">작성일</div>
+						<div class="col-views">조회수</div>
+					</div>
+
+					<!-- 리스트 항목 -->
 					<div class="doc-list-item" v-for="item in list" :key="item.totalNo"
 						@click="currentTab === 'notice' ? fnNoticeView(item.totalNo) : fnHelpView(item.totalNo)">
-						<div class="doc-title">{{ item.totalTitle }}</div>
-						<div class="doc-meta">
-							<span class="meta-writer">{{ item.userId }}</span>
-							<span class="meta-date">{{ item.cdate }}</span>
+
+						<div class="col-no">{{ item.totalNo }}</div>
+						<div class="col-title">
+							{{ item.totalTitle }}
+							<span v-if="item.fileAttached"><img src="../../img/common/file-attached.png"
+									class="file-icon"></span>
 						</div>
+						<div class="col-writer">관리자</div>
+						<div class="col-date">{{ item.cdate }}</div>
+						<div class="col-views">{{ item.cnt }}</div>
 					</div>
 				</div>
 
@@ -174,17 +115,35 @@
 				</div>
 
 				<div class="doc-list-wrapper">
+					<!-- 상단 컬럼 -->
+					<div class="doc-list-header">
+						<div class="col-no">번호</div>
+						<div class="col-title" style="text-align: center;">제목</div>
+						<div class="col-writer">답변상태</div>
+						<div class="col-writer">작성자</div>
+						<div class="col-date">작성일</div>
+						<div class="col-views">조회수</div>
+					</div>
+
+					<!-- 리스트 항목 -->
 					<div class="doc-list-item" v-for="item in list" :key="item.totalNo"
 						@click="currentTab === 'notice' ? fnNoticeView(item.totalNo) : fnHelpView(item.totalNo)">
-						<div class="doc-title">{{ item.totalTitle }}</div>
-						<div class="doc-meta">
-							<span class="meta-writer">{{ item.userId }}</span>
-							<span class="meta-date">{{ item.cdate }}</span>
+
+						<div class="col-no">{{ item.totalNo }}</div>
+						<div class="col-title">
+							{{ item.totalTitle }}
+							<span v-if="item.fileAttached"><img src="../../img/common/file-attached.png"
+									class="file-icon"></span>
+						</div>
+						<div class="col-writer">
 							<span v-if="currentTab === 'help'"
 								:class="item.answerStatus === '답변완료' ? 'status-done' : 'status-pending'">
 								{{ item.answerStatus }}
 							</span>
 						</div>
+						<div class="col-writer">{{ item.userId }}</div>
+						<div class="col-date">{{ item.cdate }}</div>
+						<div class="col-views">{{ item.cnt }}</div>
 					</div>
 				</div>
 
@@ -251,6 +210,7 @@
 					sessionId: "${sessionId}",
 					sessionStatus: "${sessionStatus}", //ADMIN, NORMAL
 					list: [],
+					fileList: [],
 					keyword: "",
 					searchOption: "all",
 					page: 1,
@@ -331,7 +291,10 @@
 						dataType: "json",
 						data: params,
 						success: function (data) {
+							console.log(data);
 							self.list = data.list;
+							self.fileList = data.fileList;
+
 							self.index = Math.ceil(data.count / self.pageSize);
 							//초기 진입일 때만 페이지 1로
 							if (self.resetPage) {

@@ -33,6 +33,20 @@
 	              align-items: center;
 	              gap: 10px;
 	           }
+			   
+			   /*신고버튼*/
+			   .btn-report {
+			      padding: 6px 10px;
+			      font-size: 13px;
+			      background-color: #ffcccc;
+			      color: #c00;
+			      border: none;
+			      border-radius: 6px;
+			      cursor: pointer;
+			      margin-left: 10px;
+			      white-space: nowrap;
+			      transition: all 0.2s ease;
+			   }
 
 	           /* 아이콘 */
 	           .title-icon {
@@ -299,6 +313,59 @@
 	              background-color: #007bff;
 	              color: #fff;
 	           }
+			   .review-section {
+			      margin-top: 40px;
+			      padding: 20px;
+			      border-top: 2px solid #ccc;
+			      font-family: 'Arial', sans-serif;
+			   }
+
+			   .review-textarea {
+			      width: 100%;
+			      padding: 12px;
+			      font-size: 14px;
+			      border-radius: 6px;
+			      border: 1px solid #ccc;
+			      resize: vertical;
+			      margin-bottom: 10px;
+			      box-sizing: border-box;
+			   }
+
+			   .review-display {
+			      background-color: #f4f8ff;
+			      padding: 15px;
+			      border: 1px solid #d0e3ff;
+			      border-radius: 6px;
+			      margin-top: 16px;
+			   }
+
+			   .review-content {
+			      font-size: 15px;
+			      line-height: 1.6;
+			      white-space: pre-wrap;
+			   }
+
+			   .review-meta {
+			      font-size: 12px;
+			      color: #666;
+			      margin-top: 8px;
+			      text-align: right;
+			   }
+			   .comment-flex {
+			     display: flex;
+			     align-items: flex-start;
+			     gap: 14px;
+			   }
+
+			   .comment-profile {
+			     width: 42px;
+			     height: 42px;
+			     border-radius: 50%;
+			     object-fit: cover;
+			     border: 1px solid #ccc;
+			   }
+
+
 	        </style>      
    </head>
 
@@ -307,13 +374,21 @@
       <div id="app">
          <div class="view-container" v-if="board?.boardNo">
             <div class="view-title"><span class="title-icon">📣</span>{{ board.boardTitle }}
-               <img 
-                 v-if="sessionType === 'lawyer'" 
-                 src="/img/icon-chat.png"
-                 @click="fnChatWithUser"
-                 title="문의자와 채팅하기"
-                 style="width: 20px; height: 20px; margin-left: auto; cursor: pointer;"
-               />
+				<div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
+					<div
+					      v-if="sessionType === 'lawyer'"
+					      @click="fnChatWithUser"
+					      style="display: flex; align-items: center; gap: 6px; cursor: pointer; background-color: #e6f3ff; border-radius: 6px; padding: 4px 10px;"
+					      title="문의자와 채팅하기"
+					   >
+					      <img 
+					         src="/img/icon-chat.png"
+					         style="width: 20px; height: 20px;"
+					      />
+					      <span style="font-size: 14px; color: #333;">채팅하기</span>
+					   </div>
+				      <button class="btn-report" @click="fnReport">🚨 신고하기</button>
+				   </div>
             </div>
 
             <div class="view-meta">
@@ -352,7 +427,7 @@
          
          <!-- 관련된 게시글 영역 -->
          <div class="related-wrapper" v-if="relatedBoards.length > 0">
-           <div class="related-title">📌 연관된 게시글</div>
+           <div class="related-title">연관된 게시글</div>
            <div class="related-cards">
              <div
                class="related-card"
@@ -374,67 +449,107 @@
          </div>
          
          
-         <div class="comment-list" v-if="comments.length >= 0">
+         		<div class="comment-list" v-if="comments.length >= 0">
                    <h4>댓글</h4>
 
-                   <div class="comment-item" v-for="(cmt, index) in comments" :key="index">
-                     <div class="comment-meta">
-                       <span>{{ cmt.lawyerName }} | {{ cmt.cdate }}</span>
-                       <div style="display: flex; align-items: center; gap: 6px; margin-left: auto;">
-                        <span class="comment-actions" v-if="sessionType === 'lawyer' && cmt.lawyerId === sessionId">
-                           <span class="text-green" @click="updateComment(cmt.cmtNo)">수정</span>
-                           <span style="font-weight: bold;" @click="deleteComment(cmt.cmtNo)">삭제</span>
-                         </span>
-  
-                         <!-- 북마크 아이콘 -->
-                          <img
-                          v-if="sessionType === 'user'"
-                          :src="isBookmarked(cmt.lawyerId) ? '/img/selectedBookmark.png' : '/img/Bookmark.png'"
-                          @click="toggleBookmark(cmt.lawyerId)"
-                          style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
-                          />
-  
-                          <!-- 계약 아이콘 -->
-                          <img
-                          v-if="sessionType === 'user'"
-                          src="/img/contract.png"
-                          @click="startContract(cmt.lawyerId)"
-                          title="계약하기"
-                          style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
-                          />
-  
-                          <!-- 채팅 아이콘 -->
-                          <img
-                          v-if="sessionType === 'user'"
-                          src="/img/icon-chat.png"
-                          @click="startChat(cmt.lawyerId)"
-                          title="채팅하기"
-                          style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
-                          />
-                       </div>
-                       
-                     </div>
-                    <div class="comment-text">
-                      <div v-if="editingCommentNo === cmt.cmtNo">
-                        <textarea v-model="editedComment" rows="3"></textarea>
-                        <div style="margin-top: 5px;">
-                          <button class="btn-green" @click="saveUpdatedComment(cmt.cmtNo)">저장</button>
-                          <button class="btn-orange" @click="cancelUpdate" style="margin-left: 5px;">취소</button>
-                        </div>
-                      </div>
-                      <div v-else>
-                        {{ cmt.contents }}
-                      </div>
-                    </div>
+				   <div class="comment-item" v-for="(cmt, index) in comments" :key="index">
+				     <div class="comment-flex">
+				       <!-- 변호사 프로필 이미지 -->
+				       <img 
+				         class="comment-profile" 
+				         :src="cmt.lawyerImg ? cmt.lawyerImg.replace('../', '/') : '/img/common/default_profile.png'" 
+				         alt="변호사 이미지" 
+				         @error="e => e.target.src='/img/common/default_profile.png'"
+				       />
+
+				       <!-- 댓글 본문 -->
+				       <div style="flex: 1;">
+				         <div class="comment-meta">
+				           <span>{{ cmt.lawyerName }} | {{ cmt.cdate }}</span>
+				           <div style="display: flex; align-items: center; gap: 6px; margin-left: auto;">
+				             <span class="comment-actions" v-if="sessionType === 'lawyer' && cmt.lawyerId === sessionId">
+				               <span class="text-green" @click="updateComment(cmt.cmtNo)">수정</span>
+				               <span style="font-weight: bold;" @click="deleteComment(cmt.cmtNo)">삭제</span>
+				             </span>
+
+				             <!-- 북마크 아이콘 -->
+				             <img
+				               v-if="sessionType === 'user'"
+				               :src="isBookmarked(cmt.lawyerId) ? '/img/selectedBookmark.png' : '/img/Bookmark.png'"
+				               @click="toggleBookmark(cmt.lawyerId)"
+				               style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
+				             />
+
+				             <!-- 계약 아이콘 -->
+				             <img
+				               v-if="sessionType === 'user'"
+				               src="/img/contract.png"
+				               @click="startContract(cmt.lawyerId)"
+				               title="계약하기"
+				               style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
+				             />
+
+				             <!-- 채팅 아이콘 -->
+				             <img
+				               v-if="sessionType === 'user'"
+				               src="/img/icon-chat.png"
+				               @click="startChat(cmt.lawyerId)"
+				               title="채팅하기"
+				               style="width: 18px; height: 18px; margin-left: 8px; cursor: pointer;"
+				             />
+				           </div>
+				         </div>
+
+				         <div class="comment-text">
+				           <div v-if="editingCommentNo === cmt.cmtNo">
+				             <textarea v-model="editedComment" rows="3"></textarea>
+				             <div style="margin-top: 5px;">
+				               <button class="btn-green" @click="saveUpdatedComment(cmt.cmtNo)">저장</button>
+				               <button class="btn-orange" @click="cancelUpdate" style="margin-left: 5px;">취소</button>
+				             </div>
+				           </div>
+				           <div v-else>
+				             {{ cmt.contents }}
+				           </div>
+				         </div>
+				       </div>
+				     </div>
+				   </div>
                    </div>
+				   
+				   
+				   
+				   <div v-if="sessionType === 'lawyer' ">
+                    <textarea v-model="newComment" placeholder="댓글을 입력하세요." rows="3"></textarea>
+                    <button class="btn-blue" @click="checkLawyerAndSubmit">💬 댓글 등록</button>
+                  </div>
+				   
+				   
+				   <!-- 리뷰 영역 -->
+				   <div class="review-section" v-if="board && board.boardStatus === 'END'">
+				      <h4>사건 리뷰</h4>
 
-                   <div v-if="sessionType === 'lawyer' ">
-                     <textarea v-model="newComment" placeholder="댓글을 입력하세요." rows="3"></textarea>
-                     <button class="btn-blue" @click="checkLawyerAndSubmit">💬 댓글 등록</button>
-                   </div>
-                 </div>
+				      <!-- 작성 영역 -->
+				      <div v-if="sessionId === boardLawyer">
+				         <textarea 
+				            v-model="reviewContent"
+				            class="review-textarea"
+				            placeholder="이번 사건에 대한 설명이나 처리 과정을 입력해주세요."
+				            rows="4"
+				         ></textarea>
+				         <button class="btn-green" @click="submitReview">리뷰 등록</button>
+				      </div>
 
-
+				      <!-- 모든 사용자에게 노출 -->
+				      <div class="review-display" v-if="lawyerReview">
+				         <p class="review-content">{{ lawyerReview }}</p>
+						 
+						 <div class="review-meta" style="display: flex; justify-content: space-between; align-items: center;">
+						       <span>계약 금액: {{ contractPrice.toLocaleString() }}원</span>
+						       <span>담당 변호사 리뷰</span>
+						    </div>
+				      </div>
+				   </div>
 
          </div>
          <jsp:include page="../common/footer.jsp" />
@@ -460,7 +575,12 @@
                editingCommentNo: null,
                editedComment: "",
                relatedBoards: [],
-               authResult : ""
+               authResult : "",
+			   boardTitle : "",
+			   lawyerReview: "",
+			   reviewContent: "",
+			   boardLawyer : "",
+			   contractPrice : 0,
             };
          },
          methods: {
@@ -478,9 +598,13 @@
                      console.log(data);
                      console.log(self.sessionType);
                      self.board = data.board;
+					 self.boardTitle = data.board.boardTitle;
                      self.makerId = data.board.userId;
                      self.comments = data.comment || [];
                      self.bookmarkList = data.bookmark;
+					 self.lawyerReview = data.board.lawyerReview || "";
+					 self.boardLawyer = data.board.lawyerId || "";
+					 self.contractPrice = data.board.contractPrice;
                      self.images = [];
                      self.videos = [];
                      data.boardFile.forEach(file => {
@@ -517,6 +641,7 @@
                   dataType: "json",
                   success: function (res) {
                      const isApproved = res.result === "true";
+					 console.log(res.result);
                      const isAuthValid = res.authResult === "true";
 
                      if (!isApproved) {
@@ -541,7 +666,7 @@
                         return;
                      }
 
-                     // 조건 통과 → 댓글 등록
+                     // 조건 통과
                      $.ajax({
                         url: "/board/commentAdd.dox",
                         type: "POST",
@@ -596,10 +721,8 @@
                   success: function (data) {
                      if (isMarked) {
                         self.bookmarkList = self.bookmarkList.filter(b => b.lawyerId !== lawyerId);
-                        alert(data.result);
                      } else {
                         self.bookmarkList.push({ lawyerId: lawyerId });
-                        alert(data.result);
                      }
                   },
                   error: function () {
@@ -637,41 +760,109 @@
             },
             startChat(lawyerId) {
                let self = this;
-               $.ajax({
-                  url: "/chat/findOrCreate.dox",
-                  type: "POST",
-                  data: {
-                     userId: self.sessionId,
-                     lawyerId: lawyerId
-                  },
-                  success: function (res) {
-                     let chatNo = res.chatNo;
-                     pageChange("/chat/chat.do", {
-                        chatNo: chatNo
-                     });
-                  }
-               });
+			   $.ajax({
+                 url: "/board/checkLawyerStatus.dox",
+                 type: "POST",
+                 data: {
+                    sessionId: lawyerId
+                 },
+                 dataType: "json",
+                 success: function (res) {
+					console.log(res.result);
+                    const isApproved = res.result === "true";
+                    const isAuthValid = res.authResult === "true";
+
+                    if (!isApproved) {
+                       Swal.fire({
+                          icon: "error",
+                          title: "승인되지 않음",
+                          text: "아직 승인되지 않은 변호사 계정입니다.",
+                          confirmButtonColor: "#ff5c00"
+                       });
+                       return;
+                    }
+
+                    if (!isAuthValid) {
+                       Swal.fire({
+                          icon: "info",
+                          title: "채팅 불가능",
+                          text: "변호사 등록기간이 만료된 변호사와는 채팅할 수 없습니다.",
+                          confirmButtonColor: "#ff5c00"
+                       });
+                       return;
+                    }
+
+                    // 조건 통과
+					$.ajax({
+	                  url: "/chat/findOrCreate.dox",
+	                  type: "POST",
+	                  data: {
+	                     userId: self.sessionId,
+	                     lawyerId: lawyerId
+	                  },
+	                  success: function (res) {
+	                     let chatNo = res.chatNo;
+	                     pageChange("/chat/chat.do", {
+	                        chatNo: chatNo
+	                     });
+	                  }
+	               });
+					
+                 },
+                 error: function () {
+                    Swal.fire({
+                       icon: "error",
+                       title: "요청 실패",
+                       text: "변호사 상태 확인 요청에 실패했습니다.",
+                       confirmButtonColor: "#ff5c00"
+                    });
+                 }
+              });
             },
-            deleteComment(cmtNo) {
-               const self = this;
-               if (!confirm("댓글을 삭제하시겠습니까?")) return;
-               $.ajax({
-                  url: "/board/commentDelete.dox",
-                  type: "POST",
-                  data: {
-                     cmtNo: Number(cmtNo),
-                     lawyerId: self.sessionId
-                  },
-                  success: function (res) {
-                     if (res.result === "success") {
-                        alert("댓글이 삭제되었습니다.");
-                        self.fnGetBoard();
-                     } else {
-                        alert("댓글 삭제 실패");
-                     }
-                  }
-               });
-            },
+			deleteComment(cmtNo) {
+			    const self = this;
+
+			    Swal.fire({
+			        title: "댓글을 삭제하시겠습니까?",
+			        text: "삭제한 댓글은 복구할 수 없습니다.",
+			        icon: "warning",
+			        showCancelButton: true,
+			        confirmButtonColor: "#d33",
+			        cancelButtonColor: "#aaa",
+			        confirmButtonText: "삭제",
+			        cancelButtonText: "취소"
+			    }).then((result) => {
+			        if (result.isConfirmed) {
+			            $.ajax({
+			                url: "/board/commentDelete.dox",
+			                type: "POST",
+			                data: {
+			                    cmtNo: Number(cmtNo),
+			                    lawyerId: self.sessionId
+			                },
+			                success: function (res) {
+			                    if (res.result === "success") {
+			                        Swal.fire({
+			                            icon: "success",
+			                            title: "삭제 완료",
+			                            text: "댓글이 삭제되었습니다.",
+			                            confirmButtonText: "확인"
+			                        });
+			                        self.fnGetBoard();
+			                    } else {
+			                        Swal.fire({
+			                            icon: "error",
+			                            title: "삭제 실패",
+			                            text: "댓글 삭제에 실패했습니다.",
+			                            confirmButtonText: "확인"
+			                        });
+			                    }
+			                }
+			            });
+			        }
+			    });
+			},
+			
             updateComment(cmtNo) {
                const comment = this.comments.find(c => c.cmtNo === cmtNo);
                this.editingCommentNo = cmtNo;
@@ -683,25 +874,35 @@
                   alert("내용을 입력해주세요.");
                   return;
                }
-               $.ajax({
-                  url: "/board/commentUpdate.dox",
-                  type: "POST",
-                  data: {
-                     cmtNo: cmtNo,
-                     contents: self.editedComment,
-                     lawyerId: self.sessionId
-                  },
-                  success: function (res) {
-                     if (res.result === "success") {
-                        alert("댓글이 수정되었습니다.");
-                        self.editingCommentNo = null;
-                        self.editedComment = "";
-                        self.fnGetBoard();
-                     } else {
-                        alert("댓글 수정 실패");
-                     }
-                  }
-               });
+			   $.ajax({
+			       url: "/board/commentUpdate.dox",
+			       type: "POST",
+			       data: {
+			           cmtNo: cmtNo,
+			           contents: self.editedComment,
+			           lawyerId: self.sessionId
+			       },
+			       success: function (res) {
+			           if (res.result === "success") {
+			               Swal.fire({
+			                   icon: "success",
+			                   title: "수정 완료",
+			                   text: "댓글이 수정되었습니다.",
+			                   confirmButtonText: "확인"
+			               });
+			               self.editingCommentNo = null;
+			               self.editedComment = "";
+			               self.fnGetBoard();
+			           } else {
+			               Swal.fire({
+			                   icon: "error",
+			                   title: "수정 실패",
+			                   text: "댓글 수정에 실패했습니다.",
+			                   confirmButtonText: "확인"
+			               });
+			           }
+			       }
+			   });
             },
             cancelUpdate() {
                this.editingCommentNo = null;
@@ -775,8 +976,84 @@
                     error: function () {
                       console.error("조회수 증가 실패");
                     }
-                  });
-                },
+            	});
+         	},
+			fnReport() {
+			   const self = this;
+
+			   Swal.fire({
+			      title: "🚨 게시글 신고",
+			      html: `
+				  <textarea id="reportReason" 
+				     class="swal2-textarea" 
+				     placeholder="신고 사유를 입력하세요"
+				     style="width: 100%; max-width: 400px; height: 120px; box-sizing: border-box; margin-top: 10px;">
+				  </textarea>
+			      `,
+			      icon: "warning",
+			      showCancelButton: true,
+			      confirmButtonText: "신고 제출",
+			      cancelButtonText: "취소",
+			      confirmButtonColor: "#d33",
+			      preConfirm: () => {
+			         const reason = document.getElementById("reportReason").value.trim();
+			         if (!reason) {
+			            Swal.showValidationMessage("신고 사유를 입력해주세요.");
+			            return false;
+			         }
+			         return reason;
+			      }
+			   }).then((result) => {
+			      if (result.isConfirmed) {
+			         const reason = result.value;
+
+			         $.ajax({
+			            url: "/board/boardReport.dox",
+			            type: "POST",
+			            data: {
+			               sessionId: self.sessionId,
+			               boardNo: self.boardNo,
+			               reason: reason
+			            },
+			            success: function (res) {
+			               Swal.fire("신고 완료", "정상적으로 신고가 접수되었습니다.", "success");
+			            },
+			            error: function () {
+			               Swal.fire("오류", "신고 처리 중 오류가 발생했습니다.", "error");
+			            }
+			         });
+			      }
+			   });
+			},
+			submitReview() {
+			   const self = this;
+
+			   if (!self.reviewContent.trim()) {
+			      Swal.fire("입력 필요", "리뷰 내용을 입력해주세요.", "warning");
+			      return;
+			   }
+
+			   $.ajax({
+			      url: "/board/addReview.dox", 
+			      type: "POST",
+			      data: {
+			         boardNo: self.boardNo,
+			         lawyerReview: self.reviewContent 
+			      },
+			      success: function (res) {
+			         if (res.result === "success") {
+			            Swal.fire("등록 완료", "리뷰가 등록되었습니다.", "success");
+			            self.reviewContent = "";
+			            self.fnGetBoard();  // 갱신
+			         } else {
+			            Swal.fire("오류", "리뷰 등록 중 문제가 발생했습니다.", "error");
+			         }
+			      },
+			      error: function () {
+			         Swal.fire("오류", "서버 요청 중 문제가 발생했습니다.", "error");
+			      }
+			   });
+			},
          },
          mounted() {
             let self = this;

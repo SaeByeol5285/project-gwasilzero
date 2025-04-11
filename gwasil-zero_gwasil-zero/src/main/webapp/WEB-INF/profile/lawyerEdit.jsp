@@ -93,6 +93,9 @@
                                             <input type="text" v-model="item.licenseName" placeholder="자격증 이름 입력" style="margin-bottom: 6px;" />
                                             <input type="file" accept="image/png, image/jpeg" @change="onFileChange($event, index)" /> 
                                             <img v-if="item.licensePreview" :src="item.licensePreview" class="license-img" /> 
+                                            <button type="button" @click="removeLicense(index)" class="lawyer-btn lawyer-btn-danger">
+                                                입력취소
+                                            </button>
                                         </template> 
                                     </div> 
                                 </div> 
@@ -162,14 +165,13 @@
                     selectedBoards: [],
                     deletedLicenseIds: [],
                     categoryList: [],  
-                    selectedCategories: [],
-                    isLicenseValid: false
+                    selectedCategories: []
                 };
             },
             computed: {
                 safeBoardList() {
                     return this.boardList.filter(item => item != null);
-                }
+                }        
             },
             methods: {
                 fnGetLawyerInfo() {
@@ -203,13 +205,12 @@
                             if (self.info.mainCase2No) self.selectedBoards.push(self.info.mainCase2No);
                             if (self.info.mainCase3No) self.selectedBoards.push(self.info.mainCase3No);
 
-                            // LAWYER의 MAIN_CATEGORIES1, 2를 categoryList로 변환하여 선택된 값 세팅
                             self.selectedCategories = [self.info.mainCategories1, self.info.mainCategories2].filter(category => category !== null);
                             self.fnGetCategories();
                         }
                     });
                 },
-                fnEdit() {
+                fnEdit() {   
                     const self = this;
 
                     // 전문분야 선택
@@ -240,6 +241,7 @@
                     formData.append("selectedCategories", JSON.stringify(self.selectedCategories));
 
                     let count = 0;
+                    let invalid = false;
 
                     self.license.forEach((item, i) => {
                         if (item.isExisting) return;
@@ -250,7 +252,7 @@
                                 icon: "warning",
                                 confirmButtonText: "확인"
                             });
-                            
+                            invalid = true;
                             return;
                         }
 
@@ -259,19 +261,12 @@
 
                         formData.append(nameKey, item.licenseName.trim());
                         formData.append(fileKey, item.licenseFile);
-                        // console.log("🧪", nameKey, ":", item.licenseName); 
-                        // console.log("🧪", fileKey, ":", item.licenseFile.name);
                         count++;
                     });
 
-                   
+                    if (invalid) return;                   
 
                     formData.append("licenseCount", count);
-                    // DEBUG 로그
-                    // console.log("🧾 삭제 예정 리스트:", self.deletedLicenseIds); 
-                    // for (let pair of formData.entries()) { 
-                    //     console.log("📦", pair[0], pair[1]); 
-                    // }
 
                     $.ajax({
                         url: "/profile/lawyerEdit.dox",
@@ -307,13 +302,16 @@
                         }
                     });
                 },
-                addLicense() {
+                addLicense() {                    
                     this.license.push({
-                        licenseName: '',
-                        isExisting: false,
-                        licenseFile: null,
-                        licensePreview: null
+                            licenseName: '',
+                            isExisting: false,
+                            licenseFile: null,
+                            licensePreview: null
                     });
+                },
+                removeLicense(index) {
+                    this.license.splice(index, 1); 
                 },
                 removeExistingLicense(item, index) {
                     swal.fire({
@@ -382,11 +380,6 @@
                 },                
             }, // 메소드 영역 끝
             mounted() {
-                // if (!this.lawyerId || this.lawyerId === "") {
-                //     alert("로그인이 필요합니다.");
-                //     location.href = "/user/login.do"; 
-                //     return;
-                // } 🚨 로그인 없이 접근 불가. 마지막에 추가할것!!! 🚨
                 const self = this;
 
                 self.fnGetLawyerInfo();
@@ -410,7 +403,6 @@
                         }
                     }, 300);
 
-                    // 이모지 버튼 클릭 시 위치 조정 및 보이기
                     document.querySelectorAll('.ql-emoji').forEach(function (btn) {
                         btn.addEventListener('click', function (e) {
                             e.preventDefault();

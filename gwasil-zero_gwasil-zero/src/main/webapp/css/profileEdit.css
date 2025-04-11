@@ -165,44 +165,43 @@ body {
 }
 
 .lawyer-quill-editor .ql-editor {
-    min-height: 200px;
+	min-height: 200px;
 }
 
 #emoji-palette {
-  position: fixed !important;
-  z-index: 99999 !important;
-  display: none;
+	position: fixed !important;
+	z-index: 99999 !important;
+	display: none;
 
-  width: 320px;
-  max-height: 300px;
-  overflow-y: auto;
-  overflow-x: hidden;
+	width: 320px;
+	max-height: 300px;
+	overflow-y: auto;
+	overflow-x: hidden;
 
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+	background: white;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
 .lawyer-quill-editor {
 	background: white;
 	border: 1px solid #ccc;
-	border-radius: 12px;
 	overflow: visible;
 	margin-bottom: 20px;
 	height: auto;
 }
 
 #emoji-palette-clone {
-  max-height: 300px;
-  max-width: 300px;
-  overflow: auto;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-  position: absolute;
-  z-index: 99999;
+	max-height: 300px;
+	max-width: 300px;
+	overflow: auto;
+	background: white;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+	position: absolute;
+	z-index: 99999;
 }
 
 .lawyer-category-checkbox-container {
@@ -233,7 +232,7 @@ body {
 }
 
 .license-card {
-	width: 47.5%;  
+	width: 47.5%;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -242,8 +241,8 @@ body {
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 	padding: 16px;
 	transition: transform 0.2s ease;
-	margin-bottom: 20px; 
-	position: relative;  
+	margin-bottom: 20px;
+	position: relative;
 	box-sizing: border-box;
 }
 
@@ -270,36 +269,37 @@ body {
 }
 
 /* 추가 입력창이 아래로 나오도록 스타일 수정 */
-input[type="text"], input[type="file"] {
-    width: 100%;  
-    padding: 8px 12px;  
-    margin-bottom: 12px;  
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 14px;
+input[type="text"],
+input[type="file"] {
+	width: 100%;
+	padding: 8px 12px;
+	margin-bottom: 12px;
+	border-radius: 6px;
+	border: 1px solid #ccc;
+	font-size: 14px;
 }
 
 .add-license-container {
-    width: 100%;             
-    margin-top: 20px;   
-	padding: 0 10px;     
+	width: 100%;
+	margin-top: 20px;
+	padding: 0 10px;
 }
 
 .add-license-container button {
-    width: 100%;             
-    padding: 12px 0;         
-    text-align: center;     
-    background-color: #ff5c00;
-    color: white;
-    border: none;
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
+	width: 100%;
+	padding: 12px 0;
+	text-align: center;
+	background-color: #ff5c00;
+	color: white;
+	border: none;
+	font-weight: bold;
+	border-radius: 8px;
+	cursor: pointer;
 }
 
 .add-license-container button:disabled {
-    background-color: #ccc;  
-    cursor: not-allowed;
+	background-color: #ccc;
+	cursor: not-allowed;
 }
 
 .lawyer-case-table {
@@ -341,7 +341,7 @@ input[type="text"], input[type="file"] {
 	font-weight: bold;
 	font-size: 14px;
 	cursor: pointer;
-	transition: 0.2s eas	
+	transition: 0.2s eas
 }
 
 .lawyer-btn:hover {
@@ -362,7 +362,7 @@ input[type="text"], input[type="file"] {
 }
 
 button.lawyer-btn-primary {
-    margin-top: 16px;
+	margin-top: 16px;
 }
 
 .no-data {

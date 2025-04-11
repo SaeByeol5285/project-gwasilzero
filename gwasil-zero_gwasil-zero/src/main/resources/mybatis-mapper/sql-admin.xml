@@ -8,6 +8,7 @@
 		FROM (
 			SELECT *
 			FROM TBL_USER
+			WHERE USER_STATUS != 'OUT'
 			ORDER BY CDATE DESC
 		)
 		WHERE ROWNUM &lt;= 5
@@ -204,7 +205,7 @@
 	
 	<update id="updateLawyerComeBack" parameterType="hashmap">
 	    UPDATE LAWYER
-	    SET LAWYER_STATUS = 'I'
+	    SET LAWYER_STATUS = 'I', LAWYER_PASS = 'N'
 	    WHERE LAWYER_ID = #{lawyerId}
 	</update>
 	

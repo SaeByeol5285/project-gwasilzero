@@ -7,6 +7,7 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <title>승인 대기 변호사 상세보기</title>
         <style>
             .profile-container {
@@ -31,8 +32,8 @@
             }
 
             .profile-photo img {
-                width: 160px;
-                height: 160px;
+                width: 180px;
+                height: 200px;
                 object-fit: cover;
                 border-radius: 12px;
                 border: 2px solid #ff5c00;
@@ -197,35 +198,56 @@
                 padding: 6px 0;
             }
 
-            .approve button {
-                height: 36px;
-                padding: 0 16px;
-                background-color: #ff5c00;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                font-weight: bold;
-                font-size: 14px;
-                cursor: pointer;
-                transition: 0.2s ease;
-                margin-left: 5px;
-            }
+            .button {
+				padding: 10px 18px;
+				/* margin-bottom: 10px; */
+				font-size: 15px;
+				border: none;
+				border-radius: 8px;
+				background-color: #ff5c00;
+				color: white;
+				font-weight: 500;
+				cursor: pointer;
+				transition: all 0.2s ease;
+			}
 
-            .approve button:hover {
-            background-color: #e65100;
+			.button:hover {
+				background-color: #ffe6db;
+				color: #ff5c00;
+			}
+
+			.button.active {
+				background-color: #ff5c00;
+				color: white;
+				font-weight: bold;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			}
+
+			.button:disabled {
+				opacity: 0.4;
+				cursor: default;
+			}
+
+			.button.active {
+				background-color: #ff5c00;
+				color: white;
+				font-weight: bold;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			}
+
+            .button-group {
+                display: flex;
+                justify-content: center;  /* 가운데 정렬 */
+                gap: 20px;  /* 버튼 사이 여백 */
+                margin-top: 10px;
             }
         </style>
     </head>
 
     <body>
-        <jsp:include page="../common/header.jsp" />
         <div id="lawyerDetailApp">
             <jsp:include page="layout.jsp" />
             <div class="content">
-                <div class="header">
-                    <div>관리자페이지</div>
-                    <div>{{sessionId}}님</div>
-                </div>
                 <div>
                     <h3>승인 대기 변호사 상세보기</h3>
                 </div>
@@ -240,9 +262,13 @@
                             <div class="lawyer-phone">Tel : {{ info.lawyerPhone }}</div>
                             <div class="lawyer-email">Email : {{ info.lawyerEmail }}</div>
                         </div>
-                        <div class="approve">
-                            <button @click="fnApprove">승인</button>
-                            <button @click="fnBack">목록</button>
+                        <div class="button-group">
+                            <span>
+                                <button @click="fnApprove" class="button">승인</button>
+                            </span>
+                            <span>
+                                <button @click="fnBack" class="button">목록</button>
+                            </span>
                         </div>
                     </div>
                     <div class="profile-detail">
@@ -288,16 +314,16 @@
                         </div>
                         <div class="section">
                             <h3>변호사 자격증명</h3>
-                            <div v-if="info.lawyerLicensName">{{ info.lawyerLicensName }}</div>
+                            <div v-if="info.lawyerLicenseName">{{ info.lawyerLicenseName }}</div>
                             <div v-else class="no-data">등록된 변호사 자격증명이 없습니다.</div>
                         </div>
                         <div class="section">
                             <h3>변호사 자격증 사본</h3>
-                            <div v-if="info.lawyerLicensPath">
+                            <div v-if="info.lawyerLicensePath">
                                 <ul>
-                                    <li>📜 {{ info.lawyerLicensName }}
-                                        <a :href="info.lawyerLicensPath" target="_blank" style="margin-left: 10px;">이미지 보기</a>
-                                        <a :href="info.lawyerLicensPath" :download="info.lawyerLicensName" style="margin-left: 10px;">다운로드</a>
+                                    <li>📜 {{ info.lawyerLicenseName }}
+                                        <a :href="info.lawyerLicensePath" target="_blank" style="margin-left: 10px;">이미지 보기</a>
+                                        <a :href="info.lawyerLicensePath" :download="info.lawyerLicenseName" style="margin-left: 10px;">다운로드</a>
                                     </li>
                                 </ul>
                             </div>
@@ -308,7 +334,6 @@
             </div>
             </div> <!-- 여기서 layout 닫기  -->
         </div>
-        <jsp:include page="../common/footer.jsp" />
     </body>
 
     </html>
@@ -340,12 +365,26 @@
                     });
                 },
                 fnApprove() {
-                    if (confirm("이 변호사를 승인하시겠습니까?")) {
-                        $.post("/admin/lawApprove.dox", { lawyerId: lawyerId }, function () {
-                            alert("승인 처리되었습니다.");
-                            location.href = "lawyer.do";
-                        });
-                    }
+                    Swal.fire({
+                        title: "이 변호사를 승인하시겠습니까?",
+                        icon: "question",
+                        showCancelButton: true,
+                        confirmButtonText: "승인",
+                        cancelButtonText: "취소"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.post("/admin/lawApprove.dox", { lawyerId: lawyerId }, function () {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "승인 완료",
+                                    text: "승인 처리되었습니다.",
+                                    confirmButtonText: "확인"
+                                }).then(() => {
+                                    location.href = "/admin/lawyer.do?page=lawyer";
+                                });
+                            });
+                        }
+                    });
                 },
                 fnBack() {
                     history.back();

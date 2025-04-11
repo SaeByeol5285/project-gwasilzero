@@ -119,8 +119,8 @@
 
             <!-- 이름 -->
             <div>
-                <div>이름(닉네임)</div>
-                <input v-model="user.userName" placeholder="이름(닉네임) 입력" />
+                <div>이름</div>
+                <input v-model="user.userName" placeholder="이름 입력" />
                 <div v-if="user.userName.trim().length === 0" class="error-text">이름을 입력해주세요.</div>
             </div>
 
@@ -226,6 +226,7 @@
                         const val = this.user.userId;
                         const validIdRegex = /^[a-zA-Z0-9]*$/;
                         this.idError = val && !validIdRegex.test(val);
+                        this.isIdChecked = false;
                     },
                     requestCert() {
                         const self = this;
@@ -234,7 +235,6 @@
                         }, function (rsp) {
                             if (rsp.success) {
                                 self.isAuthenticated = true;
-                                alert("✅ 본인 인증 성공!");
                             } else {
                                 alert("❌ 인증 실패. 다시 시도해주세요.");
                             }

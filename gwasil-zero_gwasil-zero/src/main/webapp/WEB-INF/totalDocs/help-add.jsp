@@ -9,6 +9,7 @@
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <script src="/js/page-change.js"></script>
         <link rel="stylesheet" href="/css/common.css">
+        <link rel="stylesheet" href="/css/totalDocs.css">
         <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
         <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     </head>
@@ -16,27 +17,43 @@
     <body>
         <jsp:include page="../common/header.jsp" />
         <div id="app" class="container">
-            <div class="card">
-                <h2 class="section-title">이용문의 등록</h2>
+            <div class="container-detail">
+                <div class="detail-box">
+                    <div class="post-header">
+                        <h2 class="section-title">이용문의 등록</h2>
+                    </div>
 
-                <div class="form-group mb-20">
-                    <label>제목</label>
-                    <input v-model="totalTitle" class="input-box" placeholder="제목을 입력하세요">
-                </div>
+                    <div class="form-group">
+                        <input v-model="totalTitle" class="input-box" placeholder="제목을 입력하세요" />
+                    </div>
 
-                <div class="form-group mb-20">
-                    <label>첨부파일</label>
-                    <input type="file" id="file1" name="file1" multiple>
-                </div>
+                    <!-- 첨부파일 -->
+                    <div class="attachment-box">
+                        <label><strong>첨부파일</strong></label>
+                        <div>
+                            <input id="file1" type="file" multiple @change="handleFileChange" />
+                        </div>
+                        <ul class="file-list">
+                            <li v-for="(file, i) in selectedFiles" :key="i">
+                                <img src="/img/common/file-attached.png" class="file-icon" />
+                                {{ file.name }}
+                                <button @click="removeFile(i)" class="btn-red-small">삭제</button>
+                            </li>
+                        </ul>
+                    </div>
 
-                <div class="form-group mb-20">
-                    <label>내용</label>
-                    <div id="quill-editor" style="height: 300px;"></div>
-                </div>
+                    <div class="form-group">
+                        <div id="quill-editor" style="height: 300px;"></div>
+                    </div>
 
-                <div class="btn-area">
-                    <button @click="fnAddNotice" class="btn btn-primary" :disabled="isSubmitting">등록</button>
-                    <button @click="goToListPage" class="btn btn-outline">목록보기</button>
+                    <div class="post-actions">
+                        <div class="left-buttons">
+                            <button @click="fnAddNotice" class="btn btn-write" :disabled="isSubmitting">✏️ 등록</button>
+                        </div>
+                        <div class="right-buttons">
+                            <button @click="goToListPage" class="btn btn-red">취소</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -51,7 +68,8 @@
                     userId: "${sessionId}",
                     kind: "HELP",
                     quill: null,
-                    isSubmitting: false // 중복 방지용 플래그
+                    isSubmitting: false, // 중복 방지용 플래그
+                    selectedFiles: [],
 
                 };
             },
@@ -107,6 +125,14 @@
 
                         }
                     });
+                },
+                //선택한 파일 리스트로
+                handleFileChange(event) {
+                    this.selectedFiles = Array.from(event.target.files);
+                },
+                //첨부파일 삭제
+                removeFile(index) {
+                    this.selectedFiles.splice(index, 1);
                 },
                 upload(form) {
                     $.ajax({

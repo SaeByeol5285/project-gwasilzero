@@ -7,6 +7,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .contract-wrapper {
             max-width: 600px;
@@ -106,26 +107,42 @@
             };
         },
         methods: {
-			
             fnPay() {
                 if (!this.price || !this.account) {
-                    alert("모든 정보를 입력해주세요.");
+                    Swal.fire({
+                        icon: "warning",
+                        title: "입력 누락",
+                        text: "모든 정보를 입력해주세요.",
+                        confirmButtonText: "확인"
+                    });
                     return;
                 }
 
                 const self = this;
+
                 IMP.request_pay({
-                    pg: "kakaopay",
+                    pg: "html5_inicis",
                     pay_method: "card",
                     name: "법률 계약 - " + self.lawyerName,
                     amount: self.price,
                     buyer_tel: "010-0000-0000"
                 }, function (rsp) {
                     if (rsp.success) {
-                        alert("✅ 결제 완료!");
-                        self.fnSave();
+                        Swal.fire({
+                            icon: "success",
+                            title: "결제 완료",
+                            text: "✅ 결제가 정상적으로 처리되었습니다.",
+                            confirmButtonText: "확인"
+                        }).then(() => {
+                            self.fnSave(); // 결제 성공 후 저장 함수 호출
+                        });
                     } else {
-                        alert("❌ 결제 실패!");
+                        Swal.fire({
+                            icon: "error",
+                            title: "결제 실패",
+                            text: "❌ 결제를 완료하지 못했습니다. 다시 시도해주세요.",
+                            confirmButtonText: "확인"
+                        });
                     }
                 });
             },

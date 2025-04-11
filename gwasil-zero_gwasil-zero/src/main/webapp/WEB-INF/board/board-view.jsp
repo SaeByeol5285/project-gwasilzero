@@ -1099,6 +1099,28 @@
             self.fnGetBoard();
             self.fnGetBoardWithKeyword();
             self.fnIncreaseViewCount();
+			
+			setTimeout(function () {
+							if (!self.info || !self.boardTitle) return;
+
+							const boardNo = self.boardNo;
+							const boardTitle = self.boardTitle;
+
+							const item = {
+								type: 'board',
+								id: boardNo,
+								title: boardTitle
+							};
+
+							console.log("📌 board-view (딜레이 저장) ▶", item);
+
+							let list = JSON.parse(localStorage.getItem('recentViewed') || '[]');
+							list = list.filter(i => !(i.type === item.type && i.id === item.id));
+							list.unshift(item);
+							if (list.length > 5) list = list.slice(0, 5);
+							localStorage.setItem('recentViewed', JSON.stringify(list));
+						}, 500); 
+
          }
       });
       app.mount("#app");

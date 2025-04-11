@@ -374,7 +374,7 @@
 
 			<div class="card-container">
 				<div class="card-grid">
-					<div class="box" v-for="item in list" :key="item.boardNo" @click="fnBoardView(item.boardNo)">
+					<div class="box" v-for="item in list" :key="item.boardNo" @click="fnViewBoard(item.boardNo, item.boardTitle)"> 
 						<img v-if="item.thumbnailPath" :src="item.thumbnailPath.replace('../', '/')" alt="썸네일"
 							class="thumbnail" @error="e => e.target.src='/img/common/image_not_exist.jpg'" />
 						<img v-else src="/img/common/image_not_exist.jpg" alt="기본 썸네일" class="thumbnail" />
@@ -440,28 +440,24 @@
 				};
 			},
 			methods: {
-				fnBoardList: function () {
-					var self = this;
-					var nparmap = {
-						keyword: self.keyword,
-						searchOption: self.searchOption,
-						pageSize: self.pageSize,
-						page: (self.page - 1) * self.pageSize,
-						category: self.category
-					};
-					$.ajax({
-						url: "/board/list.dox",
-						dataType: "json",
-						type: "POST",
-						data: nparmap,
-						success: function (data) {
-							console.log(data);
-							self.list = data.list;
-							self.index = Math.ceil(data.count / self.pageSize);
-						}
-					});
+				fnViewBoard(boardNo, boardTitle) {
+									var item = {
+										type: 'board',
+										id: boardNo,
+										title: boardTitle
+									};
 
-				},
+									console.log("저장할 게시글 ▶", item);
+
+									var list = JSON.parse(localStorage.getItem('recentViewed') || '[]');
+									list = list.filter(i => !(i.type === item.type && i.id === item.id));
+									list.unshift(item);
+
+									if (list.length > 5) list = list.slice(0, 5);
+									localStorage.setItem('recentViewed', JSON.stringify(list));
+
+									pageChange("/board/view.do", { boardNo: boardNo });
+								},
 				selectCategory: function (cat) {
 					console.log(cat);
 					let self = this;

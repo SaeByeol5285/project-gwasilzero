@@ -8,7 +8,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/common.css">
+
 	<title>과실 zero - 관리자 페이지</title>
     <style>
         .content-container a {
@@ -27,9 +27,8 @@
 </head>
 <body>
 <div id="mainApp">
+    <jsp:include page="../admin/layout.jsp" />
     <div class="layout">
-        <jsp:include page="../admin/layout.jsp" />
-
         <div class="content">
             <h2>상품 관리</h2>
 
@@ -109,10 +108,10 @@
             </div>
         </div>
     </div>
+    </div>
 </div>
 </body>
 </html>
-
 <script>
     const mainApp = Vue.createApp({
         data() {

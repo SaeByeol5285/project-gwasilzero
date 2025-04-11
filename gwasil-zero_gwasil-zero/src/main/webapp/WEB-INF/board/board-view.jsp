@@ -8,7 +8,8 @@
       <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       <script src="/js/page-change.js"></script>
-      <title>게시글 상세보기</title>
+	  <link rel="icon" type="image/png" href="/img/common/logo3.png">
+      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
 	  <style>
 	           .view-container {
 	              width: 1200px;
@@ -372,7 +373,7 @@
    <body>
       <jsp:include page="../common/header.jsp" />
       <div id="app">
-         <div class="view-container" v-if="board?.boardNo">
+        <div class="view-container" v-if="board?.boardNo">
             <div class="view-title"><span class="title-icon">📣</span>{{ board.boardTitle }}
 				<div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
 					<div
@@ -386,9 +387,9 @@
 					         style="width: 20px; height: 20px;"
 					      />
 					      <span style="font-size: 14px; color: #333;">채팅하기</span>
-					   </div>
-				      <button class="btn-report" @click="fnReport">🚨 신고하기</button>
-				   </div>
+					</div>
+				    <button class="btn-report" @click="fnReport">🚨 신고하기</button>
+				</div>
             </div>
 
             <div class="view-meta">
@@ -421,12 +422,12 @@
                </div>
             </div>
             <button v-if="sessionId === board.userId" @click="EditBoard" class="btn btn-write">✏️ 수정하기</button>
-         </div>
+        </div>
 
          
          
          <!-- 관련된 게시글 영역 -->
-         <div class="related-wrapper" v-if="relatedBoards.length > 0">
+        <div class="related-wrapper" v-if="relatedBoards.length > 0">
            <div class="related-title">연관된 게시글</div>
            <div class="related-cards">
              <div
@@ -446,7 +447,7 @@
                </div>
              </div>
            </div>
-         </div>
+        </div>
          
          
          		<div class="comment-list" v-if="comments.length >= 0">
@@ -551,7 +552,7 @@
 				      </div>
 				   </div>
 
-         </div>
+        </div>
          <jsp:include page="../common/footer.jsp" />
    </body>
 
@@ -980,7 +981,6 @@
          	},
 			fnReport() {
 			   const self = this;
-
 			   Swal.fire({
 			      title: "🚨 게시글 신고",
 			      html: `

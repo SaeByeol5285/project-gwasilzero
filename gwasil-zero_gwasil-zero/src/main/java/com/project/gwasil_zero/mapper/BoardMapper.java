@@ -66,4 +66,6 @@ public interface BoardMapper {
 	
 	void updateReview(HashMap<String, Object> map);
 	
+	int selectReport(HashMap<String, Object> map);
+	
 }

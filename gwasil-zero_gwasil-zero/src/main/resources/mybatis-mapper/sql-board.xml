@@ -237,4 +237,11 @@
 		update board set lawyer_review = #{lawyerReview} where board_no = #{boardNo}
 	</update>
 	
+	<select id="selectReport" parameterType="map" resultType="int">
+	   SELECT COUNT(*)
+	   FROM REPORT
+	   WHERE USER_ID = #{sessionId}
+	   AND BOARD_NO = #{boardNo}
+	</select>
+	
 </mapper>

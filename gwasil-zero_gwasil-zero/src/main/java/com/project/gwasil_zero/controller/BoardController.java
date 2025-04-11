@@ -522,4 +522,12 @@ public class BoardController {
 	    return resultMap;
 	}
 	
+	@PostMapping("/board/reportCheck.dox")
+	@ResponseBody
+	public HashMap<String, Object> reportCheck(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = boardService.reportCheck(map);
+	    return resultMap;
+	}
+	
 }

@@ -982,44 +982,68 @@
 			fnReport() {
 			   const self = this;
 
-			   Swal.fire({
-			      title: "🚨 게시글 신고",
-			      html: `
-			        <textarea id="reportReason" 
-			          class="swal2-textarea" 
-			          placeholder="신고 사유를 입력하세요"
-			          style="width: 100%; max-width: 400px; height: 120px; box-sizing: border-box; margin-top: 10px;"></textarea>
-			      `,
-			      icon: "warning",
-			      showCancelButton: true,
-			      confirmButtonText: "신고 제출",
-			      cancelButtonText: "취소",
-			      confirmButtonColor: "#d33",
-			      preConfirm: () => {
-			         const reason = document.getElementById("reportReason").value.trim();
-			         if (!reason) {
-			            Swal.showValidationMessage("신고 사유를 입력해주세요.");
-			            return false;
+			   // 1차 확인: 이미 신고했는지 확인
+			   $.ajax({
+			      url: "/board/reportCheck.dox",
+			      type: "POST",
+			      data: {
+			         sessionId: self.sessionId,
+			         boardNo: self.boardNo
+			      },
+			      dataType: "json",
+			      success: function (res) {
+			         if (res.count != 0) {
+			            Swal.fire({
+			               icon: "warning",
+			               title: "이미 신고한 게시글입니다.",
+			               text: "중복 신고는 불가능합니다.",
+			               confirmButtonColor: "#ff5c00"
+			            });
+			            return;
 			         }
-			         return reason;
-			      }
-			   }).then((result) => {
-			      if (result.isConfirmed) {
-			         const reason = result.value;
 
-			         $.ajax({
-			            url: "/board/boardReport.dox",
-			            type: "POST",
-			            data: {
-			               sessionId: self.sessionId,
-			               boardNo: self.boardNo,
-			               reason: reason
-			            },
-			            success: function (res) {
-			               Swal.fire("신고 완료", "정상적으로 신고가 접수되었습니다.", "success");
-			            },
-			            error: function () {
-			               Swal.fire("오류", "신고 처리 중 오류가 발생했습니다.", "error");
+			         // 신고 팝업 진행
+			         Swal.fire({
+			            title: "🚨 게시글 신고",
+			            html: `
+			              <textarea id="reportReason" 
+			                 class="swal2-textarea" 
+			                 placeholder="신고 사유를 입력하세요"
+			                 style="width: 100%; max-width: 400px; height: 120px; box-sizing: border-box; margin-top: 10px;">
+			              </textarea>
+			            `,
+			            icon: "warning",
+			            showCancelButton: true,
+			            confirmButtonText: "신고 제출",
+			            cancelButtonText: "취소",
+			            confirmButtonColor: "#d33",
+			            preConfirm: () => {
+			               const reason = document.getElementById("reportReason").value.trim();
+			               if (!reason) {
+			                  Swal.showValidationMessage("신고 사유를 입력해주세요.");
+			                  return false;
+			               }
+			               return reason;
+			            }
+			         }).then((result) => {
+			            if (result.isConfirmed) {
+			               const reason = result.value;
+
+			               $.ajax({
+			                  url: "/board/boardReport.dox",
+			                  type: "POST",
+			                  data: {
+			                     sessionId: self.sessionId,
+			                     boardNo: self.boardNo,
+			                     reason: reason
+			                  },
+			                  success: function (res) {
+			                     Swal.fire("신고 완료", "정상적으로 신고가 접수되었습니다.", "success");
+			                  },
+			                  error: function () {
+			                     Swal.fire("오류", "신고 처리 중 오류가 발생했습니다.", "error");
+			                  }
+			               });
 			            }
 			         });
 			      }

@@ -540,6 +540,7 @@
 				   </div>
 
          </div>
+		 <jsp:include page="/WEB-INF/profile/recentViewBox.jsp" />
          <jsp:include page="../common/footer.jsp" />
    </body>
 

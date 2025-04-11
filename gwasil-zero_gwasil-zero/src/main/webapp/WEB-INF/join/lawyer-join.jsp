@@ -132,7 +132,6 @@
                 height: 42px;
                 font-size: 16px;
                 padding-top: 4px;
-                /* ✅ 이거 추가! */
             }
 
             .email-row select {
@@ -143,7 +142,6 @@
                 font-size: 14px;
                 background-color: white;
                 appearance: none;
-                /* 기본 화살표 없애기 */
                 background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><polygon points="0,0 10,0 5,6" style="fill:%23666;" /></svg>');
                 background-repeat: no-repeat;
                 background-position: right 10px center;
@@ -163,7 +161,6 @@
                 font-size: 13px;
                 display: inline-flex;
                 align-items: center;
-                /* ✅ 이거랑 같이 써야 깔끔 */
                 gap: 6px;
                 width: 45%;
                 margin-bottom: 6px;
@@ -172,7 +169,6 @@
 
             }
 
-            /* 체크박스 스타일 - 기본 색상 적용 */
             .category-box input[type="checkbox"] {
                 accent-color: #FF5722;
                 width: 16px;
@@ -180,7 +176,6 @@
                 margin-bottom: 0px;
                 cursor: pointer;
                 vertical-align: middle;
-                /* ✅ 중앙 정렬 포인트 */
             }
         </style>
     </head>

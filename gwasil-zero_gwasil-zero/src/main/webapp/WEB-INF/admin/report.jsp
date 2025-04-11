@@ -102,7 +102,7 @@
                         // 현재 페이지에 데이터가 하나만 있고 삭제된 경우 페이지 이동
                         if (self.reportList.length === 0 && self.repoPage > 1) {
                             self.repoPage--;
-                            self.fnGetReports(); // 다시 불러오기
+                            self.fnGetReports(); 
                         }
                     }
                 });
@@ -148,7 +148,7 @@
                             text: '신고가 성공적으로 처리되었습니다.',
                             confirmButtonText: '확인'
                         });
-                        this.fnGetReports(); // 새로고침
+                        this.fnGetReports(); 
                     }
                 });
             }

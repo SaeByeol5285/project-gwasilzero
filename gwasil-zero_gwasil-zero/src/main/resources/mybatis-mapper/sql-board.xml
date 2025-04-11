@@ -26,6 +26,7 @@
 		  </if>
 		  where 1 = 1
 		  AND b.board_status != 'DELETE'
+		  and m.user_status = 'NORMAL'
 		 <if test="searchOption != null and searchOption == 'all'">
 		  AND (
 		    b.BOARD_TITLE LIKE '%' || #{keyword} || '%' 
@@ -235,5 +236,12 @@
 	<update id="updateReview" parameterType="hashmap">
 		update board set lawyer_review = #{lawyerReview} where board_no = #{boardNo}
 	</update>
+	
+	<select id="selectReport" parameterType="map" resultType="int">
+	   SELECT COUNT(*)
+	   FROM REPORT
+	   WHERE USER_ID = #{sessionId}
+	   AND BOARD_NO = #{boardNo}
+	</select>
 	
 </mapper>

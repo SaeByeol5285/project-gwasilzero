@@ -45,10 +45,13 @@
                 cursor: pointer;
                 background-color: #FF5722;
                 color: #fff;
+                font-weight: bold;
+                transition: background-color 0.3s, color 0.3s;
             }
 
             button:hover {
-                background-color: #FF7043;
+                background-color: #ffece1;
+                color: #FF5722;
             }
 
             .error-text {
@@ -119,11 +122,16 @@
             .email-row {
                 display: flex;
                 gap: 10px;
-                align-items: center;
             }
 
             .email-row span {
                 margin: 0 5px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 42px;
+                font-size: 16px;
+                padding-top: 4px;
             }
 
             .email-row select {
@@ -134,7 +142,6 @@
                 font-size: 14px;
                 background-color: white;
                 appearance: none;
-                /* 기본 화살표 없애기 */
                 background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><polygon points="0,0 10,0 5,6" style="fill:%23666;" /></svg>');
                 background-repeat: no-repeat;
                 background-position: right 10px center;
@@ -154,7 +161,6 @@
                 font-size: 13px;
                 display: inline-flex;
                 align-items: center;
-                /* ✅ 이거랑 같이 써야 깔끔 */
                 gap: 6px;
                 width: 45%;
                 margin-bottom: 6px;
@@ -163,7 +169,6 @@
 
             }
 
-            /* 체크박스 스타일 - 기본 색상 적용 */
             .category-box input[type="checkbox"] {
                 accent-color: #FF5722;
                 width: 16px;
@@ -171,7 +176,6 @@
                 margin-bottom: 0px;
                 cursor: pointer;
                 vertical-align: middle;
-                /* ✅ 중앙 정렬 포인트 */
             }
         </style>
     </head>
@@ -270,8 +274,8 @@
             <div class="license-box">
                 <h3>변호사 자격 정보</h3>
                 <div class="form-group">
-                    <label>생년월일 (선택)</label>
-                    <input type="date" v-model="license.BIRTH" />
+                    <label>생년월일</label>
+                    <input type="date" v-model="license.BIRTH" placeholder="YYYY-MM-DD" />
                 </div>
                 <div class="form-group">
                     <label>대한변협 등록번호</label>
@@ -366,37 +370,64 @@
                         this.profileImgFileName = file ? file.name : "";
                     },
                     fnJoin() {
-                        // ...기존 유효성 검사 및 기본 값 조립
-                        if (!this.agreeTerms) return alert("⚠️ 이용약관에 동의해주세요.");
-                        if (!this.isIdChecked) return alert("⚠️ 중복체크 하세요.");
-                        if (!this.isAuthenticated) return alert("⚠️ 본인인증 하세요.");
-                        if (!this.lawyer.lawyerName.trim()) return alert("이름을 입력하세요.");
-                        if (this.lawyer.lawyerId.length < 5) return alert("아이디는 5자 이상이어야 합니다.");
-                        if (this.lawyer.pwd.length < 8) return alert("비밀번호는 8자 이상이어야 합니다.");
-                        if (this.lawyer.pwd !== this.lawyer.pwd2) return alert("비밀번호가 일치하지 않습니다.");
-                        if (!this.fullEmail || !this.isEmailValid) return alert("유효한 이메일을 입력하세요.");
+                        const warn = (msg) => {
+                            Swal.fire({
+                                icon: "warning",
+                                title: "확인 필요",
+                                text: msg,
+                                confirmButtonText: "확인"
+                            });
+                        };
+
+                        if (!this.agreeTerms) return warn("이용약관에 동의해주세요.");
+                        if (!this.isIdChecked) return warn("아이디 중복체크를 해주세요.");
+                        if (!this.isAuthenticated) return warn("본인인증을 완료해주세요.");
+                        if (!this.lawyer.lawyerName.trim()) return warn("이름을 입력해주세요.");
+                        if (this.lawyer.lawyerId.length < 5) return warn("아이디는 5자 이상이어야 합니다.");
+                        if (this.lawyer.pwd.length < 8) return warn("비밀번호는 8자 이상이어야 합니다.");
+                        if (this.lawyer.pwd !== this.lawyer.pwd2) return warn("비밀번호가 일치하지 않습니다.");
+                        if (!this.fullEmail || !this.isEmailValid) return warn("유효한 이메일을 입력해주세요.");
                         if (this.lawyer.lawyerPhone.length !== 11 || !/^[0-9]+$/.test(this.lawyer.lawyerPhone)) {
-                            return alert("휴대폰 번호는 11자리 숫자여야 합니다.");
+                            return warn("휴대폰 번호는 11자리 숫자여야 합니다.");
                         }
-                        if (this.mainCategories.length !== 2) return alert("전문 분야는 2개를 선택해야 합니다.");
+                        if (this.mainCategories.length !== 2) return warn("전문 분야는 2개를 선택해야 합니다.");
+
+                        // 📌 필수 파일 체크
+                        if (this.lawyer.lawyerStatus === 'I') {
+                            if (!this.licenseFile || !this.profileImgFile) {
+                                return Swal.fire({
+                                    icon: "warning",
+                                    title: "파일 누락",
+                                    text: "자격증 사본과 프로필 사진을 모두 업로드해주세요.",
+                                    confirmButtonText: "확인"
+                                });
+                            }
+                        } else if (this.lawyer.lawyerStatus === 'P') {
+                            if (!this.licenseFile || !this.officeProofFile || !this.profileImgFile) {
+                                return Swal.fire({
+                                    icon: "warning",
+                                    title: "파일 누락",
+                                    text: "자격증 사본, 재직증명서, 프로필 사진을 모두 업로드해주세요.",
+                                    confirmButtonText: "확인"
+                                });
+                            }
+                        }
+
                         this.lawyer.lawyerEmail = this.fullEmail;
                         this.lawyer.lawyerAddr = this.address + " " + this.detailAddress;
 
                         const formData = new FormData();
-
                         Object.entries(this.lawyer).forEach(([k, v]) => formData.append(k, v));
                         formData.append("lawyerEmail", this.fullEmail);
                         Object.entries(this.license).forEach(([k, v]) => formData.append(k, v));
                         formData.append("mainCategoryName1", this.categoryMap[this.mainCategories[0]]);
                         formData.append("mainCategoryName2", this.categoryMap[this.mainCategories[1]]);
 
-                        // 프로필 이미지 경로 저장
                         if (this.profileImgFile) {
-                            formData.append("LAWYER_IMG", "/img/" + this.profileImgFile.name); // 💡 DB 경로로 저장
-                            formData.append("profileImgFile", this.profileImgFile); // 💡 파일 자체도 업로드
+                            formData.append("LAWYER_IMG", "/img/" + this.profileImgFile.name);
+                            formData.append("profileImgFile", this.profileImgFile);
                         }
 
-                        // 라이선스/재직 파일들도 동일하게 추가
                         if (this.licenseFile) {
                             formData.append("LAWYER_LICENSE_NAME", this.licenseFile.name);
                             formData.append("LAWYER_LICENSE_PATH", this.licenseFile.name);
@@ -434,7 +465,8 @@
                                 });
                             }
                         });
-                    },
+                    }
+                    ,
                     checkUserId() {
                         const val = this.lawyer.lawyerId;
                         const validIdRegex = /^[a-zA-Z0-9]*$/;
@@ -442,7 +474,15 @@
                         this.isIdChecked = false;  // ✅ 아이디 입력시 중복체크 상태 초기화
                     },
                     fnIdCheck() {
-                        if (!this.lawyer.lawyerId) return alert("아이디를 입력해주세요.");
+                        if (!this.lawyer.lawyerId) {
+                            return Swal.fire({
+                                icon: "warning",
+                                title: "입력 필요",
+                                text: "아이디를 입력해주세요.",
+                                confirmButtonText: "확인"
+                            });
+                        }
+
                         $.ajax({
                             url: "/join/checkLawyer.dox",
                             type: "POST",
@@ -450,12 +490,30 @@
                             data: { lawyerId: this.lawyer.lawyerId },
                             success: (data) => {
                                 if (data.count == 0) {
-                                    alert("사용 가능한 아이디입니다.");
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "사용 가능",
+                                        text: "사용 가능한 아이디입니다.",
+                                        confirmButtonText: "확인"
+                                    });
                                     this.isIdChecked = true;
                                 } else {
-                                    alert("이미 사용 중인 아이디입니다.");
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "중복 아이디",
+                                        text: "이미 사용 중인 아이디입니다.",
+                                        confirmButtonText: "확인"
+                                    });
                                     this.isIdChecked = false;
                                 }
+                            },
+                            error: () => {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "오류 발생",
+                                    text: "중복 확인 중 문제가 발생했습니다.",
+                                    confirmButtonText: "확인"
+                                });
                             }
                         });
                     },
@@ -495,8 +553,19 @@
                         }, function (rsp) {
                             if (rsp.success) {
                                 self.isAuthenticated = true;
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "본인 인증 성공",
+                                    text: "인증이 정상적으로 완료되었습니다.",
+                                    confirmButtonText: "확인"
+                                });
                             } else {
-                                alert("❌ 인증 실패: " + rsp.error_msg);
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "인증 실패",
+                                    text: "사유: " + rsp.error_msg,
+                                    confirmButtonText: "확인"
+                                });
                             }
                         });
                     }

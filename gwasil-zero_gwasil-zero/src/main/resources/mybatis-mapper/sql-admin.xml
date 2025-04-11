@@ -210,7 +210,7 @@
 	</update>
 	
 	<select id="selectReportList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Report">
-		SELECT * DISTINCT
+		SELECT * 
 		FROM REPORT
 		ORDER BY BOARD_NO
 		OFFSET #{repoPage} ROWS FETCH NEXT #{repoPageSize} ROWS ONLY

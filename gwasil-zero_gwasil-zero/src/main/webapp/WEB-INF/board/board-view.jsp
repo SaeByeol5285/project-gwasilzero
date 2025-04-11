@@ -414,9 +414,9 @@
                     <div class="comment-flex">
                         <!-- 변호사 프로필 이미지 -->
                         <img class="comment-profile"
-                            :src="cmt.lawyerImg ? cmt.lawyerImg.replace('../', '/') : '/img/common/default_profile.png'"
-                            alt="변호사 이미지" @error="e => e.target.src='/img/common/default_profile.png'" />
-
+                            :src="cmt.lawyerImg ? cmt.lawyerImg.replace('../', '/') : '/img/common/image_not_exist.jpg'"
+                            alt="변호사 이미지"
+                            @error="e => { e.target.onerror = null; e.target.src='/img/common/image_not_exist.jpg' }" />
                         <!-- 댓글 본문 -->
                         <div style="flex: 1;">
                             <div class="comment-meta">

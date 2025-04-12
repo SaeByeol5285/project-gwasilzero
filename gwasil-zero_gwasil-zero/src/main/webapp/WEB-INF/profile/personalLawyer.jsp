@@ -63,6 +63,16 @@
                                     <span v-if="item.lawyerInfo" v-html="truncateText(item.lawyerInfo, 100)"></span>
                                     <span v-else class="no-data">등록된 소개가 없습니다.</span>
                                 </div>
+                                <div class="lawyer-icons">
+                                    <div class="icon-item" @click.stop="startChat(item.lawyerId)">
+                                        <img src="/img/common/call.png" class="icon" />
+                                        <div class="icon-label">전화상담</div>
+                                    </div>
+                                    <div class="icon-item" @click.stop="toggleBookmark(item.lawyerId)">
+                                        <img :src="isBookmarked(item.lawyerId) ? '/img/selectedBookmark.png' : '/img/common/bookmark.png'" class="icon" />
+                                        <div class="icon-label">북마크</div>
+                                    </div>
+                                </div>  
                             </div>
                         </div>
                         <div class="pagination-container">
@@ -90,6 +100,8 @@
             data() {
                 return {
                     list: [],
+                    bookmarkList: [],
+                    sessionId: "${sessionId}",
                     keyword: "",
                     searchOption: "all",
                     index: 0,
@@ -177,11 +189,155 @@
                         return text.substring(0, 50) + '...';
                     }
                     return text;
+                },
+                startChat(lawyerId) {
+                    let self = this;
+                    if(self.sessionId == null || self.sessionId == ""){
+                        Swal.fire({
+                                    icon: "error",
+                                    title: "로그인 필요",
+                                    text: "로그인 후 이용해주세요.",
+                                    confirmButtonColor: "#ff5c00"
+                                }).then(() => {
+                            location.href = "/user/login.do";
+                        });
+                        return; 
+                    }
+                    $.ajax({
+                        url: "/board/checkLawyerStatus.dox",
+                        type: "POST",
+                        data: {
+                            sessionId: lawyerId
+                        },
+                        dataType: "json",
+                        success: function (res) {
+                            const isApproved = res.result === "true";
+                            const isAuthValid = res.authResult === "true";
+
+                            if (!isApproved) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "승인되지 않음",
+                                    text: "아직 승인되지 않은 변호사 계정입니다.",
+                                    confirmButtonColor: "#ff5c00"
+                                });
+                                return;
+                            }
+
+                            if (!isAuthValid) {
+                                Swal.fire({
+                                    icon: "info",
+                                    title: "채팅 불가능",
+                                    text: "변호사 등록기간이 만료된 변호사와는 채팅할 수 없습니다.",
+                                    confirmButtonColor: "#ff5c00"
+                                });
+                                return;
+                            }
+
+                            // 조건 통과
+                            $.ajax({
+                                url: "/chat/findOrCreate.dox",
+                                type: "POST",
+                                data: {
+                                    userId: self.sessionId,
+                                    lawyerId: lawyerId
+                                },
+                                success: function (res) {
+                                    let chatNo = res.chatNo;
+                                    pageChange("/chat/chat.do", {
+                                        chatNo: chatNo
+                                    });
+                                }
+                            });
+
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: "error",
+                                title: "요청 실패",
+                                text: "변호사 상태 확인 요청에 실패했습니다.",
+                                confirmButtonColor: "#ff5c00"
+                            });
+                        }
+                    });
+                },
+                isBookmarked(lawyerId) {
+                    return this.bookmarkList.some(bm => bm.lawyerId === lawyerId);
+                },
+                toggleBookmark(lawyerId) {
+                    const self = this;
+
+                    if (!self.sessionId) {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "로그인 필요",
+                            text: "로그인이 필요합니다.",
+                            confirmButtonColor: "#ff5c00"
+                        }).then(() => {
+                            location.href = "/user/login.do";
+                        });
+                        return;
+                    }
+
+                    if (self.sessionType !== 'user') {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "이용 불가",
+                            text: "변호사 사용자는 이용 불가능합니다.",
+                            confirmButtonColor: "#ff5c00"
+                        });
+                        return;
+                    }
+
+                    const isMarked = self.isBookmarked(lawyerId);
+                    const url = isMarked ? "/bookmark/remove.dox" : "/bookmark/add.dox";
+
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        data: {
+                            userId: self.sessionId,
+                            lawyerId: lawyerId
+                        },
+                        success: function (data) {
+                            if (isMarked) {
+                                self.bookmarkList = self.bookmarkList.filter(b => b.lawyerId !== lawyerId);
+                            } else {
+                                self.bookmarkList.push({ lawyerId: lawyerId });
+                            }
+                            localStorage.setItem('bookmarkUpdated', Date.now());
+                        },
+                        error: function () {
+                            alert("북마크 처리 중 오류가 발생했습니다.");
+                        }
+                    });
+                },
+                fnGetBookmarkList() {
+                    const self = this;
+                    if (!self.sessionId) return;
+
+                    $.ajax({
+                        url: "/bookmark/list.dox",
+                        type: "POST",
+                        data: { sessionId: self.sessionId },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.result === "success") {
+                                self.bookmarkList = data.list;
+                            }
+                        }
+                    });
                 }
             },
             mounted() {
                 var self = this;
                 self.fnGetList();
+                self.fnGetBookmarkList();
+                window.addEventListener('storage', (e) => {
+                    if (e.key === 'bookmarkUpdated') {
+                        this.fnGetBookmarkList();
+                    }
+                });
             }
         });
         perLawApp.mount('#perLawApp');

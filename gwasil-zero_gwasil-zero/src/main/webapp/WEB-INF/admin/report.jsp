@@ -108,7 +108,7 @@
                     reportList: [],
                     repoTotal: 0,
                     repoPage: 1,
-                    repoPageSize: 15,
+                    repoPageSize: 25,
                     repoPageCount: 0,
                     selectedBoardNo: null,
                 };
@@ -139,8 +139,8 @@
                 fnGetReports() {
                     var self = this;
                     var nparmap = {
-                        repoPage: (self.repoPage - 1) * self.repoPageSize,
-                        repoPageSize: self.repoPageSize
+                        repoPageSize: self.repoPageSize,
+                        repoPage: (self.repoPage - 1) * self.repoPageSize
                     };
                     $.ajax({
                         url: "/admin/reportList.dox",

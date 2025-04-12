@@ -368,7 +368,7 @@
                   <td>
                      {{ chat.partnerName }}
                      <br>
-                     <button class="edit-btn" @click="fnUsePhoneConsult(chat.partnerId)">
+                     <button class="edit-btn" @click="fnUsePhoneConsult(chat)">
                         📞 전화 상담 차감
                      </button>
                   </td>
@@ -637,8 +637,10 @@
                pageChange("/chat/chat.do", {chatNo : chatNo});
             },
 
-            fnUsePhoneConsult(userId) {
+            fnUsePhoneConsult(chat) {
                const self = this;
+			   let chatNo = chat.chatNo;
+			   let userId = chat.partnerId;
                Swal.fire({
                   title: '전화 상담 1회를 차감하시겠습니까?',
                   icon: 'warning',
@@ -652,7 +654,10 @@
                      url: '/lawyerMyPage/usePhoneConsult.dox',
                      type: 'POST',
                      data: {
-                        userId: userId
+                        userId: userId,
+						sessionId : self.sessionId,
+						chatNo : chatNo,
+						contents  : ""
                      },
                      success: function (res) {
                         if (res.result === 'success') {

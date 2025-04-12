@@ -207,14 +207,19 @@
       WHERE ORDER_ID = #{orderId}
     </update>
     
-    <select id="selectLastChat" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
+     <select id="selectLastChat" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
        SELECT
            cm.chat_no,
            cm.sender_id,
            su.user_name AS sender_name,
            cm.message,
            TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
-   
+
+           CASE 
+               WHEN c.sender_id = #{sessionId} THEN c.receiver_id
+               ELSE c.sender_id
+           END AS partner_id,
+
            CASE 
                WHEN c.sender_id = #{sessionId} THEN ru.user_name
                ELSE su2.user_name
@@ -235,12 +240,12 @@
        ) latest ON cm.chat_no = latest.chat_no AND cm.time = latest.max_time
    
        JOIN chat c ON cm.chat_no = c.chat_no
-   
+
        LEFT JOIN tbl_user su ON cm.sender_id = su.user_id
-   
+
        LEFT JOIN tbl_user su2 ON c.sender_id = su2.user_id
        LEFT JOIN tbl_user ru ON c.receiver_id = ru.user_id
-   
+
        ORDER BY cm.time DESC
    </select>
    
@@ -307,5 +312,26 @@
        SET LAWYER_STATUS = 'O'
        WHERE LAWYER_ID = #{sessionId}
    </update>  
-
+	
+	<update id="updateConsult" parameterType="hashmap">
+       UPDATE PAY
+       SET PAY_STATUS = 'USED', lawyer_id = #{lawyerId}
+       WHERE ORDER_ID = (
+           SELECT ORDER_ID
+           FROM (
+               SELECT ORDER_ID
+               FROM PAY
+               WHERE USER_ID = #{userId}
+                 AND PACKAGE_NAME = '전화 상담 패키지'
+                 AND PAY_STATUS = 'PAID'
+               ORDER BY PAY_TIME ASC
+           )
+           WHERE ROWNUM = 1
+       )
+   </update>
+   
+   	<insert id="insertChatReview" parameterType="hashmap">
+   		insert into review (review_no, user_id, lawyer_id, score, contents, cdate, udate, board_no, chat_no)
+   		values(review_seq.nextval, #{userId}, #{sessionId}, 0, null, sysdate, sysdate, null, #{chatNo})
+   	</insert>
 </mapper>

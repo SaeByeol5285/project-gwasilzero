@@ -121,7 +121,7 @@
                 const self = this;
 
                 IMP.request_pay({
-                    pg: "html5_inicis",
+                    pg: "kakaopay",
                     pay_method: "card",
                     name: "법률 계약 - " + self.lawyerName,
                     amount: self.price,
@@ -174,26 +174,25 @@
                 });
             },
 			fnChangeBoardStatus() {
-			               let self = this;
-			               const nparmap = {
-			                   userId: self.userId,
-			                   lawyerId: self.lawyerId,
-			                   boardNo: self.boardNo
-			               };
+	               let self = this;
+	               const nparmap = {
+	                   lawyerId: self.lawyerId,
+	                   boardNo: self.boardNo
+	               };
 
-			               $.ajax({
-			                   url: "/board/changeBoardStatus.dox",
-			                   type: "POST",
-			                   dataType: "json",
-			                   data: nparmap,
-			                   success: function(data) {
-			                   },
-			                   error: function(err) {
-			                       alert("게시물 상태 변경 실패");
-			                       console.error(err);
-			                   }
-			               });
-			           },
+	               $.ajax({
+	                   url: "/board/changeBoardStatus.dox",
+	                   type: "POST",
+	                   dataType: "json",
+	                   data: nparmap,
+	                   success: function(data) {
+	                   },
+	                   error: function(err) {
+	                       alert("게시물 상태 변경 실패");
+	                       console.error(err);
+	                   }
+	               });
+	           },
             fnGetLawyerInfo() {
                 let self = this;
                 const nparmap = {

@@ -335,6 +335,26 @@
                 width: 22px;
                 height: 22px;
             }
+			.btn-red {
+	            background-color: #ffe1e1;
+	            color: #e60000;
+	            font-weight: 600;
+	         }
+
+	         .btn-red:hover {
+	            background-color: #e60000;
+	            color: #fff;
+	         }
+			 .btn-blue {
+	             background-color: #e3f2ff;
+	             color: #007bff;
+	             font-weight: 600;
+	          }
+
+	          .btn-blue:hover {
+	             background-color: #007bff;
+	             color: #fff;
+	          }
         </style>
 
 
@@ -385,7 +405,20 @@
                         </video>
                     </div>
                 </div>
-                <button v-if="sessionId === board.userId" @click="EditBoard" class="btn btn-write">✏️ 수정하기</button>
+				<!-- 버튼 묶음 -->
+				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+				  
+				  <div>
+				    <button v-if="sessionId === board.userId" @click="EditBoard" class="btn btn-write">✏️ 수정하기</button>
+				    <button v-if="sessionId === board.userId" @click="deleteBoard" class="btn btn-red">🗑️ 삭제</button>
+				  </div>
+
+				  
+				  <div>
+				    <button class="btn btn-blue" @click="goToList">📋 목록 보기</button>
+				  </div>
+				</div>
+
             </div>
 
 
@@ -615,8 +648,8 @@
                             if (!isAuthValid) {
                                 Swal.fire({
                                     icon: "info",
-                                    title: "등록기간 만료",
-                                    text: "변호사 등록기간이 만료되었습니다.",
+                                    title: "회원권 필요",
+                                    text: "변호사 회원권이 필요합니다.",
                                     confirmButtonColor: "#ff5c00"
                                 }).then(() => {
                                     location.href = "/package/package.do";
@@ -950,6 +983,17 @@
                 fnReport() {
                     const self = this;
                     // 1차 확인: 이미 신고했는지 확인
+					
+					if (self.sessionId == "" || self.sessionId == null) {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "로그인 필요",
+                            text: "로그인 후 이용해주세요.",
+                            confirmButtonColor: "#ff5c00"
+                        });
+                        return;
+                    }
+					
                     $.ajax({
                         url: "/board/reportCheck.dox",
                         type: "POST",
@@ -1082,7 +1126,38 @@
                             Swal.fire("오류", "서버 요청 중 문제가 발생했습니다.", "error");
                         }
                     });
-                }
+                },
+				deleteBoard() {
+	               let self = this;
+
+	               Swal.fire({
+	                  title: '정말 삭제하시겠습니까?',
+	                  text: "삭제된 게시글은 복구할 수 없습니다.",
+	                  icon: 'warning',
+	                  showCancelButton: true,
+	                  confirmButtonColor: '#ff5c00',
+	                  cancelButtonColor: '#aaa',
+	                  confirmButtonText: '네, 삭제할게요',
+	                  cancelButtonText: '취소'
+	               }).then((result) => {
+	                  if (result.isConfirmed) {
+	                     $.post("/board/delete.dox", { boardNo: self.board.boardNo }, () => {
+	                        Swal.fire({
+	                           title: '삭제 완료!',
+	                           text: '게시글이 성공적으로 삭제되었습니다.',
+	                           icon: 'success',
+	                           confirmButtonColor: '#ff5c00',
+	                           confirmButtonText: '확인'
+	                        }).then(() => {
+	                           location.href = "/board/list.do";
+	                        });
+	                     });
+	                  }
+	               });
+	            },
+				goToList() {
+				  pageChange("/board/list.do", {});
+				}
 
             },
             mounted() {

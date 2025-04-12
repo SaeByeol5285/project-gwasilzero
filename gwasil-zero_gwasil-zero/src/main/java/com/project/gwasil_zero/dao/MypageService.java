@@ -260,7 +260,8 @@ public class MypageService {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 	    mypageMapper.updateConsult(map);
-	    resultMap.put("result", "success");      
+	    mypageMapper.insertChatReview(map);
+	    resultMap.put("result", "success");
 	    return resultMap;
 	}
 

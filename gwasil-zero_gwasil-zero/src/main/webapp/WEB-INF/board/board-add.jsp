@@ -331,15 +331,28 @@
 			watch: {
 				usePackage(newVal) {
 					const self = this;
+
+					// 선택이 Y인데 패키지 수가 0일 때
 					if (newVal === "Y" && self.packageCount === 0) {
-						const goBuy = confirm("사용 가능한 패키지가 없습니다.\n패키지를 구매하러 가시겠습니까?");
-						if (!goBuy) {
-							self.usePackage = "N";
-						} else {
-							// 예를 누르면 이동할 페이지가 있다면 여기에 추가
-							// location.href = "/pay/list.do";
-							self.usePackage = "N"; // 현재는 그냥 되돌리기로
-						}
+						Swal.fire({
+							icon: "info",
+							title: "패키지 없음",
+							text: "빠른답변 패키지가 없습니다. 구매하러 가시겠습니까?",
+							showCancelButton: true,
+							confirmButtonText: "패키지 구매",
+							cancelButtonText: "취소",
+							confirmButtonColor: "#ff5c00"
+						}).then((result) => {
+							if (result.isConfirmed) {
+								self.usePackage = "N";
+								location.href = "/package/package.do";
+							} else {
+								
+								self.$nextTick(() => {
+									self.usePackage = "N";
+								});
+							}
+						});
 					}
 				}
 			},

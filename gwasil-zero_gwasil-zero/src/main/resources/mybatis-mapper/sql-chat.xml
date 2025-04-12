@@ -100,4 +100,18 @@
 	    SELECT lawyer_name FROM lawyer WHERE lawyer_id = #{targetId, jdbcType=VARCHAR}
 	</select>
 	
+	<select id="getReviewNoByChatNo" parameterType="hashmap" resultType="int">
+	    SELECT review_no FROM review WHERE chat_no = #{chatNo}
+	</select>
+	
+	<update id="updateReview" parameterType="hashmap">
+	  UPDATE review
+	  SET 
+	    contents = #{contents},
+	    score = #{score},
+	    udate = SYSDATE
+	  WHERE chat_no = #{chatNo}
+	</update>
+	
+	
 </mapper>

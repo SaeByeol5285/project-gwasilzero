@@ -298,11 +298,6 @@
                             <div v-else class="no-data">작성된 생년월일이 없습니다.</div>
                         </div>
                         <div class="section">
-                            <h3>소속 법무 법인</h3>
-                            <div v-if="info.officproofName">{{ info.officproofName }}</div>
-                            <div v-else class="no-data">작성된 법인 내용이 없습니다.</div>
-                        </div>
-                        <div class="section">
                             <h3>변호사 등록번호</h3>
                             <div v-if="info.lawyerNumber">{{ info.lawyerNumber }}</div>
                             <div v-else class="no-data">작성된 변호사 등록번호가 없습니다.</div>
@@ -322,8 +317,8 @@
                             <div v-if="info.lawyerLicensePath">
                                 <ul>
                                     <li>📜 {{ info.lawyerLicenseName }}
-                                        <a :href="info.lawyerLicensePath" target="_blank" style="margin-left: 10px;">이미지 보기</a>
-                                        <a :href="info.lawyerLicensePath" :download="info.lawyerLicenseName" style="margin-left: 10px;">다운로드</a>
+                                        <a :href="'/img/' + info.lawyerLicensePath" target="_blank" style="margin-left: 10px;">이미지 보기</a>
+                                        <a :href="'/img/' + info.lawyerLicensePath" :download="info.lawyerLicenseName" style="margin-left: 10px;">다운로드</a>
                                     </li>
                                 </ul>
                             </div>

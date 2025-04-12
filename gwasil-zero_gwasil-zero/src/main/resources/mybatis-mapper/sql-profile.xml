@@ -166,16 +166,16 @@
 	</select>
     
     <select id="selectReviewList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Review">
-    	SELECT * 
+		SELECT * 
     	FROM REVIEW
-    	WHERE LAWYER_ID = #{lawyerId}
+    	WHERE LAWYER_ID = #{lawyerId} AND TRIM(CONTENTS) IS NOT NULL
     	OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
     </select>
     
     <select id="selectReviewCnt" parameterType="hashmap">
     	SELECT COUNT(*)
     	FROM REVIEW
-    	WHERE LAWYER_ID = #{lawyerId}
+    	WHERE LAWYER_ID = #{lawyerId} AND TRIM(CONTENTS) IS NOT NULL
     </select>
     
 </mapper>

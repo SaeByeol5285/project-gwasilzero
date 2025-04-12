@@ -88,7 +88,7 @@
 					color: #ffffff;
 					cursor: pointer;
 				}
-				
+
 				button:hover {
 					background-color: #e64a19;
 				}
@@ -256,7 +256,7 @@
 					background-color: #ff5c00;
 					color: white;
 					font-weight: bold;
-					box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+					box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 				}
 
 				.btn:disabled {
@@ -307,16 +307,12 @@
 					<!-- 페이징 영역 -->
 					<div class="pagination-container">
 						<button class="btn" @click="fnPageMove('prev')" :disabled="page === 1">〈 이전</button>
-					
-						<button 
-						v-for="n in index" 
-						:key="n" 
-						@click="fnPage(n)" 
-						:class="['btn', page === n ? 'active' : '']"
-						>
-						{{ n }}
+
+						<button v-for="n in index" :key="n" @click="fnPage(n)"
+							:class="['btn', page === n ? 'active' : '']">
+							{{ n }}
 						</button>
-					
+
 						<button class="btn" @click="fnPageMove('next')" :disabled="page === index">다음 〉</button>
 					</div>
 				</div>
@@ -409,7 +405,8 @@
 							<tr v-if="chatList.length" v-for="chat in chatList" :key="chat.chatNo">
 								<td><a href="javascript:;" @click="fnChat(chat.chatNo)" class="message">{{ chat.message
 										}}</a></td>
-								<td><a href="javascript:;" @click="fnProfile(chat.partnerId)" class="message">{{ chat.partnerName }}</a></td>
+								<td><a href="javascript:;" @click="fnProfile(chat.partnerId)" class="message">{{
+										chat.partnerName }}</a></td>
 							</tr>
 							<tr v-else>
 								<td colspan="2" style="text-align: center; color: #999;">채팅 내역이 없습니다.</td>
@@ -456,28 +453,28 @@
 				<div class="section">
 					<h3>변호사 선임 결제 내역</h3>
 					<table class="payment-table">
-					<thead>
-						<tr>
-						<th>날짜</th>
-						<th>변호사</th>
-						<th>금액</th>
-						<th>상태</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr v-if="contractList.length" v-for="item in contractList" :key="item.contractNo">
-						<td>{{ item.cdate }}</td>
-						<td>{{ item.lawyerName }}</td>
-						<td>{{ item.contractPrice.toLocaleString() }} 원</td>
-						<td>{{ getContractStatusText(item.contractStatus) }}</td>
-						</tr>
-						<tr v-else>
-						<td colspan="4" style="text-align: center; color: #999;">결제 내역이 없습니다.</td>
-						</tr>
-					</tbody>
+						<thead>
+							<tr>
+								<th>날짜</th>
+								<th>변호사</th>
+								<th>금액</th>
+								<th>상태</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-if="contractList.length" v-for="item in contractList" :key="item.contractNo">
+								<td>{{ item.cdate }}</td>
+								<td>{{ item.lawyerName }}</td>
+								<td>{{ item.contractPrice.toLocaleString() }} 원</td>
+								<td>{{ getContractStatusText(item.contractStatus) }}</td>
+							</tr>
+							<tr v-else>
+								<td colspan="4" style="text-align: center; color: #999;">결제 내역이 없습니다.</td>
+							</tr>
+						</tbody>
 					</table>
 				</div>
-  
+
 				<!-- 회원탈퇴 -->
 				<div style="text-align: center; margin-top: 20px;">
 					<button class="withdraw-btn" @click="fnRemoveUser">회원탈퇴</button>
@@ -504,7 +501,7 @@
 						page: 1,
 						pageSize: 3,  // 글 3개씩
 						index: 0,
-						contractList : [],
+						contractList: [],
 					};
 				},
 				methods: {
@@ -593,7 +590,7 @@
 					},
 
 					fnProfile(lawyerId) {
-						pageChange("/profile/view.do", {lawyerId : lawyerId});
+						pageChange("/profile/view.do", { lawyerId: lawyerId });
 					},
 
 					fnGetChatList() {
@@ -612,7 +609,7 @@
 							}
 						});
 					},
-					
+
 					fnGetPayList() {
 						var self = this;
 						var nparmap = {
@@ -667,7 +664,7 @@
 							case "PAID": return "결제 완료";
 							case "REQUEST": return "환불 요청";
 							case "REFUNDED": return "환불 완료";
-							case "USED" : return "사용 완료";
+							case "USED": return "사용 완료";
 							default: return status;
 						}
 					},
@@ -676,7 +673,7 @@
 						location.href = "/mypage-edit.do";
 					},
 					fnRemoveUser() {
-						pageChange("/mypage/remove.do", {sessionId : this.sessionId});
+						pageChange("/mypage/remove.do", { sessionId: this.sessionId });
 					},
 					//리뷰리스트
 					fnLoadReview() {
@@ -692,6 +689,7 @@
 							success: function (data) {
 								console.log(data);
 								if (data.result == "success") {
+									console.log("리뷰 리스트" + data);
 									self.availReviewList = data.availReviewList;
 									self.writtenReviewList = data.writtenReviewList;
 									self.isEditing = false;
@@ -704,6 +702,10 @@
 						const self = this;
 						if (!item.contents?.trim()) {
 							alert("내용을 입력해주세요.");
+							return;
+						}
+						if (!item.score || item.score < 1 || item.score > 5) {
+							alert("평점을 선택해주세요.");
 							return;
 						}
 						const params = {
@@ -783,23 +785,23 @@
 					fnGetContractList() {
 						const self = this;
 						$.ajax({
-						url: "/mypage/contractList.dox",
-						type: "POST",
-						data: { userId: self.sessionId },
-						dataType: "json",
-						success: function (data) {
-							console.log("🔎 계약 내역:", data);
-							self.contractList = data.contractList || [];
-						}
+							url: "/mypage/contractList.dox",
+							type: "POST",
+							data: { userId: self.sessionId },
+							dataType: "json",
+							success: function (data) {
+								console.log("🔎 계약 내역:", data);
+								self.contractList = data.contractList || [];
+							}
 						});
 					},
-					
+
 					getContractStatusText(status) {
 						switch (status) {
-						case "COMPLETE": return "결제 완료";
-						case "REQUEST": return "환불 요청";
-						case "REFUNDED": return "환불 완료";
-						default: return status;
+							case "COMPLETE": return "결제 완료";
+							case "REQUEST": return "환불 요청";
+							case "REFUNDED": return "환불 완료";
+							default: return status;
 						}
 					},
 				},

@@ -164,7 +164,7 @@
                     data: nparmap,
                     success: function(data) {
                         alert("계약이 체결되었습니다.");
-						fnChangeBoardStatus();			
+						self.fnChangeBoardStatus();			
                         location.href = "/board/list.do";
                     },
                     error: function(err) {

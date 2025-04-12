@@ -14,7 +14,11 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <title>main.jsp</title>
     </head>
-
+    <style>
+        p > p{
+            margin : 0px;
+        }
+    </style>
     <body>
         <jsp:include page="../common/header.jsp" />
         <div id="app">

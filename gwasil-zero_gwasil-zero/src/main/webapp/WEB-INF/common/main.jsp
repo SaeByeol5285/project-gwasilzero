@@ -325,7 +325,7 @@
 				                return;
 				            }
 
-				            // ✅ 패키지 구매 여부 확인
+				            // 패키지 구매 여부 확인
 				            $.ajax({
 				                url: "/board/checkUserPacakge.dox",
 				                type: "POST",

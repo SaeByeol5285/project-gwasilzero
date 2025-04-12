@@ -56,7 +56,7 @@ public interface BoardMapper {
 	
 	int increaseViewCount(int boardNo);
 	
-	int selectPackageCount(HashMap<String, Object> map);
+	Integer selectPackageCount(HashMap<String, Object> map);
 	
 	List<Pay> selectAvailablePackages(HashMap<String, Object> map);
 	

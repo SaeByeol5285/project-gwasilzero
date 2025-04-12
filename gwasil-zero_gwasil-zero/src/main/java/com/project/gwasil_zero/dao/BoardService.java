@@ -229,7 +229,7 @@ public class BoardService {
 	}
 	
 	public HashMap<String, Object> checkLawyerStatus(HashMap<String, Object> map) {
-        HashMap<String, Object> resultMap = new HashMap<>();;
+        HashMap<String, Object> resultMap = new HashMap<>();
         try {
 	        Lawyer lawyer = boardMapper.checkLawyerStatus(map);
 	        String result = "";
@@ -243,6 +243,9 @@ public class BoardService {
 	            if (!authEndDate.isBefore(today)) {
 	                authResult = "true";
 	            }
+	        }
+	        else if(authEndTimeStr == null) {
+	        	authResult = "false";
 	        }
 	        
 	        if(lawyer.getLawyerPass().equals("Y"))
@@ -355,6 +358,20 @@ public class BoardService {
 		HashMap<String, Object> resultMap = new HashMap<>();
 		try {
 	        int count = boardMapper.selectReport(map);
+	        resultMap.put("count", count);
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> checkUserPacakge(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<>();
+		try {
+	        int count = boardMapper.selectPackage(map);
 	        resultMap.put("count", count);
 	        resultMap.put("result", "success");
 	    } catch (Exception e) {

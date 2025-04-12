@@ -8,6 +8,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
+          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -72,7 +74,8 @@
     }
 
     button:hover {
-      background-color: #ff7043;
+		background-color: #ffe6db;
+			color: #ff5c00;
     }
 
     .bubble-container {
@@ -201,9 +204,10 @@
       </div>
 
       <div class="input-area">
-        <input type="text" v-model="message" placeholder="채팅을 입력하세요..." />
+        <input type="text" v-model="message" placeholder="채팅을 입력하세요..." @keyup.enter="handleSend"/>
         <input type="file" id="chatFile" multiple @change="handleFileChange" />
         <button @click="handleSend">전송</button>
+		<button v-if="reviewNo > 0" @click="openReviewModal">리뷰 남기기</button>
       </div>
     </div>
   </div>
@@ -219,7 +223,8 @@
         files: [],
         messages: [],
 		targetName : "",
-		sessionType : "${role}"
+		sessionType : "${role}",
+		reviewNo : 0
       };
     },
     methods: {
@@ -384,14 +389,97 @@
 		        this.targetName = data.targetName;
 		      }
 		    });
+		},
+		getIsEnd() {
+		  $.ajax({
+		    url: "/chat/getIsEnd.dox",
+		    type: "POST",
+		    data: {
+		      chatNo: this.chatNo
+		    },
+		    success: (data) => {
+		      if (data.result === "success") {
+		        this.reviewNo = data.reviewNo;
+		      }
+		    }
+		  });
+		},
+		openReviewModal() {
+		  const self = this;
+
+		  Swal.fire({
+		    title: '리뷰 작성',
+		    html: `
+		      <textarea id="reviewText" 
+		                class="swal2-textarea" 
+		                placeholder="리뷰 내용을 입력하세요"
+		                style="width:100%; height: 150px;"></textarea>
+		      <br>
+		      <div style="text-align:center; margin-top:10px;">
+		        <label><input type="radio" name="score" value="0"> 0점</label>&nbsp;
+		        <label><input type="radio" name="score" value="1"> 1점</label>&nbsp;
+		        <label><input type="radio" name="score" value="2"> 2점</label>&nbsp;
+		        <label><input type="radio" name="score" value="3"> 3점</label>&nbsp;
+		        <label><input type="radio" name="score" value="4"> 4점</label>&nbsp;
+		        <label><input type="radio" name="score" value="5" checked> 5점</label>
+		      </div>
+		    `,
+		    showCancelButton: true,
+		    confirmButtonText: '등록하기',
+		    cancelButtonText: '취소',
+		    confirmButtonColor: '#28a745',
+		    preConfirm: () => {
+		      const content = document.getElementById('reviewText').value.trim();
+		      const score = document.querySelector('input[name="score"]:checked')?.value;
+
+		      if (!content) {
+		        Swal.showValidationMessage("리뷰 내용을 입력해주세요.");
+		        return false;
+		      }
+
+		      if (score === null || score === undefined) {
+		        Swal.showValidationMessage("별점을 선택해주세요.");
+		        return false;
+		      }
+
+		      return { contents: content, score: parseInt(score) };
+		    }
+		  }).then(result => {
+		    if (result.isConfirmed) {
+		      const { contents, score } = result.value;
+
+		      $.ajax({
+		        url: '/chat/reviewUpdate.dox',
+		        type: 'POST',
+		        data: {
+		          chatNo: self.chatNo,
+		          contents: contents,
+		          score: score
+		        },
+		        success: (res) => {
+		          if (res.result === 'success') {
+		            Swal.fire("등록 완료", "리뷰가 등록되었습니다.", "success");
+		          } else {
+		            Swal.fire("오류", "리뷰 등록에 실패했습니다.", "error");
+		          }
+		        },
+		        error: () => {
+		          Swal.fire("서버 오류", "통신에 실패했습니다.", "error");
+		        }
+		      });
+		    }
+		  });
 		}
+
+
 
     },
     mounted() {
 		console.log(this.sessionType);
-      this.connect();
-      this.loadChatHistory();
-	  this.getTargetName();
+      	this.connect();
+      	this.loadChatHistory();
+	 	 this.getTargetName();
+	 	this.getIsEnd();
     }
   });
 

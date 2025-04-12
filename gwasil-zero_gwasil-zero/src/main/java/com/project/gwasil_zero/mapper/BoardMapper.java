@@ -68,4 +68,5 @@ public interface BoardMapper {
 	
 	int selectReport(HashMap<String, Object> map);
 	
+	int selectPackage(HashMap<String, Object> map);
 }

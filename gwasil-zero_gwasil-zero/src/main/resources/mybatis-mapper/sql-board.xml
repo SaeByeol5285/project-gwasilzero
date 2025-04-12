@@ -244,4 +244,8 @@
 	   AND BOARD_NO = #{boardNo}
 	</select>
 	
+	<select id="selectPackage" parameterType="map" resultType="int">
+		select count(*) from pay where user_id = #{userId} and package_name = '전화 상담 패키지'
+	</select>
+	
 </mapper>

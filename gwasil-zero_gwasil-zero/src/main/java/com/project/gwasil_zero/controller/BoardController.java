@@ -193,7 +193,7 @@ public class BoardController {
 	                }
 	                process.waitFor();
 
-	                // ✅ 모자이크 파일이 없으면 cut 비디오 복사로 대체
+	                // 모자이크 파일이 없으면 cut 비디오 복사로 대체
 	                File mosaicFile = new File(mosaicPath);
 	                if (!mosaicFile.exists()) {
 	                    System.out.println("❌ mosaic 생성 실패 → cut 영상 복사");
@@ -282,7 +282,7 @@ public class BoardController {
 	                System.out.println("📌 본문 키워드 분석 결과:");
 	                System.out.println(output.toString());
 
-	                // 🔽 파이썬에서 출력한 JSON 파싱 후 저장
+	                // 파이썬에서 출력한 JSON 파싱 후 저장
 	                Gson gson = new Gson();
 	                Type type = new TypeToken<Map<String, Double>>() {}.getType();
 	                Map<String, Double> keywordMap = gson.fromJson(output.toString(), type);
@@ -383,7 +383,18 @@ public class BoardController {
 	                        System.out.println("[EDIT CMD] " + line);
 	                    }
 	                    process.waitFor();
-
+	                    
+	                 // 모자이크 파일이 없으면 cut 비디오 복사로 대체
+		                File mosaicFile = new File(mosaicPath);
+		                if (!mosaicFile.exists()) {
+		                    System.out.println("❌ mosaic 생성 실패 → cut 영상 복사");
+		                    Files.copy(
+		                        new File(cutPath).toPath(),
+		                        mosaicFile.toPath(),
+		                        StandardCopyOption.REPLACE_EXISTING
+		                    );
+		                }
+	                    
 	                    // DB에 저장
 	                    HashMap<String, Object> fileMap = new HashMap<>();
 	                    fileMap.put("boardNo", boardNo);
@@ -542,5 +553,15 @@ public class BoardController {
 	    resultMap = boardService.reportCheck(map);
 	    return resultMap;
 	}
+	
+	@PostMapping("/board/checkUserPacakge.dox")
+	@ResponseBody
+	public HashMap<String, Object> checkUserPacakge(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = boardService.checkUserPacakge(map);
+	    return resultMap;
+	}
+	
+
 	
 }

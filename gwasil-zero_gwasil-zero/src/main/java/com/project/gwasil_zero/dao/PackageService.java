@@ -1,5 +1,7 @@
 package com.project.gwasil_zero.dao;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -65,8 +67,14 @@ public class PackageService {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
+			LocalDate endDate = LocalDate.now().plusMonths(1);
+		    String authEndtime = endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		    
+		    map.put("authEndtime", authEndtime);
+		    
 			packageMapper.updateAuthEndTime(map);		
-			resultMap.put("result", "success");		
+			resultMap.put("result", "success");	
+			resultMap.put("authEndtime", authEndtime);
 			
 		} catch (Exception e) {
 			// TODO: handle exception

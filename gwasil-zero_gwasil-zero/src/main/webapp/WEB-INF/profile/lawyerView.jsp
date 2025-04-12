@@ -51,6 +51,7 @@
                     <div class="lawyer-tabs">
                         <button :class="{ active: currentTab === 'home' }" @click="currentTab = 'home'">변호사 홈</button>
                         <button :class="{ active: currentTab === 'review' }" @click="currentTab = 'review'">후기 목록</button>
+                        <button @click="fnBack">변호사 목록보기</button>
                     </div>
 
                     <!-- 탭 내용 -->
@@ -249,7 +250,7 @@
                             self.license = data.license;
                             self.mainCaseList = data.mainCaseList || [];
                             self.fnGetReviewList();
-                            // console.log("✅ 변호사 정보 로딩 완료:", data.info.lawyerId);
+                            //console.log("✅ 변호사 정보 로딩 완료:", data.info);
                         }
                     });
                 },
@@ -270,7 +271,7 @@
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
-                            console.log(data.list);
+                            // console.log(data.list);
                             self.reviewList = data.list;
                             self.index = Math.ceil(data.count / self.pageSize);
                             self.reviewCnt = data.count;

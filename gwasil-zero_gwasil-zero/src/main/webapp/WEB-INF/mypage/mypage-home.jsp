@@ -277,9 +277,9 @@
 						<div>
 							<h3>내 정보</h3>
 							<div class="info-details" v-if="info && info.userName">
-								이름: {{ info.userName }}<br>
-								핸드폰 번호: {{ formatPhone(info.userPhone) }}<br>
-								이메일: {{ info.userEmail }}
+								이름 : {{ info.userName }}<br>
+								핸드폰 번호 : {{ formatPhone(info.userPhone) }}<br>
+								이메일 : {{ info.userEmail }}
 							</div>
 						</div>
 						<button @click="fnEdit">정보 수정</button>
@@ -604,7 +604,6 @@
 							data: nparmap,
 							dataType: "json",
 							success: function (data) {
-								console.log("✅ 채팅 응답: ", data);
 								self.chatList = data.chatList || [];
 							}
 						});
@@ -621,7 +620,6 @@
 							data: nparmap,
 							dataType: "json",
 							success: function (data) {
-								console.log("✅ 결제 내역 응답: ", data);
 								self.payList = data.payList || [];
 							}
 						});
@@ -629,32 +627,74 @@
 
 					fnRequestRefund(orderId) {
 						const self = this;
-						if (!confirm("해당 결제 건에 대해 환불을 요청하시겠습니까?")) return;
 
-						$.ajax({
-							url: "/mypage/Refund.dox",
-							type: "POST",
-							data: { orderId: orderId },
-							success: function () {
-								alert("환불 요청이 접수되었습니다.");
-								const pay = self.payList.find(p => p.orderId === orderId);
-								if (pay) pay.payStatus = "REQUEST";
+						Swal.fire({
+							title: "환불 요청",
+							text: "해당 결제 건에 대해 환불을 요청하시겠습니까?",
+							icon: "warning",
+							showCancelButton: true,
+							confirmButtonColor: "#d33",
+							cancelButtonColor: "#aaa",
+							confirmButtonText: "요청하기",
+							cancelButtonText: "닫기"
+						}).then((result) => {
+							if (result.isConfirmed) {
+								$.ajax({
+									url: "/mypage/Refund.dox",
+									type: "POST",
+									data: { orderId: orderId },
+									success: function () {
+										const pay = self.payList.find(p => p.orderId === orderId);
+										if (pay) pay.payStatus = "REQUEST";
+
+										Swal.fire({
+											title: "환불 요청 완료",
+											text: "환불 요청이 접수되었습니다.",
+											icon: "success",
+											confirmButtonText: "확인"
+										});
+									},
+									error: function () {
+										Swal.fire("오류", "환불 요청 처리 중 문제가 발생했습니다.", "error");
+									}
+								});
 							}
 						});
 					},
 
 					fnCancelRefund(orderId) {
 						const self = this;
-						if (!confirm("환불 요청을 취소하시겠습니까?")) return;
 
-						$.ajax({
-							url: "/mypage/RefundCancel.dox",
-							type: "POST",
-							data: { orderId: orderId },
-							success: function () {
-								alert("환불 요청이 취소되었습니다.");
-								const pay = self.payList.find(p => p.orderId === orderId);
-								if (pay) pay.payStatus = "PAID";
+						Swal.fire({
+							title: "환불 요청 취소",
+							text: "환불 요청을 취소하시겠습니까?",
+							icon: "warning",
+							showCancelButton: true,
+							confirmButtonColor: "#d33",
+							cancelButtonColor: "#aaa",
+							confirmButtonText: "취소하기",
+							cancelButtonText: "닫기"
+						}).then((result) => {
+							if (result.isConfirmed) {
+								$.ajax({
+									url: "/mypage/RefundCancel.dox",
+									type: "POST",
+									data: { orderId: orderId },
+									success: function () {
+										const pay = self.payList.find(p => p.orderId === orderId);
+										if (pay) pay.payStatus = "PAID";
+
+										Swal.fire({
+											title: "취소 완료",
+											text: "환불 요청이 취소되었습니다.",
+											icon: "success",
+											confirmButtonText: "확인"
+										});
+									},
+									error: function () {
+										Swal.fire("오류", "요청 취소 처리 중 문제가 발생했습니다.", "error");
+									}
+								});
 							}
 						});
 					},
@@ -672,6 +712,11 @@
 					fnEdit() {
 						location.href = "/mypage-edit.do";
 					},
+
+					fnChat(chatNo) {
+						pageChange("/chat/chat.do", {chatNo : chatNo});
+					},
+					
 					fnRemoveUser() {
 						pageChange("/mypage/remove.do", { sessionId: this.sessionId });
 					},
@@ -701,7 +746,12 @@
 					fnWriteReview(item) {
 						const self = this;
 						if (!item.contents?.trim()) {
-							alert("내용을 입력해주세요.");
+							Swal.fire({
+								title: "⚠️ 입력 확인",
+								text: "내용을 입력해주세요.",
+								icon: "warning",
+								confirmButtonText: "확인"
+							});
 							return;
 						}
 						if (!item.score || item.score < 1 || item.score > 5) {
@@ -723,19 +773,43 @@
 							success: function (data) {
 								console.log(data);
 								if (data.result === 'success') {
-									alert("리뷰가 등록되었습니다.");
+									Swal.fire({
+										title: "리뷰 등록 완료",
+										text: "리뷰가 성공적으로 등록되었습니다.",
+										icon: "success",
+										confirmButtonText: "확인"
+									});
 									self.fnLoadReview();
 								} else {
-									alert("리뷰 등록 실패");
+									Swal.fire({
+										title: "실패",
+										text: "리뷰 등록에 실패했습니다.",
+										icon: "error",
+										confirmButtonText: "닫기"
+									});
 								}
+							},
+							error: function () {
+								Swal.fire({
+									title: "오류",
+									text: "리뷰 등록 요청 중 문제가 발생했습니다.",
+									icon: "error",
+									confirmButtonText: "확인"
+								});
 							}
 						});
 					},
+
 					//작성한 리뷰 수정
 					fnEditReview(item) {
 						const self = this;
 						if (!item.contents?.trim()) {
-							alert("리뷰 내용을 입력해주세요.");
+							Swal.fire({
+								title: "⚠️ 입력 확인",
+								text: "리뷰 내용을 입력해주세요.",
+								icon: "warning",
+								confirmButtonText: "확인"
+							});
 							return;
 						}
 						const params = {
@@ -753,31 +827,80 @@
 							data: params,
 							success: function (data) {
 								if (data.result === "success") {
-									alert("리뷰가 수정되었습니다.");
+									Swal.fire({
+										title: "리뷰 수정 완료",
+										text: "리뷰가 성공적으로 수정되었습니다.",
+										icon: "success",
+										confirmButtonText: "확인"
+									});
 									self.fnLoadReview(); // 리스트 새로 불러오기
 								} else {
-									alert("리뷰 수정 실패");
+									Swal.fire({
+										title: "수정 실패",
+										text: "리뷰 수정에 실패했습니다.",
+										icon: "error",
+										confirmButtonText: "닫기"
+									});
 								}
+							},
+							error: function () {
+								Swal.fire({
+									title: "오류 발생",
+									text: "서버와의 통신 중 오류가 발생했습니다.",
+									icon: "error",
+									confirmButtonText: "확인"
+								});
 							}
 						});
 					},
+
 					//작성한 리뷰 삭제
 					fnRemoveReview(reviewNo) {
 						const self = this;
-						if (!confirm("정말 삭제하시겠습니까?")) return;
 
-						$.ajax({
-							url: "/review/remove.dox",
-							type: "POST",
-							dataType: "json",
-							data: { reviewNo: reviewNo },
-							success: function (data) {
-								if (data.result === "success") {
-									alert("리뷰가 삭제되었습니다.");
-									self.fnLoadReview(); // 리스트 새로 불러오기
-								} else {
-									alert("리뷰 삭제 실패");
-								}
+						Swal.fire({
+							title: '리뷰 삭제',
+							text: '정말 삭제하시겠습니까?',
+							icon: 'warning',
+							showCancelButton: true,
+							confirmButtonColor: '#d33',
+							cancelButtonColor: '#aaa',
+							confirmButtonText: '삭제',
+							cancelButtonText: '취소'
+						}).then((result) => {
+							if (result.isConfirmed) {
+								$.ajax({
+									url: "/review/remove.dox",
+									type: "POST",
+									dataType: "json",
+									data: { reviewNo: reviewNo },
+									success: function (data) {
+										if (data.result === "success") {
+											Swal.fire({
+												title: "삭제 완료",
+												text: "리뷰가 삭제되었습니다.",
+												icon: "success",
+												confirmButtonText: "확인"
+											});
+											self.fnLoadReview(); // 리스트 새로 불러오기
+										} else {
+											Swal.fire({
+												title: "삭제 실패",
+												text: "리뷰 삭제에 실패했습니다.",
+												icon: "error",
+												confirmButtonText: "확인"
+											});
+										}
+									},
+									error: function () {
+										Swal.fire({
+											title: "서버 오류",
+											text: "삭제 중 오류가 발생했습니다.",
+											icon: "error",
+											confirmButtonText: "확인"
+										});
+									}
+								});
 							}
 						});
 					},
@@ -785,14 +908,13 @@
 					fnGetContractList() {
 						const self = this;
 						$.ajax({
-							url: "/mypage/contractList.dox",
-							type: "POST",
-							data: { userId: self.sessionId },
-							dataType: "json",
-							success: function (data) {
-								console.log("🔎 계약 내역:", data);
-								self.contractList = data.contractList || [];
-							}
+						url: "/mypage/contractList.dox",
+						type: "POST",
+						data: { userId: self.sessionId },
+						dataType: "json",
+						success: function (data) {
+							self.contractList = data.contractList || [];
+						}
 						});
 					},
 
@@ -806,7 +928,6 @@
 					},
 				},
 				mounted() {
-					console.log("✅ 세션 ID:", this.sessionId); // 🔍 콘솔에서 확인
 					this.fnGetUserInfo();
 					this.fnGetBoardList();
 					this.fnGetChatList();

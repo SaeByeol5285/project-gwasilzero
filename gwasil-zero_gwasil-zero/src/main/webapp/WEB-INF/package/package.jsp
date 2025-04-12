@@ -211,23 +211,29 @@
 				if (!this.sessionId || this.sessionId === "") return false;
 
 				const found = this.purchasedList.find(p => p.packageName === item.packageName);
-				return found && found.payStatus === "PAID";
+
+				// 변호사만 구매 완료 버튼 표시
+				if (this.role === 'lawyer') {
+					return found && found.payStatus === "PAID";
+				}
+
+				// 일반 사용자는 무조건 구매하기 버튼 표시
+				return false;
 			},
 
 			// 구매 가능한지 판단
 			canBuy(item) {
 				if (!this.sessionId || this.sessionId === "") return true;
 
-				// 권한 체크
 				if (item.packageStatus === 'U' && this.role === 'lawyer') return false;
 				if (item.packageStatus === 'L' && this.role === 'user') return false;
 
 				const found = this.purchasedList.find(p => p.packageName === item.packageName);
 
-				// 구매 완료 상태일 경우만 구매 불가
-				if (found && found.payStatus === "PAID") return false;
+				if (this.role === 'lawyer') {
+					if (found && found.payStatus === "PAID") return false;
+				}
 
-				// 환불 완료, 취소 등은 다시 구매 가능
 				return true;
 			},
 
@@ -267,7 +273,7 @@
 				let timer = setInterval(() => {
 					if (popup.closed) {
 						clearInterval(timer);
-						this.fnGetPurchased();  // 🆕 구매완료 목록 갱신
+						this.fnGetPurchased(); 
 					}
 				}, 1000);
 			},
@@ -275,13 +281,13 @@
 			fnGetPurchased() {
 				let self = this;
 				$.ajax({
-					url: "/package/purchased.dox",  // 📝 userId로 구매 내역 조회
+					url: "/package/purchased.dox",  
 					data: {sessionId: self.sessionId},
 					type: "POST",
 					dataType: "json",
 					success: function(res) {
 						if (res.result === "success") {
-							self.purchasedList = res.purchasedList.map(item => item.packageName);
+							self.purchasedList = res.purchasedList
 						}
 					}
 				});

@@ -75,4 +75,8 @@ public interface MypageMapper {
 	
 	void insertChatReview(HashMap<String,Object> map);
 
+	List<Pay> selectPayUsed(HashMap<String, Object> map);
+
+	int selectConsult(HashMap<String, Object> map);
+
 }

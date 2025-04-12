@@ -259,9 +259,17 @@ public class MypageService {
 	public HashMap<String, Object> upadatePhoneConsult(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-	    mypageMapper.updateConsult(map);
-	    mypageMapper.insertChatReview(map);
-	    resultMap.put("result", "success");
+	    
+	    int count = mypageMapper.selectConsult(map);
+	    if (count > 0) {
+	    	resultMap.put("result", "success");   
+	    	mypageMapper.updateConsult(map);
+	    }
+	    else {
+	    	resultMap.put("result", "fail");
+	    	resultMap.put("message", "차감할 패키지가 없습니다.");
+	    }
+	       
 	    return resultMap;
 	}
 
@@ -283,6 +291,15 @@ public class MypageService {
 		    }
 
 		    return resultMap;
+	}
+
+	public HashMap<String, Object> selectPhoneList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		List<Pay> usedList = mypageMapper.selectPayUsed(map);
+		resultMap.put("usedList", usedList);
+		resultMap.put("result", "success");
+		return resultMap;
 	}
 
 }

@@ -23,17 +23,18 @@
 		FROM PAY
 		WHERE 1=1
 		<if test="userId != null and userId != ''">
-			AND USER_ID = #{userId}
+			AND USER_ID = #{sessionId}
 		</if>
 		<if test="lawyerId != null and lawyerId != ''">
-			AND LAWYER_ID = #{lawyerId}
+			AND LAWYER_ID = #{sessionId}
 		</if>
 	</select>
 	
-	<update id="updateAuthEndTime" parameterType="hashmap">
-	    UPDATE lawyer
-	    SET auth_endtime = ADD_MONTHS(SYSDATE, 1)
-	    WHERE lawyer_id = #{lawyerId}
+	<update id="updateAuthEndTime" parameterType="map">
+	    UPDATE LAWYER
+	    SET AUTH_ENDTIME = #{authEndtime}
+	    WHERE LAWYER_ID = #{lawyerId}
 	</update>
+
 
 </mapper>

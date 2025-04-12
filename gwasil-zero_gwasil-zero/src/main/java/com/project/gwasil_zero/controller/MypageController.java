@@ -234,12 +234,12 @@ public class MypageController {
 	                                     HttpServletRequest request) {
 	    Map<String, Object> result = new HashMap<>();
 	    try {
-	        String uploadDir = request.getServletContext().getRealPath("/img/lawyer/");
+	        String uploadDir = request.getServletContext().getRealPath("/img/");
 	        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
 	        File dest = new File(uploadDir, fileName);
 	        file.transferTo(dest);
 
-	        String imgPath = "/img/lawyer/" + fileName;
+	        String imgPath = "/img/" + fileName;
 
 	        // DB 업데이트
 	        Map<String, Object> param = new HashMap<>();
@@ -296,6 +296,15 @@ public class MypageController {
 	@ResponseBody
 	public String removeLawyer(@RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = mypageService.lawyerRemove(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 사용자 전화 상담 패키지 차감 내역
+	@RequestMapping(value = "/lawyerMyPage/usedPhoneList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String userPhoneList(@RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		resultMap = mypageService.selectPhoneList(map);
 		return new Gson().toJson(resultMap);
 	}
 

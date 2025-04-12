@@ -681,8 +681,10 @@
                pageChange("/chat/chat.do", {chatNo : chatNo});
             },
 
-            fnUsePhoneConsult(userId) {
+            fnUsePhoneConsult(chat) {
                const self = this;
+			   let chatNo = chat.chatNo;
+			   let userId = chat.partnerId;
                Swal.fire({
                   title: '전화 상담 1회를 차감하시겠습니까?',
                   icon: 'warning',
@@ -695,8 +697,10 @@
                      url: '/lawyerMyPage/usePhoneConsult.dox',
                      type: 'POST',
                      data: {
-                        lawyerId : self.sessionId,
-                        userId: userId
+                        userId: userId,
+						sessionId : self.sessionId,
+						chatNo : chatNo,
+						contents  : ""
                      },
                      success: function (res) {
                         if (res.result === 'success') {

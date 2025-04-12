@@ -72,6 +72,8 @@ public interface MypageMapper {
 	Lawyer selectLawyerById(HashMap<String, Object> map);
 
 	int deleteLawyerByAdmin(HashMap<String, Object> map);
+	
+	void insertChatReview(HashMap<String,Object> map);
 
 	List<Pay> selectPayUsed(HashMap<String, Object> map);
 

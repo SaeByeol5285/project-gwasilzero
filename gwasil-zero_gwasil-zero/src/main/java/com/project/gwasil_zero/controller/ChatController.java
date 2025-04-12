@@ -127,4 +127,21 @@ public class ChatController {
 	    resultMap = chatService.getTargetName(map);
 	    return resultMap;
 	}
+	
+	@RequestMapping(value = "/chat/getIsEnd.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public HashMap<String, Object> getIsEnd(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = chatService.getIsEnd(map);
+	    return resultMap;
+	}
+	
+	@RequestMapping(value = "/chat/reviewUpdate.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public HashMap<String, Object> reviewUpdate(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = chatService.reviewUpdate(map);
+	    return resultMap;
+	}
+	
 }

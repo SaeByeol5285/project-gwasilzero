@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -171,14 +173,14 @@ public class BoardController {
 	                String cutPath = cutPathDir + "\\cut_" + saveFileName;
 	                String mosaicPath = mosaicPathDir + "\\mosaic_" + saveFileName;
 
-	                // 스크립트 커맨드
+	                // 커맨드 실행
 	                String fullCommand = String.join(" && ",
 	                        "del \"" + mosaicPath + "\"",
-	                        "ffmpeg -y -i \"" + inputPath + "\" -t 40 -vf scale=800:600 \"" + cutPath + "\"",
+	                        "ffmpeg -y -i \"" + inputPath + "\" -vf scale=800:600 \"" + cutPath + "\"",
 	                        "\"" + pythonExec + "\" \"" + scriptPath + "\" \"" + cutPath + "\" \"" + mosaicPath + "\""
 	                );
-	                System.out.println("CMD: " + fullCommand);
 
+	                System.out.println("CMD: " + fullCommand);
 	                ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", fullCommand);
 	                pb.redirectErrorStream(true);
 	                pb.directory(new File("C:\\pixelizer"));
@@ -190,6 +192,17 @@ public class BoardController {
 	                    System.out.println("[CMD] " + line);
 	                }
 	                process.waitFor();
+
+	                // 모자이크 파일이 없으면 cut 비디오 복사로 대체
+	                File mosaicFile = new File(mosaicPath);
+	                if (!mosaicFile.exists()) {
+	                    System.out.println("❌ mosaic 생성 실패 → cut 영상 복사");
+	                    Files.copy(
+	                        new File(cutPath).toPath(),
+	                        mosaicFile.toPath(),
+	                        StandardCopyOption.REPLACE_EXISTING
+	                    );
+	                }
 
 	                // DB 등록 (thumbnail = N)
 	                HashMap<String, Object> fileMap = new HashMap<>();
@@ -269,7 +282,7 @@ public class BoardController {
 	                System.out.println("📌 본문 키워드 분석 결과:");
 	                System.out.println(output.toString());
 
-	                // 🔽 파이썬에서 출력한 JSON 파싱 후 저장
+	                // 파이썬에서 출력한 JSON 파싱 후 저장
 	                Gson gson = new Gson();
 	                Type type = new TypeToken<Map<String, Double>>() {}.getType();
 	                Map<String, Double> keywordMap = gson.fromJson(output.toString(), type);
@@ -370,7 +383,18 @@ public class BoardController {
 	                        System.out.println("[EDIT CMD] " + line);
 	                    }
 	                    process.waitFor();
-
+	                    
+	                 // 모자이크 파일이 없으면 cut 비디오 복사로 대체
+		                File mosaicFile = new File(mosaicPath);
+		                if (!mosaicFile.exists()) {
+		                    System.out.println("❌ mosaic 생성 실패 → cut 영상 복사");
+		                    Files.copy(
+		                        new File(cutPath).toPath(),
+		                        mosaicFile.toPath(),
+		                        StandardCopyOption.REPLACE_EXISTING
+		                    );
+		                }
+	                    
 	                    // DB에 저장
 	                    HashMap<String, Object> fileMap = new HashMap<>();
 	                    fileMap.put("boardNo", boardNo);
@@ -529,5 +553,15 @@ public class BoardController {
 	    resultMap = boardService.reportCheck(map);
 	    return resultMap;
 	}
+	
+	@PostMapping("/board/checkUserPacakge.dox")
+	@ResponseBody
+	public HashMap<String, Object> checkUserPacakge(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = boardService.checkUserPacakge(map);
+	    return resultMap;
+	}
+	
+
 	
 }

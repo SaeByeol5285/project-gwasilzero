@@ -248,6 +248,7 @@
 
 	    ORDER BY cm.time DESC
 	</select>
+
    
    <select id="selectContractList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Contract">
        SELECT 
@@ -354,4 +355,8 @@
 	    ORDER BY PAY_TIME DESC
 	</select>
 
+   	<insert id="insertChatReview" parameterType="hashmap">
+   		insert into review (review_no, user_id, lawyer_id, score, contents, cdate, udate, board_no, chat_no)
+   		values(review_seq.nextval, #{userId}, #{sessionId}, 0, null, sysdate, sysdate, null, #{chatNo})
+   	</insert>
 </mapper>

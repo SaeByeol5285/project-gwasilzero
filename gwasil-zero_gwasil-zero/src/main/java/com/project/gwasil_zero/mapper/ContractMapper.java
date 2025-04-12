@@ -11,4 +11,6 @@ public interface ContractMapper {
 	public void insertContract(HashMap<String, Object> map);
 	
 	public Lawyer selectLawyer(HashMap<String, Object> map);
+	
+	public void updateLawerId(HashMap<String, Object> map);
 }

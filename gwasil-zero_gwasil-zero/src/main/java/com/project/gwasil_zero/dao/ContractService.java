@@ -17,6 +17,7 @@ public class ContractService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			contractMapper.insertContract(map);
+			 contractMapper.updateLawerId(map);
 			resultMap.put("result","success");
 			
 		}catch(Exception e) {

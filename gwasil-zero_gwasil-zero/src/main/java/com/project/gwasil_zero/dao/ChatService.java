@@ -150,5 +150,42 @@ public class ChatService {
         }
         return resultMap;
     }
-	    
+    
+    public HashMap<String, Object> getIsEnd(HashMap<String, Object> map) {
+        HashMap<String, Object> resultMap = new HashMap<>();
+
+        try {
+            Integer reviewNo = chatMapper.getReviewNoByChatNo(map);
+
+            if (reviewNo != null) {
+                resultMap.put("result", "success");
+                resultMap.put("reviewNo", reviewNo);
+            } else {
+                resultMap.put("result", "success");  // 요청 자체는 성공
+                resultMap.put("reviewNo", 0);        // 리뷰가 없음을 명시
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put("result", "error");
+            resultMap.put("message", e.getMessage());
+        }
+
+        return resultMap;
+    }
+	
+    public HashMap<String, Object> reviewUpdate(HashMap<String, Object> map) {
+        HashMap<String, Object> resultMap = new HashMap<>();
+
+        try {
+             chatMapper.updateReview(map);
+             resultMap.put("result", "success");
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put("result", "error");
+            resultMap.put("message", e.getMessage());
+        }
+
+        return resultMap;
+    }
+    
 }

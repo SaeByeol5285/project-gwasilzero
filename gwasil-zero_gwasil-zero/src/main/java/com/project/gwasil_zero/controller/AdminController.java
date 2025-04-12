@@ -232,7 +232,7 @@ public class AdminController {
    	    HashMap<String, Object> resultMap = adminService.getAvailableMonths(map);
    	    return new Gson().toJson(resultMap);
    	}
-
+   	
    	// 일 목록 조회
    	@RequestMapping(value = "/admin/pieAvailableDays.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
    	@ResponseBody

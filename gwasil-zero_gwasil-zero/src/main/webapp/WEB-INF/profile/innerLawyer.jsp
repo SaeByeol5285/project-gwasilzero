@@ -142,6 +142,7 @@
 　　　　　　　.
 `, "color: #7b68ee; font-size: 14px; font-family: monospace; font-weight: bold;");
                             self.list = data.list;
+                            console.log("✅ 변호사 정보 로딩 완료:", data.list);
                             self.index = Math.ceil(data.count / 4);
                         }
                     });

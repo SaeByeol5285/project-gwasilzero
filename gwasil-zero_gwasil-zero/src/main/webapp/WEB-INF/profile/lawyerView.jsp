@@ -250,7 +250,7 @@
                             self.license = data.license;
                             self.mainCaseList = data.mainCaseList || [];
                             self.fnGetReviewList();
-                            // console.log("✅ 변호사 정보 로딩 완료:", data.info.lawyerId);
+                            //console.log("✅ 변호사 정보 로딩 완료:", data.info);
                         }
                     });
                 },

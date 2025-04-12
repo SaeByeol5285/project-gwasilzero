@@ -376,7 +376,6 @@ public class BoardService {
 	        resultMap.put("result", "success");
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        resultMap.put("count", 0);
 	        resultMap.put("result", "fail");
 	    }
 		return resultMap;

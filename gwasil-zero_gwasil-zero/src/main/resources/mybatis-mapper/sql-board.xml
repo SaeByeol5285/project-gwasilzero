@@ -208,7 +208,7 @@
 	    SELECT COUNT(*) 
 	    FROM pay
 	    WHERE user_id = #{userId}
-	      AND package_name = '빠른 답변 패키지'
+	      AND package_name = '전화 상담 패키지'
 	      AND pay_status = 'PAID'
 	</select>
 	

@@ -1,2 +1,2 @@
 
-![시연 영상](./img/demo_scaled.gif)
+![메인 시연](./img/demo_main.gif)

@@ -368,7 +368,7 @@
                   <td>
                      {{ chat.partnerName }}
                      <br>
-                     <button class="edit-btn" @click="fnUsePhoneConsult(chat.partnerId)">
+                     <button class="edit-btn" @click="fnUsePhoneConsult(chat)">
                         전화 상담 차감
                      </button>
                   </td>

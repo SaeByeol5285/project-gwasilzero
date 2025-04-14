@@ -10,6 +10,20 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <title>게시글 신고 관리</title>
     </head>
+	<style>
+		.content-container a {
+            color: #ff6b00;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+        
+        .content-container a:hover {
+            color: #d64d00;
+            text-decoration: underline;
+        }
+		
+	</style>
 
     <body>
         <div id="reportApp">
@@ -33,10 +47,12 @@
 
                                 <!-- 요약 행 -->
                                 <tr>
-                                    <td> <a @click=fnBoardView(item)>{{ item.boardNo }}
-                                            <span v-if="item.count > 1">({{ item.count }}건)</span></a>
-
-                                    </td>
+									<td>
+									  <a href="javascript:void(0);" @click="fnBoardView(item)" style="cursor: pointer;">
+									    {{ item.boardNo }}
+									    <span v-if="item.count > 1">({{ item.count }}건)</span>
+									  </a>
+									</td>
                                     <td>
                                         『{{ item.userIdList[0] }}』
                                         <span v-if="item.count > 1"> 외 {{ item.count - 1 }}명</span>

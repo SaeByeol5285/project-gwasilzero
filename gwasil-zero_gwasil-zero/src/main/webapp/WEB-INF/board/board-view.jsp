@@ -377,9 +377,11 @@
                 </div>
 
                 <div class="view-meta">
-                    <div>
-                        작성자: {{ board.userName }} | 담당 변호사: {{ board.lawyerName }} | 등록일: {{ board.cdate }}
-                    </div>
+					<div>
+					    작성자: {{ board.userName }} |
+					    담당 변호사: {{ board.lawyerName ? board.lawyerName : '미정' }} |
+					    등록일: {{ board.cdate }}
+					</div>
                     <small>
                         조회수: {{ board.cnt }} | 상태: {{ getStatusLabel(board.boardStatus) }}
                     </small>
@@ -473,7 +475,7 @@
                                         style="width: 25px; height: 25px; margin-left: 8px; cursor: pointer;" />
 
                                     <!-- 채팅 아이콘 -->
-                                    <img v-if="sessionType === 'user'" src="/img/icon-chat.png"
+                                    <img v-if="sessionType === 'user'" src="../../img/common/call.png"
                                         @click="startChat(cmt.lawyerId)" title="채팅하기"
                                         style="width: 25px; height: 25px; margin-left: 8px; cursor: pointer;" />
                                 </div>
@@ -747,7 +749,7 @@
                 },
                 startContract(lawyerId) {
                     let self = this;
-                    // 작성자가 아닌 경우 계약 불가
+                    // 작성자인지 확인
                     if (self.sessionId !== self.makerId) {
                         Swal.fire({
                             icon: "warning",
@@ -757,70 +759,117 @@
                         });
                         return;
                     }
-
+					// 이미 계약되었는지 확인
+					if (self.board.lawyerName) {
+					       Swal.fire({
+					           icon: "info",
+					           title: "계약 불가",
+					           text: "이미 담당 변호사가 배정된 사건입니다.",
+					           confirmButtonColor: "#ff5c00"
+					       });
+					       return;
+					   }
+					
                     pageChange("/contract/newContract.do", { lawyerId: lawyerId, boardNo: self.boardNo, userId: self.makerId });
                 },
-                startChat(lawyerId) {
-                    let self = this;
-                    $.ajax({
-                        url: "/board/checkLawyerStatus.dox",
-                        type: "POST",
-                        data: {
-                            sessionId: lawyerId
-                        },
-                        dataType: "json",
-                        success: function (res) {
-                            console.log(res.result);
-                            const isApproved = res.result === "true";
-                            const isAuthValid = res.authResult === "true";
+				startChat(lawyerId) {
+				    let self = this;
 
-                            if (!isApproved) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "승인되지 않음",
-                                    text: "아직 승인되지 않은 변호사 계정입니다.",
-                                    confirmButtonColor: "#ff5c00"
-                                });
-                                return;
-                            }
+				    // 로그인 여부 확인
+				    if (!self.sessionId) {
+				        Swal.fire({
+				            icon: "error",
+				            title: "로그인 필요",
+				            text: "로그인 후 이용해주세요.",
+				            confirmButtonColor: "#ff5c00"
+				        }).then(() => {
+				            location.href = "/user/login.do";
+				        });
+				        return;
+				    }
 
-                            if (!isAuthValid) {
-                                Swal.fire({
-                                    icon: "info",
-                                    title: "채팅 불가능",
-                                    text: "변호사 등록기간이 만료된 변호사와는 채팅할 수 없습니다.",
-                                    confirmButtonColor: "#ff5c00"
-                                });
-                                return;
-                            }
+				    // 패키지 구매 여부 확인
+				    $.ajax({
+				        url: "/board/checkUserPacakge.dox",
+				        type: "POST",
+				        data: { userId: self.sessionId },
+				        success: function (pkgRes) {
+				            if (pkgRes.count == 0) {
+				                Swal.fire({
+				                    icon: "error",
+				                    title: "패키지 없음",
+				                    text: "전화 상담 패키지를 구매 후 이용해주세요.",
+				                    confirmButtonColor: "#ff5c00"
+				                }).then(() => {
+				                    location.href = "/package/package.do";
+				                });
+				                return;
+				            }
 
-                            // 조건 통과
-                            $.ajax({
-                                url: "/chat/findOrCreate.dox",
-                                type: "POST",
-                                data: {
-                                    userId: self.sessionId,
-                                    lawyerId: lawyerId
-                                },
-                                success: function (res) {
-                                    let chatNo = res.chatNo;
-                                    pageChange("/chat/chat.do", {
-                                        chatNo: chatNo
-                                    });
-                                }
-                            });
+				            // 변호사 상태 확인
+				            $.ajax({
+				                url: "/board/checkLawyerStatus.dox",
+				                type: "POST",
+				                data: { sessionId: lawyerId },
+				                dataType: "json",
+				                success: function (res) {
+				                    const isApproved = res.result === "true";
+				                    const isAuthValid = res.authResult === "true";
 
-                        },
-                        error: function () {
-                            Swal.fire({
-                                icon: "error",
-                                title: "요청 실패",
-                                text: "변호사 상태 확인 요청에 실패했습니다.",
-                                confirmButtonColor: "#ff5c00"
-                            });
-                        }
-                    });
-                },
+				                    if (!isApproved) {
+				                        Swal.fire({
+				                            icon: "error",
+				                            title: "승인되지 않음",
+				                            text: "아직 승인되지 않은 변호사 계정입니다.",
+				                            confirmButtonColor: "#ff5c00"
+				                        });
+				                        return;
+				                    }
+
+				                    if (!isAuthValid) {
+				                        Swal.fire({
+				                            icon: "info",
+				                            title: "채팅 불가능",
+				                            text: "변호사 등록기간이 만료된 변호사와는 채팅할 수 없습니다.",
+				                            confirmButtonColor: "#ff5c00"
+				                        });
+				                        return;
+				                    }
+
+				                    //채팅
+				                    $.ajax({
+				                        url: "/chat/findOrCreate.dox",
+				                        type: "POST",
+				                        data: {
+				                            userId: self.sessionId,
+				                            lawyerId: lawyerId
+				                        },
+				                        success: function (res) {
+				                            let chatNo = res.chatNo;
+				                            pageChange("/chat/chat.do", { chatNo: chatNo });
+				                        }
+				                    });
+				                },
+				                error: function () {
+				                    Swal.fire({
+				                        icon: "error",
+				                        title: "요청 실패",
+				                        text: "변호사 상태 확인 요청에 실패했습니다.",
+				                        confirmButtonColor: "#ff5c00"
+				                    });
+				                }
+				            });
+				        },
+				        error: function () {
+				            Swal.fire({
+				                icon: "error",
+				                title: "요청 실패",
+				                text: "패키지 확인 중 오류가 발생했습니다.",
+				                confirmButtonColor: "#ff5c00"
+				            });
+				        }
+				    });
+				},
                 deleteComment(cmtNo) {
                     const self = this;
 

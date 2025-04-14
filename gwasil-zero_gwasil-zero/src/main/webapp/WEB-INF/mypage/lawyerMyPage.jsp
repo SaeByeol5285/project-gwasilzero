@@ -393,7 +393,7 @@
                <tbody>
                   <tr v-for="item in usedList" :key="item.orderId">
                      <td>{{ item.payTime }}</td>
-                     <td>{{ item.userId }}</td>
+                     <td>{{ item.userName }}</td>
                      <td>사용됨</td>
                   </tr>
                   <tr v-if="!usedList.length">

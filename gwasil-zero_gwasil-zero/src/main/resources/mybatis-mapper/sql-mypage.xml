@@ -190,7 +190,8 @@
     <select id="selectLawyerPay" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
       SELECT *
       FROM PAY
-      WHERE LAWYER_ID = #{sessionId} 
+      WHERE LAWYER_ID = #{sessionId}
+      AND (USER_ID IS NULL OR TRIM(USER_ID) = '')	
    </select>
    
    <update id="updatePayStatus" parameterType="hashmap">
@@ -343,11 +344,12 @@
 	<select id="selectPayUsed" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
 	    SELECT 
 	        ORDER_ID,
-	        USER_ID,
 	        PAY_TIME,
 	        PACKAGE_NAME,
-	        PAY_STATUS
-	    FROM PAY
+	        PAY_STATUS,
+	        USER_NAME
+	    FROM PAY P
+	    INNER JOIN TBL_USER U ON P.USER_ID = U.USER_ID
 	    WHERE 
 	        LAWYER_ID = #{lawyerId}
 	        AND PACKAGE_NAME = '전화 상담 패키지'

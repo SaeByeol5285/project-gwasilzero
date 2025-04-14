@@ -697,10 +697,11 @@
                      url: '/lawyerMyPage/usePhoneConsult.dox',
                      type: 'POST',
                      data: {
+                        lawyerId : self.sessionId,
                         userId: userId,
-						sessionId : self.sessionId,
-						chatNo : chatNo,
-						contents  : ""
+                        sessionId : self.sessionId,
+                        chatNo : chatNo,
+                        contents  : ""
                      },
                      success: function (res) {
                         if (res.result === 'success') {

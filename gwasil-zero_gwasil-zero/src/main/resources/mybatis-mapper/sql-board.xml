@@ -214,7 +214,7 @@
 	  SET cnt = NVL(cnt, 0) + 1
 	  WHERE board_no = #{boardNo}
 	</update>
-	<!--빠답패-->
+	<!--빠답패 -->
 	<select id="selectPackageCount" parameterType="hashmap" resultType="int">
 	    SELECT COUNT(*) 
 	    FROM pay

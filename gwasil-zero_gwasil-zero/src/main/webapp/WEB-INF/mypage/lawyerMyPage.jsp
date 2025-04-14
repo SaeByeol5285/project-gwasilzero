@@ -51,6 +51,7 @@
       .edit-btn,
       .withdraw-btn {
       background-color: #FF5722;
+      
       border: none;
       border-radius: 8px;
       padding: 6px 12px;

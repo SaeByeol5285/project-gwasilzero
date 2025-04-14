@@ -59,12 +59,13 @@
 					text-align: center;
 					border: 1px solid #eee;
 					transition: all 0.2s ease;
-					cursor: default;
+					
 				}
 
 				.box:hover {
 					transform: translateY(-4px);
 					box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+					cursor: pointer;
 				}
 
 				table {

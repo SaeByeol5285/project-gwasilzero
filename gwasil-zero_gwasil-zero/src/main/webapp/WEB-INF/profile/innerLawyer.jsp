@@ -112,7 +112,8 @@
                     searchOption: "all",
                     index: 0,
                     page: 1,
-                    currentPage: 'innerLawyer'
+                    currentPage: 'innerLawyer',
+                    sessionType : "${sessionType}"
                 };
             },
             methods: {

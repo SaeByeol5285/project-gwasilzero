@@ -102,8 +102,8 @@
 </head>
 <body>
     <div id="editApp">
+        <jsp:include page="../admin/layout.jsp" />
         <div class="layout">
-            <jsp:include page="../admin/layout.jsp" />
             <div class="content">
                 <div class="form-wrapper">
                     <div class="form-title">패키지 수정</div>

@@ -274,22 +274,22 @@
                     <div class="profile-detail">
                         <div class="section">
                             <h3>소개</h3>
-                            <div v-if="info.lawyerInfo" v-html="info.lawyerInfo">{{ info.lawyerInfo }}</div>
+                            <div v-if="hasInfo" v-html="info.lawyerInfo">{{ info.lawyerInfo }}</div>
                             <div v-else class="no-data">작성된 소개가 없습니다.</div>
                         </div>
                         <div class="section">
                             <h3>경력</h3>
-                            <div v-if="info.lawyerCareer" v-html="info.lawyerCareer">{{ info.lawyerCareer }}</div>
+                            <div v-if="hasCareer" v-html="info.lawyerCareer">{{ info.lawyerCareer }}</div>
                             <div v-else class="no-data">작성된 경력이 없습니다.</div>
                         </div>
                         <div class="section">
                             <h3>주요 업무사례</h3>
-                            <div v-if="info.lawyerTask" v-html="info.lawyerTask">{{ info.lawyerTask }}</div>
+                            <div v-if="hasTask" v-html="info.lawyerTask">{{ info.lawyerTask }}</div>
                             <div v-else class="no-data">작성된 업무사례가 없습니다.</div>
                         </div>
                         <div class="section">
                             <h3>학력</h3>
-                            <div v-if="info.lawyerEdu" v-html="info.lawyerEdu">{{ info.lawyerEdu }}</div>
+                            <div v-if="hasEdu" v-html="info.lawyerEdu">{{ info.lawyerEdu }}</div>
                             <div v-else class="no-data">작성된 학력이 없습니다.</div>
                         </div>
                         <div class="section">
@@ -344,6 +344,20 @@
                     sessionId: "${sessionId}"
                 };
             },
+            computed: {
+                hasInfo() {
+                    return this.info.lawyerInfo && this.removeEmptyTag(this.info.lawyerInfo).trim() !== '';
+                },
+                hasCareer() {
+                    return this.info.lawyerCareer && this.removeEmptyTag(this.info.lawyerCareer).trim() !== '';
+                },
+                hasEdu() {
+                    return this.info.lawyerEdu && this.removeEmptyTag(this.info.lawyerEdu).trim() !== '';
+                },
+                hasTask() {
+                    return this.info.lawyerTask && this.removeEmptyTag(this.info.lawyerTask).trim() !== '';
+                }
+            },
             methods: {
                 fnGetLawyerInfo() {
                     const self = this;
@@ -383,6 +397,12 @@
                 },
                 fnBack() {
                     history.back();
+                },
+                removeEmptyTag(html) {
+                    // <p><br></p> 같이 아무 의미 없는 태그 제거
+                    return html.replace(/<p><br\s*\/?><\/p>/gi, '')
+                            .replace(/&nbsp;/gi, '')
+                            .replace(/\s+/g, '');
                 }
             },
             mounted() {

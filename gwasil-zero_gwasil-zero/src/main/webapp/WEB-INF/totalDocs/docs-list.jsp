@@ -45,7 +45,6 @@
 						<select v-model="searchOption" class="search-select">
 							<option value="all">:: 전체 ::</option>
 							<option value="title">제목</option>
-							<option value="writer">작성자</option>
 						</select>
 						<input v-model="keyword" @keyup.enter="fnNoticeList" class="search-input" placeholder="검색어 입력">
 						<button @click="resetPage = true; fnNoticeList" class="btn btn-primary">검색</button>
@@ -388,6 +387,9 @@
 			watch: {
 				currentTab(newVal) {
 					this.page = 1;
+					this.keyword = "";
+					this.searchOption = "all";
+
 					if (newVal === 'notice') {
 						this.fnNoticeList();
 					} else if (newVal === 'help') {
@@ -419,7 +421,7 @@
 				}
 				window.addEventListener("scroll", this.handleScroll);
 			},
-			
+
 		});
 		app.mount("#app");
 	</script>

@@ -285,7 +285,25 @@
 			fnChat2(item) {
 			    let self = this;
 
-			    // 패키지 구매 여부 확인
+			    // 변호사일 경우 패키지 체크 생략
+			    if (self.sessionType === 'lawyer') {
+			        // 읽음 처리 후 채팅방 이동
+			        $.ajax({
+			            url: "/notification/read.dox",
+			            type: "POST",
+			            data: { notiNo: item.notiNo },
+			            success: () => {
+			                if (item.chatNo) {
+			                    location.href = "/chat/chat.do?chatNo=" + item.chatNo;
+			                } else {
+			                    alert("채팅방 정보가 없습니다.");
+			                }
+			            }
+			        });
+			        return;
+			    }
+
+			    // 일반 사용자일 경우 패키지 확인
 			    $.ajax({
 			        url: "/board/checkUserPacakge.dox",
 			        type: "POST",

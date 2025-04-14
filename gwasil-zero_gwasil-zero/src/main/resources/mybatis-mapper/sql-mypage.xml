@@ -29,12 +29,17 @@
            B.USER_ID = #{userId} AND BOARD_STATUS != 'DELETE'
    </select>
    
-   <select id="selectUserChatList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
+  <select id="selectUserChatList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
        SELECT
           cm.chat_no,
           cm.sender_id,
           cm.message,
           TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
+          
+          CASE 
+               WHEN c.sender_id = #{sessionId} THEN c.receiver_id
+               ELSE c.sender_id
+         END AS partner_id,
       
           CASE 
               WHEN c.sender_id = #{sessionId} THEN l2.lawyer_name

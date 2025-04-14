@@ -9,7 +9,8 @@
       <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       <script src="/js/page-change.js"></script>
-      <title>과실 ZERO - 교통사고 전문 법률 플랫폼</title>
+	  <link rel="icon" type="image/png" href="/img/common/logo3.png">
+	  		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
    </head>
    <style>
       #app {
@@ -394,7 +395,7 @@
                <tbody>
                   <tr v-for="item in usedList" :key="item.orderId">
                      <td>{{ item.payTime }}</td>
-                     <td>{{ item.userId }}</td>
+                     <td>{{ item.userName }}</td>
                      <td>사용됨</td>
                   </tr>
                   <tr v-if="!usedList.length">
@@ -489,7 +490,6 @@
                   type: "POST",
                   data: nparmap,
                   success: function (data) {
-                     console.log(data);
                      self.view = data.view;
 
                      if (!self.view.counsel) {
@@ -564,7 +564,6 @@
                   type: "POST",
                   data: nparmap,
                   success: function (data) {
-                     console.log("확인 : ", data);
                      if (data.result == "success") {
                         self.boardList = data.boardList;
                         self.index = Math.max(1, Math.ceil(data.count / self.pageSize));
@@ -586,7 +585,6 @@
                   data: { sessionId: self.sessionId },
                   dataType: "json",
                   success: function(data) {
-                     console.log(data);
                      self.lawyerPayList = data.lawyerPayList; 
                   },
                   error: function() {

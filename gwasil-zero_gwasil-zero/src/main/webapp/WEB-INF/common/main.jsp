@@ -12,7 +12,8 @@
         <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <title>main.jsp</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
     </head>
     <style>
         p > p{
@@ -198,7 +199,6 @@
                         type: "POST",
                         success: function (data) {
                             if (data.result === "success") {
-                                console.log(data);
                                 self.reviewList = self.reviewList = data.list;
                             } else {
                                 alert("review 불러오기 실패");
@@ -232,7 +232,6 @@
                         dataType: "json",
                         success(data) {
                             if (data.result === "success") {
-                                console.log(data);
                                 self.lawyerList = data.list;
                                 self.$nextTick(() => {
                                     self.initSwiper();
@@ -460,7 +459,6 @@
                 this.fnGetLawyerList();
                 this.fnGetBookmarkList();
                 this.fnGetReviewList();
-                console.log("메인에서 :", this.sessionId);
                 //북마크 갱신용
                 window.addEventListener('storage', (e) => {
                     if (e.key === 'bookmarkUpdated') {

@@ -22,7 +22,6 @@ public class BookmarkService {
 			resultMap.put("list", bm);
 			resultMap.put("result","success");
 		}catch(Exception e) {
-			System.out.println(e.getMessage());
 			resultMap.put("result","failed");
 		}
 		return resultMap;
@@ -34,7 +33,6 @@ public class BookmarkService {
 			bookmarkMapper.insertBookmark(map);
 			resultMap.put("result","성공적으로 등록되었습니다");
 		}catch(Exception e) {
-			System.out.println(e.getMessage());
 			resultMap.put("result","등록 실패");
 		}
 		return resultMap;
@@ -46,7 +44,6 @@ public class BookmarkService {
 			bookmarkMapper.deleteBookmark(map);
 			resultMap.put("result","성공적으로 삭제되었습니다");
 		}catch(Exception e) {
-			System.out.println(e.getMessage());
 			resultMap.put("result","삭제 실패");
 		}
 		return resultMap;

@@ -12,7 +12,8 @@
 			<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 			<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 			<script src="/js/page-change.js"></script>
-			<title>마이페이지</title>
+			<link rel="icon" type="image/png" href="/img/common/logo3.png">
+					      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
 			<style>
 				#app {
 					max-width: 1000px;
@@ -518,7 +519,6 @@
 							data: { userId: self.sessionId },
 							dataType: "json",
 							success: function (data) {
-								console.log(data);
 								if (data.user && data.user.length > 0) {
 									self.info = data.user[0];
 								}
@@ -538,7 +538,6 @@
 							data: nparmap,
 							dataType: "json",
 							success: function (data) {
-								console.log("✅ 글 : ", data);
 								self.boardList = data.boardList;
 								self.index = Math.ceil(data.boardCnt / self.pageSize);
 							}
@@ -554,7 +553,6 @@
 							dataType: "json",
 							success: function (data) {
 								if (data.result === "success" && data.notifications.length > 0) {
-									console.log("알림", data);
 									const message = data.notifications[0].contents;
 									Swal.fire({
 										title: '📢 알림',
@@ -734,9 +732,7 @@
 							dataType: "json",
 							data: params,
 							success: function (data) {
-								console.log(data);
 								if (data.result == "success") {
-									console.log("리뷰 리스트" + data);
 									self.availReviewList = data.availReviewList;
 									self.writtenReviewList = data.writtenReviewList;
 									self.isEditing = false;
@@ -778,7 +774,6 @@
 							dataType: "json",
 							data: params,
 							success: function (data) {
-								console.log(data);
 								if (data.result === 'success') {
 									Swal.fire({
 										title: "리뷰 등록 완료",

@@ -191,7 +191,6 @@ public class BoardController {
 	                        "\"" + pythonExec + "\" \"" + scriptPath + "\" \"" + cutPath + "\" \"" + mosaicPath + "\""
 	                );
 
-	                System.out.println("CMD: " + fullCommand);
 	                ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", fullCommand);
 	                pb.redirectErrorStream(true);
 	                pb.directory(new File("C:\\pixelizer"));
@@ -200,14 +199,12 @@ public class BoardController {
 	                BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
 	                String line;
 	                while ((line = in.readLine()) != null) {
-	                    System.out.println("[CMD] " + line);
 	                }
 	                process.waitFor();
 
 	                // 모자이크 파일이 없으면 cut 비디오 복사로 대체
 	                File mosaicFile = new File(mosaicPath);
 	                if (!mosaicFile.exists()) {
-	                    System.out.println("❌ mosaic 생성 실패 → cut 영상 복사");
 	                    Files.copy(
 	                        new File(cutPath).toPath(),
 	                        mosaicFile.toPath(),
@@ -240,7 +237,6 @@ public class BoardController {
 	                    "ffmpeg -y -i \"%s\" -ss 00:00:02.000 -vframes 1 \"%s\"",
 	                    lastMosaicPath, thumbnailPath
 	            );
-	            System.out.println("THUMB CMD: " + thumbCommand);
 
 	            ProcessBuilder thumbPB = new ProcessBuilder("cmd.exe", "/c", thumbCommand);
 	            thumbPB.redirectErrorStream(true);
@@ -249,7 +245,6 @@ public class BoardController {
 	            BufferedReader thumbIn = new BufferedReader(new InputStreamReader(thumbProcess.getInputStream()));
 	            String thumbLine;
 	            while ((thumbLine = thumbIn.readLine()) != null) {
-	                System.out.println("[THUMB] " + thumbLine);
 	            }
 	            thumbProcess.waitFor();
 
@@ -290,7 +285,6 @@ public class BoardController {
 
 	            int exitCode = processText.waitFor();
 	            if (exitCode == 0) {
-	                System.out.println("📌 본문 키워드 분석 결과:");
 	                System.out.println(output.toString());
 
 	                // 파이썬에서 출력한 JSON 파싱 후 저장
@@ -307,11 +301,9 @@ public class BoardController {
 
 	                boardService.saveBoardKeywords(boardNo, keywords);
 	            } else {
-	                System.out.println("❌ 키워드 분석 실패 (code: " + exitCode + ")");
 	            }
 
 	        } catch (Exception e) {
-	            System.out.println("❗ 키워드 분석 중 예외 발생");
 	            e.printStackTrace();
 	        }
 	        
@@ -391,14 +383,12 @@ public class BoardController {
 	                    BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
 	                    String line;
 	                    while ((line = in.readLine()) != null) {
-	                        System.out.println("[EDIT CMD] " + line);
 	                    }
 	                    process.waitFor();
 	                    
 	                 // 모자이크 파일이 없으면 cut 비디오 복사로 대체
 		                File mosaicFile = new File(mosaicPath);
 		                if (!mosaicFile.exists()) {
-		                    System.out.println("❌ mosaic 생성 실패 → cut 영상 복사");
 		                    Files.copy(
 		                        new File(cutPath).toPath(),
 		                        mosaicFile.toPath(),
@@ -430,7 +420,7 @@ public class BoardController {
 	            ProcessBuilder pbText = new ProcessBuilder(
 	            	    "python",
 	            	    textScriptPath,
-	            	    tempTextFile.getAbsolutePath()  // <- 본문 파일 경로만 넘김
+	            	    tempTextFile.getAbsolutePath()  //  본문 파일 경로만 넘김
 	            	);
 
 	            pbText.redirectErrorStream(true);
@@ -447,7 +437,6 @@ public class BoardController {
 
 	            int exitCode = processText.waitFor();
 	            if (exitCode == 0) {
-	            	System.out.println("📌 본문 키워드 분석 결과:");
 	                System.out.println(output.toString());
 
 	                Gson gson = new Gson();
@@ -464,11 +453,10 @@ public class BoardController {
 
 					boardService.updateBoardKeywords(boardNo, keywords);
 	            } else {
-	                System.out.println(" 키워드 분석 실패 (code: " + exitCode + ")");
+
 	            }
 
 	        } catch (Exception e) {
-	            System.out.println("❗ 키워드 분석 중 예외 발생");
 	            e.printStackTrace();
 	        }
 	        

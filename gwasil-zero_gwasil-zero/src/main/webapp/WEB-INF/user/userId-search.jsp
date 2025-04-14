@@ -11,7 +11,8 @@
       crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <title>아이디 찾기</title>
+	<link rel="icon" type="image/png" href="/img/common/logo3.png">
+			      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
 
     <style>
       #app {
@@ -152,7 +153,6 @@
             phone: this.user.userPhone
           }, function (rsp) {
             if (rsp.success) {
-              console.log("✅ 본인 인증 성공");
               self.isAuthenticated = true;
             } else {
               Swal.fire({
@@ -198,7 +198,6 @@
         }
       },
       mounted() {
-        console.log("Vue instance mounted");
       }
     });
 

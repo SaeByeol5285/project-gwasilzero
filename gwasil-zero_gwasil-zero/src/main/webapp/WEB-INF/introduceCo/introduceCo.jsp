@@ -9,7 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="/css/introduceCo.css">
-    <title>introduceCo</title>
+	<link rel="icon" type="image/png" href="/img/common/logo3.png">
+	      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
     <style>
 
     </style>

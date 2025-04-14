@@ -168,7 +168,6 @@ public class UserController {
 		session.setAttribute("sessionId", profile.get("nickname"));
 		session.setAttribute("sessionType", "user");
 
-		System.out.println("✅ 카카오 닉네임: " + profile.get("nickname"));
 
 		// 4. 최소 응답
 		HashMap<String, Object> result = new HashMap<>();
@@ -202,7 +201,6 @@ public class UserController {
 		session.setAttribute("sessionId", map.get("email")); // 또는 map.get("id") 등
 		session.setAttribute("sessionName", map.get("name"));
 		session.setAttribute("sessionType", "user"); // 권한도 설정해두면 좋음
-		System.out.println(map.get("email") + ", " + map.get("name"));
 		HashMap<String, Object> result = new HashMap<>();
 		result.put("result", "success");
 		result.put("id", map.get("email"));
@@ -244,24 +242,22 @@ public class UserController {
 					newUser.put("USER_EMAIL", email);
 					newUser.put("USER_NAME", name);
 					newUser.put("USER_STATUS", "active");
-					newUser.put("USER_PASSWORD", "google-login"); // 🔐 NOT NULL 처리
-					newUser.put("USER_PHONE", "010-0000-0000"); // 📱 NOT NULL 처리
+					newUser.put("USER_PASSWORD", "google-login"); // NOT NULL 처리
+					newUser.put("USER_PHONE", "010-0000-0000"); // NOT NULL 처리
 
 					userService.insertGoogleUser(newUser);
 
 					session.setAttribute("sessionId", newUser.get("USER_ID"));
-					session.setAttribute("sessionType", "user"); // ✅ 여기 추가
+					session.setAttribute("sessionType", "user"); 
 				} else {
 					session.setAttribute("sessionId", user.get("USER_ID"));
-					session.setAttribute("sessionType", "user"); // ✅ 여기 추가
+					session.setAttribute("sessionType", "user"); 
 				}
 
 				session.setAttribute("loginType", "google");
 
-				System.out.println("✅ Google 로그인 성공: " + email + ", 이름: " + name);
 				return "redirect:/common/main.do";
 			} else {
-				System.out.println("Invalid ID token.");
 				return "redirect:/user/login.do";
 			}
 		} catch (Exception e) {

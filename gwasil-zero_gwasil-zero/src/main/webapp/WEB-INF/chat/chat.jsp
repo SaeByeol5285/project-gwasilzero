@@ -10,6 +10,8 @@
   <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
           <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		  <link rel="icon" type="image/png" href="/img/common/logo3.png">
+		        <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -232,14 +234,12 @@
         const socket = new SockJS('/ws-chat');
         this.stompClient = Stomp.over(socket);
         this.stompClient.connect({}, (frame) => {
-          console.log("WebSocket 연결 성공");
 		  
 		  //chatNo로 연결
 		  this.stompClient.subscribe('/topic/chat/' + this.chatNo, (message) => {
 		        this.showMessage(JSON.parse(message.body));
 		      });
         }, (error) => {
-          console.error("WebSocket 연결 실패", error);
         });
       },
 	  handleSend() {
@@ -385,7 +385,6 @@
 				senderId : this.senderId
 			  },
 		      success: (data) => {
-				console.log(data.targetName);
 		        this.targetName = data.targetName;
 		      }
 		    });
@@ -475,7 +474,6 @@
 
     },
     mounted() {
-		console.log(this.sessionType);
       	this.connect();
       	this.loadChatHistory();
 	 	 this.getTargetName();

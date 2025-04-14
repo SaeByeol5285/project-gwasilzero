@@ -26,7 +26,6 @@ public class CommonService {
 			resultMap.put("list", boardList);
 			resultMap.put("result", "success");
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
 			resultMap.put("result", "failed");
 		}
 
@@ -43,7 +42,6 @@ public class CommonService {
 			resultMap.put("list", list);
 			resultMap.put("result", "success");
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
 			resultMap.put("result", "failed");
 		}
 

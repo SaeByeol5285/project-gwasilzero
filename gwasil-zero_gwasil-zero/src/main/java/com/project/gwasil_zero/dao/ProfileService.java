@@ -63,8 +63,6 @@ public class ProfileService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			Lawyer info = profileMapper.selectLawyer(map);
-//			System.out.println("mainCategoryName1 = " + info.getMainCategoryName1());
-//			System.out.println("mainCategoryName2 = " + info.getMainCategoryName2());
 			List<License> license = profileMapper.lawyerLicenseList(map);
 			List<Board> boardList = profileMapper.lawyerBoardList(map);
 			List<BoardFile> mainCaseList = profileMapper.lawyerBoardFileList(map);

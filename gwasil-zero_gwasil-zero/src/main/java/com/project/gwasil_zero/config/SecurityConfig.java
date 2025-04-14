@@ -28,11 +28,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors() // ✅ CORS 설정 활성화
+            .cors() //  CORS 설정 활성화
             .and()
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // ✅ preflight OPTIONS 허용
-                .anyRequest().permitAll()                               // ✅ 모든 요청 허용
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // preflight OPTIONS 허용
+                .anyRequest().permitAll()                               //  모든 요청 허용
             )
             .csrf(csrf -> csrf.disable())
             .formLogin(form -> form.disable())
@@ -50,11 +50,11 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOriginPatterns(List.of("*")); // ✅ credentials와 함께 쓸 수 있는 방식
+        config.setAllowedOriginPatterns(List.of("*")); // credentials와 함께 쓸 수 있는 방식
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));        // ✅ 모든 헤더 허용
+        config.setAllowedHeaders(List.of("*"));        //  모든 헤더 허용
         config.setExposedHeaders(List.of("Authorization")); // 필요한 경우 노출
-        config.setMaxAge(3600L); // ✅ preflight 결과 캐싱 시간 (1시간)
+        config.setMaxAge(3600L); //  preflight 결과 캐싱 시간 (1시간)
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

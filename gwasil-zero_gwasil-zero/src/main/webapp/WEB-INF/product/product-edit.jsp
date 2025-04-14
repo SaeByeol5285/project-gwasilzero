@@ -3,7 +3,8 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>패키지 수정</title>
+	<link rel="icon" type="image/png" href="/img/common/logo3.png">
+			      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
     
     <!-- 라이브러리 -->
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -11,6 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/common.css">
+	
     <!-- 상품 관리 선택 유지 -->
     <%
     request.setAttribute("currentPage", "product");

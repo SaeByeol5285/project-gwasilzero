@@ -588,8 +588,6 @@
                         },
                         dataType: "json",
                         success: function (data) {
-                            console.log(data);
-                            console.log(self.sessionType);
                             self.board = data.board;
                             self.boardTitle = data.board.boardTitle;
                             self.makerId = data.board.userId;
@@ -634,7 +632,6 @@
                         dataType: "json",
                         success: function (res) {
                             const isApproved = res.result === "true";
-                            console.log(res.result);
                             const isAuthValid = res.authResult === "true";
 
                             if (!isApproved) {
@@ -738,7 +735,6 @@
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
-                            console.log(data);
                             if (data.result == "success") {
                                 self.list = data.list;
                             } else {
@@ -1025,7 +1021,6 @@
                             }
                         },
                         error: function () {
-                            console.error("조회수 증가 실패");
                         }
                     });
                 },
@@ -1211,7 +1206,6 @@
             },
             mounted() {
                 let self = this;
-                console.log(self.sessionType);
                 self.fnGetBoard();
                 self.fnGetBoardWithKeyword();
                 self.fnIncreaseViewCount();
@@ -1228,7 +1222,6 @@
                         title: boardTitle
                     };
 
-                    console.log("📌 board-view (딜레이 저장) ▶", item);
 
                     let list = JSON.parse(localStorage.getItem('recentViewed') || '[]');
                     list = list.filter(i => !(i.type === item.type && i.id === item.id));

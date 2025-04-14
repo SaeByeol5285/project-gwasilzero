@@ -518,6 +518,7 @@
 							data: { userId: self.sessionId },
 							dataType: "json",
 							success: function (data) {
+								console.log(data);
 								if (data.user && data.user.length > 0) {
 									self.info = data.user[0];
 								}
@@ -715,9 +716,9 @@
 					},
 
 					fnChat(chatNo) {
-						pageChange("/chat/chat.do", {chatNo : chatNo});
+						pageChange("/chat/chat.do", { chatNo: chatNo });
 					},
-					
+
 					fnRemoveUser() {
 						pageChange("/mypage/remove.do", { sessionId: this.sessionId });
 					},
@@ -748,7 +749,7 @@
 						const self = this;
 						if (!item.contents?.trim()) {
 							Swal.fire({
-								title: "⚠️ 입력 확인",
+								title: "입력 확인",
 								text: "내용을 입력해주세요.",
 								icon: "warning",
 								confirmButtonText: "확인"
@@ -756,7 +757,12 @@
 							return;
 						}
 						if (!item.score || item.score < 1 || item.score > 5) {
-							alert("평점을 선택해주세요.");
+							Swal.fire({
+								title: "입력 확인",
+								text: "평점을 선택해주세요.",
+								icon: "warning",
+								confirmButtonText: "확인"
+							});
 							return;
 						}
 						const params = {
@@ -909,13 +915,13 @@
 					fnGetContractList() {
 						const self = this;
 						$.ajax({
-						url: "/mypage/contractList.dox",
-						type: "POST",
-						data: { userId: self.sessionId },
-						dataType: "json",
-						success: function (data) {
-							self.contractList = data.contractList || [];
-						}
+							url: "/mypage/contractList.dox",
+							type: "POST",
+							data: { userId: self.sessionId },
+							dataType: "json",
+							success: function (data) {
+								self.contractList = data.contractList || [];
+							}
 						});
 					},
 

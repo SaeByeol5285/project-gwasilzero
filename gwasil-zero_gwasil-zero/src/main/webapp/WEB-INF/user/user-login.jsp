@@ -177,7 +177,7 @@
                                     text: "환영합니다!",
                                     confirmButtonText: "확인"
                                 }).then(() => {
-                                    location.href = "/common/main.do";
+                                    location.href = res.redirect || "/common/main.do"; // 리디렉션 URI 있으면(가이드라인에서 글쓰기)거기로, 없으면 메인
                                 });
                             } else if (res.message && res.message.includes("탈퇴한 계정입니다")) {
                                 Swal.fire({

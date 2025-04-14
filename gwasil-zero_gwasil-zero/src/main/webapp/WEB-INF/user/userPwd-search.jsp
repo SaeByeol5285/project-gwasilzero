@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/css/common.css">
     <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>비밀번호 찾기</title>
     <style>
       #app {
@@ -94,7 +95,12 @@
               self.isAuthenticated = true;
               console.log("✅ 인증 성공");
             } else {
-              alert("❌ 본인 인증에 실패했습니다.");
+              Swal.fire({
+                icon: "error",
+                title: "인증 실패",
+                text: "❌ 본인 인증에 실패했습니다.",
+                confirmButtonText: "확인"
+              });
             }
           });
         },
@@ -111,15 +117,26 @@
                 sessionStorage.setItem("recoverUserId", self.user.userId);
                 location.href = "/user/reMakePwd.do";
               } else {
-                alert("❌ 존재하지 않는 아이디입니다.");
+                Swal.fire({
+                  icon: "warning",
+                  title: "아이디 없음",
+                  text: "❌ 존재하지 않는 아이디입니다.",
+                  confirmButtonText: "확인"
+                });
               }
             },
             error: function () {
-              alert("서버 통신 오류가 발생했습니다.");
+              Swal.fire({
+                icon: "error",
+                title: "서버 오류",
+                text: "서버 통신 오류가 발생했습니다.",
+                confirmButtonText: "확인"
+              });
             }
           });
         }
-      },
+      }
+      ,
       mounted() {
         console.log("Vue instance mounted");
       }

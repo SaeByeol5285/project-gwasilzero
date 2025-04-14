@@ -47,6 +47,7 @@
                 font-size: 16px;
                 box-sizing: border-box;
                 transition: background-color 0.2s ease-in-out;
+                cursor: pointer;
                 /* 부드럽게 전환 */
             }
 

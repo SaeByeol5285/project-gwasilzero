@@ -67,12 +67,12 @@ public class ProfileService {
 //			System.out.println("mainCategoryName2 = " + info.getMainCategoryName2());
 			List<License> license = profileMapper.lawyerLicenseList(map);
 			List<Board> boardList = profileMapper.lawyerBoardList(map);
-			List<BoardFile> boardFileList = profileMapper.lawyerBoardFileList(map);
+			List<BoardFile> mainCaseList = profileMapper.lawyerBoardFileList(map);
 			
 			resultMap.put("info", info);
 			resultMap.put("license", license);
 			resultMap.put("boardList", boardList); 
-			resultMap.put("boardFileList", boardFileList);
+			resultMap.put("mainCaseList", mainCaseList);
 			resultMap.put("result", "success");
 		} catch(Exception e) {
 			System.out.println(e.getMessage());

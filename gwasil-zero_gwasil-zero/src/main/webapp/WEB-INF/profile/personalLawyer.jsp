@@ -48,7 +48,7 @@
                                 <option value="name">이름</option>
                                 <option value="txt">키워드</option>
                             </select>
-                            <input type="text" v-model="keyword" @keyup.enter="fnGetList" placeholder="검색어">
+                            <input type="text" v-model="keyword" @keyup.enter="fnGetList" placeholder="검색어를 입력하세요!">
                             <button @click="fnGetList">검색</button>
                         </div>
                         <div class="lawyer-list">

@@ -1,372 +1,418 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
-<mapper namespace="com.project.gwasil_zero.mapper.MypageMapper">
-     
-   <select id="selectUserBoardList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Board">
-       SELECT
-           B.*,
-           F.FILE_PATH AS thumbnailPath,
-             L.LAWYER_NAME
-       FROM
-           BOARD B
-       LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
-       LEFT JOIN LAWYER L ON L.LAWYER_ID = B.LAWYER_ID
-       WHERE
-           B.USER_ID = #{userId} AND BOARD_STATUS != 'DELETE'
-       ORDER BY B.CDATE DESC
-       offset #{page} rows fetch next #{pageSize} rows only
-   </select>
+                                 
+<mapper namespace="com.project.gwasil_zero.mapper.AdminMapper">
+   <select id="selectNewMemList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+      SELECT *
+      FROM (
+         SELECT *
+         FROM TBL_USER
+         WHERE USER_STATUS != 'OUT'
+         ORDER BY CDATE DESC
+      )
+      WHERE ROWNUM &lt;= 5
+   </select>   
    
-   <select id="selectBoardCount" parameterType="hashmap" resultType="int">
-       SELECT COUNT(*)
-       FROM
-           BOARD B
-       LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
-       LEFT JOIN LAWYER L ON L.LAWYER_ID = B.LAWYER_ID
-       WHERE
-           B.USER_ID = #{userId} AND BOARD_STATUS != 'DELETE'
-   </select>
-   
-  <select id="selectUserChatList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
-       SELECT
-          cm.chat_no,
-          cm.sender_id,
-          cm.message,
-          TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
-          
-          CASE 
-               WHEN c.sender_id = #{sessionId} THEN c.receiver_id
-               ELSE c.sender_id
-         END AS partner_id,
-      
-          CASE 
-              WHEN c.sender_id = #{sessionId} THEN l2.lawyer_name
-              ELSE l1.lawyer_name
-          END AS partner_name
-      
-      FROM chat_message cm
-      
-      JOIN (
-          SELECT chat_no, MAX(time) AS max_time
-          FROM chat_message
-          WHERE chat_no IN (
-              SELECT chat_no
-              FROM chat
-              WHERE sender_id = #{sessionId}
-                 OR receiver_id = #{sessionId}
-          )
-          GROUP BY chat_no
-      ) latest 
-          ON cm.chat_no = latest.chat_no 
-         AND cm.time = latest.max_time
-      
-      JOIN chat c ON cm.chat_no = c.chat_no
-      
-      LEFT JOIN lawyer l1 ON c.sender_id = l1.lawyer_id
-      LEFT JOIN lawyer l2 ON c.receiver_id = l2.lawyer_id
-      
-      ORDER BY cm.time DESC
-
-   </select>
-   
-   
-   <select id="selectMyPayList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
-       SELECT *
-       FROM PAY
-       WHERE USER_ID = #{sessionId}
-       
-   </select>
-   
-   <select id="selectUserForMypage" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
-       SELECT 
-           USER_NAME, 
-           SUBSTR(USER_PHONE, 1, 3) || '-' || SUBSTR(USER_PHONE, 4, 4) || '-' || SUBSTR(USER_PHONE, 8, 4) AS USER_PHONE,
-           USER_EMAIL, 
-           USER_ID
-       FROM TBL_USER
-       WHERE USER_ID = #{userId}
-   </select>
-  
-   <update id="updateUserInfo" parameterType="hashmap">
-       UPDATE TBL_USER
-       SET
-           USER_NAME = #{userName},
-           USER_PHONE = #{userPhone},
-           USER_EMAIL = #{userEmail}
-       WHERE USER_ID = #{userId}
-   </update>
-   
-   <select id="selectUserInfo" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
-       SELECT USER_ID, USER_NAME, USER_PHONE, USER_EMAIL
-       FROM TBL_USER
-       WHERE USER_ID = #{sessionId}
-   </select>
-   
-   <!-- 비밀번호 확인용 -->
-   <select id="selectUserById" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
-       SELECT *
-       FROM TBL_USER
-       WHERE USER_ID = #{userId}
-   </select>
-
-   <!-- 탈퇴 처리 (user_status 변경 or 삭제) -->
-   <update id="deleteUserByAdmin" parameterType="hashmap">
-       UPDATE TBL_USER
-       SET USER_STATUS = 'OUT'
-       WHERE USER_ID = #{userId}
-   </update>   
-   
-   <select id="selectLawyerView" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
-      SELECT 
-         LAWYER_ID,
-         LAWYER_NAME,
-         LAWYER_EMAIL,
-         SUBSTR(LAWYER_PHONE, 1, 3) || '-' || SUBSTR(LAWYER_PHONE, 4, 4) || '-' || SUBSTR(LAWYER_PHONE, 8, 4) AS LAWYER_PHONE,
-         LAWYER_ADDR,
-         LAWYER_IMG,
-         LAWYER_INFO,
-         COUNSEL
+   <select id="selectLawAdminWaitList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+      SELECT *
       FROM LAWYER
-      WHERE LAWYER_ID = #{sessionId}
+      WHERE LAWYER_PASS = 'N' AND ROWNUM &lt;= 5
    </select>
    
-   <update id="updateLawyer" parameterType="hashmap">
-     UPDATE LAWYER
-     SET
-        LAWYER_NAME = #{lawyerName},
-        LAWYER_PHONE = #{lawyerPhone},
-        LAWYER_EMAIL = #{lawyerEmail},
-        LAWYER_ADDR = #{lawyerAddr},
-        LAWYER_IMG = #{lawyerImg, jdbcType=VARCHAR}
-     WHERE LAWYER_ID = #{sessionId}
-   </update>
+   <select id="selectRepoAdminList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Report">      
+      SELECT *
+      FROM REPORT
+      WHERE ROWNUM &lt;= 5
+      ORDER BY CDATE DESC      
+   </select>
    
-   <update id="updateLawyerImg" parameterType="hashmap">
-       UPDATE lawyer
-       SET lawyer_img = #{lawyerImg, jdbcType=VARCHAR}
-       WHERE lawyer_id = #{lawyerId}
-   </update>
-   
-   <update id="updateCounsel" parameterType="hashmap">
-      UPDATE LAWYER
-      SET
-         COUNSEL = #{counsel}
-      WHERE LAWYER_ID = #{lawyerId}
-   </update>
-   
-   <select id="selectLawyerBoard" parameterType="hashmap" resultType="Board">
-       SELECT B.*, U.USER_NAME, F.FILE_PATH AS thumbnailPath
-       FROM BOARD B
-       LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
-       INNER JOIN TBL_USER U ON B.USER_ID = U.USER_ID
+   <select id="selectUserList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+      SELECT
+           U.USER_ID,
+           U.USER_NAME,
+           U.USER_STATUS,
+           U.REPORT_CNT,
+           U.CDATE,
+           (
+               SELECT MAX(PACKAGE_NAME)
+               FROM PAY P
+               WHERE P.USER_ID = U.USER_ID
+           ) AS PACKAGE_NAME
+       FROM TBL_USER U
        WHERE 1=1
-       AND B.BOARD_STATUS != 'DELETE'
-       <if test="sessionId != null and sessionId != ''">
-           AND B.LAWYER_ID = #{sessionId}
+   
+       <!-- 회원 상태 필터 -->
+       <if test="status != null and status != 'ALL'">
+           <choose>
+               <when test="status == 'Out'">
+                   AND U.USER_STATUS = 'OUT'
+               </when>
+               <when test="status == 'paid'">
+                   AND U.USER_STATUS = 'NORMAL'
+                   AND EXISTS (
+                       SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
+                   )
+               </when>
+               <when test="status == 'free'">
+                   AND U.USER_STATUS = 'NORMAL'
+                   AND NOT EXISTS (
+                       SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
+                   )
+               </when>
+           </choose>
        </if>
-       <if test="boardStatus != null and boardStatus != ''">
-           AND B.BOARD_STATUS = #{boardStatus}
+   
+       <!-- 가입일 조건 -->
+       <if test="period != null and period != 'ALL'">
+           <choose>
+               <when test="period == 'WEEK'">
+                   AND U.CDATE &gt;= SYSDATE - 7
+               </when>
+               <when test="period == 'MONTH'">
+                   AND U.CDATE &gt;= ADD_MONTHS(SYSDATE, -1)
+               </when>
+               <when test="period == 'YEAR'">
+                   AND U.CDATE &gt;= ADD_MONTHS(SYSDATE, -12)
+               </when>
+           </choose>
        </if>
-       ORDER BY B.CDATE ASC
-       offset #{page} rows fetch next #{pageSize} rows only
+   
+       <!-- 검색어 (이름 또는 패키지명) -->
+       <if test="word != null and word != ''">
+           AND (
+               U.USER_NAME LIKE '%' || #{word} || '%'
+               OR EXISTS (
+                   SELECT 1 FROM PAY P
+                   WHERE P.USER_ID = U.USER_ID
+                   AND P.PACKAGE_NAME LIKE '%' || #{word} || '%'
+               )
+           )
+       </if>
+   
+       ORDER BY U.CDATE DESC
+       OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
    </select>
    
-   <select id="selectBoardCnt" parameterType="hashmap" resultType="int">
+   <select id="userCnt" parameterType="hashmap" resultType="int">
+      SELECT COUNT(*)
+       FROM TBL_USER U
+       WHERE 1=1
+   
+       <if test="status != null and status != 'ALL'">
+           <choose>
+               <when test="status == 'Out'">
+                   AND U.USER_STATUS = 'OUT'
+               </when>
+               <when test="status == 'paid'">
+                   AND U.USER_STATUS = 'NORMAL'
+                   AND EXISTS (
+                       SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
+                   )
+               </when>
+               <when test="status == 'free'">
+                   AND U.USER_STATUS = 'NORMAL'
+                   AND NOT EXISTS (
+                       SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
+                   )
+               </when>
+           </choose>
+       </if>
+   
+       <if test="period != null and period != 'ALL'">
+           <choose>
+               <when test="period == 'WEEK'">
+                   AND U.CDATE &gt;= SYSDATE - 7
+               </when>
+               <when test="period == 'MONTH'">
+                   AND U.CDATE &gt;= ADD_MONTHS(SYSDATE, -1)
+               </when>
+               <when test="period == 'YEAR'">
+                   AND U.CDATE &gt;= ADD_MONTHS(SYSDATE, -12)
+               </when>
+           </choose>
+       </if>
+   
+       <if test="word != null and word != ''">
+           AND (
+               U.USER_NAME LIKE '%' || #{word} || '%'
+               OR EXISTS (
+                   SELECT 1 FROM PAY P
+                   WHERE P.USER_ID = U.USER_ID
+                   AND P.PACKAGE_NAME LIKE '%' || #{word} || '%'
+               )
+           )
+       </if>
+   </select>   
+   
+   <select id="selectLawWaitList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+      SELECT *
+      FROM LAWYER
+      WHERE LAWYER_PASS = 'N'
+         AND LAWYER_STATUS != 'O'
+      ORDER BY LAWYER_NAME
+      OFFSET #{waitPage} ROWS FETCH NEXT #{waitPageSize} ROWS ONLY
+   </select>
+   
+   <select id="selectLawWaitCount" parameterType="hashmap" resultType="int">
        SELECT COUNT(*)
-       FROM BOARD B
-       LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
-       INNER JOIN TBL_USER U ON B.USER_ID = U.USER_ID
-       WHERE 1=1
-       AND B.BOARD_STATUS != 'DELETE'
-       <if test="sessionId != null and sessionId != ''">
-           AND B.LAWYER_ID = #{sessionId}
-       </if>
-       <if test="boardStatus != null and boardStatus != ''">
-           AND B.BOARD_STATUS = #{boardStatus}
-       </if>
+       FROM LAWYER
+       WHERE LAWYER_PASS = 'N'
+          AND LAWYER_STATUS != 'O'
    </select>
+   
+   <update id="updateLawyerPass" parameterType="hashmap">
+       UPDATE LAWYER
+       SET LAWYER_PASS = 'Y'
+       WHERE LAWYER_ID = #{lawyerId}
+   </update>
+   
+   <select id="selectLawPassedList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+      SELECT *
+      FROM LAWYER
+      WHERE LAWYER_PASS = 'Y'
+         AND LAWYER_STATUS != 'O'
+      ORDER BY LAWYER_NAME
+      OFFSET #{passedPage} ROWS FETCH NEXT #{passedPageSize} ROWS ONLY
+   </select>
+   
+   <select id="selectLawPassedCount" parameterType="hashmap" resultType="int">
+       SELECT COUNT(*)
+       FROM LAWYER
+       WHERE LAWYER_PASS = 'Y'
+          AND LAWYER_STATUS != 'O'
+   </select>
+   
+   <update id="updateLawyerCencel" parameterType="hashmap">
+       UPDATE LAWYER
+       SET LAWYER_PASS = 'N'
+       WHERE LAWYER_ID = #{lawyerId}
+   </update>
+   
+   <select id="selectLawOutList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+      SELECT *
+      FROM LAWYER
+      WHERE LAWYER_STATUS = 'O'
+      ORDER BY LAWYER_NAME
+      OFFSET #{outPage} ROWS FETCH NEXT #{outPageSize} ROWS ONLY
+   </select>
+   
+   <select id="selectLawOutCount" parameterType="hashmap" resultType="int">
+       SELECT COUNT(*)
+       FROM LAWYER
+       WHERE LAWYER_STATUS = 'O'
+   </select>
+   
+   <update id="updateLawyerComeBack" parameterType="hashmap">
+       UPDATE LAWYER
+       SET LAWYER_STATUS = 'I', LAWYER_PASS = 'N'
+       WHERE LAWYER_ID = #{lawyerId}
+   </update>
+   
+   <select id="selectReportList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Report">
+      SELECT * 
+      FROM REPORT
+      ORDER BY BOARD_NO
+      OFFSET #{repoPage} ROWS FETCH NEXT #{repoPageSize} ROWS ONLY
+   </select>
+   
+   <select id="selectReportCount" parameterType="hashmap" resultType="int">
+       SELECT COUNT(*)
+       FROM REPORT
+   </select>
+   
+   <update id="updateReportStatus" parameterType="hashmap">
+       UPDATE REPORT
+       SET REPORT_STATUS = #{reportStatus}
+       WHERE BOARD_NO = #{boardNo}
+   </update>
    
    <update id="updateBoardStatus" parameterType="hashmap">
-      UPDATE BOARD
-      SET
-         BOARD_STATUS = #{boardStatus}
-      WHERE BOARD_NO = #{boardNo}
-    </update>
-    
-    <select id="selectLawyerPay" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
-      SELECT *
-      FROM PAY
-      WHERE LAWYER_ID = #{sessionId} 
-      AND (USER_ID IS NULL OR TRIM(USER_ID) = '')
-   </select>
-   
-   <update id="updatePayStatus" parameterType="hashmap">
-      UPDATE PAY
-      SET
-         PAY_STATUS = 'REQUEST'
-      WHERE ORDER_ID = #{orderId}
-    </update>
-    
-    <update id="updateCancel" parameterType="hashmap">
-      UPDATE PAY
-      SET
-         PAY_STATUS = 'PAID'
-      WHERE ORDER_ID = #{orderId}
-    </update>
-    
-    <select id="selectLastChat" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
-       SELECT
-           cm.chat_no,
-           cm.sender_id,
-           su.user_name AS sender_name,
-           cm.message,
-           TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
-
-           CASE 
-               WHEN c.sender_id = #{sessionId} THEN c.receiver_id
-               ELSE c.sender_id
-           END AS partner_id,
-
-           CASE 
-               WHEN c.sender_id = #{sessionId} THEN ru.user_name
-               ELSE su2.user_name
-           END AS partner_name
-   
-       FROM chat_message cm
-   
-       JOIN (
-           SELECT chat_no, MAX(time) AS max_time
-           FROM chat_message
-           WHERE chat_no IN (
-               SELECT chat_no
-               FROM chat
-               WHERE sender_id = #{sessionId}
-                  OR receiver_id = #{sessionId}
-           )
-           GROUP BY chat_no
-       ) latest ON cm.chat_no = latest.chat_no AND cm.time = latest.max_time
-   
-       JOIN chat c ON cm.chat_no = c.chat_no
-
-       LEFT JOIN tbl_user su ON cm.sender_id = su.user_id
-
-       LEFT JOIN tbl_user su2 ON c.sender_id = su2.user_id
-       LEFT JOIN tbl_user ru ON c.receiver_id = ru.user_id
-
-       ORDER BY cm.time DESC
-   </select>
-
-   
-   <select id="selectContractList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Contract">
-       SELECT 
-           C.CONTRACT_NO,
-           C.CONTRACT_PRICE,
-           TO_CHAR(C.CDATE, 'YYYY-MM-DD HH24:MI') AS CDATE,
-           C.CONTRACT_STATUS,
-           L.LAWYER_NAME
-       FROM 
-           CONTRACT C
-       JOIN 
-           LAWYER L ON C.LAWYER_ID = L.LAWYER_ID
-       WHERE 
-           C.USER_ID = #{userId}
-       ORDER BY C.CDATE DESC
-   </select>
-   
-   <select id="selectLawyerInfo" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
-       SELECT LAWYER_NAME, LAWYER_EMAIL, LAWYER_PHONE, LAWYER_ADDR
-       FROM LAWYER
-       WHERE LAWYER_ID = #{sessionId}
-   </select>
-
-   <select id="selectRefundNoti" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Notification">
-       SELECT 
-           NOTI_NO,
-           RECEIVER_ID,
-           NOTI_TYPE,
-           CONTENTS,
-           IS_READ,
-           TO_CHAR(CREATED_AT, 'YYYY-MM-DD HH24:MI:SS') AS CREATED_AT,
-           SENDER_ID,
-           BOARD_NO,
-           CHAT_NO
-       FROM 
-           NOTIFICATION
-       WHERE 
-           RECEIVER_ID = #{receiverId}
-       AND 
-           IS_READ = 'N' AND NOTI_TYPE IN ('REFUND', 'CANCEL_REFUND')
-       ORDER BY CREATED_AT DESC
-   </select>
-   
-   <update id="updateNoti" parameterType="hashmap">
-    UPDATE NOTIFICATION
-       SET IS_READ = 'Y'
-       WHERE RECEIVER_ID = #{receiverId}
-       AND IS_READ = 'N'
-       AND NOTI_TYPE IN ('REFUND', 'CANCEL_REFUND')
+       update board set board_status = #{boardStatus} where board_no = #{boardNo}
    </update>
    
-   <update id="updateConsult" parameterType="hashmap">
-       UPDATE PAY
-       SET PAY_STATUS = 'USED',
-       LAWYER_ID = #{lawyerId}
-       WHERE ORDER_ID = (
-           SELECT ORDER_ID
-           FROM (
-               SELECT ORDER_ID
-               FROM PAY
-               WHERE USER_ID = #{userId}
-                 AND PACKAGE_NAME = '전화 상담 패키지'
-                 AND PAY_STATUS = 'PAID'
-               ORDER BY PAY_TIME ASC
-           )
-           WHERE ROWNUM = 1
-       )
-   </update>
-
-   <select id="selectConsult" parameterType="hashmap" resultType="int">
-       SELECT COUNT(*)
+   <select id="selectStatChart" parameterType="hashmap" resultType="hashmap">
+       SELECT 
+           PACKAGE_NAME,
+           TO_CHAR(PAY_TIME,
+           <choose>
+               <when test="groupType == 'daily'"> 'YY/MM/DD' </when>
+               <when test="groupType == 'monthly'"> 'YY/MM' </when>
+               <otherwise> 'YY' </otherwise>
+           </choose>
+           ) AS TIME_GROUP,
+           SUM(TO_NUMBER(PRICE)) AS TOTAL_PRICE
        FROM PAY
-       WHERE USER_ID = #{userId}
-       AND PACKAGE_NAME = '전화 상담 패키지'
-       AND PAY_STATUS = 'PAID'
+       WHERE PAY_STATUS = 'PAID'
+         AND REGEXP_LIKE(PRICE, '^\d+$')
+       <if test="startDate != null and endDate != null and startDate != '' and endDate != ''">
+           AND PAY_TIME BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD') AND TO_DATE(#{endDate}, 'YYYY-MM-DD')
+       </if>
+       GROUP BY 
+           PACKAGE_NAME,
+           TO_CHAR(PAY_TIME,
+           <choose>
+               <when test="groupType == 'daily'"> 'YY/MM/DD' </when>
+               <when test="groupType == 'monthly'"> 'YY/MM' </when>
+               <otherwise> 'YY' </otherwise>
+           </choose>
+           )
+       ORDER BY TIME_GROUP
    </select>
    
-   <!-- 비밀번호 확인용 -->
-   <select id="selectLawyerById" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
-       SELECT *
-       FROM LAWYER
-       WHERE LAWYER_ID = #{sessionId}
+   <!-- 연도 목록 -->
+   <select id="selectAvailableYears" resultType="string">
+       SELECT DISTINCT TO_CHAR(PAY_TIME, 'YYYY') AS YEAR
+       FROM PAY
+       WHERE PAY_STATUS = 'PAID'
+       ORDER BY YEAR
    </select>
-
-   <!-- 탈퇴 처리 (lawyer_status 변경) -->
-   <update id="deleteLawyerByAdmin" parameterType="hashmap">
-       UPDATE LAWYER
-       SET LAWYER_STATUS = 'O'
-       WHERE LAWYER_ID = #{sessionId}
-   </update>  
-
-   <select id="selectPayUsed" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
+   
+   <!-- 특정 연도에 대한 월 목록 -->
+   <select id="selectAvailableMonths" parameterType="hashmap" resultType="string">
+       SELECT DISTINCT TO_CHAR(PAY_TIME, 'MM') AS MONTH
+       FROM PAY
+       WHERE PAY_STATUS = 'PAID'
+       <if test="year != null and year != ''">
+           AND TO_CHAR(PAY_TIME, 'YYYY') = #{year}
+       </if>
+       ORDER BY TO_NUMBER(MONTH)
+   </select>
+   
+   <!-- 특정 연도, 월에 대한 일 목록 -->
+   <select id="selectAvailableDays" parameterType="hashmap" resultType="string">
+       SELECT DISTINCT TO_CHAR(PAY_TIME, 'DD') AS DAY
+       FROM PAY
+       WHERE PAY_STATUS = 'PAID'
+       <if test="year != null and year != ''">
+           AND TO_CHAR(PAY_TIME, 'YYYY') = #{year}
+       </if>
+       <if test="month != null and month != ''">
+           AND TO_CHAR(PAY_TIME, 'MM') = LPAD(#{month}, 2, '0')
+       </if>
+       ORDER BY TO_NUMBER(DAY)
+   </select>
+   
+   <!-- pie 차트용 데이터 조회 -->
+   <select id="selectStatPie" parameterType="hashmap" resultType="hashmap">
        SELECT 
-           p.ORDER_ID,
-           p.PAY_TIME,
-           p.PACKAGE_NAME,
-           p.PAY_STATUS,
-           u.user_name as userName
-       FROM PAY p
-       inner join tbl_user u on u.user_id = p.user_id
-       WHERE 
-           LAWYER_ID = #{lawyerId}
-           AND PACKAGE_NAME = '전화 상담 패키지'
-           AND PAY_STATUS = 'USED'
-       ORDER BY PAY_TIME DESC
+           PACKAGE_NAME,
+           SUM(TO_NUMBER(PRICE)) AS TOTAL_PRICE
+       FROM PAY
+       WHERE PAY_STATUS = 'PAID'
+         <if test="year != null and year != ''">
+           AND TO_CHAR(PAY_TIME, 'YYYY') = #{year}
+         </if>
+         <if test="month != null and month != ''">
+           AND TO_CHAR(PAY_TIME, 'MM') = LPAD(#{month}, 2, '0')
+         </if>
+         <if test="day != null and day != ''">
+           AND TO_CHAR(PAY_TIME, 'DD') = LPAD(#{day}, 2, '0')
+         </if>
+       GROUP BY PACKAGE_NAME
+       ORDER BY PACKAGE_NAME
+   </select>
+   
+   <!-- 누적 일반 이용자 데이터 조회 -->
+   <select id="selectStatUserLine" parameterType="hashmap" resultType="hashmap">
+       <choose>
+           <when test="groupType == 'daily'">
+               SELECT 
+                   TO_CHAR(CDATE, 'YYYY-MM-DD') AS TIME_GROUP,
+                   COUNT(*) AS USER_COUNT
+               FROM TBL_USER
+               WHERE USER_STATUS = 'NORMAL'
+               <if test="startDate != null and startDate != ''">
+                   AND CDATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+               </if>
+               <if test="endDate != null and endDate != ''">
+                   AND CDATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+               </if>
+               GROUP BY TO_CHAR(CDATE, 'YYYY-MM-DD')
+               ORDER BY TIME_GROUP
+           </when>
+           <when test="groupType == 'monthly'">
+               SELECT 
+                   TO_CHAR(CDATE, 'YYYY-MM') AS TIME_GROUP,
+                   COUNT(*) AS USER_COUNT
+               FROM TBL_USER
+               WHERE USER_STATUS = 'NORMAL'
+               <if test="startDate != null and startDate != ''">
+                   AND CDATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+               </if>
+               <if test="endDate != null and endDate != ''">
+                   AND CDATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+               </if>
+               GROUP BY TO_CHAR(CDATE, 'YYYY-MM')
+               ORDER BY TIME_GROUP
+           </when>
+           <when test="groupType == 'yearly'">
+               SELECT 
+                   TO_CHAR(CDATE, 'YYYY') AS TIME_GROUP,
+                   COUNT(*) AS USER_COUNT
+               FROM TBL_USER
+               WHERE USER_STATUS = 'NORMAL'
+               <if test="startDate != null and startDate != ''">
+                   AND CDATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+               </if>
+               <if test="endDate != null and endDate != ''">
+                   AND CDATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+               </if>
+               GROUP BY TO_CHAR(CDATE, 'YYYY')
+               ORDER BY TIME_GROUP
+           </when>
+       </choose>
    </select>
 
-      <insert id="insertChatReview" parameterType="hashmap">
-         insert into review (review_no, user_id, lawyer_id, score, contents, cdate, udate, board_no, chat_no)
-         values(review_seq.nextval, #{userId}, #{sessionId}, 0, null, sysdate, sysdate, null, #{chatNo})
-      </insert>
+   <!-- 누적 변호사 등록 데이터 조회 -->
+   <select id="selectStatLawyerLine" parameterType="hashmap" resultType="hashmap">
+       <choose>
+           <when test="groupType == 'daily'">
+               SELECT 
+                   TO_CHAR(CDATE, 'YYYY-MM-DD') AS TIME_GROUP,
+                   COUNT(*) AS LAWYER_COUNT
+               FROM LAWYER
+               WHERE LAWYER_STATUS = 'I' OR LAWYER_STATUS = 'P'
+               <if test="startDate != null and startDate != ''">
+                   AND CDATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+               </if>
+               <if test="endDate != null and endDate != ''">
+                   AND CDATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+               </if>
+               GROUP BY TO_CHAR(CDATE, 'YYYY-MM-DD')
+               ORDER BY TIME_GROUP
+           </when>
+           <when test="groupType == 'monthly'">
+               SELECT 
+                   TO_CHAR(CDATE, 'YYYY-MM') AS TIME_GROUP,
+                   COUNT(*) AS LAWYER_COUNT
+               FROM LAWYER
+               WHERE LAWYER_STATUS = 'I' OR LAWYER_STATUS = 'P'
+               <if test="startDate != null and startDate != ''">
+                   AND CDATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+               </if>
+               <if test="endDate != null and endDate != ''">
+                   AND CDATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+               </if>
+               GROUP BY TO_CHAR(CDATE, 'YYYY-MM')
+               ORDER BY TIME_GROUP
+           </when>
+           <when test="groupType == 'yearly'">
+               SELECT 
+                   TO_CHAR(CDATE, 'YYYY') AS TIME_GROUP,
+                   COUNT(*) AS LAWYER_COUNT
+               FROM LAWYER
+               WHERE LAWYER_STATUS = 'I' OR LAWYER_STATUS = 'P'
+               <if test="startDate != null and startDate != ''">
+                   AND CDATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+               </if>
+               <if test="endDate != null and endDate != ''">
+                   AND CDATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+               </if>
+               GROUP BY TO_CHAR(CDATE, 'YYYY')
+               ORDER BY TIME_GROUP
+           </when>
+       </choose>
+   </select>
+
 </mapper>

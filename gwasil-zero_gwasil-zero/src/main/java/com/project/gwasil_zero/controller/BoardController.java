@@ -54,6 +54,7 @@ public class BoardController {
 	        // 로그인 안 한 경우, redirect 경로 저장
 	        String category = request.getParameter("category"); // 글쓰기 시 파라미터 있을 수 있음
 	        session.setAttribute("redirectURI", "/board/add.do" + (category != null ? "?category=" + category : ""));
+
 	        return "redirect:/user/login.do";
 	    }
 

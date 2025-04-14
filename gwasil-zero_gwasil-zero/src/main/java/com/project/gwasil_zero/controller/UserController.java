@@ -90,20 +90,14 @@ public class UserController {
 	@RequestMapping(value = "/user/user-login.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String login(Model model, @RequestParam HashMap<String, Object> map, HttpSession session) throws Exception {
-	    HashMap<String, Object> resultMap = userService.getInfo(map);
+		HashMap<String, Object> resultMap = userService.getInfo(map);
 
-	    // 로그인 성공 시 세션 저장
-	    if ("success".equals(resultMap.get("result"))) {
-	        session.setAttribute("sessionId", map.get("id"));
-	        session.setAttribute("sessionType", "user");
-	    }
+		// redirectURI 처리
+		String redirectURI = (String) session.getAttribute("redirectURI");
+		session.removeAttribute("redirectURI");
+		resultMap.put("redirect", (redirectURI != null && !redirectURI.isEmpty()) ? redirectURI : "/common/main.do");
 
-	    // redirectURI 처리
-	    String redirectURI = (String) session.getAttribute("redirectURI");
-	    session.removeAttribute("redirectURI");
-	    resultMap.put("redirect", (redirectURI != null && !redirectURI.isEmpty()) ? redirectURI : "/common/main.do");
-
-	    return new Gson().toJson(resultMap);
+		return new Gson().toJson(resultMap);
 	}
 
 	// 로그아웃

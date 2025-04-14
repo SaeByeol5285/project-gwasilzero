@@ -40,7 +40,7 @@
                         <!-- 소개글 -->
                         <div class="profile-right">
                             <h3 class="intro-title">소개글</h3>
-                            <p v-if="info.lawyerInfo" v-html="info.lawyerInfo" class="intro-text"></p>
+                            <p v-if="hasInfo" v-html="info.lawyerInfo" class="intro-text"></p>
                             <p v-else class="no-data">작성된 소개가 없습니다.</p>
                         </div>
                     </div>                    
@@ -217,6 +217,9 @@
             computed: {
                 validCaseList() {
                     return this.mainCaseList.filter(item => item != null);
+                },
+                hasInfo() {
+                    return this.info.lawyerInfo && this.removeEmptyTag(this.info.lawyerInfo).trim() !== '';
                 },
                 hasCareer() {
                     return this.info.lawyerCareer && this.removeEmptyTag(this.info.lawyerCareer).trim() !== '';

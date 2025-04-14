@@ -46,7 +46,7 @@
 	<select id="selectReviewList" resultType="com.project.gwasil_zero.model.Review">
 		SELECT R.*, LAWYER_NAME AS lawyerName
 		FROM REVIEW R
-        LEFT JOIN LAWYER L ON R.LAWYER_ID = L.LAWYER_ID
+        INNER JOIN LAWYER L ON R.LAWYER_ID = L.LAWYER_ID
         WHERE SCORE >= 4 AND LENGTH(R.CONTENTS) > 10
 	</select>
 

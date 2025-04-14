@@ -339,7 +339,7 @@
 				                        Swal.fire({
 				                            icon: "error",
 				                            title: "패키지 없음",
-				                            text: "채팅 패키지를 구매 후 이용해주세요.",
+				                            text: "전화 상담 패키지를 구매 후 이용해주세요.",
 				                            confirmButtonColor: "#ff5c00"
 				                        }).then(() => {
 				                            location.href = "/package/package.do";

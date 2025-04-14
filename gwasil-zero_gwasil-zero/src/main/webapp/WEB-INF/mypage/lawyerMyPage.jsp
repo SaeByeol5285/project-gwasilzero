@@ -51,6 +51,7 @@
       .edit-btn,
       .withdraw-btn {
       background-color: #FF5722;
+      
       border: none;
       border-radius: 8px;
       padding: 6px 12px;
@@ -368,7 +369,7 @@
                   <td>
                      {{ chat.partnerName }}
                      <br>
-                     <button class="edit-btn" @click="fnUsePhoneConsult(chat.partnerId)">
+                     <button class="edit-btn" @click="fnUsePhoneConsult(chat)">
                         전화 상담 차감
                      </button>
                   </td>
@@ -697,10 +698,11 @@
                      url: '/lawyerMyPage/usePhoneConsult.dox',
                      type: 'POST',
                      data: {
+                        lawyerId : self.sessionId,
                         userId: userId,
-						sessionId : self.sessionId,
-						chatNo : chatNo,
-						contents  : ""
+                        sessionId : self.sessionId,
+                        chatNo : chatNo,
+                        contents  : ""
                      },
                      success: function (res) {
                         if (res.result === 'success') {

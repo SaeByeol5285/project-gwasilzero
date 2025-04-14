@@ -34,7 +34,7 @@ public interface ChatMapper {
 	 
 	 public String getLawyerNameById(String targetId);
 	 
-	 public int getReviewNoByChatNo(HashMap<String, Object> map);
+	 public Integer getReviewNoByChatNo(HashMap<String, Object> map);
 	 
 	 public void updateReview(HashMap<String, Object> map);
 	 

@@ -23,6 +23,7 @@ import java.lang.reflect.Type;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -46,9 +47,19 @@ public class BoardController {
 	BoardService boardService;
 	
 	@RequestMapping("/board/add.do") 
-    public String boardAdd(Model model) throws Exception{
-        return "/board/board-add";
-    }
+	public String boardAdd(HttpSession session, HttpServletRequest request) throws Exception {
+	    String sessionId = (String) session.getAttribute("sessionId");
+
+	    if (sessionId == null || sessionId.equals("")) {
+	        // 로그인 안 한 경우, redirect 경로 저장
+	        String category = request.getParameter("category"); // 글쓰기 시 파라미터 있을 수 있음
+	        session.setAttribute("redirectURI", "/board/add.do" + (category != null ? "?category=" + category : ""));
+
+	        return "redirect:/user/login.do";
+	    }
+
+	    return "/board/board-add";
+	}
 
 	@RequestMapping("/board/list.do") 
     public String boardList(Model model) throws Exception{

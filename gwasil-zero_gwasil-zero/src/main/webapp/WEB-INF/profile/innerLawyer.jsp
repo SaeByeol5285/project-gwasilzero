@@ -113,7 +113,7 @@
                     index: 0,
                     page: 1,
                     currentPage: 'innerLawyer',
-                    sessionType: "${sessionType}"
+                    sessionType : "${sessionType}"
                 };
             },
             methods: {

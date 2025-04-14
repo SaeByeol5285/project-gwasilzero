@@ -295,7 +295,7 @@ public class BoardService {
 	public int increaseViewCount(int boardNo) {
         return boardMapper.increaseViewCount(boardNo);
     }
-	
+	// 빠답패
 	public HashMap<String, Object> getPackageCount(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
 	    try {
@@ -367,7 +367,7 @@ public class BoardService {
 		
 		return resultMap;
 	}
-	
+	//전상패
 	public HashMap<String, Object> checkUserPacakge(HashMap<String, Object> map){
 		HashMap<String, Object> resultMap = new HashMap<>();
 		try {

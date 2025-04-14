@@ -255,7 +255,7 @@
 			fnChat(item) {
 			    let self = this;
 
-			    // 1. 로그인 여부 확인
+			    // 로그인 여부 확인
 			    if (!self.sessionId) {
 			        Swal.fire({
 			            icon: "warning",
@@ -265,8 +265,8 @@
 			        });
 			        return;
 			    }
-
-			    // 2. 채팅 이동 확인 알림
+				
+			    //  채팅 이동 확인
 			    Swal.fire({
 			        icon: "warning",
 			        title: "알림",
@@ -281,24 +281,51 @@
 			        }
 			    });
 			},
-            fnChat2(item) {
-               let self = this;
+			fnChat2(item) {
+			    let self = this;
 
-               
-               // 읽음 처리 후 바로 이동
-               $.ajax({
-                  url: "/notification/read.dox",
-                  type: "POST",
-                  data: { notiNo: item.notiNo },
-                  success: () => {
-                     if (item.chatNo) {
-                        location.href = "/chat/chat.do?chatNo=" + item.chatNo;
-                     } else {
-                        alert("채팅방 정보가 없습니다.");
-                     }
-                  }
-               });
-            },
+			    // 패키지 구매 여부 확인
+			    $.ajax({
+			        url: "/board/checkUserPacakge.dox",
+			        type: "POST",
+			        data: { userId: self.sessionId },
+			        success: function (pkgRes) {
+			            if (pkgRes.count == 0) {
+			                Swal.fire({
+			                    icon: "error",
+			                    title: "패키지 없음",
+			                    text: "전화 상담 패키지를 구매 후 이용해주세요.",
+			                    confirmButtonColor: "#ff5c00"
+			                }).then(() => {
+			                    location.href = "/package/package.do";
+			                });
+			                return;
+			            }
+
+			            // 읽음 처리 후 채팅방 이동
+			            $.ajax({
+			                url: "/notification/read.dox",
+			                type: "POST",
+			                data: { notiNo: item.notiNo },
+			                success: () => {
+			                    if (item.chatNo) {
+			                        location.href = "/chat/chat.do?chatNo=" + item.chatNo;
+			                    } else {
+			                        alert("채팅방 정보가 없습니다.");
+			                    }
+			                }
+			            });
+			        },
+			        error: function () {
+			            Swal.fire({
+			                icon: "error",
+			                title: "오류",
+			                text: "패키지 확인 중 오류가 발생했습니다.",
+			                confirmButtonColor: "#ff5c00"
+			            });
+			        }
+			    });
+			},
             fnLogout() {
                var self = this;
                $.ajax({

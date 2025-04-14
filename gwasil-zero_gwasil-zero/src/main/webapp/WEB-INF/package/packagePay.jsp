@@ -97,7 +97,7 @@
                 fnPay() {
                     const self = this;
                     IMP.request_pay({
-                        pg: "html5_inicis",
+                        pg: "kakaopay",
                         pay_method: "card",
                         merchant_uid: self.orderId,
                         name: self.packageName,
@@ -112,10 +112,6 @@
                                 confirmButtonColor: "#ff5c00"
                             }).then(() => {
                                 self.fnSave(rsp.merchant_uid);
-                                if (window.opener) {
-                                    window.opener.location.reload(); // ✅ 새로고침
-                                }
-                                window.close();
                             });
                         } else {
                             Swal.fire({
@@ -144,9 +140,9 @@
                         type: "POST",
                         data: nparmap,
                         success: function(data) {
-                            console.log("결제 내역 저장 완료:", data);
 
                             if (self.packageName === "월 회원권" && self.role === "lawyer") {
+                                console.log("✅ 월 회원권 조건 진입함");
                                 $.ajax({
                                     url: "/lawyer/updateAuthEndtime.dox",
                                     type: "POST",
@@ -173,8 +169,10 @@
                                     }
                                 });
                             } else {
+                                if (window.opener) {
+                                    window.opener.location.reload(); 
+                                }
                                 window.close();
-                                location.href = "/package/package.do";
                             }
                         },
                         error: function(err) {

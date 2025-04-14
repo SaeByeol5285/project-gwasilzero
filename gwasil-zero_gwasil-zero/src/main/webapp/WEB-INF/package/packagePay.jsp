@@ -98,7 +98,7 @@
                 fnPay() {
                     const self = this;
                     IMP.request_pay({
-                        pg: "kakaopay",
+                        pg: "html5_inicis",
                         pay_method: "card",
                         merchant_uid: self.orderId,
                         name: self.packageName,

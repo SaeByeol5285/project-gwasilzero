@@ -169,7 +169,7 @@
        <if test="boardStatus != null and boardStatus != ''">
            AND B.BOARD_STATUS = #{boardStatus}
        </if>
-       ORDER BY B.CDATE ASC
+       ORDER BY B.CDATE DESC
        offset #{page} rows fetch next #{pageSize} rows only
    </select>
    

@@ -6,7 +6,8 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>상품 등록</title>
+	<link rel="icon" type="image/png" href="/img/common/logo3.png">
+			      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
 
 	<!-- 라이브러리 -->
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>

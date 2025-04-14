@@ -11,7 +11,8 @@
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
 		<script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-		<title>board-list</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
 
 	</head>
 	<style>
@@ -462,7 +463,6 @@
 					pageChange("/board/view.do", { boardNo: boardNo });
 				},
 				selectCategory: function (cat) {
-					console.log(cat);
 					let self = this;
 					self.keyword = "";
 					self.page = 1;
@@ -538,7 +538,6 @@
 						type: "POST",
 						data: nparmap,
 						success: function (data) {
-							console.log(data);
 							self.list = data.list;
 							self.index = Math.ceil(data.count / self.pageSize);
 						}

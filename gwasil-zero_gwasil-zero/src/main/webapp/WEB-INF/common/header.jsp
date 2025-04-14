@@ -9,7 +9,8 @@
    <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
    <script src="/js/page-change.js"></script>
    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+   <link rel="icon" type="image/png" href="/img/common/logo3.png">
+         <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
    <style>
       * {
          font-family: 'Noto Sans KR', sans-serif;
@@ -335,7 +336,6 @@
                   data: {},
                   success: function (data) {
                      if (data.result == "success") {
-                        console.log("sessionId =====> " + self.id);
 
                         // 네이버 SDK가 저장한 로컬스토리지 데이터 삭제
                         localStorage.removeItem("com.naver.nid.access_token");

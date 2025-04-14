@@ -140,7 +140,6 @@
                         pageSize: self.pageSize
                     },
 					success : function(data) { 
-						console.log(data);
 						if(data.result == "success"){
 							self.list = data.list;
                             self.pageCount = Math.ceil(data.productCount / self.pageSize);
@@ -241,10 +240,9 @@
                                 if (data.result === "success") {
                                     const receiverId = item.userId || item.lawyerId;
                                     if (!receiverId) {
-                                        console.error("⚠️ receiverId가 없습니다. 알림을 보낼 수 없습니다.");
                                         return;
                                     }
-                                    // ✅ 알림 insert 요청 추가
+                                    //  알림 insert 요청 추가
                                     $.ajax({
                                         url: "/admin/product/notification.dox",
                                         type: "POST",
@@ -290,10 +288,9 @@
                             data: { orderId: orderId },
                             success: function (data) {
                                 if (data.result === "success") {
-                                    // ✅ 알림 보내기
+                                    //  알림 보내기
                                     const receiverId = item.userId || item.lawyerId;
                                     if (!receiverId) {
-                                        console.error("⚠️ receiverId가 없습니다. 알림을 보낼 수 없습니다.");
                                         return;
                                     }
 

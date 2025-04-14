@@ -14,7 +14,8 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
         <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
         <script src="https://accounts.google.com/gsi/client" async defer></script>
-        <title>로그인</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+				      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -223,13 +224,11 @@
                                     text: "아이디 또는 비밀번호를 확인해주세요.",
                                     confirmButtonText: "확인"
                                 });
-                                self.pwd = "";  // ✅ 비밀번호 초기화
-                            }
+                                self.pwd = ""; 
                         }
                     });
                 },
                 kakaoLoginCallback(code) {
-                    console.log("✅ 인가 코드 받음:", code);
                     $.ajax({
                         url: "/kakao.dox",
                         type: "POST",

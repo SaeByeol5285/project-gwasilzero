@@ -11,7 +11,8 @@
 		<link rel="stylesheet" href="/css/totalDocs.css">
 		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap"
 			rel="stylesheet">
-		<title>통합 자료실</title>
+			<link rel="icon" type="image/png" href="/img/common/logo3.png">
+					      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
 		<style>
 			* {
 				font-family: 'Noto Sans KR', sans-serif;
@@ -290,7 +291,6 @@
 						dataType: "json",
 						data: params,
 						success: function (data) {
-							console.log(data);
 							self.list = data.list;
 							self.fileList = data.fileList;
 
@@ -318,7 +318,6 @@
 						dataType: "json",
 						data: params,
 						success: function (data) {
-							console.log(data);
 							self.list = data.list;
 							self.index = Math.ceil(data.count / self.pageSize);
 							//초기 진입일 때만 페이지 1로

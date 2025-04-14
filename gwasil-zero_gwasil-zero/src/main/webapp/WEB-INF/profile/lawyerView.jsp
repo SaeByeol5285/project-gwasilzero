@@ -8,7 +8,8 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <link rel="stylesheet" href="/css/lawyerView.css">
-        <title>변호사 상세보기</title>        
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+				      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title> 
     </head>
     <body>
         <jsp:include page="../common/header.jsp" />
@@ -240,13 +241,11 @@
                         type: "POST",
                         data: { lawyerId: self.lawyerId },
                         success: function (data) {
-                            console.log(data.mainCaseList);
                             self.info = data.info;
                             self.lawyerId = data.info.lawyerId;
                             self.license = data.license;
                             self.mainCaseList = data.mainCaseList || [];
                             self.fnGetReviewList();
-                            //console.log("변호사 정보 로딩 완료:", data.info);
                         }
                     });
                 },
@@ -267,7 +266,6 @@
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
-                            // console.log(data.list);
                             self.reviewList = data.list;
                             self.index = Math.ceil(data.count / self.pageSize);
                             self.reviewCnt = data.count;

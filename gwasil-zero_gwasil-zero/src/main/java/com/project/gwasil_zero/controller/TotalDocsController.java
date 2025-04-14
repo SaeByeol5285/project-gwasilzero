@@ -222,13 +222,7 @@ public class TotalDocsController {
 				long size = multi.getSize();
 				String saveFileName = Common.genSaveFileName(extName);
 
-				System.out.println("uploadpath : " + uploadpath);
-				System.out.println("originFilename : " + originFilename);
-				System.out.println("extensionName : " + extName);
-				System.out.println("size : " + size);
-				System.out.println("saveFileName : " + saveFileName);
 				String path2 = System.getProperty("user.dir");
-				System.out.println("Working Directory = " + path2 + "\\src\\webapp\\img");
 
 				if (!multi.isEmpty()) {
 					File file = new File(path2 + "\\src\\main\\webapp\\img", saveFileName);
@@ -245,7 +239,6 @@ public class TotalDocsController {
 			}
 			return new Gson().toJson(resultMap); // redirect:주소 => 리턴하면서 페이지 이동됨
 		} catch (Exception e) {
-			System.out.println(e);
 		}
 		return "redirect:/notice/list.do";
 	}

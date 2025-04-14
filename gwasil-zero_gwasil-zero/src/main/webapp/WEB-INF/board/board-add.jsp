@@ -4,7 +4,8 @@
 
 	<head>
 		<meta charset="UTF-8">
-		<title>게시글 등록</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
 		<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 
@@ -325,8 +326,6 @@
 							} else {
 								self.orderId = "";
 							}
-							console.log("사용 가능 패키지 수:", self.packageCount);
-							console.log("사용 가능 패키지 목록:", self.packageList);
 						}
 					});
 
@@ -336,7 +335,6 @@
 				usePackage(newVal) {
 					const self = this;
 
-					// 선택이 Y인데 패키지 수가 0일 때
 					if (newVal === "Y" && self.packageCount === 0) {
 						Swal.fire({
 							icon: "info",

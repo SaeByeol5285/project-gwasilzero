@@ -8,7 +8,8 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <title>승인 대기 변호사 상세보기</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
         <style>
             .profile-container {
                 display: flex;
@@ -327,7 +328,7 @@
                     </div>
                 </div>
             </div>
-            </div> <!-- 여기서 layout 닫기  -->
+            </div> 
         </div>
     </body>
 
@@ -353,7 +354,6 @@
                         type: "POST",
                         data: { lawyerId: lawyerId },
                         success: function (data) {
-                            console.log(data. info);
                             self.info = data.info;
                             self.license = data.license;
                         }

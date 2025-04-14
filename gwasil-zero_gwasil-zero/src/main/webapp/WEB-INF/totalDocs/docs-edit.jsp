@@ -4,7 +4,8 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>공지사항 수정</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+				      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <script src="/js/page-change.js"></script>
@@ -128,7 +129,6 @@
                         data: { totalNo: self.totalNo },
                         success(data) {
                             if (data.result === "success") {
-                                console.log(data);
                                 self.info = data.info;
                                 self.fileList = data.fileList;
                                 if (self.quill) {
@@ -270,7 +270,6 @@
                                                         alert("이미지 업로드 실패");
                                                     }
                                                 } catch (err) {
-                                                    console.error(err);
                                                     alert("이미지 업로드 중 오류 발생");
                                                 }
                                             }

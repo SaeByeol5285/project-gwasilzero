@@ -12,7 +12,8 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <title>비밀번호 찾기</title>
+	<link rel="icon" type="image/png" href="/img/common/logo3.png">
+			      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
     <style>
       #app {
         display: flex;
@@ -93,7 +94,6 @@
           }, function (rsp) {
             if (rsp.success) {
               self.isAuthenticated = true;
-              console.log("✅ 인증 성공");
             } else {
               Swal.fire({
                 icon: "error",
@@ -138,7 +138,6 @@
       }
       ,
       mounted() {
-        console.log("Vue instance mounted");
       }
     });
 

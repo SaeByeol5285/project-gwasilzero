@@ -7,7 +7,8 @@
         <link rel="stylesheet" href="/css/footer.css">
         <link rel="stylesheet" href="/css/common.css">
 
-        <title>footer.jsp</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
         <style>
             body {
                 padding-bottom: 0 !important;

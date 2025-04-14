@@ -257,14 +257,14 @@
 	      this.stompClient.send("/app/sendMessage", {}, JSON.stringify(chatTextMsg));
 
 	      // 바로 표시
-	      this.showMessage({
+	      /*this.showMessage({
 	        type: "text",
 	        payload: {
 	          senderId: this.senderId,
 	          senderName: "나", // 혹은 본인 이름 변수 있으면 그걸 사용
 	          message: trimmedMsg
 	        }
-	      });
+	      });*/
 
 	      this.message = "";
 	    }

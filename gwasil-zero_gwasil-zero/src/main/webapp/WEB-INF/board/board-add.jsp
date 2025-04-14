@@ -320,7 +320,11 @@
 						success: function (res) {
 							self.packageCount = res.packageCount;
 							self.packageList = res.packageList;
-							self.orderId = self.packageList[0].orderId;
+							if (self.packageList.length > 0 && self.packageList[0].orderId) {
+								self.orderId = self.packageList[0].orderId;
+							} else {
+								self.orderId = "";
+							}
 							console.log("사용 가능 패키지 수:", self.packageCount);
 							console.log("사용 가능 패키지 목록:", self.packageList);
 						}
@@ -363,7 +367,7 @@
 					this.selectedCategory = categoryParam;
 				}
 				this.fnGetPackage();
-
+				
 			}
 		});
 		app.mount('#app');

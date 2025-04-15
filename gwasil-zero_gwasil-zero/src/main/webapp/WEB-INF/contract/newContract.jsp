@@ -122,7 +122,7 @@
                 const self = this;
 
                 IMP.request_pay({
-                    pg: "kakaopay",
+                    pg: "html5_inicis",
                     pay_method: "card",
                     name: "법률 계약 - " + self.lawyerName,
                     amount: self.price,
@@ -164,12 +164,16 @@
                     dataType: "json",
                     data: nparmap,
                     success: function(data) {
-                        alert("계약이 체결되었습니다.");
 						self.fnChangeBoardStatus();			
                         location.href = "/board/list.do";
                     },
                     error: function(err) {
-                        alert("계약 저장 실패!");
+						Swal.fire({
+                            icon: "error",
+                            title: "계약 실패",
+                            text: "관리자에게 문의해주세요.",
+                            confirmButtonText: "확인"
+                        });
                     }
                 });
             },

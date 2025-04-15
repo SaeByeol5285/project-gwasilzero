@@ -9,8 +9,8 @@
       <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       <script src="/js/page-change.js"></script>
-	  <link rel="icon" type="image/png" href="/img/common/logo3.png">
-	  		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
+     <link rel="icon" type="image/png" href="/img/common/logo3.png">
+                 <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
    </head>
    <style>
       #app {
@@ -500,31 +500,31 @@
             },
 
             fnGetNotification() {
-					const self = this;
-					$.ajax({
-						url: "/mypage/notification.dox",
-						type: "POST",
-						data: { receiverId: self.sessionId },
-						dataType: "json",
-						success: function (data) {
-							if (data.result === "success" && data.notifications.length > 0) {
-								const message = data.notifications[0].contents;
-								Swal.fire({
-									title: '📢 알림',
-									text: message,
-									icon: 'info',
-									confirmButtonText: '확인'
-								}).then(() => {
-									$.ajax({
-										url: "/mypage/notificationRead.dox",
-										type: "POST",
-										data: { receiverId: self.sessionId }
-									});
-								});
-							}
-						}
-					});
-				},
+               const self = this;
+               $.ajax({
+                  url: "/mypage/notification.dox",
+                  type: "POST",
+                  data: { receiverId: self.sessionId },
+                  dataType: "json",
+                  success: function (data) {
+                     if (data.result === "success" && data.notifications.length > 0) {
+                        const message = data.notifications[0].contents;
+                        Swal.fire({
+                           title: '📢 알림',
+                           text: message,
+                           icon: 'info',
+                           confirmButtonText: '확인'
+                        }).then(() => {
+                           $.ajax({
+                              url: "/mypage/notificationRead.dox",
+                              type: "POST",
+                              data: { receiverId: self.sessionId }
+                           });
+                        });
+                     }
+                  }
+               });
+            },
             
             fnUpdateStatus() {
                 const self = this;
@@ -546,7 +546,7 @@
 
             fnLawyerBoard() {
                var self = this;
-               self.page = 1;
+               
                var nparmap = { 
                   sessionId: self.sessionId,
                   boardStatus : self.boardStatus,
@@ -682,8 +682,8 @@
 
             fnUsePhoneConsult(chat) {
                const self = this;
-			   let chatNo = chat.chatNo;
-			   let userId = chat.partnerId;
+            let chatNo = chat.chatNo;
+            let userId = chat.partnerId;
                Swal.fire({
                   title: '전화 상담 1회를 차감하시겠습니까?',
                   icon: 'warning',

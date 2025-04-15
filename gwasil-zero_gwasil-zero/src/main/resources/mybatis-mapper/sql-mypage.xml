@@ -29,12 +29,17 @@
            B.USER_ID = #{userId} AND BOARD_STATUS != 'DELETE'
    </select>
    
-   <select id="selectUserChatList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
+  <select id="selectUserChatList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
        SELECT
           cm.chat_no,
           cm.sender_id,
           cm.message,
           TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
+          
+          CASE 
+               WHEN c.sender_id = #{sessionId} THEN c.receiver_id
+               ELSE c.sender_id
+         END AS partner_id,
       
           CASE 
               WHEN c.sender_id = #{sessionId} THEN l2.lawyer_name
@@ -128,15 +133,15 @@
    </select>
    
    <update id="updateLawyer" parameterType="hashmap">
-	  UPDATE LAWYER
-	  SET
-	     LAWYER_NAME = #{lawyerName},
-	     LAWYER_PHONE = #{lawyerPhone},
-	     LAWYER_EMAIL = #{lawyerEmail},
-	     LAWYER_ADDR = #{lawyerAddr},
-	     LAWYER_IMG = #{lawyerImg, jdbcType=VARCHAR}
-	  WHERE LAWYER_ID = #{sessionId}
-	</update>
+     UPDATE LAWYER
+     SET
+        LAWYER_NAME = #{lawyerName},
+        LAWYER_PHONE = #{lawyerPhone},
+        LAWYER_EMAIL = #{lawyerEmail},
+        LAWYER_ADDR = #{lawyerAddr},
+        LAWYER_IMG = #{lawyerImg, jdbcType=VARCHAR}
+     WHERE LAWYER_ID = #{sessionId}
+   </update>
    
    <update id="updateLawyerImg" parameterType="hashmap">
        UPDATE lawyer
@@ -157,12 +162,14 @@
        LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
        INNER JOIN TBL_USER U ON B.USER_ID = U.USER_ID
        WHERE 1=1
+       AND B.BOARD_STATUS != 'DELETE'
        <if test="sessionId != null and sessionId != ''">
            AND B.LAWYER_ID = #{sessionId}
        </if>
        <if test="boardStatus != null and boardStatus != ''">
            AND B.BOARD_STATUS = #{boardStatus}
        </if>
+       ORDER BY B.CDATE DESC
        offset #{page} rows fetch next #{pageSize} rows only
    </select>
    
@@ -172,6 +179,7 @@
        LEFT JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
        INNER JOIN TBL_USER U ON B.USER_ID = U.USER_ID
        WHERE 1=1
+       AND B.BOARD_STATUS != 'DELETE'
        <if test="sessionId != null and sessionId != ''">
            AND B.LAWYER_ID = #{sessionId}
        </if>
@@ -209,46 +217,46 @@
     </update>
     
     <select id="selectLastChat" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatMessage">
-	    SELECT
-	        cm.chat_no,
-	        cm.sender_id,
-	        su.user_name AS sender_name,
-	        cm.message,
-	        TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
+       SELECT
+           cm.chat_no,
+           cm.sender_id,
+           su.user_name AS sender_name,
+           cm.message,
+           TO_CHAR(cm.time, 'YYYY-MM-DD HH24:MI:SS') AS time,
 
-	        CASE 
-	            WHEN c.sender_id = #{sessionId} THEN c.receiver_id
-	            ELSE c.sender_id
-	        END AS partner_id,
+           CASE 
+               WHEN c.sender_id = #{sessionId} THEN c.receiver_id
+               ELSE c.sender_id
+           END AS partner_id,
 
-	        CASE 
-	            WHEN c.sender_id = #{sessionId} THEN ru.user_name
-	            ELSE su2.user_name
-	        END AS partner_name
-	
-	    FROM chat_message cm
-	
-	    JOIN (
-	        SELECT chat_no, MAX(time) AS max_time
-	        FROM chat_message
-	        WHERE chat_no IN (
-	            SELECT chat_no
-	            FROM chat
-	            WHERE sender_id = #{sessionId}
-	               OR receiver_id = #{sessionId}
-	        )
-	        GROUP BY chat_no
-	    ) latest ON cm.chat_no = latest.chat_no AND cm.time = latest.max_time
-	
-	    JOIN chat c ON cm.chat_no = c.chat_no
+           CASE 
+               WHEN c.sender_id = #{sessionId} THEN ru.user_name
+               ELSE su2.user_name
+           END AS partner_name
+   
+       FROM chat_message cm
+   
+       JOIN (
+           SELECT chat_no, MAX(time) AS max_time
+           FROM chat_message
+           WHERE chat_no IN (
+               SELECT chat_no
+               FROM chat
+               WHERE sender_id = #{sessionId}
+                  OR receiver_id = #{sessionId}
+           )
+           GROUP BY chat_no
+       ) latest ON cm.chat_no = latest.chat_no AND cm.time = latest.max_time
+   
+       JOIN chat c ON cm.chat_no = c.chat_no
 
-	    LEFT JOIN tbl_user su ON cm.sender_id = su.user_id
+       LEFT JOIN tbl_user su ON cm.sender_id = su.user_id
 
-	    LEFT JOIN tbl_user su2 ON c.sender_id = su2.user_id
-	    LEFT JOIN tbl_user ru ON c.receiver_id = ru.user_id
+       LEFT JOIN tbl_user su2 ON c.sender_id = su2.user_id
+       LEFT JOIN tbl_user ru ON c.receiver_id = ru.user_id
 
-	    ORDER BY cm.time DESC
-	</select>
+       ORDER BY cm.time DESC
+   </select>
 
    
    <select id="selectContractList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Contract">
@@ -302,24 +310,24 @@
    </update>
    
    <update id="updateConsult" parameterType="hashmap">
-	    UPDATE PAY
-	    SET PAY_STATUS = 'USED',
-	    LAWYER_ID = #{lawyerId}
-	    WHERE ORDER_ID = (
-	        SELECT ORDER_ID
-	        FROM (
-	            SELECT ORDER_ID
-	            FROM PAY
-	            WHERE USER_ID = #{userId}
-	              AND PACKAGE_NAME = '전화 상담 패키지'
-	              AND PAY_STATUS = 'PAID'
-	            ORDER BY PAY_TIME ASC
-	        )
-	        WHERE ROWNUM = 1
-	    )
-	</update>
+       UPDATE PAY
+       SET PAY_STATUS = 'USED',
+       LAWYER_ID = #{lawyerId}
+       WHERE ORDER_ID = (
+           SELECT ORDER_ID
+           FROM (
+               SELECT ORDER_ID
+               FROM PAY
+               WHERE USER_ID = #{userId}
+                 AND PACKAGE_NAME = '전화 상담 패키지'
+                 AND PAY_STATUS = 'PAID'
+               ORDER BY PAY_TIME ASC
+           )
+           WHERE ROWNUM = 1
+       )
+   </update>
 
-	<select id="selectConsult" parameterType="hashmap" resultType="int">
+   <select id="selectConsult" parameterType="hashmap" resultType="int">
        SELECT COUNT(*)
        FROM PAY
        WHERE USER_ID = #{userId}
@@ -341,24 +349,24 @@
        WHERE LAWYER_ID = #{sessionId}
    </update>  
 
-	<select id="selectPayUsed" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
-	    SELECT 
-	        p.ORDER_ID,
-	        p.PAY_TIME,
-	        p.PACKAGE_NAME,
-	        p.PAY_STATUS,
-	        u.user_name as userName
-	    FROM PAY p
-	    inner join tbl_user u on u.user_id = p.user_id
-	    WHERE 
-	        LAWYER_ID = #{lawyerId}
-	        AND PACKAGE_NAME = '전화 상담 패키지'
-	        AND PAY_STATUS = 'USED'
-	    ORDER BY PAY_TIME DESC
-	</select>
+   <select id="selectPayUsed" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
+       SELECT 
+           p.ORDER_ID,
+           p.PAY_TIME,
+           p.PACKAGE_NAME,
+           p.PAY_STATUS,
+           u.user_name as userName
+       FROM PAY p
+       inner join tbl_user u on u.user_id = p.user_id
+       WHERE 
+           LAWYER_ID = #{lawyerId}
+           AND PACKAGE_NAME = '전화 상담 패키지'
+           AND PAY_STATUS = 'USED'
+       ORDER BY PAY_TIME DESC
+   </select>
 
-   	<insert id="insertChatReview" parameterType="hashmap">
-   		insert into review (review_no, user_id, lawyer_id, score, contents, cdate, udate, board_no, chat_no)
-   		values(review_seq.nextval, #{userId}, #{sessionId}, 0, null, sysdate, sysdate, null, #{chatNo})
-   	</insert>
+      <insert id="insertChatReview" parameterType="hashmap">
+         insert into review (review_no, user_id, lawyer_id, score, contents, cdate, udate, board_no, chat_no)
+         values(review_seq.nextval, #{userId}, #{sessionId}, 0, null, sysdate, sysdate, null, #{chatNo})
+      </insert>
 </mapper>

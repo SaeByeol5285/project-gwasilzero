@@ -225,6 +225,7 @@
                                     confirmButtonText: "확인"
                                 });
                                 self.pwd = ""; 
+								}
                         }
                     });
                 },

@@ -224,7 +224,7 @@
 	<update id="updateReportStatus" parameterType="hashmap">
 	    UPDATE REPORT
 	    SET REPORT_STATUS = #{reportStatus}
-	    WHERE REPORT_NO = #{reportNo}
+	    WHERE BOARD_NO = #{boardNo}
 	</update>
 	
 	<update id="updateBoardStatus" parameterType="hashmap">

@@ -216,5 +216,4 @@ public class ProfileService {
 
 		return resultMap;	
 		}
-
 }

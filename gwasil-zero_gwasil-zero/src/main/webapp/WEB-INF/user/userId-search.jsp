@@ -10,7 +10,9 @@
       integrity="sha512-Qq+0zrmldI9Zlo8bNzImlYAj6GdvYp7ZXU8pHnW9RZOh2ISmD74yW3Q6bTFSvVPttTeu4lUbZ8F9E3A7bU4TgQ=="
       crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
-    <title>아이디 찾기</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<link rel="icon" type="image/png" href="/img/common/logo3.png">
+			      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
 
     <style>
       #app {
@@ -151,10 +153,14 @@
             phone: this.user.userPhone
           }, function (rsp) {
             if (rsp.success) {
-              console.log("✅ 본인 인증 성공");
               self.isAuthenticated = true;
             } else {
-              alert("❌ 본인 인증에 실패했습니다.");
+              Swal.fire({
+                icon: "error",
+                title: "본인 인증 실패",
+                text: "❌ 본인 인증에 실패했습니다.",
+                confirmButtonText: "확인"
+              });
             }
           });
         },
@@ -172,17 +178,26 @@
               if (data.result === "success") {
                 self.foundUserId = data.userId;
               } else {
-                alert("아이디를 찾을 수 없습니다.");
+                Swal.fire({
+                  icon: "warning",
+                  title: "아이디 없음",
+                  text: "아이디를 찾을 수 없습니다.",
+                  confirmButtonText: "확인"
+                });
               }
             },
             error: function () {
-              alert("서버 통신 오류");
+              Swal.fire({
+                icon: "error",
+                title: "오류 발생",
+                text: "서버 통신 중 오류가 발생했습니다.",
+                confirmButtonText: "확인"
+              });
             }
           });
         }
       },
       mounted() {
-        console.log("Vue instance mounted");
       }
     });
 

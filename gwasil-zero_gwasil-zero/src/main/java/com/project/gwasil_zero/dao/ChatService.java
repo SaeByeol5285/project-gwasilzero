@@ -132,7 +132,6 @@ public class ChatService {
             Chat chat = chatMapper.getChatByNo(map);
             String id1 = (String) chat.getSenderId();
             String id2 = (String) chat.getReceiverId();
-            System.out.println(id1 + id2+ senderId);
 
             // 요청한 ID와 다른 쪽 ID가 상대방 ID
             String targetId = senderId.equals(id1) ? id2 : id1;

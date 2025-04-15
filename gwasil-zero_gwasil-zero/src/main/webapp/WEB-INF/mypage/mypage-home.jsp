@@ -12,7 +12,8 @@
 			<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 			<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 			<script src="/js/page-change.js"></script>
-			<title>마이페이지</title>
+			<link rel="icon" type="image/png" href="/img/common/logo3.png">
+					      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
 			<style>
 				#app {
 					max-width: 1000px;
@@ -59,12 +60,13 @@
 					text-align: center;
 					border: 1px solid #eee;
 					transition: all 0.2s ease;
-					cursor: default;
+					
 				}
 
 				.box:hover {
 					transform: translateY(-4px);
 					box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+					cursor: pointer;
 				}
 
 				table {
@@ -536,7 +538,6 @@
 							data: nparmap,
 							dataType: "json",
 							success: function (data) {
-								console.log("✅ 글 : ", data);
 								self.boardList = data.boardList;
 								self.index = Math.ceil(data.boardCnt / self.pageSize);
 							}
@@ -552,7 +553,6 @@
 							dataType: "json",
 							success: function (data) {
 								if (data.result === "success" && data.notifications.length > 0) {
-									console.log("알림", data);
 									const message = data.notifications[0].contents;
 									Swal.fire({
 										title: '📢 알림',
@@ -714,9 +714,9 @@
 					},
 
 					fnChat(chatNo) {
-						pageChange("/chat/chat.do", {chatNo : chatNo});
+						pageChange("/chat/chat.do", { chatNo: chatNo });
 					},
-					
+
 					fnRemoveUser() {
 						pageChange("/mypage/remove.do", { sessionId: this.sessionId });
 					},
@@ -732,9 +732,7 @@
 							dataType: "json",
 							data: params,
 							success: function (data) {
-								console.log(data);
 								if (data.result == "success") {
-									console.log("리뷰 리스트" + data);
 									self.availReviewList = data.availReviewList;
 									self.writtenReviewList = data.writtenReviewList;
 									self.isEditing = false;
@@ -747,7 +745,7 @@
 						const self = this;
 						if (!item.contents?.trim()) {
 							Swal.fire({
-								title: "⚠️ 입력 확인",
+								title: "입력 확인",
 								text: "내용을 입력해주세요.",
 								icon: "warning",
 								confirmButtonText: "확인"
@@ -755,7 +753,12 @@
 							return;
 						}
 						if (!item.score || item.score < 1 || item.score > 5) {
-							alert("평점을 선택해주세요.");
+							Swal.fire({
+								title: "입력 확인",
+								text: "평점을 선택해주세요.",
+								icon: "warning",
+								confirmButtonText: "확인"
+							});
 							return;
 						}
 						const params = {
@@ -771,7 +774,6 @@
 							dataType: "json",
 							data: params,
 							success: function (data) {
-								console.log(data);
 								if (data.result === 'success') {
 									Swal.fire({
 										title: "리뷰 등록 완료",
@@ -908,13 +910,13 @@
 					fnGetContractList() {
 						const self = this;
 						$.ajax({
-						url: "/mypage/contractList.dox",
-						type: "POST",
-						data: { userId: self.sessionId },
-						dataType: "json",
-						success: function (data) {
-							self.contractList = data.contractList || [];
-						}
+							url: "/mypage/contractList.dox",
+							type: "POST",
+							data: { userId: self.sessionId },
+							dataType: "json",
+							success: function (data) {
+								self.contractList = data.contractList || [];
+							}
 						});
 					},
 

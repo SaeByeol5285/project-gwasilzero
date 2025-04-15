@@ -58,6 +58,9 @@ public interface BoardMapper {
 	
 	Integer selectPackageCount(HashMap<String, Object> map);
 	
+	Integer selectPackageCount2(HashMap<String, Object> map);
+	
+	
 	List<Pay> selectAvailablePackages(HashMap<String, Object> map);
 	
 	void updatePayStatusToUsed(HashMap<String, Object> map);

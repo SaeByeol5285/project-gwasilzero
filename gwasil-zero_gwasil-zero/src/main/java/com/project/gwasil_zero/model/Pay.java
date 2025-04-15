@@ -16,5 +16,6 @@ public class Pay {
 	private String name;
 	private String receiverId;
 	private String userType;
+	private String userName;
 
 }

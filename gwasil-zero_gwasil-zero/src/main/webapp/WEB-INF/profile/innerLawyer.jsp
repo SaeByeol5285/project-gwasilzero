@@ -8,7 +8,8 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <script src="/js/page-change.js"></script>
-        <title>소속 변호사</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+				      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
         <link rel="stylesheet" href="/css/profile.css">
     </head>
 
@@ -49,7 +50,7 @@
                                 <option value="name">이름</option>
                                 <option value="txt">키워드</option>
                             </select>
-                            <input type="text" v-model="keyword" @keyup.enter="fnGetList" placeholder="검색어">
+                            <input type="text" v-model="keyword" @keyup.enter="fnGetList" placeholder="검색어를 입력하세요!">
                             <button @click="fnGetList">검색</button>
                         </div>
                         <div class="lawyer-list">
@@ -112,7 +113,8 @@
                     searchOption: "all",
                     index: 0,
                     page: 1,
-                    currentPage: 'innerLawyer'
+                    currentPage: 'innerLawyer',
+                    sessionType : "${sessionType}"
                 };
             },
             methods: {
@@ -154,7 +156,6 @@
 　　　　　　　.
 `, "color: #7b68ee; font-size: 14px; font-family: monospace; font-weight: bold;");
                             self.list = data.list;
-                            console.log("✅ 변호사 정보 로딩 완료:", data.list);
                             self.index = Math.ceil(data.count / 4);
                         }
                     });

@@ -8,7 +8,8 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <link rel="stylesheet" href="/css/lawyerView.css">
-        <title>변호사 상세보기</title>        
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+				      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title> 
     </head>
     <body>
         <jsp:include page="../common/header.jsp" />
@@ -40,7 +41,7 @@
                         <!-- 소개글 -->
                         <div class="profile-right">
                             <h3 class="intro-title">소개글</h3>
-                            <p v-if="info.lawyerInfo" v-html="info.lawyerInfo" class="intro-text"></p>
+                            <p v-if="hasInfo" v-html="info.lawyerInfo" class="intro-text"></p>
                             <p v-else class="no-data">작성된 소개가 없습니다.</p>
                         </div>
                     </div>                    
@@ -72,19 +73,19 @@
                         </div>
 
                         <!-- 박스 2: 학력 사항 -->
-                        <div class="info-box" v-if="info.lawyerEdu">
+                        <div class="info-box" v-if="hasEdu">
                             <h3>학력 사항</h3>
                             <div v-html="info.lawyerEdu" class="info-text"></div>
                         </div>
 
                         <!-- 박스 3: 법조 경력 -->
-                        <div class="info-box" v-if="info.lawyerCareer">
+                        <div class="info-box" v-if="hasCareer">
                             <h3>법조 경력</h3>
                             <div v-html="info.lawyerCareer" class="info-text"></div>
                         </div>
 
                         <!-- 박스 4: 업무 사례 -->
-                        <div class="info-box" v-if="info.lawyerTask">
+                        <div class="info-box" v-if="hasTask">
                             <h3>업무 사례</h3>
                             <div v-html="info.lawyerTask" class="info-text"></div>
                         </div>
@@ -109,12 +110,14 @@
                         <!-- 박스 6: 대표 사건 -->
                         <div class="info-box" v-if="validCaseList.length > 0">
                             <h3>대표 사건</h3>
-                            <div v-if="validCaseList.length > 0" class="case-list">
-                                <div class="case-card" v-for="caseItem in validCaseList" :key="caseItem.BOARD_NO">
-                                    <img v-if="caseItem.thumbnailPath" :src="caseItem.thumbnailPath" class="preview-img" />
+                            <div class="case-list">
+                                <div class="case-card" 
+                                        v-for="caseItem in validCaseList" 
+                                        :key="caseItem.boardNo"
+                                        @click="goToBoard(caseItem.boardNo)">
+                                    <img v-if="caseItem.filePath" :src="caseItem.filePath" class="preview-img" />
                                     <div v-else class="preview-img no-thumbnail">썸네일 없음</div>
-                                    <div class="case-title">{{ caseItem.BOARD_TITLE }}</div>
-                                    <div class="case-desc">{{ caseItem.CONTENTS }}</div>
+                                    <div class="case-title">{{ caseItem.boardTitle }}</div>
                                 </div>
                             </div>
                         </div>
@@ -215,6 +218,18 @@
             computed: {
                 validCaseList() {
                     return this.mainCaseList.filter(item => item != null);
+                },
+                hasInfo() {
+                    return this.info.lawyerInfo && this.removeEmptyTag(this.info.lawyerInfo).trim() !== '';
+                },
+                hasCareer() {
+                    return this.info.lawyerCareer && this.removeEmptyTag(this.info.lawyerCareer).trim() !== '';
+                },
+                hasEdu() {
+                    return this.info.lawyerEdu && this.removeEmptyTag(this.info.lawyerEdu).trim() !== '';
+                },
+                hasTask() {
+                    return this.info.lawyerTask && this.removeEmptyTag(this.info.lawyerTask).trim() !== '';
                 }
             },
             methods: {
@@ -226,31 +241,11 @@
                         type: "POST",
                         data: { lawyerId: self.lawyerId },
                         success: function (data) {
-                            console.log(`.
-　 ∧_∧　！
-　(´ﾞﾟωﾟ')
-＿(_つ/￣￣￣/＿
-　 ＼/　　　/
-　　　￣￣￣
-
-　 ∧_∧
-　(;ﾞﾟωﾟ')
-＿(_つ__ミ　헉
-　＼￣￣￣＼ミ
-　　￣￣￣￣
-
-　 .:∧_∧:
-＿:(;ﾞﾟωﾟ'): 에러잖아!
-　＼￣￣￣＼
-　　￣￣￣￣
-`);
-
                             self.info = data.info;
                             self.lawyerId = data.info.lawyerId;
                             self.license = data.license;
                             self.mainCaseList = data.mainCaseList || [];
                             self.fnGetReviewList();
-                            //console.log("✅ 변호사 정보 로딩 완료:", data.info);
                         }
                     });
                 },
@@ -271,7 +266,6 @@
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
-                            // console.log(data.list);
                             self.reviewList = data.list;
                             self.index = Math.ceil(data.count / self.pageSize);
                             self.reviewCnt = data.count;
@@ -353,6 +347,15 @@
                             self.loading = false;
                         }
                     });
+                },
+                goToBoard(boardNo) {
+                    location.href = "/board/view.do?boardNo=" + boardNo;
+                },
+                removeEmptyTag(html) {
+                    // <p><br></p> 같이 아무 의미 없는 태그 제거
+                    return html.replace(/<p><br\s*\/?><\/p>/gi, '')
+                            .replace(/&nbsp;/gi, '')
+                            .replace(/\s+/g, '');
                 }
             },
             mounted() {

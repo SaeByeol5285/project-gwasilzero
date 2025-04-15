@@ -6,7 +6,8 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>상품 등록</title>
+	<link rel="icon" type="image/png" href="/img/common/logo3.png">
+			      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
 
 	<!-- 라이브러리 -->
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -99,8 +100,8 @@
 </head>
 <body>
 	<div id="productApp">
+		<jsp:include page="../admin/layout.jsp" />
 		<div class="layout">
-			<jsp:include page="../admin/layout.jsp" />
 			<div class="content">
 				<div class="form-wrapper">
 					<div class="form-title">패키지 정보 입력</div>

@@ -55,7 +55,7 @@
                 background-color: #FF7043;
             }
 
-            /* 🚗 자동차 주행 도로 */
+            /*  자동차 주행 도로 */
             .car-road {
                 position: absolute;
                 bottom: 0;

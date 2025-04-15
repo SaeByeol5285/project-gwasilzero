@@ -4,11 +4,13 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>사용자 회원가입</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
         <link rel="stylesheet" href="/css/common.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <style>
             #app {
                 width: 100%;
@@ -196,23 +198,11 @@
             const app = Vue.createApp({
                 data() {
                     return {
-                        user: {
-                            userName: "",
-                            userId: "",
-                            pwd: "",
-                            pwd2: "",
-                            userPhone: "",
-                            userEmail: ""
-                        },
-                        emailId: "",
-                        emailDomain: "",
-                        customDomain: "",
-                        isAuthenticated: false,
-                        isIdChecked: false,
-                        agreeTerms: false,
-                        showTerms: false,
-                        idError: false,
-                        emailIdTouched: false
+                        user: { userName: "", userId: "", pwd: "", pwd2: "", userPhone: "", userEmail: "" },
+                        emailId: "", emailDomain: "", customDomain: "",
+                        isAuthenticated: false, isIdChecked: false,
+                        agreeTerms: false, showTerms: false,
+                        idError: false, emailIdTouched: false
                     };
                 },
                 computed: {
@@ -239,21 +229,23 @@
                             if (rsp.success) {
                                 self.isAuthenticated = true;
                             } else {
-                                alert("❌ 인증 실패. 다시 시도해주세요.");
+                                Swal.fire({ icon: "error", title: "인증 실패", text: "다시 시도해주세요." });
                             }
                         });
                     },
                     fnJoin() {
-                        if (!this.agreeTerms) return alert("⚠️ 이용약관에 동의해주세요.");
-                        if (!this.isIdChecked) return alert("⚠️ 중복체크 하세요.");
-                        if (!this.isAuthenticated) return alert("⚠️ 본인인증 하세요.");
-                        if (!this.user.userName.trim()) return alert("이름을 입력하세요.");
-                        if (this.user.userId.length < 5) return alert("아이디는 5자 이상이어야 합니다.");
-                        if (this.user.pwd.length < 8) return alert("비밀번호는 8자 이상이어야 합니다.");
-                        if (this.user.pwd !== this.user.pwd2) return alert("비밀번호가 일치하지 않습니다.");
-                        if (!this.fullEmail || !this.isEmailValid) return alert("유효한 이메일을 입력하세요.");
+                        const warn = msg => Swal.fire({ icon: "warning", title: "확인 필요", text: msg });
+
+                        if (!this.agreeTerms) return warn("이용약관에 동의해주세요.");
+                        if (!this.isIdChecked) return warn("아이디 중복체크를 해주세요.");
+                        if (!this.isAuthenticated) return warn("본인인증을 진행해주세요.");
+                        if (!this.user.userName.trim()) return warn("이름을 입력해주세요.");
+                        if (this.user.userId.length < 5) return warn("아이디는 5자 이상이어야 합니다.");
+                        if (this.user.pwd.length < 8) return warn("비밀번호는 8자 이상이어야 합니다.");
+                        if (this.user.pwd !== this.user.pwd2) return warn("비밀번호가 일치하지 않습니다.");
+                        if (!this.fullEmail || !this.isEmailValid) return warn("유효한 이메일을 입력해주세요.");
                         if (this.user.userPhone.length !== 11 || !/^[0-9]+$/.test(this.user.userPhone)) {
-                            return alert("휴대폰 번호는 11자리 숫자여야 합니다.");
+                            return warn("휴대폰 번호는 11자리 숫자여야 합니다.");
                         }
 
                         this.user.userEmail = this.fullEmail;
@@ -264,17 +256,25 @@
                             type: "POST",
                             data: this.user,
                             success: function () {
-                                alert("회원가입 완료되었습니다.");
-                                location.href = "/user/login.do";
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "회원가입 완료",
+                                    text: "정상적으로 가입되었습니다.",
+                                    confirmButtonText: "확인"
+                                }).then(() => {
+                                    location.href = "/user/login.do";
+                                });
                             },
                             error: function () {
-                                alert("회원가입 중 오류가 발생했습니다.");
+                                Swal.fire({ icon: "error", title: "회원가입 실패", text: "오류가 발생했습니다." });
                             }
                         });
                     },
                     fnIdCheck() {
                         const self = this;
-                        if (this.user.userId === "") return alert("아이디 입력하셈");
+                        if (this.user.userId === "") {
+                            return Swal.fire({ icon: "warning", title: "입력 필요", text: "아이디를 입력해주세요." });
+                        }
 
                         $.ajax({
                             url: "/join/check.dox",
@@ -283,10 +283,10 @@
                             data: { userId: this.user.userId },
                             success: function (data) {
                                 if (data.count == 0) {
-                                    alert("사용 가능");
+                                    Swal.fire({ icon: "success", title: "사용 가능", text: "이 아이디는 사용할 수 있습니다." });
                                     self.isIdChecked = true;
                                 } else {
-                                    alert("사용 불가능");
+                                    Swal.fire({ icon: "error", title: "사용 불가", text: "이미 사용 중인 아이디입니다." });
                                     self.isIdChecked = false;
                                 }
                             }

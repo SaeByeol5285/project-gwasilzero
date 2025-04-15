@@ -102,9 +102,6 @@ public class ProfileController {
 			String uploadPath = request.getServletContext().getRealPath("/license/");
 			Gson gson = new Gson();
 
-			// 이미지 경로 로그
-//	        System.out.println("UploadPath: " + uploadPath);
-
 	        // 1. 프로필 정보 가져오기
 	        String infoJson = request.getParameter("info");
 	        Map<String, Object> infoMap = gson.fromJson(infoJson, Map.class);
@@ -129,9 +126,6 @@ public class ProfileController {
 	        for (int i = 0; i < licenseCount; i++) {
 	            String licenseName = request.getParameter("licenseName_" + i);
 	            MultipartFile licenseFile = request.getFile("licenseFile_" + i);
-	            // 로그 확인
-//	            System.out.println(">>> licenseName_" + i + ": " + licenseName);
-//	            System.out.println(">>> licenseFile_" + i + ": " + (licenseFile != null ? licenseFile.getOriginalFilename() : "null"));
 
 	            if (licenseName != null && !licenseName.trim().isEmpty() && licenseFile != null && !licenseFile.isEmpty()) {
 	                HashMap<String, Object> license = new HashMap<>();

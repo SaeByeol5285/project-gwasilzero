@@ -8,7 +8,8 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <title>결제창</title>
+	<link rel="icon" type="image/png" href="/img/common/logo3.png">
+			      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
     <style>
         :root {
             --main-color: #ff5c00; /* 코랄 톤: 밝고 부드러운 주황 */
@@ -112,10 +113,6 @@
                                 confirmButtonColor: "#ff5c00"
                             }).then(() => {
                                 self.fnSave(rsp.merchant_uid);
-                                if (window.opener) {
-                                    window.opener.location.reload(); // ✅ 새로고침
-                                }
-                                window.close();
                             });
                         } else {
                             Swal.fire({
@@ -144,7 +141,6 @@
                         type: "POST",
                         data: nparmap,
                         success: function(data) {
-                            console.log("결제 내역 저장 완료:", data);
 
                             if (self.packageName === "월 회원권" && self.role === "lawyer") {
                                 $.ajax({
@@ -173,12 +169,13 @@
                                     }
                                 });
                             } else {
+                                if (window.opener) {
+                                    window.opener.location.reload(); 
+                                }
                                 window.close();
-                                location.href = "/package/package.do";
                             }
                         },
                         error: function(err) {
-                            console.error("결제 내역 저장 실패", err);
                         }
                     });
                 }

@@ -10,7 +10,8 @@
 		<link rel="stylesheet" href="/css/common.css">
 		<link rel="stylesheet" href="/css/totalDocs.css">
 		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-		<title>상세 페이지</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+				      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
 		<style>
 
 		</style>
@@ -157,7 +158,6 @@
 						data: nparmap,
 						success(data) {
 							if (data.result === "success") {
-								console.log(data);
 								self.info = data.info;
 								self.fileList = data.fileList;
 								self.fnAdjacent(self.totalNo, self.info.kind);
@@ -191,7 +191,6 @@
 						dataType: "json",
 						data: nparmap,
 						success(data) {
-							console.log(data);
 							if (data.result === "success") {
 								self.cmtList = data.list;
 							}

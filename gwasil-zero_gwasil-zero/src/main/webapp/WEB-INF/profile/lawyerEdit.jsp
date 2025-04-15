@@ -16,7 +16,8 @@
         <script src="https://cdn.jsdelivr.net/npm/quill-emoji@0.1.7/dist/quill-emoji.js"></script>
         
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <title>변호사 프로필 수정</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+				      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
     </head>
     <body>
         <jsp:include page="../common/header.jsp" />
@@ -182,7 +183,6 @@
                         dataType: "json",
                         data: { lawyerId: self.lawyerId },
                         success(data) {
-                            // console.log(data.info);
                             self.info = data.info;
                             // Quill에 값 설정
                             quillInfo.root.innerHTML = self.info.lawyerInfo || '';
@@ -293,7 +293,6 @@
                             }
                         },
                         error(err) {
-                            console.error(err);
                             swal.fire({
                                 title: "서버와의 통신 중 오류가 발생했습니다.",
                                 icon: "error",

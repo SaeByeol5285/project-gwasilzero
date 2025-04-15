@@ -9,7 +9,8 @@
       <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       <script src="/js/page-change.js"></script>
-      <title>과실 ZERO - 교통사고 전문 법률 플랫폼</title>
+     <link rel="icon" type="image/png" href="/img/common/logo3.png">
+                 <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
    </head>
    <style>
       #app {
@@ -51,6 +52,7 @@
       .edit-btn,
       .withdraw-btn {
       background-color: #FF5722;
+      
       border: none;
       border-radius: 8px;
       padding: 6px 12px;
@@ -368,7 +370,7 @@
                   <td>
                      {{ chat.partnerName }}
                      <br>
-                     <button class="edit-btn" @click="fnUsePhoneConsult(chat.partnerId)">
+                     <button class="edit-btn" @click="fnUsePhoneConsult(chat)">
                         전화 상담 차감
                      </button>
                   </td>
@@ -393,7 +395,7 @@
                <tbody>
                   <tr v-for="item in usedList" :key="item.orderId">
                      <td>{{ item.payTime }}</td>
-                     <td>{{ item.userId }}</td>
+                     <td>{{ item.userName }}</td>
                      <td>사용됨</td>
                   </tr>
                   <tr v-if="!usedList.length">
@@ -488,7 +490,6 @@
                   type: "POST",
                   data: nparmap,
                   success: function (data) {
-                     console.log(data);
                      self.view = data.view;
 
                      if (!self.view.counsel) {
@@ -499,31 +500,31 @@
             },
 
             fnGetNotification() {
-					const self = this;
-					$.ajax({
-						url: "/mypage/notification.dox",
-						type: "POST",
-						data: { receiverId: self.sessionId },
-						dataType: "json",
-						success: function (data) {
-							if (data.result === "success" && data.notifications.length > 0) {
-								const message = data.notifications[0].contents;
-								Swal.fire({
-									title: '📢 알림',
-									text: message,
-									icon: 'info',
-									confirmButtonText: '확인'
-								}).then(() => {
-									$.ajax({
-										url: "/mypage/notificationRead.dox",
-										type: "POST",
-										data: { receiverId: self.sessionId }
-									});
-								});
-							}
-						}
-					});
-				},
+               const self = this;
+               $.ajax({
+                  url: "/mypage/notification.dox",
+                  type: "POST",
+                  data: { receiverId: self.sessionId },
+                  dataType: "json",
+                  success: function (data) {
+                     if (data.result === "success" && data.notifications.length > 0) {
+                        const message = data.notifications[0].contents;
+                        Swal.fire({
+                           title: '📢 알림',
+                           text: message,
+                           icon: 'info',
+                           confirmButtonText: '확인'
+                        }).then(() => {
+                           $.ajax({
+                              url: "/mypage/notificationRead.dox",
+                              type: "POST",
+                              data: { receiverId: self.sessionId }
+                           });
+                        });
+                     }
+                  }
+               });
+            },
             
             fnUpdateStatus() {
                 const self = this;
@@ -545,7 +546,7 @@
 
             fnLawyerBoard() {
                var self = this;
-               self.page = 1;
+               
                var nparmap = { 
                   sessionId: self.sessionId,
                   boardStatus : self.boardStatus,
@@ -563,7 +564,6 @@
                   type: "POST",
                   data: nparmap,
                   success: function (data) {
-                     console.log("확인 : ", data);
                      if (data.result == "success") {
                         self.boardList = data.boardList;
                         self.index = Math.max(1, Math.ceil(data.count / self.pageSize));
@@ -585,7 +585,6 @@
                   data: { sessionId: self.sessionId },
                   dataType: "json",
                   success: function(data) {
-                     console.log(data);
                      self.lawyerPayList = data.lawyerPayList; 
                   },
                   error: function() {
@@ -683,8 +682,8 @@
 
             fnUsePhoneConsult(chat) {
                const self = this;
-			   let chatNo = chat.chatNo;
-			   let userId = chat.partnerId;
+            let chatNo = chat.chatNo;
+            let userId = chat.partnerId;
                Swal.fire({
                   title: '전화 상담 1회를 차감하시겠습니까?',
                   icon: 'warning',
@@ -697,10 +696,11 @@
                      url: '/lawyerMyPage/usePhoneConsult.dox',
                      type: 'POST',
                      data: {
+                        lawyerId : self.sessionId,
                         userId: userId,
-						sessionId : self.sessionId,
-						chatNo : chatNo,
-						contents  : ""
+                        sessionId : self.sessionId,
+                        chatNo : chatNo,
+                        contents  : ""
                      },
                      success: function (res) {
                         if (res.result === 'success') {

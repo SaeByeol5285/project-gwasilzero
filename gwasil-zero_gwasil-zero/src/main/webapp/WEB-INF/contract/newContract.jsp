@@ -3,7 +3,8 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>과실 ZERO - 교통사고 전문 법률 플랫폼</title>
+	<link rel="icon" type="image/png" href="/img/common/logo3.png">
+	      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
@@ -121,7 +122,7 @@
                 const self = this;
 
                 IMP.request_pay({
-                    pg: "kakaopay",
+                    pg: "html5_inicis",
                     pay_method: "card",
                     name: "법률 계약 - " + self.lawyerName,
                     amount: self.price,
@@ -163,13 +164,16 @@
                     dataType: "json",
                     data: nparmap,
                     success: function(data) {
-                        alert("계약이 체결되었습니다.");
 						self.fnChangeBoardStatus();			
                         location.href = "/board/list.do";
                     },
                     error: function(err) {
-                        alert("계약 저장 실패!");
-                        console.error(err);
+						Swal.fire({
+                            icon: "error",
+                            title: "계약 실패",
+                            text: "관리자에게 문의해주세요.",
+                            confirmButtonText: "확인"
+                        });
                     }
                 });
             },
@@ -189,7 +193,6 @@
 	                   },
 	                   error: function(err) {
 	                       alert("게시물 상태 변경 실패");
-	                       console.error(err);
 	                   }
 	               });
 	           },
@@ -205,12 +208,10 @@
                     dataType: "json",
                     data: nparmap,
                     success: function(data) {
-						console.log(data);
                         self.lawyer = data.lawyer;
                     },
                     error: function(err) {
                         alert("계약 저장 실패!");
-                        console.error(err);
                     }
                 });
             }

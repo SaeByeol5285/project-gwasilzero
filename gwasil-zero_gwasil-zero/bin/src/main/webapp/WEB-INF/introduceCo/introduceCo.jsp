@@ -9,7 +9,11 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="/css/introduceCo.css">
-    <title>introduceCo</title>
+	<link rel="icon" type="image/png" href="/img/common/logo3.png">
+	      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
+    <style>
+
+    </style>
   </head>
 
   <body>
@@ -27,13 +31,9 @@
       </section>
 
       <section class="why-needed">
-        <section class="why-needed">
-          <h2 class="why-title">
-            왜 <span class="inline-logo"><img src="../../img/logo1.png" alt="과실제로 로고"> 가 필요한가요?</span>
-          </h2>
-        </section>
-
-
+        <h2 class="why-title">
+          왜 <span class="inline-logo"><img src="../../img/logo1.png" alt="과실제로 로고"> 가 필요한가요?</span>
+        </h2>
         <div class="content">
           <img src="../../img/blackbox.webp" alt="블랙박스 아이콘" class="blackbox-img" />
 
@@ -49,7 +49,7 @@
       <section class="steps">
         <h2 class="steps-title">
           <span class="inline-title">
-            <img src="../../img/logo1.png" alt="과실제로 로고" class="logo" />의 <strong>3단계로 끝나는 교통사고 법률 대응</strong>   
+            <img src="../../img/logo1.png" alt="과실제로 로고" class="logo" />의 <strong>3단계로 끝나는 교통사고 법률 대응</strong>
           </span>
         </h2>
         <div class="step-wrapper">
@@ -98,7 +98,7 @@
         </div>
 
         <div class="cta-box">
-          <a href="/user/add.do" class="cta-button">회원가입 시 1회 무료 상담 가능</a>
+          <a href="/join/select.do" class="cta-button">회원가입 시 1회 무료 상담 가능</a>
         </div>
       </section>
 

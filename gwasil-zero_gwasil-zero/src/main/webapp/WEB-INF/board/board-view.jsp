@@ -335,6 +335,26 @@
                 width: 22px;
                 height: 22px;
             }
+         .btn-red {
+               background-color: #ffe1e1;
+               color: #e60000;
+               font-weight: 600;
+            }
+
+            .btn-red:hover {
+               background-color: #e60000;
+               color: #fff;
+            }
+          .btn-blue {
+                background-color: #e3f2ff;
+                color: #007bff;
+                font-weight: 600;
+             }
+
+             .btn-blue:hover {
+                background-color: #007bff;
+                color: #fff;
+             }
         </style>
 
 
@@ -357,9 +377,11 @@
                 </div>
 
                 <div class="view-meta">
-                    <div>
-                        작성자: {{ board.userName }} | 담당 변호사: {{ board.lawyerName }} | 등록일: {{ board.cdate }}
-                    </div>
+               <div>
+                   작성자: {{ board.userName }} |
+                   담당 변호사: {{ board.lawyerName ? board.lawyerName : '미정' }} |
+                   등록일: {{ board.cdate }}
+               </div>
                     <small>
                         조회수: {{ board.cnt }} | 상태: {{ getStatusLabel(board.boardStatus) }}
                     </small>
@@ -385,7 +407,20 @@
                         </video>
                     </div>
                 </div>
+            <!-- 버튼 묶음 -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+              
+              <div>
                 <button v-if="sessionId === board.userId" @click="EditBoard" class="btn btn-write">✏️ 수정하기</button>
+                <button v-if="sessionId === board.userId" @click="deleteBoard" class="btn btn-red">🗑️ 삭제</button>
+              </div>
+
+              
+              <div>
+                <button class="btn btn-blue" @click="goToList">📋 목록 보기</button>
+              </div>
+            </div>
+
             </div>
 
 
@@ -396,8 +431,11 @@
                 <div class="related-cards">
                     <div class="related-card" v-for="item in relatedBoards" :key="item.boardNo"
                         @click="goToBoard(item.boardNo)">
-                        <img :src="item.thumbnailPath?.replace('../', '/')" alt="썸네일"
-                            @error="e => e.target.src = '/img/common/image_not_exist.jpg'" />
+                        <img 
+                            :src="item.thumbnailPath ? item.thumbnailPath.replace('../', '/') : '/img/common/image_not_exist.jpg'" 
+                            alt="썸네일"
+                            @error="e => e.target.src = '/img/common/image_not_exist.jpg'" 
+                            />
                         <div class="card-info">
                             <h5>{{ item.boardTitle }}</h5>
                             <p>작성자: {{ item.userName }}</p>
@@ -435,12 +473,15 @@
                                         style="width: 25px; height: 25px; margin-left: 8px; cursor: pointer;" />
 
                                     <!-- 계약 아이콘 -->
-                                    <img v-if="sessionType === 'user'" src="/img/contract.png"
-                                        @click="startContract(cmt.lawyerId)" title="계약하기"
-                                        style="width: 25px; height: 25px; margin-left: 8px; cursor: pointer;" />
+									<img v-if="sessionType === 'user'"
+									     :src="board.lawyerId === cmt.lawyerId ? '/img/selectedContract.png' : '/img/contract.png'"
+									     @click="startContract(cmt.lawyerId)"
+									     :title="board.lawyerId === cmt.lawyerId ? '이미 계약된 변호사입니다' : '계약하기'"
+									     style="width: 25px; height: 25px; margin-left: 8px; cursor: pointer;" />
+
 
                                     <!-- 채팅 아이콘 -->
-                                    <img v-if="sessionType === 'user'" src="/img/icon-chat.png"
+                                    <img v-if="sessionType === 'user'" src="../../img/common/call.png"
                                         @click="startChat(cmt.lawyerId)" title="채팅하기"
                                         style="width: 25px; height: 25px; margin-left: 8px; cursor: pointer;" />
                                 </div>
@@ -553,8 +594,6 @@
                         },
                         dataType: "json",
                         success: function (data) {
-                            console.log(data);
-                            console.log(self.sessionType);
                             self.board = data.board;
                             self.boardTitle = data.board.boardTitle;
                             self.makerId = data.board.userId;
@@ -599,7 +638,6 @@
                         dataType: "json",
                         success: function (res) {
                             const isApproved = res.result === "true";
-                            console.log(res.result);
                             const isAuthValid = res.authResult === "true";
 
                             if (!isApproved) {
@@ -615,8 +653,8 @@
                             if (!isAuthValid) {
                                 Swal.fire({
                                     icon: "info",
-                                    title: "등록기간 만료",
-                                    text: "변호사 등록기간이 만료되었습니다.",
+                                    title: "회원권 필요",
+                                    text: "변호사 회원권이 필요합니다.",
                                     confirmButtonColor: "#ff5c00"
                                 }).then(() => {
                                     location.href = "/package/package.do";
@@ -703,7 +741,6 @@
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
-                            console.log(data);
                             if (data.result == "success") {
                                 self.list = data.list;
                             } else {
@@ -714,7 +751,7 @@
                 },
                 startContract(lawyerId) {
                     let self = this;
-                    // 작성자가 아닌 경우 계약 불가
+                    // 작성자인지 확인
                     if (self.sessionId !== self.makerId) {
                         Swal.fire({
                             icon: "warning",
@@ -724,70 +761,117 @@
                         });
                         return;
                     }
-
+               // 이미 계약되었는지 확인
+               if (self.board.lawyerName) {
+                      Swal.fire({
+                          icon: "info",
+                          title: "계약 불가",
+                          text: "이미 담당 변호사가 배정된 사건입니다.",
+                          confirmButtonColor: "#ff5c00"
+                      });
+                      return;
+                  }
+               
                     pageChange("/contract/newContract.do", { lawyerId: lawyerId, boardNo: self.boardNo, userId: self.makerId });
                 },
-                startChat(lawyerId) {
-                    let self = this;
-                    $.ajax({
-                        url: "/board/checkLawyerStatus.dox",
-                        type: "POST",
-                        data: {
-                            sessionId: lawyerId
-                        },
-                        dataType: "json",
-                        success: function (res) {
-                            console.log(res.result);
-                            const isApproved = res.result === "true";
-                            const isAuthValid = res.authResult === "true";
+            startChat(lawyerId) {
+                let self = this;
 
-                            if (!isApproved) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "승인되지 않음",
-                                    text: "아직 승인되지 않은 변호사 계정입니다.",
-                                    confirmButtonColor: "#ff5c00"
-                                });
-                                return;
-                            }
+                // 로그인 여부 확인
+                if (!self.sessionId) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "로그인 필요",
+                        text: "로그인 후 이용해주세요.",
+                        confirmButtonColor: "#ff5c00"
+                    }).then(() => {
+                        location.href = "/user/login.do";
+                    });
+                    return;
+                }
 
-                            if (!isAuthValid) {
-                                Swal.fire({
-                                    icon: "info",
-                                    title: "채팅 불가능",
-                                    text: "변호사 등록기간이 만료된 변호사와는 채팅할 수 없습니다.",
-                                    confirmButtonColor: "#ff5c00"
-                                });
-                                return;
-                            }
-
-                            // 조건 통과
-                            $.ajax({
-                                url: "/chat/findOrCreate.dox",
-                                type: "POST",
-                                data: {
-                                    userId: self.sessionId,
-                                    lawyerId: lawyerId
-                                },
-                                success: function (res) {
-                                    let chatNo = res.chatNo;
-                                    pageChange("/chat/chat.do", {
-                                        chatNo: chatNo
-                                    });
-                                }
-                            });
-
-                        },
-                        error: function () {
+                // 패키지 구매 여부 확인
+                $.ajax({
+                    url: "/board/checkUserPacakge.dox",
+                    type: "POST",
+                    data: { userId: self.sessionId },
+                    success: function (pkgRes) {
+                        if (pkgRes.count == 0) {
                             Swal.fire({
                                 icon: "error",
-                                title: "요청 실패",
-                                text: "변호사 상태 확인 요청에 실패했습니다.",
+                                title: "패키지 없음",
+                                text: "전화 상담 패키지를 구매 후 이용해주세요.",
                                 confirmButtonColor: "#ff5c00"
+                            }).then(() => {
+                                location.href = "/package/package.do";
                             });
+                            return;
                         }
-                    });
-                },
+
+                        // 변호사 상태 확인
+                        $.ajax({
+                            url: "/board/checkLawyerStatus.dox",
+                            type: "POST",
+                            data: { sessionId: lawyerId },
+                            dataType: "json",
+                            success: function (res) {
+                                const isApproved = res.result === "true";
+                                const isAuthValid = res.authResult === "true";
+
+                                if (!isApproved) {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "승인되지 않음",
+                                        text: "아직 승인되지 않은 변호사 계정입니다.",
+                                        confirmButtonColor: "#ff5c00"
+                                    });
+                                    return;
+                                }
+
+                                if (!isAuthValid) {
+                                    Swal.fire({
+                                        icon: "info",
+                                        title: "채팅 불가능",
+                                        text: "변호사 등록기간이 만료된 변호사와는 채팅할 수 없습니다.",
+                                        confirmButtonColor: "#ff5c00"
+                                    });
+                                    return;
+                                }
+
+                                //채팅
+                                $.ajax({
+                                    url: "/chat/findOrCreate.dox",
+                                    type: "POST",
+                                    data: {
+                                        userId: self.sessionId,
+                                        lawyerId: lawyerId
+                                    },
+                                    success: function (res) {
+                                        let chatNo = res.chatNo;
+                                        pageChange("/chat/chat.do", { chatNo: chatNo });
+                                    }
+                                });
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "요청 실패",
+                                    text: "변호사 상태 확인 요청에 실패했습니다.",
+                                    confirmButtonColor: "#ff5c00"
+                                });
+                            }
+                        });
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: "error",
+                            title: "요청 실패",
+                            text: "패키지 확인 중 오류가 발생했습니다.",
+                            confirmButtonColor: "#ff5c00"
+                        });
+                    }
+                });
+            },
                 deleteComment(cmtNo) {
                     const self = this;
 
@@ -943,13 +1027,23 @@
                             }
                         },
                         error: function () {
-                            console.error("조회수 증가 실패");
                         }
                     });
                 },
                 fnReport() {
                     const self = this;
                     // 1차 확인: 이미 신고했는지 확인
+               
+               if (self.sessionId == "" || self.sessionId == null) {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "로그인 필요",
+                            text: "로그인 후 이용해주세요.",
+                            confirmButtonColor: "#ff5c00"
+                        });
+                        return;
+                    }
+               
                     $.ajax({
                         url: "/board/reportCheck.dox",
                         type: "POST",
@@ -1082,12 +1176,42 @@
                             Swal.fire("오류", "서버 요청 중 문제가 발생했습니다.", "error");
                         }
                     });
-                }
+                },
+            deleteBoard() {
+                  let self = this;
+
+                  Swal.fire({
+                     title: '정말 삭제하시겠습니까?',
+                     text: "삭제된 게시글은 복구할 수 없습니다.",
+                     icon: 'warning',
+                     showCancelButton: true,
+                     confirmButtonColor: '#ff5c00',
+                     cancelButtonColor: '#aaa',
+                     confirmButtonText: '네, 삭제할게요',
+                     cancelButtonText: '취소'
+                  }).then((result) => {
+                     if (result.isConfirmed) {
+                        $.post("/board/delete.dox", { boardNo: self.board.boardNo }, () => {
+                           Swal.fire({
+                              title: '삭제 완료!',
+                              text: '게시글이 성공적으로 삭제되었습니다.',
+                              icon: 'success',
+                              confirmButtonColor: '#ff5c00',
+                              confirmButtonText: '확인'
+                           }).then(() => {
+                              location.href = "/board/list.do";
+                           });
+                        });
+                     }
+                  });
+               },
+            goToList() {
+              pageChange("/board/list.do", {});
+            }
 
             },
             mounted() {
                 let self = this;
-                console.log(self.sessionType);
                 self.fnGetBoard();
                 self.fnGetBoardWithKeyword();
                 self.fnIncreaseViewCount();
@@ -1104,7 +1228,6 @@
                         title: boardTitle
                     };
 
-                    console.log("📌 board-view (딜레이 저장) ▶", item);
 
                     let list = JSON.parse(localStorage.getItem('recentViewed') || '[]');
                     list = list.filter(i => !(i.type === item.type && i.id === item.id));

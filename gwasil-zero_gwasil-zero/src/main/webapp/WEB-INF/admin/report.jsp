@@ -8,8 +8,23 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <title>게시글 신고 관리</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
     </head>
+	<style>
+		.content-container a {
+            color: #ff6b00;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+        
+        .content-container a:hover {
+            color: #d64d00;
+            text-decoration: underline;
+        }
+		
+	</style>
 
     <body>
         <div id="reportApp">
@@ -33,10 +48,12 @@
 
                                 <!-- 요약 행 -->
                                 <tr>
-                                    <td> <a @click=fnBoardView(item)>{{ item.boardNo }}
-                                            <span v-if="item.count > 1">({{ item.count }}건)</span></a>
-
-                                    </td>
+									<td>
+									  <a href="javascript:void(0);" @click="fnBoardView(item)" style="cursor: pointer;">
+									    {{ item.boardNo }}
+									    <span v-if="item.count > 1">({{ item.count }}건)</span>
+									  </a>
+									</td>
                                     <td>
                                         『{{ item.userIdList[0] }}』
                                         <span v-if="item.count > 1"> 외 {{ item.count - 1 }}명</span>
@@ -108,7 +125,7 @@
                     reportList: [],
                     repoTotal: 0,
                     repoPage: 1,
-                    repoPageSize: 15,
+                    repoPageSize: 25,
                     repoPageCount: 0,
                     selectedBoardNo: null,
                 };
@@ -139,8 +156,8 @@
                 fnGetReports() {
                     var self = this;
                     var nparmap = {
-                        repoPage: (self.repoPage - 1) * self.repoPageSize,
-                        repoPageSize: self.repoPageSize
+                        repoPageSize: self.repoPageSize,
+                        repoPage: (self.repoPage - 1) * self.repoPageSize
                     };
                     $.ajax({
                         url: "/admin/reportList.dox",

@@ -19,7 +19,7 @@ body {
 .content {
     max-width: 1200px;
     margin: 0px auto;
-	padding-top: 20px;
+	/*padding-top: 20px;*/
 	padding-bottom: 40px;
 }
 
@@ -251,12 +251,13 @@ body {
     flex: 1;
     min-width: 180px;
     max-width: 220px;
-    background-color: #fff7f7;
+    background-color: white;
     border: 1px solid #fbb;
     border-radius: 8px;
     padding: 12px;
     text-align: center;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+	cursor: pointer;
 }
 
 .case-card:hover {

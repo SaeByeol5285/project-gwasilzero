@@ -32,7 +32,6 @@ public class AdminService {
 						
 			resultMap.put("newMemList", newMemList);
 		} catch(Exception e) {
-			System.out.println(e.getMessage());
 			resultMap.put("result", "fail");
 		}
 		return resultMap;
@@ -46,7 +45,6 @@ public class AdminService {
 			
 			resultMap.put("lawAdminWaitList", lawAdminWaitList);
 		} catch(Exception e) {
-			System.out.println(e.getMessage());
 			resultMap.put("result", "fail");
 		}
 		return resultMap;
@@ -60,7 +58,6 @@ public class AdminService {
 			
 			resultMap.put("repoAdminList", repoAdminList);
 		} catch(Exception e) {
-			System.out.println(e.getMessage());
 			resultMap.put("result", "fail");
 		}
 		return resultMap;
@@ -77,7 +74,7 @@ public class AdminService {
 			resultMap.put("count", count);
 			resultMap.put("result", "success");
 		} catch(Exception e) {
-			System.out.println(e.getMessage());
+		
 			resultMap.put("result", "fail");
 		}
 		return resultMap;
@@ -93,7 +90,7 @@ public class AdminService {
 			resultMap.put("lawWaitList", lawWaitList);
 			resultMap.put("count", count);
 		} catch(Exception e) {
-			System.out.println(e.getMessage());
+			
 			resultMap.put("result", "fail");
 		}
 		return resultMap;
@@ -118,7 +115,6 @@ public class AdminService {
 			resultMap.put("lawPassedList", lawPassedList);
 			resultMap.put("count", count);
 		} catch(Exception e) {
-			System.out.println(e.getMessage());
 			resultMap.put("result", "fail");
 		}
 		return resultMap;
@@ -143,7 +139,6 @@ public class AdminService {
 			resultMap.put("lawOutList", lawOutList);
 			resultMap.put("count", count);
 		} catch(Exception e) {
-			System.out.println(e.getMessage());
 			resultMap.put("result", "fail");
 		}
 		return resultMap;
@@ -168,7 +163,6 @@ public class AdminService {
 			resultMap.put("reportList", reportList);
 			resultMap.put("count", count);
 		} catch(Exception e) {
-			System.out.println(e.getMessage());
 			resultMap.put("result", "fail");
 		}
 		return resultMap;
@@ -178,7 +172,6 @@ public class AdminService {
 		// TODO Auto-generated method stub
 		try {
 	        adminMapper.updateReportStatus(map);
-	        System.out.println("boardStatus: " + (String)map.get("boardStatus"));
 	        if("DELETE".equals(map.get("boardStatus"))) {
 	        	adminMapper.updateBoardStatus(map);
 	        }

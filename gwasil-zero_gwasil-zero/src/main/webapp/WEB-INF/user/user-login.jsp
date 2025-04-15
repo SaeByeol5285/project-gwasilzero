@@ -14,7 +14,8 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
         <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
         <script src="https://accounts.google.com/gsi/client" async defer></script>
-        <title>로그인</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+				      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -47,6 +48,7 @@
                 font-size: 16px;
                 box-sizing: border-box;
                 transition: background-color 0.2s ease-in-out;
+                cursor: pointer;
                 /* 부드럽게 전환 */
             }
 
@@ -176,7 +178,7 @@
                                     text: "환영합니다!",
                                     confirmButtonText: "확인"
                                 }).then(() => {
-                                    location.href = "/common/main.do";
+                                    location.href = res.redirect || "/common/main.do"; // 리디렉션 URI 있으면(가이드라인에서 글쓰기)거기로, 없으면 메인
                                 });
                             } else if (res.message && res.message.includes("탈퇴한 계정입니다")) {
                                 Swal.fire({
@@ -222,13 +224,12 @@
                                     text: "아이디 또는 비밀번호를 확인해주세요.",
                                     confirmButtonText: "확인"
                                 });
-                                self.pwd = "";  // ✅ 비밀번호 초기화
-                            }
+                                self.pwd = ""; 
+								}
                         }
                     });
                 },
                 kakaoLoginCallback(code) {
-                    console.log("✅ 인가 코드 받음:", code);
                     $.ajax({
                         url: "/kakao.dox",
                         type: "POST",

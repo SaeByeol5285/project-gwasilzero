@@ -2,13 +2,14 @@
     pageEncoding="UTF-8" %>
     <!DOCTYPE html>
     <html>
-
+	
     <head>
         <meta charset="UTF-8">
         <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-        <title>매출 통계</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
         <style>
             .chart-header {
                 display: flex;
@@ -514,8 +515,6 @@
                         }),
                         success(data) {
                             self.fnRenderUserLineChart(data.series, data.categories);
-                            console.log("일반회원 시리즈 " + data.series);
-                            console.log("일반회원 카테고리 " + data.categories);
                         }
                     });
                 },
@@ -576,8 +575,6 @@
                         }),
                         success(data) {
                             self.fnRenderLawyerLineChart(data.series, data.categories);
-                            console.log("변호사 시리즈 " + data.series);
-                            console.log("변호사 카테고리 " + data.categories);
                         }
                     });
                 },

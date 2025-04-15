@@ -34,7 +34,6 @@ public class BoardService {
 		HashMap<String, Object> resultMap = new HashMap<>();
 		try {
 			boardMapper.insertBoard(map); // boardNo는 이 map 안에 들어옴
-			System.out.println("Inserted Board Map: " + map);
 
 			// boardNo를 BigDecimal로 받고 int로 변환
 			Object boardNoObj = map.get("boardNo");
@@ -85,7 +84,6 @@ public class BoardService {
 			boardMapper.insertBoardFile(map);
 			resultMap.put("fileResult","success");
 		}catch(Exception e) {
-			System.out.println(e.getMessage());
 			resultMap.put("fileResult", "failed");
 		}
 
@@ -101,9 +99,7 @@ public class BoardService {
 			resultMap.put("result", "success");
 			resultMap.put("count", count);
 
-			System.out.println(count);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
 			resultMap.put("result", "failed");
 		}
 
@@ -124,7 +120,6 @@ public class BoardService {
 			resultMap.put("comment", bc);
 			resultMap.put("bookmark", bm);
 		}catch(Exception e) {
-			System.out.println(e.getMessage());
 			resultMap.put("result", "failed");
 		}
 
@@ -138,7 +133,6 @@ public class BoardService {
 			resultMap.put("result","success");
 			
 		}catch(Exception e) {
-			System.out.println(e.getMessage());
 			resultMap.put("result", "failed");
 		}
 
@@ -151,7 +145,6 @@ public class BoardService {
 			resultMap.put("result","success");
 			
 		}catch(Exception e) {
-			System.out.println(e.getMessage());
 			resultMap.put("result","failed");
 		}
 		
@@ -229,7 +222,7 @@ public class BoardService {
 	}
 	
 	public HashMap<String, Object> checkLawyerStatus(HashMap<String, Object> map) {
-        HashMap<String, Object> resultMap = new HashMap<>();;
+        HashMap<String, Object> resultMap = new HashMap<>();
         try {
 	        Lawyer lawyer = boardMapper.checkLawyerStatus(map);
 	        String result = "";
@@ -243,6 +236,9 @@ public class BoardService {
 	            if (!authEndDate.isBefore(today)) {
 	                authResult = "true";
 	            }
+	        }
+	        else if(authEndTimeStr == null) {
+	        	authResult = "false";
 	        }
 	        
 	        if(lawyer.getLawyerPass().equals("Y"))
@@ -292,7 +288,7 @@ public class BoardService {
 	public int increaseViewCount(int boardNo) {
         return boardMapper.increaseViewCount(boardNo);
     }
-	
+	// 빠답패
 	public HashMap<String, Object> getPackageCount(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
 	    try {
@@ -364,5 +360,19 @@ public class BoardService {
 		
 		return resultMap;
 	}
+	//전상패
+	public HashMap<String, Object> checkUserPacakge(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<>();
+		try {
+	        Integer count = boardMapper.selectPackageCount2(map);
+	        resultMap.put("count", count != null ? count : 0);
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+		return resultMap;
+	}
+
 	
 }

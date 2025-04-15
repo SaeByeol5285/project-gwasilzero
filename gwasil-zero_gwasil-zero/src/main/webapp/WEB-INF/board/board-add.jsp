@@ -4,7 +4,8 @@
 
 	<head>
 		<meta charset="UTF-8">
-		<title>게시글 등록</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
 		<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 
@@ -320,9 +321,11 @@
 						success: function (res) {
 							self.packageCount = res.packageCount;
 							self.packageList = res.packageList;
-							self.orderId = self.packageList[0].orderId;
-							console.log("사용 가능 패키지 수:", self.packageCount);
-							console.log("사용 가능 패키지 목록:", self.packageList);
+							if (self.packageList.length > 0 && self.packageList[0].orderId) {
+								self.orderId = self.packageList[0].orderId;
+							} else {
+								self.orderId = "";
+							}
 						}
 					});
 
@@ -331,15 +334,27 @@
 			watch: {
 				usePackage(newVal) {
 					const self = this;
+
 					if (newVal === "Y" && self.packageCount === 0) {
-						const goBuy = confirm("사용 가능한 패키지가 없습니다.\n패키지를 구매하러 가시겠습니까?");
-						if (!goBuy) {
-							self.usePackage = "N";
-						} else {
-							// 예를 누르면 이동할 페이지가 있다면 여기에 추가
-							// location.href = "/pay/list.do";
-							self.usePackage = "N"; // 현재는 그냥 되돌리기로
-						}
+						Swal.fire({
+							icon: "info",
+							title: "패키지 없음",
+							text: "빠른답변 패키지가 없습니다. 구매하러 가시겠습니까?",
+							showCancelButton: true,
+							confirmButtonText: "패키지 구매",
+							cancelButtonText: "취소",
+							confirmButtonColor: "#ff5c00"
+						}).then((result) => {
+							if (result.isConfirmed) {
+								self.usePackage = "N";
+								location.href = "/package/package.do";
+							} else {
+								
+								self.$nextTick(() => {
+									self.usePackage = "N";
+								});
+							}
+						});
 					}
 				}
 			},
@@ -350,7 +365,7 @@
 					this.selectedCategory = categoryParam;
 				}
 				this.fnGetPackage();
-
+				
 			}
 		});
 		app.mount('#app');

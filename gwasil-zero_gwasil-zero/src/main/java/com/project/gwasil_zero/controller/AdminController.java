@@ -210,7 +210,6 @@ public class AdminController {
    	    try {
    	        resultMap = adminService.getStatChart(map);
    	    } catch (Exception e) {
-   	        System.out.println("통계 에러: " + e.getMessage());
    	        resultMap.put("result", "fail");
    	    }
    	    
@@ -232,7 +231,7 @@ public class AdminController {
    	    HashMap<String, Object> resultMap = adminService.getAvailableMonths(map);
    	    return new Gson().toJson(resultMap);
    	}
-
+   	
    	// 일 목록 조회
    	@RequestMapping(value = "/admin/pieAvailableDays.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
    	@ResponseBody
@@ -293,7 +292,6 @@ public class AdminController {
    	        resultMap = adminService.getStatPie(map);
 
    	    } catch (Exception e) {
-   	        System.out.println("Pie 차트 에러: " + e.getMessage());
    	        resultMap.put("result", "fail");
    	        resultMap.put("message", "서버 오류가 발생했습니다.");
    	    }

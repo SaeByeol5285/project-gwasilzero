@@ -3,7 +3,8 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>과실 ZERO - 교통사고 전문 법률 플랫폼</title>
+	<link rel="icon" type="image/png" href="/img/common/logo3.png">
+	      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
@@ -163,37 +164,38 @@
                     dataType: "json",
                     data: nparmap,
                     success: function(data) {
-                        alert("계약이 체결되었습니다.");
-						fnChangeBoardStatus();			
+						self.fnChangeBoardStatus();			
                         location.href = "/board/list.do";
                     },
                     error: function(err) {
-                        alert("계약 저장 실패!");
-                        console.error(err);
+						Swal.fire({
+                            icon: "error",
+                            title: "계약 실패",
+                            text: "관리자에게 문의해주세요.",
+                            confirmButtonText: "확인"
+                        });
                     }
                 });
             },
 			fnChangeBoardStatus() {
-			               let self = this;
-			               const nparmap = {
-			                   userId: self.userId,
-			                   lawyerId: self.lawyerId,
-			                   boardNo: self.boardNo
-			               };
+	               let self = this;
+	               const nparmap = {
+	                   lawyerId: self.lawyerId,
+	                   boardNo: self.boardNo
+	               };
 
-			               $.ajax({
-			                   url: "/board/changeBoardStatus.dox",
-			                   type: "POST",
-			                   dataType: "json",
-			                   data: nparmap,
-			                   success: function(data) {
-			                   },
-			                   error: function(err) {
-			                       alert("게시물 상태 변경 실패");
-			                       console.error(err);
-			                   }
-			               });
-			           },
+	               $.ajax({
+	                   url: "/board/changeBoardStatus.dox",
+	                   type: "POST",
+	                   dataType: "json",
+	                   data: nparmap,
+	                   success: function(data) {
+	                   },
+	                   error: function(err) {
+	                       alert("게시물 상태 변경 실패");
+	                   }
+	               });
+	           },
             fnGetLawyerInfo() {
                 let self = this;
                 const nparmap = {
@@ -206,12 +208,10 @@
                     dataType: "json",
                     data: nparmap,
                     success: function(data) {
-						console.log(data);
                         self.lawyer = data.lawyer;
                     },
                     error: function(err) {
                         alert("계약 저장 실패!");
-                        console.error(err);
                     }
                 });
             }

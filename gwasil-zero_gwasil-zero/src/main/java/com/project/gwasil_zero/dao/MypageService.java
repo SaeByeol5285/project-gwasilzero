@@ -28,14 +28,12 @@ public class MypageService {
 
 	public HashMap<String, Object> getList(HashMap<String, Object> map) {
 	    if (map.get("sessionId") != null) {
-	        map.put("userId", map.get("sessionId"));  // 🔥 핵심
+	        map.put("userId", map.get("sessionId"));  
 	    }
 
-	    System.out.println("🔎 최종 전달 데이터: " + map);
 
 	    HashMap<String, Object> resultMap = new HashMap<>();
-	    List<User> user = mypageMapper.selectUserForMypage(map);  // 이 부분만 바꿈
-	    System.out.println("🔎 조회된 사용자 정보: " + user);
+	    List<User> user = mypageMapper.selectUserForMypage(map);  
 
 	    resultMap.put("user", user);
 	    return resultMap;
@@ -259,8 +257,17 @@ public class MypageService {
 	public HashMap<String, Object> upadatePhoneConsult(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-	    mypageMapper.updateConsult(map);
-	    resultMap.put("result", "success");      
+	    
+	    int count = mypageMapper.selectConsult(map);
+	    if (count > 0) {
+	    	resultMap.put("result", "success");   
+	    	mypageMapper.updateConsult(map);
+	    }
+	    else {
+	    	resultMap.put("result", "fail");
+	    	resultMap.put("message", "차감할 패키지가 없습니다.");
+	    }
+	       
 	    return resultMap;
 	}
 
@@ -282,6 +289,15 @@ public class MypageService {
 		    }
 
 		    return resultMap;
+	}
+
+	public HashMap<String, Object> selectPhoneList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		List<Pay> usedList = mypageMapper.selectPayUsed(map);
+		resultMap.put("usedList", usedList);
+		resultMap.put("result", "success");
+		return resultMap;
 	}
 
 }

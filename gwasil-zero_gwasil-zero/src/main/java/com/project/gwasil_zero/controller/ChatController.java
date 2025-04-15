@@ -46,19 +46,19 @@ public class ChatController {
     }
 
 	@MessageMapping("/sendMessage")
-	@SendTo("/topic/public")
-	public MessageWrapper sendMessage(MessageWrapper wrapper) {
+	public void sendMessage(MessageWrapper wrapper) {
 	    if ("text".equals(wrapper.getType())) {
 	        ChatMessage msg = new ObjectMapper().convertValue(wrapper.getPayload(), ChatMessage.class);
 	        msg.setTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
-	        chatService.saveChatMessage(msg); // ID로 저장
-	        chatService.enrichSenderName(msg); // 이름 조회
-	        wrapper.setPayload(msg); // 이름 담아서 다시 전송
+	        chatService.saveChatMessage(msg);
+	        chatService.enrichSenderName(msg);
+	        wrapper.setPayload(msg);
 
+	        messagingTemplate.convertAndSend("/topic/chat/" + msg.getChatNo(), wrapper);
 	    }
-	    return wrapper;
 	}
+
 	
 	@PostMapping("/chat/uploadFiles")
 	@ResponseBody
@@ -127,4 +127,21 @@ public class ChatController {
 	    resultMap = chatService.getTargetName(map);
 	    return resultMap;
 	}
+	
+	@RequestMapping(value = "/chat/getIsEnd.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public HashMap<String, Object> getIsEnd(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = chatService.getIsEnd(map);
+	    return resultMap;
+	}
+	
+	@RequestMapping(value = "/chat/reviewUpdate.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public HashMap<String, Object> reviewUpdate(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = chatService.reviewUpdate(map);
+	    return resultMap;
+	}
+	
 }

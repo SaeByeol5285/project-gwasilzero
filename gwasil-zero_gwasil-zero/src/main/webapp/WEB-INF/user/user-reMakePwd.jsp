@@ -10,7 +10,9 @@
     <link rel="stylesheet" href="/css/common.css">
     <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
-    <title>비밀번호 재설정</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<link rel="icon" type="image/png" href="/img/common/logo3.png">
+			      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
     <style>
       .form-section {
         width: 100%;
@@ -58,44 +60,74 @@
 
   <script>
     const userId = sessionStorage.getItem("recoverUserId");
-
+  
     if (!userId) {
-      alert("❌ 인증되지 않은 접근입니다.");
-      location.href = "/user/search.do";
+      Swal.fire({
+        icon: "error",
+        title: "접근 오류",
+        text: "❌ 인증되지 않은 접근입니다.",
+        confirmButtonText: "확인"
+      }).then(() => {
+        location.href = "/user/search.do";
+      });
     }
-
+  
     function submitNewPassword() {
       const pwd = document.getElementById("newPwd").value;
       const confirmPwd = document.getElementById("confirmPwd").value;
-
+  
       if (!pwd || !confirmPwd) {
-        alert("비밀번호를 입력해주세요.");
-        return;
+        return Swal.fire({
+          icon: "warning",
+          title: "입력 필요",
+          text: "비밀번호를 입력해주세요.",
+          confirmButtonText: "확인"
+        });
       }
-
+  
       if (pwd !== confirmPwd) {
-        alert("비밀번호가 일치하지 않습니다.");
-        return;
+        return Swal.fire({
+          icon: "error",
+          title: "불일치",
+          text: "비밀번호가 일치하지 않습니다.",
+          confirmButtonText: "확인"
+        });
       }
-
+  
       $.ajax({
         url: "/user/user-reMakePwd.dox",
         type: "POST",
         data: {
-          id: userId,  // ✅ 여기 수정됨
+          id: userId,
           pwd: pwd
         },
         success: function (data) {
           if (data.result === "success") {
-            alert("✅ 비밀번호가 성공적으로 변경되었습니다.");
-            sessionStorage.removeItem("recoverUserId");
-            location.href = "/user/login.do";
+            Swal.fire({
+              icon: "success",
+              title: "변경 완료",
+              text: "✅ 비밀번호가 성공적으로 변경되었습니다.",
+              confirmButtonText: "확인"
+            }).then(() => {
+              sessionStorage.removeItem("recoverUserId");
+              location.href = "/user/login.do";
+            });
           } else {
-            alert("변경 실패: " + (data.message || "서버 오류"));
+            Swal.fire({
+              icon: "error",
+              title: "변경 실패",
+              text: "변경 실패: " + (data.message || "서버 오류"),
+              confirmButtonText: "확인"
+            });
           }
         },
         error: function () {
-          alert("서버 통신 오류가 발생했습니다.");
+          Swal.fire({
+            icon: "error",
+            title: "서버 오류",
+            text: "서버 통신 오류가 발생했습니다.",
+            confirmButtonText: "확인"
+          });
         }
       });
     }

@@ -7,7 +7,9 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
-    <title>결제창</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<link rel="icon" type="image/png" href="/img/common/logo3.png">
+			      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
     <style>
         :root {
             --main-color: #ff5c00; /* 코랄 톤: 밝고 부드러운 주황 */
@@ -96,7 +98,7 @@
                 fnPay() {
                     const self = this;
                     IMP.request_pay({
-                        pg: "kakaopay",
+                        pg: "html5_inicis",
                         pay_method: "card",
                         merchant_uid: self.orderId,
                         name: self.packageName,
@@ -104,10 +106,21 @@
                         buyer_tel: "010-0000-0000"
                     }, function (rsp) {
                         if (rsp.success) {
-                            alert("✅ 결제 완료!");
-                            self.fnSave(rsp.merchant_uid);
+                            Swal.fire({
+                                icon: "success",
+                                title: "✅ 결제 완료!",
+                                text: "정상적으로 결제되었습니다.",
+                                confirmButtonColor: "#ff5c00"
+                            }).then(() => {
+                                self.fnSave(rsp.merchant_uid);
+                            });
                         } else {
-                            alert("❌ 결제 실패!");
+                            Swal.fire({
+                                icon: "error",
+                                title: "❌ 결제 실패!",
+                                text: "결제가 정상적으로 처리되지 않았습니다.",
+                                confirmButtonColor: "#ff5c00"
+                            });
                         }
                     });
                 },
@@ -128,7 +141,6 @@
                         type: "POST",
                         data: nparmap,
                         success: function(data) {
-                            console.log("결제 내역 저장 완료:", data);
 
                             if (self.packageName === "월 회원권" && self.role === "lawyer") {
                                 $.ajax({
@@ -136,15 +148,19 @@
                                     type: "POST",
                                     data: { lawyerId: self.sessionId },
                                     success: function(res) {
-                                        Swal.fire({
-                                            title: "월 회원 등록 완료!",
-                                            text: `🗓️ ` + res.authEndtime + `까지 활동 가능합니다!`,
-                                            icon: "success",
-                                            confirmButtonText: "확인"
-                                        }).then(() => {
-                                            window.close();
-                                            location.href = "/package/package.do";
-                                        });
+                                        if (res.result == "success") {
+                                            Swal.fire({
+                                                title: "월 회원 등록 완료!",
+                                                text: `🗓️ ` + res.authEndtime + `까지 활동 가능합니다!`,
+                                                icon: "success",
+                                                confirmButtonText: "확인"
+                                            }).then(() => {
+                                                if (window.opener) {
+                                                    window.opener.location.reload(); 
+                                                }
+                                                window.close();
+                                            });
+                                        }  
                                     },
                                     error: function(err) {
                                         alert("회원 기간 갱신에 실패했습니다.");
@@ -153,12 +169,13 @@
                                     }
                                 });
                             } else {
+                                if (window.opener) {
+                                    window.opener.location.reload(); 
+                                }
                                 window.close();
-                                location.href = "/package/package.do";
                             }
                         },
                         error: function(err) {
-                            console.error("결제 내역 저장 실패", err);
                         }
                     });
                 }

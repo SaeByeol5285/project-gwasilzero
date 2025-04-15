@@ -4,7 +4,8 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>변호사 유형 선택</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <style>
             #app {
@@ -80,7 +81,6 @@
             const app = Vue.createApp({
                 methods: {
                     selectLawyer(status) {
-                        console.log("선택된 status:", status); // 확인용 로그
                         location.href = "/join/lawyer-join.do?status=" + status;
                     }
                 }

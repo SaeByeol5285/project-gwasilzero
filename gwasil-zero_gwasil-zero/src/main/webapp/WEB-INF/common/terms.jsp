@@ -4,7 +4,8 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>약관 페이지</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <style>
             body {

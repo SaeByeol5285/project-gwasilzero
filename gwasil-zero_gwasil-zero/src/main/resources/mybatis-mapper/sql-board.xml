@@ -49,26 +49,32 @@
 		SELECT COUNT(*)
 		FROM BOARD B
 		INNER JOIN TBL_USER M ON B.USER_ID = M.USER_ID  
-		LEFT JOIN CATEGORIES C ON B.BOARD_NO = C.BOARD_NO
 		LEFT JOIN LAWYER l ON b.lawyer_id = l.lawyer_id
-		WHERE 1=1
-		AND b.board_status != 'DELETE'
+	
 		<if test="category != null and category != 'all'">
-			AND C.CATEGORY = #{category}
+			INNER JOIN CATEGORIES C ON B.BOARD_NO = C.BOARD_NO AND C.CATEGORY = #{category}
 		</if>
+	
+		WHERE 1 = 1
+		AND b.board_status != 'DELETE'
+		AND m.user_status = 'NORMAL'
+	
 		<if test="searchOption != null and searchOption == 'all'">
-		  AND (
-		    BOARD_TITLE LIKE '%' || #{keyword} || '%' 
-		    OR l.LAWYER_NAME LIKE '%' || #{keyword} || '%'
-		  )
+			AND (
+				BOARD_TITLE LIKE '%' || #{keyword} || '%' 
+				OR l.LAWYER_NAME LIKE '%' || #{keyword} || '%'
+			)
 		</if>
+	
 		<if test="searchOption != null and searchOption == 'title'">
-		  AND BOARD_TITLE LIKE '%' || #{keyword} || '%'
+			AND BOARD_TITLE LIKE '%' || #{keyword} || '%'
 		</if>
+	
 		<if test="searchOption != null and searchOption == 'name'">
-		  AND l.LAWYER_NAME LIKE '%' || #{keyword} || '%'
+			AND l.LAWYER_NAME LIKE '%' || #{keyword} || '%'
 		</if>
 	</select>
+
 
 
 
@@ -160,39 +166,44 @@
 	
 	<!-- 키워드 기반 추출 -->
 	<select id="selectRelatedBoards" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Board">
-		   SELECT b.*, 
-		         m.user_name AS userName, 
-		         l.lawyer_name AS lawyerName, 
-		         bf.file_path AS thumbnailPath
-		  FROM board b
-		  JOIN tbl_user m ON b.user_id = m.user_id
-		  LEFT JOIN lawyer l ON b.lawyer_id = l.lawyer_id
-		  LEFT JOIN (
-		    SELECT board_no, file_path 
-		    FROM board_file 
-		    WHERE thumbnail = 'Y'
-		  ) bf ON b.board_no = bf.board_no
-		  JOIN (
-		    SELECT k2.board_no, COUNT(*) AS match_count
-		    FROM keyword k1
-		    JOIN keyword k2 ON k1.keyword = k2.keyword
-		    WHERE k1.board_no = #{boardNo} 
-		      AND k2.board_no != #{boardNo}
-		    GROUP BY k2.board_no
-		    HAVING COUNT(*) >= 2
-		  ) match_keyword ON b.board_no = match_keyword.board_no
-		  WHERE b.board_status != 'DELETE'
-		    AND EXISTS (
-		      SELECT 1 FROM categories c1 
-		      WHERE c1.board_no = b.board_no 
-		        AND c1.category = (
-		          SELECT category FROM categories 
-		          WHERE board_no = #{boardNo} 
-		          FETCH FIRST 1 ROWS ONLY
-		        )
-		    )
-		  AND ROWNUM &lt;= 3
+	    SELECT b.*, 
+	           m.user_name AS userName, 
+	           l.lawyer_name AS lawyerName, 
+	           bf.file_path AS thumbnailPath
+	    FROM board b
+	    JOIN tbl_user m ON b.user_id = m.user_id
+	    LEFT JOIN lawyer l ON b.lawyer_id = l.lawyer_id
+	    LEFT JOIN (
+	        SELECT board_no, file_path 
+	        FROM board_file 
+	        WHERE thumbnail = 'Y'
+	    ) bf ON b.board_no = bf.board_no
+	    WHERE b.board_status != 'DELETE'
+	      AND b.board_no != #{boardNo}
+	      AND (
+	            b.board_no IN (
+	                SELECT k2.board_no
+	                FROM keyword k1
+	                JOIN keyword k2 ON k1.keyword = k2.keyword
+	                WHERE k1.board_no = #{boardNo} 
+	                  AND k2.board_no != #{boardNo}
+	                GROUP BY k2.board_no
+	                HAVING COUNT(*) >= 2
+	            )
+	            OR
+	            EXISTS (
+	                SELECT 1 FROM categories c1 
+	                WHERE c1.board_no = b.board_no 
+	                  AND c1.category = (
+	                      SELECT category FROM categories 
+	                      WHERE board_no = #{boardNo}
+	                      FETCH FIRST 1 ROWS ONLY
+	                  )
+	            )
+	      )
+	      AND ROWNUM &lt;= 3
 	</select>
+
 
 	<delete id="deleteBoardKeywords" parameterType="int">
 	    DELETE FROM keyword WHERE board_no = #{boardNo}
@@ -203,7 +214,16 @@
 	  SET cnt = NVL(cnt, 0) + 1
 	  WHERE board_no = #{boardNo}
 	</update>
+	<!--빠답패-->
+	<select id="selectPackageCount2" parameterType="hashmap" resultType="int">
+	    SELECT COUNT(*) 
+	    FROM pay
+	    WHERE user_id = #{userId}
+	      AND package_name = '전화 상담 패키지'
+	      AND pay_status = 'PAID'
+	</select>
 	
+	<!--빠답패-->
 	<select id="selectPackageCount" parameterType="hashmap" resultType="int">
 	    SELECT COUNT(*) 
 	    FROM pay
@@ -212,7 +232,7 @@
 	      AND pay_status = 'PAID'
 	</select>
 	
-	<!-- 사용 가능한 패키지 리스트 반환 -->
+	<!--빠답패-->
 	<select id="selectAvailablePackages" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
 	    SELECT *
 	    FROM pay
@@ -242,6 +262,10 @@
 	   FROM REPORT
 	   WHERE USER_ID = #{sessionId}
 	   AND BOARD_NO = #{boardNo}
+	</select>
+	
+	<select id="selectPackage" parameterType="map" resultType="int">
+		select count(*) from pay where user_id = #{userId} and package_name = '전화 상담 패키지'
 	</select>
 	
 </mapper>

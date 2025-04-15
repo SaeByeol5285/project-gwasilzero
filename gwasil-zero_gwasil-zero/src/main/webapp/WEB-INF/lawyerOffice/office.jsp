@@ -3,7 +3,8 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>과실 ZERO - 교통사고 전문 법률 플랫폼</title>
+	<link rel="icon" type="image/png" href="/img/common/logo3.png">
+	      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b58f49b3384edf05982d77a3259c7afb&libraries=services"></script>
@@ -392,6 +393,11 @@ const mapApp = Vue.createApp({
 			} else {
 				this.loadLawyers('P');
 			}
+
+		},
+
+		filterStatus() {
+			this.page = 1;
 		}
 	},
 
@@ -607,7 +613,6 @@ const mapApp = Vue.createApp({
 
 				const promises = res.lawyerList.map(lawyer => {
 					return new Promise((resolve) => {
-						// ✅ 주소 유효성 검사
 						if (!lawyer.lawyerAddr || lawyer.lawyerAddr.trim() === "") {
 							resolve(lawyer); // 주소 없으면 스킵
 							return;
@@ -690,7 +695,6 @@ const mapApp = Vue.createApp({
 			});
 		},
 
-		// ✅ 거리 계산 함수 (단위: km)
 		calculateDistances() {
 			const self = this;
 
@@ -727,7 +731,6 @@ const mapApp = Vue.createApp({
 			});
 		},
 
-		// 거리 계산 공식 (Haversine)
 		getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
 			const R = 6371; // 지구 반지름 (km)
 			const dLat = this.deg2rad(lat2 - lat1);
@@ -774,7 +777,7 @@ const mapApp = Vue.createApp({
 			if (!lawyer._lat || !lawyer._lng) return;
 
 			const position = new kakao.maps.LatLng(lawyer._lat, lawyer._lng);
-			self.map.panTo(position);  // 부드럽게 이동
+			self.map.panTo(position); 
 
 			// 기존 인포윈도우 닫기
 			if (self.infowindow) self.infowindow.close();
@@ -876,10 +879,8 @@ const mapApp = Vue.createApp({
 			     success: function (data) {
 			       if (isMarked) {
 			         self.bookmarkList = self.bookmarkList.filter(b => b.lawyerId !== lawyerId);
-					 alert(data.result);
 			       } else {
 			         self.bookmarkList.push({ lawyerId: lawyerId });
-					 alert(data.result);
 			       }
 			     },
 			     error: function () {

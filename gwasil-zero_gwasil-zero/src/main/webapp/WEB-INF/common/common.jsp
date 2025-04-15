@@ -12,4 +12,4 @@
 <div class="card">내용</div>
 
 ✅ 정렬
-<div class="flex-between">양쪽 배치</div>   
+<div class="flex-between">양쪽 배치</div>       

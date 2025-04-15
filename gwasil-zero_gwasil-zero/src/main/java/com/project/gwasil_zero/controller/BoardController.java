@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -21,6 +23,7 @@ import java.lang.reflect.Type;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,9 +47,19 @@ public class BoardController {
 	BoardService boardService;
 	
 	@RequestMapping("/board/add.do") 
-    public String boardAdd(Model model) throws Exception{
-        return "/board/board-add";
-    }
+	public String boardAdd(HttpSession session, HttpServletRequest request) throws Exception {
+	    String sessionId = (String) session.getAttribute("sessionId");
+
+	    if (sessionId == null || sessionId.equals("")) {
+	        // 로그인 안 한 경우, redirect 경로 저장
+	        String category = request.getParameter("category"); // 글쓰기 시 파라미터 있을 수 있음
+	        session.setAttribute("redirectURI", "/board/add.do" + (category != null ? "?category=" + category : ""));
+
+	        return "redirect:/user/login.do";
+	    }
+
+	    return "/board/board-add";
+	}
 
 	@RequestMapping("/board/list.do") 
     public String boardList(Model model) throws Exception{
@@ -171,13 +184,12 @@ public class BoardController {
 	                String cutPath = cutPathDir + "\\cut_" + saveFileName;
 	                String mosaicPath = mosaicPathDir + "\\mosaic_" + saveFileName;
 
-	                // 스크립트 커맨드
+	                // 커맨드 실행
 	                String fullCommand = String.join(" && ",
 	                        "del \"" + mosaicPath + "\"",
-	                        "ffmpeg -y -i \"" + inputPath + "\" -t 40 -vf scale=800:600 \"" + cutPath + "\"",
+	                        "ffmpeg -y -i \"" + inputPath + "\" -vf scale=800:600 \"" + cutPath + "\"",
 	                        "\"" + pythonExec + "\" \"" + scriptPath + "\" \"" + cutPath + "\" \"" + mosaicPath + "\""
 	                );
-	                System.out.println("CMD: " + fullCommand);
 
 	                ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", fullCommand);
 	                pb.redirectErrorStream(true);
@@ -187,9 +199,18 @@ public class BoardController {
 	                BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
 	                String line;
 	                while ((line = in.readLine()) != null) {
-	                    System.out.println("[CMD] " + line);
 	                }
 	                process.waitFor();
+
+	                // 모자이크 파일이 없으면 cut 비디오 복사로 대체
+	                File mosaicFile = new File(mosaicPath);
+	                if (!mosaicFile.exists()) {
+	                    Files.copy(
+	                        new File(cutPath).toPath(),
+	                        mosaicFile.toPath(),
+	                        StandardCopyOption.REPLACE_EXISTING
+	                    );
+	                }
 
 	                // DB 등록 (thumbnail = N)
 	                HashMap<String, Object> fileMap = new HashMap<>();
@@ -216,7 +237,6 @@ public class BoardController {
 	                    "ffmpeg -y -i \"%s\" -ss 00:00:02.000 -vframes 1 \"%s\"",
 	                    lastMosaicPath, thumbnailPath
 	            );
-	            System.out.println("THUMB CMD: " + thumbCommand);
 
 	            ProcessBuilder thumbPB = new ProcessBuilder("cmd.exe", "/c", thumbCommand);
 	            thumbPB.redirectErrorStream(true);
@@ -225,7 +245,6 @@ public class BoardController {
 	            BufferedReader thumbIn = new BufferedReader(new InputStreamReader(thumbProcess.getInputStream()));
 	            String thumbLine;
 	            while ((thumbLine = thumbIn.readLine()) != null) {
-	                System.out.println("[THUMB] " + thumbLine);
 	            }
 	            thumbProcess.waitFor();
 
@@ -266,10 +285,9 @@ public class BoardController {
 
 	            int exitCode = processText.waitFor();
 	            if (exitCode == 0) {
-	                System.out.println("📌 본문 키워드 분석 결과:");
 	                System.out.println(output.toString());
 
-	                // 🔽 파이썬에서 출력한 JSON 파싱 후 저장
+	                // 파이썬에서 출력한 JSON 파싱 후 저장
 	                Gson gson = new Gson();
 	                Type type = new TypeToken<Map<String, Double>>() {}.getType();
 	                Map<String, Double> keywordMap = gson.fromJson(output.toString(), type);
@@ -283,11 +301,9 @@ public class BoardController {
 
 	                boardService.saveBoardKeywords(boardNo, keywords);
 	            } else {
-	                System.out.println("❌ 키워드 분석 실패 (code: " + exitCode + ")");
 	            }
 
 	        } catch (Exception e) {
-	            System.out.println("❗ 키워드 분석 중 예외 발생");
 	            e.printStackTrace();
 	        }
 	        
@@ -367,10 +383,19 @@ public class BoardController {
 	                    BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
 	                    String line;
 	                    while ((line = in.readLine()) != null) {
-	                        System.out.println("[EDIT CMD] " + line);
 	                    }
 	                    process.waitFor();
-
+	                    
+	                 // 모자이크 파일이 없으면 cut 비디오 복사로 대체
+		                File mosaicFile = new File(mosaicPath);
+		                if (!mosaicFile.exists()) {
+		                    Files.copy(
+		                        new File(cutPath).toPath(),
+		                        mosaicFile.toPath(),
+		                        StandardCopyOption.REPLACE_EXISTING
+		                    );
+		                }
+	                    
 	                    // DB에 저장
 	                    HashMap<String, Object> fileMap = new HashMap<>();
 	                    fileMap.put("boardNo", boardNo);
@@ -395,7 +420,7 @@ public class BoardController {
 	            ProcessBuilder pbText = new ProcessBuilder(
 	            	    "python",
 	            	    textScriptPath,
-	            	    tempTextFile.getAbsolutePath()  // <- 본문 파일 경로만 넘김
+	            	    tempTextFile.getAbsolutePath()  //  본문 파일 경로만 넘김
 	            	);
 
 	            pbText.redirectErrorStream(true);
@@ -412,7 +437,6 @@ public class BoardController {
 
 	            int exitCode = processText.waitFor();
 	            if (exitCode == 0) {
-	            	System.out.println("📌 본문 키워드 분석 결과:");
 	                System.out.println(output.toString());
 
 	                Gson gson = new Gson();
@@ -429,11 +453,10 @@ public class BoardController {
 
 					boardService.updateBoardKeywords(boardNo, keywords);
 	            } else {
-	                System.out.println(" 키워드 분석 실패 (code: " + exitCode + ")");
+
 	            }
 
 	        } catch (Exception e) {
-	            System.out.println("❗ 키워드 분석 중 예외 발생");
 	            e.printStackTrace();
 	        }
 	        
@@ -529,5 +552,15 @@ public class BoardController {
 	    resultMap = boardService.reportCheck(map);
 	    return resultMap;
 	}
+	
+	@PostMapping("/board/checkUserPacakge.dox")
+	@ResponseBody
+	public HashMap<String, Object> checkUserPacakge(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = boardService.checkUserPacakge(map);
+	    return resultMap;
+	}
+	
+
 	
 }

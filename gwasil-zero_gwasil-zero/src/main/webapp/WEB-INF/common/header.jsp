@@ -9,7 +9,8 @@
    <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
    <script src="/js/page-change.js"></script>
    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+   <link rel="icon" type="image/png" href="/img/common/logo3.png">
+         <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
    <style>
       * {
          font-family: 'Noto Sans KR', sans-serif;
@@ -102,12 +103,30 @@
                            <div class="noti-section">
                               <h4>관심 변호사</h4>
                               <div class="noti-list" v-if="bookmarkList.length > 0">
-                                 <div class="noti-item" v-for="(bm, index) in bookmarkList" :key="index">
-                                    {{ bm.lawyerName }}
-                                    <img src="/img/selectedBookmark.png"
-                                       style="float: right; width: 18px; height: 18px; cursor: pointer;"
-                                       @click="confirmBookmarkDelete(bm.lawyerId)" />
-                                 </div>
+								
+								<div class="noti-item" v-for="(bm, index) in bookmarkList" :key="index" style="display: flex; justify-content: space-between; align-items: center;">
+									<span
+									    style="color: #ff5722; font-weight: 500; cursor: pointer;"
+									    @click="goToLawyerProfile(bm.lawyerId)"
+									  >
+									    {{ bm.lawyerName }}
+									  </span>
+
+								  <!-- 오른쪽: 아이콘들 -->
+								  <div style="display: flex; align-items: center; gap: 8px;">
+								    <img
+								      src="/img/common/call.png"
+								      style="width: 18px; height: 18px; cursor: pointer;"
+								      @click="startChat(bm.lawyerId)"
+								    />
+								    <img
+								      src="/img/selectedBookmark.png"
+								      style="width: 18px; height: 18px; cursor: pointer;"
+								      @click="confirmBookmarkDelete(bm.lawyerId)"
+								    />
+								  </div>
+								</div>
+								
                               </div>
                               <div class="noti-empty" v-else>관심있는 변호사가 없습니다.</div>
                            </div>
@@ -123,7 +142,6 @@
                </div>
             </div>
 
-            <!-- ✅ 메뉴줄 (하단) -->
             <div class="bottom-line">
                <ul class="main-menu">
                   <li class="menu-item" v-for="(item, index) in menuItems" :key="index">
@@ -235,25 +253,98 @@
             fnBoardView(item) {
                pageChange("/board/view.do", { boardNo: item.boardNo });
             },
-            fnChat(item) {
-               let self = this;
+			fnChat(item) {
+			    let self = this;
 
-               if (!confirm("채팅방으로 이동하시겠습니까?")) return;
+			    // 로그인 여부 확인
+			    if (!self.sessionId) {
+			        Swal.fire({
+			            icon: "warning",
+			            title: "로그인 필요",
+			            text: "로그인 후 이용해주세요.",
+			            confirmButtonColor: "#ff5c00"
+			        });
+			        return;
+			    }
+				
+			    //  채팅 이동 확인
+			    Swal.fire({
+			        icon: "warning",
+			        title: "알림",
+			        text: "채팅으로 이동하시겠습니까?",
+			        showCancelButton: true,
+			        confirmButtonText: "이동",
+			        cancelButtonText: "취소",
+			        confirmButtonColor: "#ff5c00"
+			    }).then((result) => {
+			        if (result.isConfirmed) {
+			            self.fnChat2(item);
+			        }
+			    });
+			},
+			fnChat2(item) {
+			    let self = this;
 
-               // 읽음 처리 후 바로 이동
-               $.ajax({
-                  url: "/notification/read.dox",
-                  type: "POST",
-                  data: { notiNo: item.notiNo },
-                  success: () => {
-                     if (item.chatNo) {
-                        location.href = "/chat/chat.do?chatNo=" + item.chatNo;
-                     } else {
-                        alert("채팅방 정보가 없습니다.");
-                     }
-                  }
-               });
-            },
+			    // 변호사일 경우 패키지 체크 생략
+			    if (self.sessionType === 'lawyer') {
+			        // 읽음 처리 후 채팅방 이동
+			        $.ajax({
+			            url: "/notification/read.dox",
+			            type: "POST",
+			            data: { notiNo: item.notiNo },
+			            success: () => {
+			                if (item.chatNo) {
+			                    location.href = "/chat/chat.do?chatNo=" + item.chatNo;
+			                } else {
+			                    alert("채팅방 정보가 없습니다.");
+			                }
+			            }
+			        });
+			        return;
+			    }
+
+			    // 일반 사용자일 경우 패키지 확인
+			    $.ajax({
+			        url: "/board/checkUserPacakge.dox",
+			        type: "POST",
+			        data: { userId: self.sessionId },
+			        success: function (pkgRes) {
+			            if (pkgRes.count == 0) {
+			                Swal.fire({
+			                    icon: "error",
+			                    title: "패키지 없음",
+			                    text: "전화 상담 패키지를 구매 후 이용해주세요.",
+			                    confirmButtonColor: "#ff5c00"
+			                }).then(() => {
+			                    location.href = "/package/package.do";
+			                });
+			                return;
+			            }
+
+			            // 읽음 처리 후 채팅방 이동
+			            $.ajax({
+			                url: "/notification/read.dox",
+			                type: "POST",
+			                data: { notiNo: item.notiNo },
+			                success: () => {
+			                    if (item.chatNo) {
+			                        location.href = "/chat/chat.do?chatNo=" + item.chatNo;
+			                    } else {
+			                        alert("채팅방 정보가 없습니다.");
+			                    }
+			                }
+			            });
+			        },
+			        error: function () {
+			            Swal.fire({
+			                icon: "error",
+			                title: "오류",
+			                text: "패키지 확인 중 오류가 발생했습니다.",
+			                confirmButtonColor: "#ff5c00"
+			            });
+			        }
+			    });
+			},
             fnLogout() {
                var self = this;
                $.ajax({
@@ -263,7 +354,6 @@
                   data: {},
                   success: function (data) {
                      if (data.result == "success") {
-                        console.log("sessionId =====> " + self.id);
 
                         // 네이버 SDK가 저장한 로컬스토리지 데이터 삭제
                         localStorage.removeItem("com.naver.nid.access_token");
@@ -383,10 +473,85 @@
                } else {
                   alert("검색어를 입력해주세요.");
                }
-            }
+            },
+			startChat(lawyerId) {
+                let self = this;
+                if(self.sessionId == null || self.sessionId == ""){
+                    Swal.fire({
+                                icon: "error",
+                                title: "로그인 필요",
+                                text: "로그인 후 이용해주세요.",
+                                confirmButtonColor: "#ff5c00"
+                            }).then(() => {
+                        location.href = "/user/login.do";
+                    });
+                    return; 
+                }
+                $.ajax({
+                    url: "/board/checkLawyerStatus.dox",
+                    type: "POST",
+                    data: {
+                        sessionId: lawyerId
+                    },
+                    dataType: "json",
+                    success: function (res) {
+                        const isApproved = res.result === "true";
+                        const isAuthValid = res.authResult === "true";
+
+                        if (!isApproved) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "승인되지 않음",
+                                text: "아직 승인되지 않은 변호사 계정입니다.",
+                                confirmButtonColor: "#ff5c00"
+                            });
+                            return;
+                        }
+
+                        if (!isAuthValid) {
+                            Swal.fire({
+                                icon: "info",
+                                title: "채팅 불가능",
+                                text: "변호사 등록기간이 만료된 변호사와는 채팅할 수 없습니다.",
+                                confirmButtonColor: "#ff5c00"
+                            });
+                            return;
+                        }
+
+                        // 조건 통과
+                        $.ajax({
+                            url: "/chat/findOrCreate.dox",
+                            type: "POST",
+                            data: {
+                                userId: self.sessionId,
+                                lawyerId: lawyerId
+                            },
+                            success: function (res) {
+                                let chatNo = res.chatNo;
+                                pageChange("/chat/chat.do", {
+                                    chatNo: chatNo
+                                });
+                            }
+                        });
+
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: "error",
+                            title: "요청 실패",
+                            text: "변호사 상태 확인 요청에 실패했습니다.",
+                            confirmButtonColor: "#ff5c00"
+                        });
+                    }
+                });
+
+            },
+			goToLawyerProfile(lawyerId){
+				pageChange("/profile/view.do" , {lawyerId : lawyerId});
+			}
+				
          },
          mounted() {
-            console.log(self.sessionid);
             this.fnGetNotificationList();
             if (this.sessionType === 'user') {
                // this.fnGetBookmarkList();

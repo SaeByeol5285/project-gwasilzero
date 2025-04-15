@@ -8,7 +8,8 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <title>승인 대기 변호사 상세보기</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
         <style>
             .profile-container {
                 display: flex;
@@ -298,11 +299,6 @@
                             <div v-else class="no-data">작성된 생년월일이 없습니다.</div>
                         </div>
                         <div class="section">
-                            <h3>소속 법무 법인</h3>
-                            <div v-if="info.officproofName">{{ info.officproofName }}</div>
-                            <div v-else class="no-data">작성된 법인 내용이 없습니다.</div>
-                        </div>
-                        <div class="section">
                             <h3>변호사 등록번호</h3>
                             <div v-if="info.lawyerNumber">{{ info.lawyerNumber }}</div>
                             <div v-else class="no-data">작성된 변호사 등록번호가 없습니다.</div>
@@ -322,8 +318,8 @@
                             <div v-if="info.lawyerLicensePath">
                                 <ul>
                                     <li>📜 {{ info.lawyerLicenseName }}
-                                        <a :href="info.lawyerLicensePath" target="_blank" style="margin-left: 10px;">이미지 보기</a>
-                                        <a :href="info.lawyerLicensePath" :download="info.lawyerLicenseName" style="margin-left: 10px;">다운로드</a>
+                                        <a :href="'/img/' + info.lawyerLicensePath" target="_blank" style="margin-left: 10px;">이미지 보기</a>
+                                        <a :href="'/img/' + info.lawyerLicensePath" :download="info.lawyerLicenseName" style="margin-left: 10px;">다운로드</a>
                                     </li>
                                 </ul>
                             </div>
@@ -332,7 +328,7 @@
                     </div>
                 </div>
             </div>
-            </div> <!-- 여기서 layout 닫기  -->
+            </div> 
         </div>
     </body>
 
@@ -358,7 +354,6 @@
                         type: "POST",
                         data: { lawyerId: lawyerId },
                         success: function (data) {
-                            console.log(data. info);
                             self.info = data.info;
                             self.license = data.license;
                         }

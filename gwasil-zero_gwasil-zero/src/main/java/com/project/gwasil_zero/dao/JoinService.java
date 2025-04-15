@@ -37,7 +37,7 @@ public class JoinService {
 	public HashMap<String, Object> searchJoin(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<>();
 
-		// 🔥 lawyerId가 없으면 userId 값을 복사
+		// lawyerId가 없으면 userId 값을 복사
 		if (!map.containsKey("lawyerId") || map.get("lawyerId") == null) {
 			map.put("lawyerId", map.get("userId"));
 		}
@@ -63,7 +63,7 @@ public class JoinService {
 	public HashMap<String, Object> searchJoinLawyer(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<>();
 
-		// 🔥 userId 없으면 lawyerId 값을 넣어주기
+		//  userId 없으면 lawyerId 값을 넣어주기
 		if (!map.containsKey("userId") || map.get("userId") == null) {
 			map.put("userId", map.get("lawyerId"));
 		}

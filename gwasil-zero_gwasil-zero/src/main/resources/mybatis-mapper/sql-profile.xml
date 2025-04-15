@@ -115,11 +115,18 @@
 	</select>
 	
 	<select id="lawyerBoardFileList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.BoardFile">
-		SELECT *  
+		SELECT *
 		FROM LAWYER L
-		LEFT JOIN BOARD B ON L.LAWYER_ID = B.LAWYER_ID
-		INNER JOIN BOARD_FILE F ON B.BOARD_NO = F.BOARD_NO
-		WHERE L.LAWYER_ID = #{lawyerId} AND THUMBNAIL = 'Y'
+		LEFT JOIN BOARD B 
+		    ON B.BOARD_NO IN (
+		        NVL(NULLIF(L.MAIN_CASE1_NO, 0), -1),
+		        NVL(NULLIF(L.MAIN_CASE2_NO, 0), -1),
+		        NVL(NULLIF(L.MAIN_CASE3_NO, 0), -1)
+		    )
+		LEFT JOIN BOARD_FILE F 
+		    ON B.BOARD_NO = F.BOARD_NO AND F.THUMBNAIL = 'Y'
+		WHERE L.LAWYER_ID = #{lawyerId}
+		  AND B.BOARD_STATUS = 'END'
 	</select>
 	
 	<select id="lawyerLicenseList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.License">
@@ -166,16 +173,16 @@
 	</select>
     
     <select id="selectReviewList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Review">
-    	SELECT * 
+		SELECT * 
     	FROM REVIEW
-    	WHERE LAWYER_ID = #{lawyerId}
+    	WHERE LAWYER_ID = #{lawyerId} AND TRIM(CONTENTS) IS NOT NULL
     	OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
     </select>
     
     <select id="selectReviewCnt" parameterType="hashmap">
     	SELECT COUNT(*)
     	FROM REVIEW
-    	WHERE LAWYER_ID = #{lawyerId}
+    	WHERE LAWYER_ID = #{lawyerId} AND TRIM(CONTENTS) IS NOT NULL
     </select>
     
 </mapper>

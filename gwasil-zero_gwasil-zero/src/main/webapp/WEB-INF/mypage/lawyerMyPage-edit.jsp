@@ -6,7 +6,8 @@
         <meta charset="UTF-8">
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-        <title>내 정보 수정</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+				      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
         <style>
             #app {
                 max-width: 500px;
@@ -144,7 +145,6 @@
                         contentType: false,
                         success: function (data) {
                             if (data.result === "success") {
-                                alert("이미지 업로드 성공!");
                                 self.lawyerInfo.lawyerImg = data.imgPath;
                             }
                         }
@@ -153,26 +153,51 @@
 
                 fnSave() {
                     const self = this;
-                    const nparmap = {
-                        sessionId: self.sessionId,
-                        lawyerName: self.lawyerInfo.lawyerName,
-                        lawyerPhone: self.lawyerInfo.lawyerPhone,
-                        lawyerEmail: self.lawyerInfo.lawyerEmail,
-                        lawyerAddr: self.lawyerInfo.lawyerAddr,
-                        lawyerImg: self.lawyerInfo.lawyerImg
-                    };
-                    $.ajax({
-                        url: "/lawyerMyPage/edit.dox",
-                        type: "POST",
-                        data: nparmap,
-                        dataType: "json",
-                        success: function (data) {
-                            if (data.result === "success") {
-                                alert("수정되었습니다!");
-                                location.href = "/mypage/lawyerMyPage.do";
-                            } else {
-                                alert("수정 실패");
-                            }
+
+                    Swal.fire({
+                        title: "수정하시겠습니까?",
+                        icon: "question",
+                        showCancelButton: true,
+                        confirmButtonColor: "#ff5c00",
+                        cancelButtonColor: "#aaa",
+                        confirmButtonText: "확인",
+                        cancelButtonText: "취소"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const nparmap = {
+                                sessionId: self.sessionId,
+                                lawyerName: self.lawyerInfo.lawyerName,
+                                lawyerPhone: self.lawyerInfo.lawyerPhone,
+                                lawyerEmail: self.lawyerInfo.lawyerEmail,
+                                lawyerAddr: self.lawyerInfo.lawyerAddr,
+                                lawyerImg: self.lawyerInfo.lawyerImg
+                            };
+
+                            $.ajax({
+                                url: "/lawyerMyPage/edit.dox",
+                                type: "POST",
+                                data: nparmap,
+                                dataType: "json",
+                                success: function (data) {
+                                    if (data.result === "success") {
+                                        Swal.fire({
+                                            icon: "success",
+                                            title: "수정 완료",
+                                            text: "정보가 성공적으로 수정되었습니다.",
+                                            confirmButtonColor: "#ff5c00"
+                                        }).then(() => {
+                                            location.href = "/mypage/lawyerMyPage.do";
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            icon: "error",
+                                            title: "수정 실패",
+                                            text: "다시 시도해주세요.",
+                                            confirmButtonColor: "#ff5c00"
+                                        });
+                                    }
+                                }
+                            });
                         }
                     });
                 }

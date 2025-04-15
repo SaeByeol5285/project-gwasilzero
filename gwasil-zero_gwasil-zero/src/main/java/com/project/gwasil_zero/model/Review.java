@@ -17,5 +17,6 @@ public class Review {
 	private String boardStatus;
 	private String lawyerName;
 	private String highlight;
+	private int chatNo;
 
 }

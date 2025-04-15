@@ -12,9 +12,14 @@
         <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <title>main.jsp</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
     </head>
-
+    <style>
+        p > p{
+            margin : 0px;
+        }
+    </style>
     <body>
         <jsp:include page="../common/header.jsp" />
         <div id="app">
@@ -194,7 +199,6 @@
                         type: "POST",
                         success: function (data) {
                             if (data.result === "success") {
-                                console.log(data);
                                 self.reviewList = self.reviewList = data.list;
                             } else {
                                 alert("review 불러오기 실패");
@@ -228,7 +232,6 @@
                         dataType: "json",
                         success(data) {
                             if (data.result === "success") {
-                                console.log(data);
                                 self.lawyerList = data.list;
                                 self.$nextTick(() => {
                                     self.initSwiper();
@@ -281,80 +284,94 @@
                         },
                     });
                 },
-                startChat(lawyerId) {
-                    let self = this;
-                    if(self.sessionId == null || self.sessionId == ""){
-                        Swal.fire({
-                                    icon: "error",
-                                    title: "로그인 필요",
-                                    text: "로그인 후 이용해주세요.",
-                                    confirmButtonColor: "#ff5c00"
-                                }).then(() => {
-                            location.href = "/user/login.do";
-                        });
-                        return; 
-                    }
-                    $.ajax({
-                        url: "/board/checkLawyerStatus.dox",
-                        type: "POST",
-                        data: {
-                            sessionId: lawyerId
-                        },
-                        dataType: "json",
-                        success: function (res) {
-                            const isApproved = res.result === "true";
-                            const isAuthValid = res.authResult === "true";
+				startChat(lawyerId) {
+				    let self = this;
 
-                            if (!isApproved) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "승인되지 않음",
-                                    text: "아직 승인되지 않은 변호사 계정입니다.",
-                                    confirmButtonColor: "#ff5c00"
-                                });
-                                return;
-                            }
+				    if (!self.sessionId) {
+				        Swal.fire({
+				            icon: "error",
+				            title: "로그인 필요",
+				            text: "로그인 후 이용해주세요.",
+				            confirmButtonColor: "#ff5c00"
+				        }).then(() => {
+				            location.href = "/user/login.do";
+				        });
+				        return;
+				    }
 
-                            if (!isAuthValid) {
-                                Swal.fire({
-                                    icon: "info",
-                                    title: "채팅 불가능",
-                                    text: "변호사 등록기간이 만료된 변호사와는 채팅할 수 없습니다.",
-                                    confirmButtonColor: "#ff5c00"
-                                });
-                                return;
-                            }
+				    $.ajax({
+				        url: "/board/checkLawyerStatus.dox",
+				        type: "POST",
+				        data: { sessionId: lawyerId },
+				        dataType: "json",
+				        success: function (res) {
+				            const isApproved = res.result === "true";
+				            const isAuthValid = res.authResult === "true";
 
-                            // 조건 통과
-                            $.ajax({
-                                url: "/chat/findOrCreate.dox",
-                                type: "POST",
-                                data: {
-                                    userId: self.sessionId,
-                                    lawyerId: lawyerId
-                                },
-                                success: function (res) {
-                                    let chatNo = res.chatNo;
-                                    pageChange("/chat/chat.do", {
-                                        chatNo: chatNo
-                                    });
-                                }
-                            });
+				            if (!isApproved) {
+				                Swal.fire({
+				                    icon: "error",
+				                    title: "승인되지 않음",
+				                    text: "아직 승인되지 않은 변호사 계정입니다.",
+				                    confirmButtonColor: "#ff5c00"
+				                });
+				                return;
+				            }
 
-                        },
-                        error: function () {
-                            Swal.fire({
-                                icon: "error",
-                                title: "요청 실패",
-                                text: "변호사 상태 확인 요청에 실패했습니다.",
-                                confirmButtonColor: "#ff5c00"
-                            });
-                        }
-                    });
+				            if (!isAuthValid) {
+				                Swal.fire({
+				                    icon: "info",
+				                    title: "채팅 불가능",
+				                    text: "변호사 등록기간이 만료되었습니다.",
+				                    confirmButtonColor: "#ff5c00"
+				                });
+				                return;
+				            }
 
+				            // 패키지 구매 여부 확인
+				            $.ajax({
+				                url: "/board/checkUserPacakge.dox",
+				                type: "POST",
+				                data: { userId: self.sessionId },
+				                success: (pkgRes) => {
+				                    if (pkgRes.count == 0) {
+				                        Swal.fire({
+				                            icon: "error",
+				                            title: "패키지 없음",
+				                            text: "전화 상담 패키지를 구매 후 이용해주세요.",
+				                            confirmButtonColor: "#ff5c00"
+				                        }).then(() => {
+				                            location.href = "/package/package.do";
+				                        });
+				                        return;
+				                    }
 
-
-                },
+				                    // 채팅방 찾기 or 생성
+				                    $.ajax({
+				                        url: "/chat/findOrCreate.dox",
+				                        type: "POST",
+				                        data: {
+				                            userId: self.sessionId,
+				                            lawyerId: lawyerId
+				                        },
+				                        success: function (res) {
+				                            let chatNo = res.chatNo;
+				                            pageChange("/chat/chat.do", { chatNo: chatNo });
+				                        }
+				                    });
+				                }
+				            });
+				        },
+				        error: function () {
+				            Swal.fire({
+				                icon: "error",
+				                title: "요청 실패",
+				                text: "변호사 상태 확인 중 오류가 발생했습니다.",
+				                confirmButtonColor: "#ff5c00"
+				            });
+				        }
+				    });
+				},
                 EditBoard: function () {
                     let self = this;
                     pageChange("/board/edit.do", { boardNo: self.boardNo, userId: self.sessionId });
@@ -442,7 +459,6 @@
                 this.fnGetLawyerList();
                 this.fnGetBookmarkList();
                 this.fnGetReviewList();
-                console.log("메인에서 :", this.sessionId);
                 //북마크 갱신용
                 window.addEventListener('storage', (e) => {
                     if (e.key === 'bookmarkUpdated') {

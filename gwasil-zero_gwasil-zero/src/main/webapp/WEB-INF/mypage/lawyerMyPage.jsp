@@ -9,7 +9,8 @@
       <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       <script src="/js/page-change.js"></script>
-      <title>과실 ZERO - 교통사고 전문 법률 플랫폼</title>
+     <link rel="icon" type="image/png" href="/img/common/logo3.png">
+                 <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
    </head>
    <style>
       #app {
@@ -51,6 +52,7 @@
       .edit-btn,
       .withdraw-btn {
       background-color: #FF5722;
+      
       border: none;
       border-radius: 8px;
       padding: 6px 12px;
@@ -363,13 +365,13 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-if="chatList.length" v-for="chat in chatList" :key="chat.chatNo">
+                <tr v-if="chatList && chatList.length > 0" v-for="chat in chatList" :key="chat.chatNo">
                   <td><a href="javascript:;" @click="fnChat(chat.chatNo)" class="message">{{ chat.message }}</a></td>
                   <td>
                      {{ chat.partnerName }}
                      <br>
-                     <button class="edit-btn" @click="fnUsePhoneConsult(chat.partnerId)">
-                        📞 전화 상담 차감
+                     <button class="edit-btn" @click="fnUsePhoneConsult(chat)">
+                        전화 상담 차감
                      </button>
                   </td>
                 </tr>
@@ -379,6 +381,29 @@
               </tbody>
             </table>
           </div>          
+
+          <div class="section">
+            <h3>차감된 전화 상담 내역</h3>
+            <table class="payment-table">
+               <thead>
+                  <tr>
+                     <th>사용일</th>
+                     <th>대상 유저</th>
+                     <th>상태</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr v-for="item in usedList" :key="item.orderId">
+                     <td>{{ item.payTime }}</td>
+                     <td>{{ item.userName }}</td>
+                     <td>사용됨</td>
+                  </tr>
+                  <tr v-if="!usedList.length">
+                     <td colspan="3" style="text-align:center;">차감 내역이 없습니다.</td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>         
 
          <div class="section">
             <h3>최근 결제 내역</h3>
@@ -451,7 +476,8 @@
                pageSize: 3,
                index: 0,
                lawyerPayList : [],
-               chatList : []
+               chatList : [],
+               usedList : []
             };
          },
          methods: {
@@ -464,7 +490,6 @@
                   type: "POST",
                   data: nparmap,
                   success: function (data) {
-                     console.log(data);
                      self.view = data.view;
 
                      if (!self.view.counsel) {
@@ -475,32 +500,31 @@
             },
 
             fnGetNotification() {
-					const self = this;
-					$.ajax({
-						url: "/mypage/notification.dox",
-						type: "POST",
-						data: { receiverId: self.sessionId },
-						dataType: "json",
-						success: function (data) {
-							if (data.result === "success" && data.notifications.length > 0) {
-								console.log("알림", data);
-								const message = data.notifications[0].contents;
-								Swal.fire({
-									title: '📢 알림',
-									text: message,
-									icon: 'info',
-									confirmButtonText: '확인'
-								}).then(() => {
-									$.ajax({
-										url: "/mypage/notificationRead.dox",
-										type: "POST",
-										data: { receiverId: self.sessionId }
-									});
-								});
-							}
-						}
-					});
-				},
+               const self = this;
+               $.ajax({
+                  url: "/mypage/notification.dox",
+                  type: "POST",
+                  data: { receiverId: self.sessionId },
+                  dataType: "json",
+                  success: function (data) {
+                     if (data.result === "success" && data.notifications.length > 0) {
+                        const message = data.notifications[0].contents;
+                        Swal.fire({
+                           title: '📢 알림',
+                           text: message,
+                           icon: 'info',
+                           confirmButtonText: '확인'
+                        }).then(() => {
+                           $.ajax({
+                              url: "/mypage/notificationRead.dox",
+                              type: "POST",
+                              data: { receiverId: self.sessionId }
+                           });
+                        });
+                     }
+                  }
+               });
+            },
             
             fnUpdateStatus() {
                 const self = this;
@@ -512,17 +536,17 @@
                     counsel: self.view.counsel
                 },
                 success: function (data) {
-                    alert("상담 상태가 변경되었습니다.");
+                  Swal.fire("상담 상태가 변경되었습니다.");
                 },
                 error: function () {
-                    alert("상담 상태 변경 실패");
+                  Swal.fire("상담 상태 변경 실패");
                 }
                 });
             },
 
             fnLawyerBoard() {
                var self = this;
-               self.page = 1;
+               
                var nparmap = { 
                   sessionId: self.sessionId,
                   boardStatus : self.boardStatus,
@@ -540,7 +564,6 @@
                   type: "POST",
                   data: nparmap,
                   success: function (data) {
-                     console.log("확인 : ", data);
                      if (data.result == "success") {
                         self.boardList = data.boardList;
                         self.index = Math.max(1, Math.ceil(data.count / self.pageSize));
@@ -562,7 +585,6 @@
                   data: { sessionId: self.sessionId },
                   dataType: "json",
                   success: function(data) {
-                     console.log(data);
                      self.lawyerPayList = data.lawyerPayList; 
                   },
                   error: function() {
@@ -574,22 +596,33 @@
             fnRequestRefund(orderId) {
                const self = this;
 
-               if (!confirm("해당 결제 건에 대해 환불을 요청하시겠습니까?")) return;
+               Swal.fire({
+                  title: "환불 요청",
+                  text: "해당 결제 건에 대해 환불을 요청하시겠습니까?",
+                  icon: "warning",
+                  showCancelButton: true,
+                  confirmButtonColor: "#d33",
+                  cancelButtonColor: "#aaa",
+                  confirmButtonText: "요청",
+                  cancelButtonText: "취소"
+               }).then((result) => {
+                  if (result.isConfirmed) {
+                        $.ajax({
+                           url: "/mypage/Refund.dox",
+                           type: "POST",
+                           data: { orderId: orderId },
+                           success: function (data) {
+                              Swal.fire("요청 완료", "환불 요청이 접수되었습니다.", "success");
 
-               $.ajax({
-                  url: "/mypage/Refund.dox",
-                  type: "POST",
-                  data: { orderId: orderId },
-                  success: function (data) {
-                     alert("환불 요청이 접수되었습니다.");
-
-                     const pay = self.lawyerPayList.find(p => p.orderId === orderId);
-                     if (pay) {
-                        pay.payStatus = "REQUEST";
-                     }
-                  },
-                  error: function () {
-                     alert("환불 요청 처리 중 오류가 발생했습니다.");
+                              const pay = self.lawyerPayList.find(p => p.orderId === orderId);
+                              if (pay) {
+                                    pay.payStatus = "REQUEST";
+                              }
+                           },
+                           error: function () {
+                              alert("환불 요청 처리 중 오류가 발생했습니다.");
+                           }
+                        });
                   }
                });
             },
@@ -597,21 +630,32 @@
             fnCancelRefund(orderId) {
                const self = this;
 
-               if (!confirm("환불 요청을 취소하시겠습니까?")) return;
-
-               $.ajax({
-                  url: "/mypage/RefundCancel.dox", 
-                  type: "POST",
-                  data: { orderId: orderId },
-                  success: function () {
-                     alert("환불 요청이 취소되었습니다.");
-                     const pay = self.lawyerPayList.find(p => p.orderId === orderId);
-                     if (pay) {
-                     pay.payStatus = "PAID"; // 다시 결제 완료로 되돌림
-                     }
-                  },
-                  error: function () {
-                     alert("환불 요청 취소 처리 중 오류가 발생했습니다.");
+               Swal.fire({
+                  title: "환불 요청 취소",
+                  text: "환불 요청을 취소하시겠습니까?",
+                  icon: "warning",
+                  showCancelButton: true,
+                  confirmButtonColor: "#d33",
+                  cancelButtonColor: "#aaa",
+                  confirmButtonText: "취소 요청",
+                  cancelButtonText: "닫기"
+               }).then((result) => {
+                  if (result.isConfirmed) {
+                        $.ajax({
+                           url: "/mypage/RefundCancel.dox", 
+                           type: "POST",
+                           data: { orderId: orderId },
+                           success: function () {
+                              Swal.fire("취소 완료", "환불 요청이 취소되었습니다.", "success");
+                              const pay = self.lawyerPayList.find(p => p.orderId === orderId);
+                              if (pay) {
+                                    pay.payStatus = "PAID"; 
+                              }
+                           },
+                           error: function () {
+                              alert("환불 요청 취소 처리 중 오류가 발생했습니다.");
+                           }
+                        });
                   }
                });
             },
@@ -624,7 +668,6 @@
                   data: { sessionId: self.sessionId },
                   dataType: "json",
                   success: function(data) {
-                     console.log(data);
                      self.chatList = data && data.chatList ? data.chatList : [];
                   },
                   error: function() {
@@ -637,8 +680,10 @@
                pageChange("/chat/chat.do", {chatNo : chatNo});
             },
 
-            fnUsePhoneConsult(userId) {
+            fnUsePhoneConsult(chat) {
                const self = this;
+            let chatNo = chat.chatNo;
+            let userId = chat.partnerId;
                Swal.fire({
                   title: '전화 상담 1회를 차감하시겠습니까?',
                   icon: 'warning',
@@ -647,12 +692,15 @@
                   cancelButtonText: '취소'
                }).then((result) => {
                   if (result.isConfirmed) {
-                     console.log("아이디 : ", userId);
                      $.ajax({
                      url: '/lawyerMyPage/usePhoneConsult.dox',
                      type: 'POST',
                      data: {
-                        userId: userId
+                        lawyerId : self.sessionId,
+                        userId: userId,
+                        sessionId : self.sessionId,
+                        chatNo : chatNo,
+                        contents  : ""
                      },
                      success: function (res) {
                         if (res.result === 'success') {
@@ -665,6 +713,19 @@
                         Swal.fire('오류', '서버와의 통신 중 문제가 발생했습니다.', 'error');
                      }
                      });
+                  }
+               });
+            },
+
+            fnGetUsedPhoneList() {
+               const self = this;
+               $.ajax({
+                  url: "/lawyerMyPage/usedPhoneList.dox",
+                  type: "POST",
+                  data: { lawyerId: self.sessionId },
+                  dataType: "json",
+                  success: function(res) {
+                     self.usedList = res.usedList || [];
                   }
                });
             },
@@ -726,7 +787,7 @@
                   },
                   success: function (data) {
                      if (data.result === "success") {
-                        alert("상태가 변경되었습니다.");
+                        Swal.fire("변경 완료", "상태가 변경되었습니다.", "success");
                      } else {
                         alert("상태 변경 실패");
                      }
@@ -748,6 +809,7 @@
             this.fnGetPayments();
             this.fnGetChatList();
             this.fnGetNotification();
+            this.fnGetUsedPhoneList();
          }
       });
       app.mount('#app');

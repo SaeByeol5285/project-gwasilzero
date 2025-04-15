@@ -293,7 +293,7 @@
                         allContents;
                     self.loading = true; 
                     $.ajax({
-                        url: "http://localhost:5000/qa",
+                        url: "http://192.168.30.6:5000/qa",
                         type: "POST",
                         contentType: "application/json",
                         data: JSON.stringify({ question: question }),
@@ -334,7 +334,7 @@
 
                     self.loading = true;
                     $.ajax({
-                        url: "http://localhost:5000/qa",
+                        url: "http://192.168.30.6:5000/qa",
                         type: "POST",
                         contentType: "application/json",
                         data: JSON.stringify({ question: questionToSend }),

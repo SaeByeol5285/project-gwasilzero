@@ -7,8 +7,18 @@
         <link rel="stylesheet" href="/css/footer.css">
         <link rel="stylesheet" href="/css/common.css">
 
-        <title>footer.jsp</title>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
         <style>
+            body {
+                padding-bottom: 0 !important;
+                /* 전체 하단 여백 방지 */
+            }
+
+            .footer-container {
+                padding: 40px 20px 20px;
+                /* top: 40px, right/left: 20px, bottom: 20px */
+            }
         </style>
     </head>
 
@@ -20,11 +30,8 @@
                     <div class="footer-top">
                         <img src="/img/logo1.png" alt="법무법인 과실제로 로고" class="footer-logo" />
                         <div class="footer-links">
-                            <a href="#">면책공고</a>
-                            <a href="#">유한책임</a>
-                            <a href="#">개인정보처리방침</a>
-                            <a href="#">이메일무단수집거부</a>
-                            <a href="#" class="highlight">고객만족센터</a>
+                            <a href="/common/terms.do">이용약관</a>
+                            <a href="/totalDocs/list.do?kind=HELP" class="highlight">이용문의</a>
                         </div>
                     </div>
 
@@ -41,16 +48,7 @@
 
     </html>
     <script>
-        const footer = Vue.createApp({
-            data() {
-                return {
-                                    
-                }
-            },
-            mounted() {
-            }
-        });
-        footer.mount('#footer');
+
     </script>
 
     ​

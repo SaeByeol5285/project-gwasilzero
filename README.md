@@ -34,7 +34,7 @@
 |------|----------------|
 | 박새별 | [SaeByeol5285](https://github.com/......) |
 | 김정철 | []() |
-| 조연주 | []() |
+| 조연주 | [Yeonju02](https://github.com/Yeonju02) |
 | 유승호 | [minamRyu](https://github.com/minamRyu/Intro) |
 | 이주원 | [juwon2932]() |
 

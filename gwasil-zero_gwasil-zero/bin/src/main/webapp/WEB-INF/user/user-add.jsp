@@ -7,7 +7,8 @@
       <script src="https://code.jquery.com/jquery-3.7.1.js"
          integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-      <title>user-add.jsp</title>
+	  <link rel="icon" type="image/png" href="/img/common/logo3.png">
+	  		      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
    </head>
    <style>
       body {
@@ -173,7 +174,6 @@
                   type: "POST",
                   data: nparmap,
                   success: function (data) {
-                     console.log(data);
                      if (data.result == "success") {
                         self.list = data.list;
                         alert("회원가입 완료");
@@ -198,7 +198,6 @@
                   type: "POST",
                   data: nparmap,
                   success: function (data) {
-                     console.log(data);
                      if (data.count == 0) {
                         alert("사용 가능");
                      } else {
@@ -218,7 +217,6 @@
                   type: "POST",
                   data: nparmap,
                   success: function (data) {
-                     console.log(data);
                      if (data.response.statusCode == 2000) {
                         alert("문자 발송 완료");
                         self.authNum = data.ranStr;

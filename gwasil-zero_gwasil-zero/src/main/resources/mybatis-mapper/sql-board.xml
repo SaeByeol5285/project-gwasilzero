@@ -215,6 +215,15 @@
 	  WHERE board_no = #{boardNo}
 	</update>
 	<!--빠답패-->
+	<select id="selectPackageCount2" parameterType="hashmap" resultType="int">
+	    SELECT COUNT(*) 
+	    FROM pay
+	    WHERE user_id = #{userId}
+	      AND package_name = '전화 상담 패키지'
+	      AND pay_status = 'PAID'
+	</select>
+	
+	<!--빠답패-->
 	<select id="selectPackageCount" parameterType="hashmap" resultType="int">
 	    SELECT COUNT(*) 
 	    FROM pay

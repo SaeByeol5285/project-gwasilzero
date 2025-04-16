@@ -1,0 +1,16 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+											
+<mapper namespace="com.project.gwasil_zero.mapper.BookmarkMapper">
+	<select id="selectBookmarkList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Bookmark">
+		select b.*, l.lawyer_name as lawyerName from bookmark b inner join lawyer l on b.lawyer_id = l.lawyer_id where user_id = #{sessionId}
+	</select>
+	
+	<insert id="insertBookmark"  parameterType="hashmap">
+		insert into bookmark values(bookmark_seq.nextval, #{userId}, #{lawyerId}, sysdate)
+	</insert>
+	
+	<delete id = "deleteBookmark" parameterType="hashmap">
+		delete from bookmark where user_id = #{userId} and lawyer_id = #{lawyerId}
+	</delete>
+</mapper>

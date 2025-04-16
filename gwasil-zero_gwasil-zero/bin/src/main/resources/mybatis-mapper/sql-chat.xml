@@ -36,4 +36,82 @@
 	    UNION
 	    SELECT lawyer_name FROM lawyer WHERE lawyer_id = #{senderId}
 	</select>
+	
+	<select id="selectChatMessages" parameterType="hashmap" resultType="ChatMessage">
+	  SELECT 
+	    m.chat_no, 
+	    m.sender_id,
+	    NVL(u.user_name, l.lawyer_name) AS sender_name,
+	    m.message,
+	    m.time 
+	  FROM chat_message m
+	  LEFT JOIN tbl_user u ON m.sender_id = u.user_id
+	  LEFT JOIN lawyer l ON m.sender_id = l.lawyer_id
+	  WHERE m.chat_no = #{chatNo}
+	</select>
+		
+	<select id="selectChatFiles" parameterType="hashmap" resultType="com.project.gwasil_zero.model.ChatFile">
+	  SELECT 
+	    f.chat_no, 
+	    f.sender_id,
+	    NVL(u.user_name, l.lawyer_name) AS sender_name,
+	    f.chat_filepath as chatFilePath,
+	    f.time 
+	  FROM chat_file f
+	  LEFT JOIN tbl_user u ON f.sender_id = u.user_id
+	  LEFT JOIN lawyer l ON f.sender_id = l.lawyer_id
+	  WHERE f.chat_no = #{chatNo}
+	</select>
+	
+	<select id="selectReceiverIdFromChat" parameterType="hashmap" resultType="string">
+	    SELECT 
+	        CASE 
+	            WHEN sender_id = #{senderId} THEN receiver_id 
+	            ELSE sender_id 
+	        END AS receiver_id
+	    FROM chat
+	    WHERE chat_no = #{chatNo}
+	</select>
+	<select id="findChatNoByParticipants" parameterType="hashmap" resultType="int">
+	    SELECT chat_no 
+	    FROM chat 
+	    WHERE (sender_id = #{userId} AND receiver_id = #{lawyerId})
+	       OR (sender_id = #{lawyerId} AND receiver_id = #{userId})
+	</select>
+	
+	<insert id="createChat" parameterType="hashmap" useGeneratedKeys="true" keyColumn="chat_no" keyProperty="chatNo">
+	    INSERT INTO chat (chat_no, sender_id, receiver_id)
+	    VALUES (chat_seq.nextval,#{userId}, #{lawyerId})
+	</insert>
+	
+	<select id="getChatByNo" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Chat">
+	    SELECT *
+	    FROM chat
+	    WHERE chat_no = #{chatNo}
+	</select>
+	
+	<!-- 사용자 이름 조회 -->
+	<select id="getUserNameById" resultType="string">
+	    SELECT user_name FROM tbl_user WHERE user_id = #{targetId, jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 변호사 이름 조회 -->
+	<select id="getLawyerNameById" resultType="string">
+	    SELECT lawyer_name FROM lawyer WHERE lawyer_id = #{targetId, jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getReviewNoByChatNo" parameterType="hashmap" resultType="int">
+	    SELECT review_no FROM review WHERE chat_no = #{chatNo}
+	</select>
+	
+	<update id="updateReview" parameterType="hashmap">
+	  UPDATE review
+	  SET 
+	    contents = #{contents},
+	    score = #{score},
+	    udate = SYSDATE
+	  WHERE chat_no = #{chatNo}
+	</update>
+	
+	
 </mapper>

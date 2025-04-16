@@ -59,6 +59,11 @@
                                     <img v-if="item.lawyerImg" :src="item.lawyerImg" alt="프로필 사진" />
                                     <div v-else class="no-data">등록된 프로필 사진이 없습니다.</div>
                                 </div>
+                                <div v-if="item.mainCategoryName1 || item.mainCategoryName2" class="category-badges">
+                                    <span v-if="item.mainCategoryName1" class="badge">{{ item.mainCategoryName1 }}</span>
+                                    <span v-if="item.mainCategoryName2" class="badge">{{ item.mainCategoryName2 }}</span>
+                                </div>
+                                <div v-else class="no-data">선택된 전문분야가 없습니다.</div>
                                 <div class="lawyer-name">{{item.lawyerName}}</div>
                                 <div class="intro">
                                     <span v-if="item.lawyerInfo" v-html="truncateText(item.lawyerInfo, 100)"></span>

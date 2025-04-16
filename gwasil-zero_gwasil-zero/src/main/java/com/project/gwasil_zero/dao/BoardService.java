@@ -364,7 +364,7 @@ public class BoardService {
 	public HashMap<String, Object> checkUserPacakge(HashMap<String, Object> map){
 		HashMap<String, Object> resultMap = new HashMap<>();
 		try {
-	        Integer count = boardMapper.selectPackageCount(map);
+	        Integer count = boardMapper.selectPackageCount2(map);
 	        resultMap.put("count", count != null ? count : 0);
 	        resultMap.put("result", "success");
 	    } catch (Exception e) {

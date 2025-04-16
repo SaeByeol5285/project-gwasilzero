@@ -3,10 +3,16 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 	
 <mapper namespace="com.project.gwasil_zero.mapper.ProductMapper">
-	<select id = "selectProductList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Packages">
-		SELECT * 
-		FROM packages
-	</select>	
+	<select id="selectProductList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Packages">
+    SELECT * 
+	    FROM packages
+	    ORDER BY package_name ASC
+	    offset #{page} rows fetch next #{pageSize} rows only
+	</select>
+	
+	<select id="selectProductCount" parameterType="hashmap" resultType="int">
+	    SELECT COUNT(*) FROM packages
+	</select>
 	
 	<delete id = "deleteProductList" parameterType="hashmap" >
 		DELETE FROM PACKAGES WHERE PACKAGE_NAME IN 
@@ -24,7 +30,6 @@
 		SELECT * 
 		FROM PACKAGES
 		WHERE PACKAGE_NAME = #{packageName}
-		
 	</select>
 	
 	<update id="updateProduct" parameterType="hashmap">
@@ -35,5 +40,63 @@
 			PACKAGE_STATUS = #{packageStatus}
 		WHERE PACKAGE_NAME = #{packageName}
 	</update>
-    
+	
+	<select id="selectRefundList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Pay">
+	    SELECT 
+	        P.ORDER_ID,
+	        P.PACKAGE_NAME,
+	        P.PAY_TIME,
+	        P.PRICE,
+	        P.PAY_STATUS,
+	        NVL(U.USER_NAME, L.LAWYER_NAME) AS NAME,
+	        CASE 
+	            WHEN P.USER_ID IS NOT NULL THEN 'U'
+	            WHEN P.LAWYER_ID IS NOT NULL THEN 'L'
+	        END AS USERTYPE,
+	        P.USER_ID,
+	        P.LAWYER_ID
+	    FROM PAY P
+	    LEFT JOIN TBL_USER U ON P.USER_ID = U.USER_ID
+	    LEFT JOIN LAWYER L ON P.LAWYER_ID = L.LAWYER_ID
+	    WHERE P.PAY_STATUS = 'REQUEST'
+	    ORDER BY P.PAY_TIME DESC
+	    offset #{refundPage} rows fetch next #{refundPageSize} rows only
+	</select>
+	
+	<select id="selectRefundCount" parameterType="hashmap" resultType="int">
+	    SELECT COUNT(*) 
+	    FROM PAY P
+	    WHERE P.PAY_STATUS = 'REQUEST'
+	</select>
+
+	<update id="updateRefund" parameterType="hashmap">
+	    UPDATE PAY
+	    SET 
+	        PAY_STATUS = 'REFUNDED',
+	        REFUND_TIME = SYSDATE
+	    WHERE ORDER_ID = #{orderId}
+	</update>
+	
+	<update id="CancelRefund" parameterType="hashmap">
+	    UPDATE PAY
+	    SET 
+	        PAY_STATUS = 'PAID',
+	        REFUND_TIME = NULL
+	    WHERE ORDER_ID = #{orderId}
+	</update>
+	
+	<insert id="insertNotification" parameterType="hashmap">
+	    INSERT INTO NOTIFICATION (
+	        NOTI_NO, RECEIVER_ID, NOTI_TYPE, CONTENTS, IS_READ, CREATED_AT, SENDER_ID
+	    ) VALUES (
+	        NOTIFICATION_SEQ.NEXTVAL,
+	        #{receiverId},
+	        #{notiType},
+	        #{contents},
+	        #{isRead},
+	        SYSDATE,
+	        #{senderId}
+	    )
+	</insert>
+
 </mapper>

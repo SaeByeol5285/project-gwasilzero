@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project.gwasil_zero.mapper.ReviewMapper">
+	
+	<!-- 작성가능 리뷰 리스트 -->
+	<select id="selectAvailableReviewList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Review">
+		SELECT B.BOARD_NO, B.BOARD_TITLE, B.LAWYER_ID, B.BOARD_STATUS
+		FROM BOARD B
+		WHERE B.USER_ID = #{userId}
+		  AND B.BOARD_STATUS = 'END' 
+		  AND B.LAWYER_ID IS NOT NULL
+		  AND NOT EXISTS (
+		      SELECT 1 
+		      FROM REVIEW R2 
+		      WHERE R2.BOARD_NO = B.BOARD_NO
+		  )
+	</select>
+	
+	<!--작성완료 리뷰 리스트-->
+	<select id="selectWrittenReviewList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Review">
+		SELECT R.REVIEW_NO, R.USER_ID, R.LAWYER_ID, R.SCORE, R.CONTENTS, TO_CHAR(R.CDATE, 'YYYY-MM-DD') AS CDATE, B.BOARD_NO, B.BOARD_TITLE AS BOARD_TITLE
+	    FROM REVIEW R
+	    INNER JOIN BOARD B ON R.BOARD_NO = B.BOARD_NO
+	    WHERE R.USER_ID = #{userId}
+	   
+    </select>
+	
+	<!--리뷰 쓰기-->
+	<insert id = "insertReview" parameterType="hashmap">
+		INSERT INTO REVIEW
+		VALUES (REVIEW_SEQ.NEXTVAL, #{userId}, #{lawyerId}, #{score}, #{contents}, SYSDATE, SYSDATE, #{boardNo}, NULL)
+	</insert>
+	
+	<!--리뷰 수정-->
+	<update id="updateReview" parameterType="hashmap">
+		UPDATE REVIEW
+		SET
+			SCORE = #{score},
+			CONTENTS = #{contents}
+		WHERE REVIEW_NO = #{reviewNo}			
+	</update>
+	
+	<!--리뷰 삭제-->
+	<delete id="deleteReview" parameterType="hashmap">
+		DELETE FROM REVIEW
+		WHERE REVIEW_NO = #{reviewNo}
+	</delete>
+	
+
+</mapper>
+
+
+
+

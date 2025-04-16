@@ -3,13 +3,16 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>패키지 수정</title>
+	<link rel="icon" type="image/png" href="/img/common/logo3.png">
+			      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
     
     <!-- 라이브러리 -->
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/common.css">
+	
     <!-- 상품 관리 선택 유지 -->
     <%
     request.setAttribute("currentPage", "product");
@@ -18,7 +21,7 @@
 
     <style>
         .form-wrapper {
-            max-width: 600px;
+            width: 1000px;
             margin: 40px auto;
             padding: 30px;
             background: #fff;
@@ -40,23 +43,24 @@
 
         .form-table th {
             text-align: left;
-            padding: 10px 0;
+            padding: 10px 0 10px 16px; /* 왼쪽 여백 추가 */
             color: #555;
             width: 130px;
+            vertical-align: top; /* 설명 textarea 길 때 정렬 맞춤 */
         }
 
         .form-table td {
-            padding: 10px 0;
+            padding: 10px 16px; /* 좌우 패딩 추가 */
         }
 
         .input-box {
             width: 100%;
+            box-sizing: border-box; /* ✅ padding 포함 너비 계산 */
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 6px;
             font-size: 14px;
         }
-
         .textarea-box {
             resize: vertical;
             min-height: 100px;
@@ -69,6 +73,7 @@
         }
 
         .btn {
+            font-family: 'Noto Sans KR', sans-serif !important;
             padding: 10px 24px;
             font-size: 14px;
             font-weight: bold;
@@ -98,49 +103,47 @@
     </style>
 </head>
 <body>
-<div id="editApp" class="layout">
-    <jsp:include page="../admin/layout.jsp" />
-    <div class="content">
-        <div class="header">
-            <div>관리자페이지</div>
-            <div>Admin님</div>
-        </div>
+    <div id="editApp">
+        <jsp:include page="../admin/layout.jsp" />
+        <div class="layout">
+            <div class="content">
+                <div class="form-wrapper">
+                    <div class="form-title">패키지 수정</div>
+                    <table class="form-table">
+                        <tr>
+                            <th>패키지명</th>
+                            <td><input type="text" v-model="info.packageName" class="input-box" readonly></td>
+                        </tr>
+                        <tr>
+                            <th>패키지 설명</th>
+                            <td>
+                                <textarea v-model="info.packageInfo" class="input-box textarea-box" rows="4"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>패키지 가격</th>
+                            <td><input type="number" v-model="info.packagePrice" class="input-box"></td>
+                        </tr>
+                        <tr>
+                            <th>사용자</th>
+                            <td>
+                                <select v-model="info.packageStatus" class="input-box">
+                                    <option value="U">일반 사용자</option>
+                                    <option value="L">변호사</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
 
-        <div class="form-wrapper">
-            <div class="form-title">패키지 수정</div>
-            <table class="form-table">
-                <tr>
-                    <th>패키지명</th>
-                    <td><input type="text" v-model="info.packageName" class="input-box" readonly></td>
-                </tr>
-                <tr>
-                    <th>패키지 설명</th>
-                    <td>
-                        <textarea v-model="info.packageInfo" class="input-box textarea-box" rows="4"></textarea>
-                    </td>
-                </tr>
-                <tr>
-                    <th>패키지 가격</th>
-                    <td><input type="number" v-model="info.packagePrice" class="input-box"></td>
-                </tr>
-                <tr>
-                    <th>사용자</th>
-                    <td>
-                        <select v-model="info.packageStatus" class="input-box">
-                            <option value="U">일반 사용자</option>
-                            <option value="L">변호사</option>
-                        </select>
-                    </td>
-                </tr>
-            </table>
-
-            <div class="btn-area">
-                <button class="btn btn-save" @click="fnSave">저장</button>
-                <button class="btn btn-cancel" @click="fnBack">뒤로가기</button>
+                    <div class="btn-area">
+                        <button class="btn btn-save" @click="fnSave">저장</button>
+                        <button class="btn btn-cancel" @click="fnBack">뒤로가기</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</body>
 
 <script>
 const editApp = Vue.createApp({
@@ -211,5 +214,4 @@ const editApp = Vue.createApp({
 });
 editApp.mount('#editApp');
 </script>
-</body>
 </html>

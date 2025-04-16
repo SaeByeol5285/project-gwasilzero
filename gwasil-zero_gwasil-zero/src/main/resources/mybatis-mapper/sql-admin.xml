@@ -3,7 +3,6 @@
    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
                                  
 <mapper namespace="com.project.gwasil_zero.mapper.AdminMapper">
-<<<<<<< HEAD
 	<select id="selectNewMemList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
 		SELECT *
 		FROM (
@@ -364,7 +363,6 @@
 	        </when>
 	    </choose>
 	</select>
-=======
    <select id="selectNewMemList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
       SELECT *
       FROM (
@@ -725,7 +723,6 @@
            </when>
        </choose>
    </select>
->>>>>>> branch 'feature/chunsamkim' of https://github.com/SaeByeol5285/project-gwasilzero.git
 
    <!-- 누적 변호사 등록 데이터 조회 -->
    <select id="selectStatLawyerLine" parameterType="hashmap" resultType="hashmap">

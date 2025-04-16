@@ -17,10 +17,6 @@
 		<link rel="icon" type="image/png" href="/img/common/logo3.png">
 				      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
         <style>
-            body {
-                font-family: Arial, sans-serif;
-                text-align: center;
-            }
 
             #app {
                 width: 400px;
@@ -104,6 +100,9 @@
                 margin-bottom: 5px;
                 font-weight: bold;
             }
+            .center {
+                text-align: center;
+            }
         </style>
     </head>
 
@@ -111,7 +110,7 @@
         <jsp:include page="../common/header.jsp" />
 
         <div id="app">
-            <h1>로그인</h1>
+            <h1 class="center">로그인</h1>
             <div class="form-group">
                 <label for="id">아이디</label>
                 <input v-model="id" id="id" placeholder="아이디 입력">
@@ -142,7 +141,7 @@
                 </div>
             </div>
 
-            <div class="extra-links">
+            <div class="extra-links center">
                 <a href="/user/search.do">아이디/비밀번호 찾기</a>
                 <a href="/join/select.do">회원가입</a>
             </div>

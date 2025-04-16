@@ -107,3 +107,15 @@
 ## 📫 문의
 
 프로젝트에 대한 문의는 [박새별]()에게 연락주세요.
+
+---
+
+## 📂 프로젝트 자료 모음
+
+| 분류 | 링크 |
+|------|------|
+| 📝 회의록 | [회의록 보기](https://drive.google.com/drive/folders/1bpM3vTIY-6_Rf_6FwxaOvptJlfphWDZC) |
+| 🏗 설계 자료 | [설계 보기](https://drive.google.com/drive/folders/1WqbDMTMkynVD0cCp9hnwFD0ld0HBcUQW) |
+| 📚 공통 문서 | [공통 문서 보기](https://drive.google.com/drive/folders/1Xm2uaNjuhy3Qlk6FlUh8F5hIuKT3p7nS) |
+
+---

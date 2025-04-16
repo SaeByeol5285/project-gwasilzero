@@ -8,9 +8,10 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <link rel="stylesheet" href="/css/lawyerView.css">
-		<link rel="icon" type="image/png" href="/img/common/logo3.png">
-				      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title> 
+        <link rel="icon" type="image/png" href="/img/common/logo3.png">
+        <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
     </head>
+
     <body>
         <jsp:include page="../common/header.jsp" />
         <div id="lawInfoApp">
@@ -25,7 +26,7 @@
                         <div class="profile-left">
                             <img :src="info.lawyerImg" alt="프로필">
                         </div>
-                    
+
                         <!-- 이름 + 전문 분야 -->
                         <div class="profile-center">
                             <h2 class="lawyer-name">
@@ -37,21 +38,22 @@
                                 <span class="badge" v-if="info.mainCategoryName2">{{ info.mainCategoryName2 }}</span>
                             </div>
                         </div>
-                    
+
                         <!-- 소개글 -->
                         <div class="profile-right">
                             <h3 class="intro-title">소개글</h3>
                             <p v-if="hasInfo" v-html="info.lawyerInfo" class="intro-text"></p>
                             <p v-else class="no-data">작성된 소개가 없습니다.</p>
                         </div>
-                    </div>                    
+                    </div>
 
                     <hr class="divider" />
 
                     <!-- 탭 영역 -->
                     <div class="lawyer-tabs">
                         <button :class="{ active: currentTab === 'home' }" @click="currentTab = 'home'">변호사 홈</button>
-                        <button :class="{ active: currentTab === 'review' }" @click="currentTab = 'review'">후기 목록</button>
+                        <button :class="{ active: currentTab === 'review' }" @click="currentTab = 'review'">후기
+                            목록</button>
                         <button @click="fnBack">변호사 목록보기</button>
                     </div>
 
@@ -95,26 +97,20 @@
                             <h3>기타 자격사항</h3>
                             <div class="license-list">
                                 <div class="license-card" v-for="item in license" :key="item.licenseName">
-                                  <img
-                                    v-if="item.licenseFilePath"
-                                    :src="item.licenseFilePath"
-                                    alt="자격증 이미지"
-                                    class="license-img"
-                                  />
-                                  <div v-else class="no-data license-img">이미지 없음</div>
-                                  <div class="license-name">{{ item.licenseName }}</div>
+                                    <img v-if="item.licenseFilePath" :src="item.licenseFilePath" alt="자격증 이미지"
+                                        class="license-img" />
+                                    <div v-else class="no-data license-img">이미지 없음</div>
+                                    <div class="license-name">{{ item.licenseName }}</div>
                                 </div>
-                              </div>
-                        </div>    
+                            </div>
+                        </div>
 
                         <!-- 박스 6: 대표 사건 -->
                         <div class="info-box" v-if="validCaseList.length > 0">
                             <h3>대표 사건</h3>
                             <div class="case-list">
-                                <div class="case-card" 
-                                        v-for="caseItem in validCaseList" 
-                                        :key="caseItem.boardNo"
-                                        @click="goToBoard(caseItem.boardNo)">
+                                <div class="case-card" v-for="caseItem in validCaseList" :key="caseItem.boardNo"
+                                    @click="goToBoard(caseItem.boardNo)">
                                     <img v-if="caseItem.filePath" :src="caseItem.filePath" class="preview-img" />
                                     <div v-else class="preview-img no-thumbnail">썸네일 없음</div>
                                     <div class="case-title">{{ caseItem.boardTitle }}</div>
@@ -139,8 +135,7 @@
                                             <span class="review-date">{{ item.cdate }}</span>
                                         </div>
                                         <div class="review-score">
-                                            <span v-for="n in 5" :key="n" class="star"
-                                                :class="{ filled: n <= item.score }">⭐</span>
+                                            <span v-for="n in item.score" :key="n" class="star">⭐</span>
                                             <span class="score-text">({{ item.score }}점)</span>
                                         </div>
                                         <div class="review-content">
@@ -192,6 +187,7 @@
         <jsp:include page="/WEB-INF/profile/recentViewBox.jsp" />
         <jsp:include page="../common/footer.jsp" />
     </body>
+
     </html>
     <script>
         const lawInfoApp = Vue.createApp({
@@ -266,6 +262,7 @@
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
+                            console.log(data);
                             self.reviewList = data.list;
                             self.index = Math.ceil(data.count / self.pageSize);
                             self.reviewCnt = data.count;
@@ -291,7 +288,7 @@
                         "이 텍스트들을 기반으로 자주 등장하는 단어 3개를 뽑아주세요. " +
                         "단어만 콤마(,)로 구분해서 간단히 적어주세요.\n" +
                         allContents;
-                    self.loading = true; 
+                    self.loading = true;
                     $.ajax({
                         url: "http://192.168.30.6:5000/qa",
                         type: "POST",
@@ -299,11 +296,11 @@
                         data: JSON.stringify({ question: question }),
                         success: function (res) {
                             self.answer = res.answer;
-                            self.loading = false; 
+                            self.loading = false;
                         },
                         error: function () {
                             self.answer = "키워드 추출에 실패했습니다.";
-                            self.loading = false; 
+                            self.loading = false;
                         }
                     });
                 },
@@ -354,8 +351,8 @@
                 removeEmptyTag(html) {
                     // <p><br></p> 같이 아무 의미 없는 태그 제거
                     return html.replace(/<p><br\s*\/?><\/p>/gi, '')
-                            .replace(/&nbsp;/gi, '')
-                            .replace(/\s+/g, '');
+                        .replace(/&nbsp;/gi, '')
+                        .replace(/\s+/g, '');
                 }
             },
             mounted() {
@@ -378,7 +375,7 @@
                     };
 
                     let list = JSON.parse(localStorage.getItem('recentViewed') || '[]');
-                    list = list.filter(i => !(i.type === item.type && i.id === item.id)); 
+                    list = list.filter(i => !(i.type === item.type && i.id === item.id));
                     list.unshift(item);
                     if (list.length > 5) list = list.slice(0, 5);
                     localStorage.setItem('recentViewed', JSON.stringify(list));

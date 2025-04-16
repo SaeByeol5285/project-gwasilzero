@@ -473,9 +473,12 @@
                                         style="width: 25px; height: 25px; margin-left: 8px; cursor: pointer;" />
 
                                     <!-- 계약 아이콘 -->
-                                    <img v-if="sessionType === 'user'" src="/img/contract.png"
-                                        @click="startContract(cmt.lawyerId)" title="계약하기"
-                                        style="width: 25px; height: 25px; margin-left: 8px; cursor: pointer;" />
+									<img v-if="sessionType === 'user'"
+									     :src="board.lawyerId === cmt.lawyerId ? '/img/selectedContract.png' : '/img/contract.png'"
+									     @click="startContract(cmt.lawyerId)"
+									     :title="board.lawyerId === cmt.lawyerId ? '이미 계약된 변호사입니다' : '계약하기'"
+									     style="width: 25px; height: 25px; margin-left: 8px; cursor: pointer;" />
+
 
                                     <!-- 채팅 아이콘 -->
                                     <img v-if="sessionType === 'user'" src="../../img/common/call.png"

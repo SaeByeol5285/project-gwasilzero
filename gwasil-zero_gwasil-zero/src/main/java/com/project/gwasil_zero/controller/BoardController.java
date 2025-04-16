@@ -187,7 +187,7 @@ public class BoardController {
 	                // 커맨드 실행
 	                String fullCommand = String.join(" && ",
 	                        "del \"" + mosaicPath + "\"",
-	                        "ffmpeg -y -i \"" + inputPath + "\" -vf scale=800:600 \"" + cutPath + "\"",
+	                        "ffmpeg -y -i \"" + inputPath + "\" -t 40 -vf scale=800:600 \"" + cutPath + "\"",
 	                        "\"" + pythonExec + "\" \"" + scriptPath + "\" \"" + cutPath + "\" \"" + mosaicPath + "\""
 	                );
 
@@ -199,6 +199,7 @@ public class BoardController {
 	                BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
 	                String line;
 	                while ((line = in.readLine()) != null) {
+	                	System.out.println("[SCRIPT LOG] " + line);
 	                }
 	                process.waitFor();
 

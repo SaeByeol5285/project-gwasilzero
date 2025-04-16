@@ -1,4 +1,29 @@
 /* ---------------------- */
+/* 가독성 */
+/* ---------------------- */
+* {
+    box-sizing: border-box;
+  }
+  
+section {
+    padding: 60px 0;
+}
+
+/* 배경과 색 구분 */
+section:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#app {
+    background-color: #fff;
+    max-width: 1200px;
+    margin: 80px auto;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+}
+
+/* ---------------------- */
 /* Hero Section Styles */
 /* ---------------------- */
 .hero {
@@ -101,11 +126,12 @@
     max-width: 800px;
     margin: 0 auto;
 }
+
 .steps-title {
     text-align: center;
     margin-bottom: 32px;
-  }
-  
+}
+
 
 .inline-title {
     display: inline-flex;
@@ -148,15 +174,17 @@
 .step-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center;   /* 각 step을 수평 중앙 정렬 */
-    gap: 24px;              /* step 간 간격 */
+    align-items: center;
+    /* 각 step을 수평 중앙 정렬 */
+    gap: 24px;
+    /* step 간 간격 */
     margin: 0 auto;
-  
-  }
-  
-  .steps {
+
+}
+
+.steps {
     text-align: center;
-  }
+}
 
 .features {
     padding: 60px 20px;

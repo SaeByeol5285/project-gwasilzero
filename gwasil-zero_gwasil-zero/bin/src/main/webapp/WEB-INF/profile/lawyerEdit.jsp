@@ -7,237 +7,430 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-        <title>프로필 수정</title>
-        <style>
-            body {
-                font-family: '맑은 고딕', sans-serif;
-                background-color: #f0f0f0;
-                padding: 40px;
-            }
+        <link rel="stylesheet" href="/css/profileEdit.css" />
 
-            .form-container {
-                background-color: #ddd;
-                padding: 30px;
-                border-radius: 14px;
-                width: 1000px;
-                margin: 0 auto;
-            }
-
-            table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-
-            th,
-            td {
-                border: none;
-                padding: 10px;
-                vertical-align: top;
-            }
-
-            th {
-                background-color: #fdf5c9;
-                width: 130px;
-            }
-
-            td {
-                background-color: #ccf5f8;
-            }
-
-            textarea,
-            input[type="text"] {
-                width: 100%;
-                padding: 6px;
-                box-sizing: border-box;
-                border-radius: 5px;
-                border: 1px solid #ccc;
-            }
-
-            .case-table {
-                width: 100%;
-                margin-top: 10px;
-            }
-
-            .case-table th {
-                background-color: #fdd;
-                text-align: left;
-            }
-
-            .case-table td {
-                background-color: #eee;
-            }
-
-            .submit-btn {
-                background-color: #fdfda8;
-                border: none;
-                padding: 12px 30px;
-                font-size: 16px;
-                border-radius: 10px;
-                margin-top: 25px;
-                cursor: pointer;
-                display: block;
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .license-item {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                margin-bottom: 8px;
-            }
-
-            .license-note {
-                font-size: 13px;
-                color: #444;
-                margin-bottom: 6px;
-            }
-
-            .add-license-btn {
-                margin-top: 10px;
-            }
-
-            .board-note {
-                font-size: 12px;
-                color: #888;
-            }
-        </style>
+        <!-- Quill 관련 -->
+        <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" />
+        <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/quill-emoji@0.1.7/dist/quill-emoji.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/quill-emoji@0.1.7/dist/quill-emoji.js"></script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<link rel="icon" type="image/png" href="/img/common/logo3.png">
+				      <title>과실ZERO - 교통사고 전문 법률 플랫폼</title>
     </head>
-
     <body>
+        <jsp:include page="../common/header.jsp" />
         <div id="lawEditApp">
-            <div class="form-container">
-                <form id="lawyerEditForm">
-                    <table>
-                        <tr>
-                            <th>소개</th>
-                            <td><textarea v-model="info.lawyerInfo" rows="3"></textarea></td>
-                        </tr>
-                        <tr>
-                            <th>경력</th>
-                            <td><textarea v-model="info.lawyerCareer" rows="3"></textarea></td>
-                        </tr>
-                        <tr>
-                            <th>주요 업무 사례</th>
-                            <td><textarea v-model="info.lawyerTask" rows="3"></textarea></td>
-                        </tr>
-                        <tr>
-                            <th>학력</th>
-                            <td><textarea v-model="info.lawyerEdu" rows="3"></textarea></td>
-                        </tr>
-                        <tr>
-                            <th>자격 취득</th>
-                            <td>
-                                <p class="license-note">☑ 선택삭제</p>
-                                <div v-for="(item, index) in license" :key="index" class="license-item">
-                                    <input type="checkbox" v-model="item._delete" />
-                                    <textarea v-model="item.licenseName" rows="2"></textarea>
+            <div class="layout">
+                <div>
+                    <h2 class="section-subtitle">변호사 프로필 수정</h2>
+                </div>
+                <div class="content">
+                    <form id="lawyerEditForm" @submit.prevent>
+                        <!-- 상단 프로필 영역 -->
+                        <div class="lawyer-header">
+                            <div class="profile-left">
+                                <img :src="info.lawyerImg" alt="프로필">
+                                <h2 class="lawyer-name">
+                                    {{ info.lawyerName }}
+                                    <span class="lawyer-title">변호사</span>
+                                </h2>
+                            </div>
+                            <div class="profile-right">
+                                <h3 class="intro-title">소개글 수정</h3>
+                                <div id="editor-info" class="lawyer-quill-editor"></div>
+                            </div>
+                        </div>
+    
+                        <hr class="divider" />
+    
+                        <!-- 하단 정보 박스 -->
+                        <div class="tab-content">  
+                            <div class="info-box">
+                                <h3>법조 경력 수정</h3>
+                                <div id="editor-career" class="lawyer-quill-editor"></div>
+                            </div>
+
+                            <div class="info-box">
+                                <h3>업무 사례 수정</h3>
+                                <div id="editor-task" class="lawyer-quill-editor"></div>
+                            </div>
+    
+                            <div class="info-box">
+                                <h3>학력 사항 수정</h3>
+                                <div id="editor-edu" class="lawyer-quill-editor"></div>
+                            </div>
+    
+                            <div class="info-box">
+                                <h3>전문 분야 선택</h3>
+                                <p class="lawyer-board-note">{{ selectedCategories.length }}개 선택됨 (2개 모두 선택하세요!)</p>
+                                <div class="lawyer-category-checkbox-container">
+                                    <div v-for="(category, index) in categoryList" :key="category.CATEGORY_NO" class="lawyer-category-checkbox-item">
+                                        <input type="checkbox" 
+                                               :id="'category' + category.CATEGORY_NO" 
+                                               :value="category.CATEGORY_NO"
+                                               v-model="selectedCategories"
+                                               :disabled="selectedCategories.length >= 2 && !selectedCategories.includes(category.CATEGORY_NO)" />
+                                        <label :for="'category' + category.CATEGORY_NO" 
+                                               :class="{ 'lawyer-highlighted': selectedCategories.includes(category.CATEGORY_NO) }">
+                                            {{ category.CATEGORY_NAME }}
+                                        </label>
+                                    </div>
                                 </div>
-                                <button type="button" @click="addLicense" class="add-license-btn">+ 자격 추가</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>대표 사건 사례<br>(최대 3개)</th>
-                            <td>
-                                <p class="board-note">
-                                    {{ selectedBoards.length }}개 선택됨 (최대 3개까지)
-                                </p>
-                                <table class="case-table">
-                                    <tr>
-                                        <th style="width: 50px;">선택</th>
-                                        <th>게시판 번호</th>
-                                        <th>게시판 제목</th>
-                                        <th>내용</th>
-                                    </tr>
-                                    <tr v-for="board in boardList" :key="board.boardNo">
-                                        <td>
-                                            <input type="checkbox" :value="board.boardNo" v-model="selectedBoards"
-                                                :disabled="selectedBoards.length >= 3 && !selectedBoards.includes(board.boardNo)" />
-                                        </td>
-                                        <td>{{ board.boardNo }}</td>
-                                        <td>{{ board.boardTitle }}</td>
-                                        <td>{{ board.contents }}</td>
-                                    </tr>
+                            </div>
+    
+                            <div class="info-box">
+                                <h3>기타 자격 사항</h3>
+                                <div v-if="license.length > 0" class="license-list">
+                                    <div v-for="(item, index) in license" :key="index" class="license-card">
+                                        <template v-if="item.isExisting">
+                                            <img :src="item.licensePreview" class="license-img" /> 
+                                            <div class="license-name">{{ item.licenseName }}</div> 
+                                            <button type="button" @click="removeExistingLicense(item, index)" 
+                                                    class="lawyer-btn lawyer-btn-primary" style="margin-top: 10px;">삭제</button> 
+                                        </template>
+                                        <template v-else>
+                                            <input type="text" v-model="item.licenseName" placeholder="자격증 이름 입력" style="margin-bottom: 6px;" />
+                                            <input type="file" accept="image/png, image/jpeg" @change="onFileChange($event, index)" /> 
+                                            <img v-if="item.licensePreview" :src="item.licensePreview" class="license-img" /> 
+                                            <button type="button" @click="removeLicense(index)" class="lawyer-btn lawyer-btn-danger">
+                                                입력취소
+                                            </button>
+                                        </template> 
+                                    </div> 
+                                </div> 
+                                <div v-else class="no-data">등록된 자격증이 없습니다.</div> 
+                                <div style="margin-top: 16px;"> 
+                                    <button type="button" @click="addLicense" class="lawyer-btn lawyer-btn-primary">+ 자격 추가</button> 
+                                </div> 
+                            </div>
+    
+                            <div class="info-box">
+                                <h3>대표 사건 선택</h3>
+                                <p class="lawyer-board-note">{{ selectedBoards.length }}개 선택됨 (최대 3개)</p>
+                                <table class="lawyer-case-table">
+                                    <thead>
+                                        <tr>
+                                            <th>선택</th>
+                                            <th>번호</th>
+                                            <th>제목</th>
+                                            <th>내용</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="board in safeBoardList" :key="board.boardNo">
+                                            <td>
+                                                <input type="checkbox" :value="board.boardNo"
+                                                    v-model="selectedBoards"
+                                                    :disabled="selectedBoards.length >= 3 && !selectedBoards.includes(board.boardNo)" />
+                                            </td>
+                                            <td>{{ board.boardNo }}</td>
+                                            <td>{{ board.boardTitle }}</td>
+                                            <td>{{ board.contents }}</td>
+                                        </tr>
+                                    </tbody>
                                 </table>
-                            </td>
-                        </tr>
-                    </table>
-                    <button type="button" @click="fnEdit" class="submit-btn">수정하기</button>
-                </form>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="lawyer-mt-20 lawyer-flex-center">
+                        <button type="button" @click="fnEdit" class="lawyer-btn">수정하기</button>
+                    </div>
+                </div>
             </div>
         </div>
+        <jsp:include page="../common/footer.jsp" />
     </body>
-
+    
+    
     </html>
     <script>
+        let quillInfo, quillCareer, quillTask, quillEdu;
+
+        const toolbarOptions = [
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'header': 1 }, { 'header': 2 }],
+        [{ 'color': [] }, { 'background': [] }],
+        ['emoji'],
+        ['clean']
+        ];
+
         const lawEditApp = Vue.createApp({
             data() {
                 return {
-                    // lawyerId : "${sessionId}",
-                    lawyerId: "lawyer_2",
+                    lawyerId : "${sessionId}",
                     info: {},
                     boardList: [],
                     license: [],
-                    selectedBoards: []
+                    selectedBoards: [],
+                    deletedLicenseIds: [],
+                    categoryList: [],  
+                    selectedCategories: []
                 };
+            },
+            computed: {
+                safeBoardList() {
+                    return this.boardList.filter(item => item != null);
+                }        
             },
             methods: {
                 fnGetLawyerInfo() {
-                    var self = this;
-                    var nparmap = {
-                        lawyerId: self.lawyerId
-                    };
+                    const self = this;
                     $.ajax({
                         url: "/profile/info.dox",
-                        dataType: "json",
                         type: "POST",
-                        data: nparmap,
-                        success: function (data) {
-                            console.log(data.boardList);
+                        dataType: "json",
+                        data: { lawyerId: self.lawyerId },
+                        success(data) {
                             self.info = data.info;
-                            self.boardList = data.boardList;
-                            self.license = data.license;
+                            // Quill에 값 설정
+                            quillInfo.root.innerHTML = self.info.lawyerInfo || '';
+                            quillCareer.root.innerHTML = self.info.lawyerCareer || '';
+                            quillTask.root.innerHTML = self.info.lawyerTask || '';
+                            quillEdu.root.innerHTML = self.info.lawyerEdu || '';
+
+                            self.boardList = (data.boardList || []).filter(item => item != null);
+                            self.license = data.license.map(item => ({
+                                ...item,
+                                isExisting: true,
+                                licenseFile: null,
+                                licensePreview: item.licenseFilePath || null,
+                                lawyerId: self.lawyerId
+                            }));
+
+                            // 대표 사건 선택 초기화
+                            self.selectedBoards = [];
+                            if (self.info.mainCase1No) self.selectedBoards.push(self.info.mainCase1No);
+                            if (self.info.mainCase2No) self.selectedBoards.push(self.info.mainCase2No);
+                            if (self.info.mainCase3No) self.selectedBoards.push(self.info.mainCase3No);
+
+                            self.selectedCategories = [self.info.mainCategories1, self.info.mainCategories2].filter(category => category !== null);
+                            self.fnGetCategories();
                         }
                     });
                 },
-                fnEdit: function () {
-                    var self = this;
-                    // 1. 삭제 체크 안 된 항목만
-                    // 2. licenseName이 비어있지 않은 항목만
-                    var filteredLicense = self.license.filter(item => {
-                        return !item._delete && item.licenseName && item.licenseName.trim() !== '';
+                fnEdit() {   
+                    const self = this;
+
+                    // 전문분야 선택
+                    if (self.selectedCategories.length < 2) {
+                        swal.fire({
+                            title: "전문 분야 선택 오류",
+                            text: "전문 분야를 2개 모두 선택해야 합니다.",
+                            icon: "warning",
+                            confirmButtonText: "확인"
+                        });
+                        return;
+                    }
+
+                    self.info.mainCategories1 = self.selectedCategories[0] || null;
+                    self.info.mainCategories2 = self.selectedCategories[1] || null;
+
+                    // Quill 값 동기화
+                    self.info.lawyerInfo = quillInfo.root.innerHTML;
+                    self.info.lawyerCareer = quillCareer.root.innerHTML;
+                    self.info.lawyerTask = quillTask.root.innerHTML;
+                    self.info.lawyerEdu = quillEdu.root.innerHTML;
+
+                    const formData = new FormData();
+                    formData.append("lawyerId", self.lawyerId);
+                    formData.append("info", JSON.stringify(self.info));
+                    formData.append("selectedBoards", JSON.stringify(self.selectedBoards));
+                    formData.append("deletedLicenseIds", JSON.stringify(self.deletedLicenseIds));
+                    formData.append("selectedCategories", JSON.stringify(self.selectedCategories));
+
+                    let count = 0;
+                    let invalid = false;
+
+                    self.license.forEach((item, i) => {
+                        if (item.isExisting) return;
+                        if (!item.licenseName || !item.licenseFile) {
+                            swal.fire({
+                                title: "자격증 입력 오류",
+                                text: "자격증 항목의 이름과 파일을 확인하세요.",
+                                icon: "warning",
+                                confirmButtonText: "확인"
+                            });
+                            invalid = true;
+                            return;
+                        }
+
+                        const nameKey = "licenseName_" + count;
+                        const fileKey = "licenseFile_" + count;
+
+                        formData.append(nameKey, item.licenseName.trim());
+                        formData.append(fileKey, item.licenseFile);
+                        count++;
                     });
 
-                    // board 번호 숫자로 변환
-                    self.selectedBoards = self.selectedBoards.map(b => Number(b));
-                    var nparmap = {
-                        ...self.info,
-                        lawyerId: self.lawyerId,
-                        licenseList: filteredLicense,
-                        selectedBoards: self.selectedBoards
-                    };
+                    if (invalid) return;                   
+
+                    formData.append("licenseCount", count);
+
                     $.ajax({
                         url: "/profile/lawyerEdit.dox",
                         type: "POST",
-                        data: JSON.stringify(nparmap), // JSON으로 변환
-                        contentType: "application/json;charset=UTF-8",
-                        success: function (data) {
-                            alert("수정되었습니다");
-                            location.href = "/profile/innerLawyer.do";
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success(data) {
+                            if (data.result === "success") {
+                                swal.fire({
+                                    title: "변호사 프로필이 성공적으로 수정되었습니다!",
+                                    icon: "success",
+                                    confirmButtonText: "확인"
+                                }).then(() => {
+                                    self.deletedLicenseIds = [];
+                                    location.href = "/common/main.do";
+                                });
+                            } else {
+                                swal.fire({
+                                    title: "프로필 수정 중 오류가 발생했습니다.",
+                                    icon: "error",
+                                    confirmButtonText: "확인"
+                                });
+                            }
+                        },
+                        error(err) {
+                            swal.fire({
+                                title: "서버와의 통신 중 오류가 발생했습니다.",
+                                icon: "error",
+                                confirmButtonText: "확인"
+                            });
                         }
                     });
-                    // console.log("전송할 licenseList:", self.license);
-                    // console.log("전송할 전체 데이터:", nparmap);
                 },
-                addLicense() {
-                    this.license.push({ licenseName: '', _delete: false });
+                addLicense() {                    
+                    this.license.push({
+                            licenseName: '',
+                            isExisting: false,
+                            licenseFile: null,
+                            licensePreview: null
+                    });
                 },
-            },
+                removeLicense(index) {
+                    this.license.splice(index, 1); 
+                },
+                removeExistingLicense(item, index) {
+                    swal.fire({
+                        title: "정말 삭제하시겠습니까?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "삭제",
+                        cancelButtonText: "취소",
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            this.deletedLicenseIds.push({
+                                licenseName: item.licenseName,
+                                lawyerId: item.lawyerId
+                            });
+                            this.license.splice(index, 1);
+                            swal.fire({
+                                title: "자격증이 삭제되었습니다.",
+                                icon: "success",
+                                confirmButtonText: "확인"
+                            });
+                        }
+                    });
+                },
+                onFileChange(event, index) {
+                    const file = event.target.files[0];
+                    if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
+                        if (file.size > 5 * 1024 * 1024) {
+                            swal.fire({
+                                title: "파일 크기 오류",
+                                text: "5MB 이하의 파일만 업로드 가능합니다.",
+                                icon: "warning",
+                                confirmButtonText: "확인"
+                            });
+                            return;
+                        }
+
+                        if (this.license[index].licensePreview) {
+                            URL.revokeObjectURL(this.license[index].licensePreview);
+                        }
+
+                        this.license[index].licenseFile = file;
+                        this.license[index].licensePreview = URL.createObjectURL(file);
+                    } else {
+                        swal.fire({
+                            title: "파일 형식 오류",
+                            text: "JPG 또는 PNG 파일만 업로드 가능합니다.",
+                            icon: "warning",
+                            confirmButtonText: "확인"
+                        });
+                        event.target.value = '';
+                        this.license[index].licenseFile = null;
+                        this.license[index].licensePreview = null;
+                    }
+                },
+                fnGetCategories() {
+                    const self = this;
+                    $.ajax({
+                        url: "/profile/getCategories.dox", 
+                        type: "GET",
+                        dataType: "json",
+                        success(data) {
+                            self.categoryList = data.categories || [];
+                        }
+                    });
+                },                
+            }, // 메소드 영역 끝
             mounted() {
-                var self = this;
+                const self = this;
+
                 self.fnGetLawyerInfo();
+                self.fnGetCategories();
+
+                self.$nextTick(function () {
+                    // Quill 에디터 초기화
+                    quillInfo   = new Quill('#editor-info',   { theme: 'snow', modules: { toolbar: toolbarOptions, 'emoji-toolbar': true } });
+                    quillCareer = new Quill('#editor-career', { theme: 'snow', modules: { toolbar: toolbarOptions, 'emoji-toolbar': true } });
+                    quillTask   = new Quill('#editor-task',   { theme: 'snow', modules: { toolbar: toolbarOptions, 'emoji-toolbar': true } });
+                    quillEdu    = new Quill('#editor-edu',    { theme: 'snow', modules: { toolbar: toolbarOptions, 'emoji-toolbar': true } });
+
+                    // emoji palette body로 이동
+                    setTimeout(function () {
+                        const palette = document.getElementById('emoji-palette');
+                        if (palette) {
+                            document.body.appendChild(palette);
+                            palette.style.position = 'fixed';
+                            palette.style.zIndex = '99999';
+                            palette.style.display = 'none';
+                        }
+                    }, 300);
+
+                    document.querySelectorAll('.ql-emoji').forEach(function (btn) {
+                        btn.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            setTimeout(function () {
+                                const palette = document.getElementById('emoji-palette');
+                                if (!palette) return;
+
+                                const rect = btn.getBoundingClientRect();
+
+                                palette.style.top = (rect.bottom + 8) + 'px';
+                                palette.style.left = (rect.left - 0) + 'px';
+                                palette.style.display = 'block';
+                            }, 100);
+                        });
+                    });
+
+                    // 외부 클릭 시 palette 숨기기
+                    document.addEventListener('click', function (e) {
+                        const palette = document.getElementById('emoji-palette');
+                        if (!palette) return;
+
+                        if (!palette.contains(e.target) && !e.target.closest('.ql-emoji')) {
+                            palette.style.display = 'none';
+                        }
+                    });
+                });
             }
         });
         lawEditApp.mount('#lawEditApp');
     </script>
-    ​

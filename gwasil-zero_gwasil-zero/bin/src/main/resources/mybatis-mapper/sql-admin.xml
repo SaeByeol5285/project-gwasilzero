@@ -1,151 +1,418 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-											
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+                                 
 <mapper namespace="com.project.gwasil_zero.mapper.AdminMapper">
-	<select id="selectNewMemList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
-		SELECT *
-		FROM (
-			SELECT *
-			FROM TBL_USER
-			ORDER BY CDATE DESC
-		)
-		WHERE ROWNUM &lt;= 5
-	</select>	
-	
-	<select id="selectLawAdminWaitList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
-		SELECT *
-		FROM LAWYER
-		WHERE LAWYER_PASS = 'N' AND ROWNUM &lt;= 5
-	</select>
-	
-	<select id="selectReportList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Report">
-		SELECT *
-		FROM (
-		    SELECT *
-		    FROM REPORT
-		    WHERE REPORT_STATUS != 'DELETE'
-		    ORDER BY CDATE DESC
-		)
-		WHERE ROWNUM &lt;= 5
-	</select>	
-	
-	<select id="selectUserList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
-		SELECT
-	        U.USER_ID,
-	        U.USER_NAME,
-	        U.USER_STATUS,
-	        U.REPORT_CNT,
-	        U.CDATE,
-	        (
-	            SELECT MAX(PACKAGE_NAME)
-	            FROM PAY P
-	            WHERE P.USER_ID = U.USER_ID
-	        ) AS PACKAGE_NAME
-	    FROM TBL_USER U
-	    WHERE 1=1
-	
-	    <!-- 회원 상태 필터 -->
-	    <if test="status != null and status != 'ALL'">
-	        <choose>
-	            <when test="status == 'Out'">
-	                AND U.USER_STATUS = 'Out'
-	            </when>
-	            <when test="status == 'paid'">
-	                AND U.USER_STATUS = 'Nomal'
-	                AND EXISTS (
-	                    SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
-	                )
-	            </when>
-	            <when test="status == 'free'">
-	                AND U.USER_STATUS = 'Nomal'
-	                AND NOT EXISTS (
-	                    SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
-	                )
-	            </when>
-	        </choose>
-	    </if>
-	
-	    <!-- 가입일 조건 -->
-	    <if test="period != null and period != 'ALL'">
-	        <choose>
-	            <when test="period == 'WEEK'">
-	                AND U.CDATE &gt;= SYSDATE - 7
-	            </when>
-	            <when test="period == 'MONTH'">
-	                AND U.CDATE &gt;= ADD_MONTHS(SYSDATE, -1)
-	            </when>
-	            <when test="period == 'YEAR'">
-	                AND U.CDATE &gt;= ADD_MONTHS(SYSDATE, -12)
-	            </when>
-	        </choose>
-	    </if>
-	
-	    <!-- 검색어 (이름 또는 패키지명) -->
-	    <if test="word != null and word != ''">
-	        AND (
-	            U.USER_NAME LIKE '%' || #{word} || '%'
-	            OR EXISTS (
-	                SELECT 1 FROM PAY P
-	                WHERE P.USER_ID = U.USER_ID
-	                AND P.PACKAGE_NAME LIKE '%' || #{word} || '%'
-	            )
-	        )
-	    </if>
-	
-	    ORDER BY U.CDATE DESC
-	    OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
-	</select>
-	
-	<select id="userCnt" parameterType="hashmap" resultType="int">
-		SELECT COUNT(*)
-	    FROM TBL_USER U
-	    WHERE 1=1
-	
-	    <if test="status != null and status != 'ALL'">
-	        <choose>
-	            <when test="status == 'Out'">
-	                AND U.USER_STATUS = 'Out'
-	            </when>
-	            <when test="status == 'paid'">
-	                AND U.USER_STATUS = 'Nomal'
-	                AND EXISTS (
-	                    SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
-	                )
-	            </when>
-	            <when test="status == 'free'">
-	                AND U.USER_STATUS = 'Nomal'
-	                AND NOT EXISTS (
-	                    SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
-	                )
-	            </when>
-	        </choose>
-	    </if>
-	
-	    <if test="period != null and period != 'ALL'">
-	        <choose>
-	            <when test="period == 'WEEK'">
-	                AND U.CDATE &gt;= SYSDATE - 7
-	            </when>
-	            <when test="period == 'MONTH'">
-	                AND U.CDATE &gt;= ADD_MONTHS(SYSDATE, -1)
-	            </when>
-	            <when test="period == 'YEAR'">
-	                AND U.CDATE &gt;= ADD_MONTHS(SYSDATE, -12)
-	            </when>
-	        </choose>
-	    </if>
-	
-	    <if test="word != null and word != ''">
-	        AND (
-	            U.USER_NAME LIKE '%' || #{word} || '%'
-	            OR EXISTS (
-	                SELECT 1 FROM PAY P
-	                WHERE P.USER_ID = U.USER_ID
-	                AND P.PACKAGE_NAME LIKE '%' || #{word} || '%'
-	            )
-	        )
-	    </if>
-	</select>
-	
+   <select id="selectNewMemList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+      SELECT *
+      FROM (
+         SELECT *
+         FROM TBL_USER
+         WHERE USER_STATUS != 'OUT'
+         ORDER BY CDATE DESC
+      )
+      WHERE ROWNUM &lt;= 5
+   </select>   
+   
+   <select id="selectLawAdminWaitList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+      SELECT *
+      FROM LAWYER
+      WHERE LAWYER_PASS = 'N' AND ROWNUM &lt;= 5
+   </select>
+   
+   <select id="selectRepoAdminList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Report">      
+      SELECT *
+      FROM REPORT
+      WHERE ROWNUM &lt;= 5
+      ORDER BY CDATE DESC      
+   </select>
+   
+   <select id="selectUserList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.User">
+      SELECT
+           U.USER_ID,
+           U.USER_NAME,
+           U.USER_STATUS,
+           U.REPORT_CNT,
+           U.CDATE,
+           (
+               SELECT MAX(PACKAGE_NAME)
+               FROM PAY P
+               WHERE P.USER_ID = U.USER_ID
+           ) AS PACKAGE_NAME
+       FROM TBL_USER U
+       WHERE 1=1
+   
+       <!-- 회원 상태 필터 -->
+       <if test="status != null and status != 'ALL'">
+           <choose>
+               <when test="status == 'Out'">
+                   AND U.USER_STATUS = 'OUT'
+               </when>
+               <when test="status == 'paid'">
+                   AND U.USER_STATUS = 'NORMAL'
+                   AND EXISTS (
+                       SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
+                   )
+               </when>
+               <when test="status == 'free'">
+                   AND U.USER_STATUS = 'NORMAL'
+                   AND NOT EXISTS (
+                       SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
+                   )
+               </when>
+           </choose>
+       </if>
+   
+       <!-- 가입일 조건 -->
+       <if test="period != null and period != 'ALL'">
+           <choose>
+               <when test="period == 'WEEK'">
+                   AND U.CDATE &gt;= SYSDATE - 7
+               </when>
+               <when test="period == 'MONTH'">
+                   AND U.CDATE &gt;= ADD_MONTHS(SYSDATE, -1)
+               </when>
+               <when test="period == 'YEAR'">
+                   AND U.CDATE &gt;= ADD_MONTHS(SYSDATE, -12)
+               </when>
+           </choose>
+       </if>
+   
+       <!-- 검색어 (이름 또는 패키지명) -->
+       <if test="word != null and word != ''">
+           AND (
+               U.USER_NAME LIKE '%' || #{word} || '%'
+               OR EXISTS (
+                   SELECT 1 FROM PAY P
+                   WHERE P.USER_ID = U.USER_ID
+                   AND P.PACKAGE_NAME LIKE '%' || #{word} || '%'
+               )
+           )
+       </if>
+   
+       ORDER BY U.CDATE DESC
+       OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+   </select>
+   
+   <select id="userCnt" parameterType="hashmap" resultType="int">
+      SELECT COUNT(*)
+       FROM TBL_USER U
+       WHERE 1=1
+   
+       <if test="status != null and status != 'ALL'">
+           <choose>
+               <when test="status == 'Out'">
+                   AND U.USER_STATUS = 'OUT'
+               </when>
+               <when test="status == 'paid'">
+                   AND U.USER_STATUS = 'NORMAL'
+                   AND EXISTS (
+                       SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
+                   )
+               </when>
+               <when test="status == 'free'">
+                   AND U.USER_STATUS = 'NORMAL'
+                   AND NOT EXISTS (
+                       SELECT 1 FROM PAY P WHERE P.USER_ID = U.USER_ID
+                   )
+               </when>
+           </choose>
+       </if>
+   
+       <if test="period != null and period != 'ALL'">
+           <choose>
+               <when test="period == 'WEEK'">
+                   AND U.CDATE &gt;= SYSDATE - 7
+               </when>
+               <when test="period == 'MONTH'">
+                   AND U.CDATE &gt;= ADD_MONTHS(SYSDATE, -1)
+               </when>
+               <when test="period == 'YEAR'">
+                   AND U.CDATE &gt;= ADD_MONTHS(SYSDATE, -12)
+               </when>
+           </choose>
+       </if>
+   
+       <if test="word != null and word != ''">
+           AND (
+               U.USER_NAME LIKE '%' || #{word} || '%'
+               OR EXISTS (
+                   SELECT 1 FROM PAY P
+                   WHERE P.USER_ID = U.USER_ID
+                   AND P.PACKAGE_NAME LIKE '%' || #{word} || '%'
+               )
+           )
+       </if>
+   </select>   
+   
+   <select id="selectLawWaitList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+      SELECT *
+      FROM LAWYER
+      WHERE LAWYER_PASS = 'N'
+         AND LAWYER_STATUS != 'O'
+      ORDER BY LAWYER_NAME
+      OFFSET #{waitPage} ROWS FETCH NEXT #{waitPageSize} ROWS ONLY
+   </select>
+   
+   <select id="selectLawWaitCount" parameterType="hashmap" resultType="int">
+       SELECT COUNT(*)
+       FROM LAWYER
+       WHERE LAWYER_PASS = 'N'
+          AND LAWYER_STATUS != 'O'
+   </select>
+   
+   <update id="updateLawyerPass" parameterType="hashmap">
+       UPDATE LAWYER
+       SET LAWYER_PASS = 'Y'
+       WHERE LAWYER_ID = #{lawyerId}
+   </update>
+   
+   <select id="selectLawPassedList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+      SELECT *
+      FROM LAWYER
+      WHERE LAWYER_PASS = 'Y'
+         AND LAWYER_STATUS != 'O'
+      ORDER BY LAWYER_NAME
+      OFFSET #{passedPage} ROWS FETCH NEXT #{passedPageSize} ROWS ONLY
+   </select>
+   
+   <select id="selectLawPassedCount" parameterType="hashmap" resultType="int">
+       SELECT COUNT(*)
+       FROM LAWYER
+       WHERE LAWYER_PASS = 'Y'
+          AND LAWYER_STATUS != 'O'
+   </select>
+   
+   <update id="updateLawyerCencel" parameterType="hashmap">
+       UPDATE LAWYER
+       SET LAWYER_PASS = 'N'
+       WHERE LAWYER_ID = #{lawyerId}
+   </update>
+   
+   <select id="selectLawOutList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Lawyer">
+      SELECT *
+      FROM LAWYER
+      WHERE LAWYER_STATUS = 'O'
+      ORDER BY LAWYER_NAME
+      OFFSET #{outPage} ROWS FETCH NEXT #{outPageSize} ROWS ONLY
+   </select>
+   
+   <select id="selectLawOutCount" parameterType="hashmap" resultType="int">
+       SELECT COUNT(*)
+       FROM LAWYER
+       WHERE LAWYER_STATUS = 'O'
+   </select>
+   
+   <update id="updateLawyerComeBack" parameterType="hashmap">
+       UPDATE LAWYER
+       SET LAWYER_STATUS = 'I', LAWYER_PASS = 'N'
+       WHERE LAWYER_ID = #{lawyerId}
+   </update>
+   
+   <select id="selectReportList" parameterType="hashmap" resultType="com.project.gwasil_zero.model.Report">
+      SELECT * 
+      FROM REPORT
+      ORDER BY BOARD_NO
+      OFFSET #{repoPage} ROWS FETCH NEXT #{repoPageSize} ROWS ONLY
+   </select>
+   
+   <select id="selectReportCount" parameterType="hashmap" resultType="int">
+       SELECT COUNT(*)
+       FROM REPORT
+   </select>
+   
+   <update id="updateReportStatus" parameterType="hashmap">
+       UPDATE REPORT
+       SET REPORT_STATUS = #{reportStatus}
+       WHERE BOARD_NO = #{boardNo}
+   </update>
+   
+   <update id="updateBoardStatus" parameterType="hashmap">
+       update board set board_status = #{boardStatus} where board_no = #{boardNo}
+   </update>
+   
+   <select id="selectStatChart" parameterType="hashmap" resultType="hashmap">
+       SELECT 
+           PACKAGE_NAME,
+           TO_CHAR(PAY_TIME,
+           <choose>
+               <when test="groupType == 'daily'"> 'YY/MM/DD' </when>
+               <when test="groupType == 'monthly'"> 'YY/MM' </when>
+               <otherwise> 'YY' </otherwise>
+           </choose>
+           ) AS TIME_GROUP,
+           SUM(TO_NUMBER(PRICE)) AS TOTAL_PRICE
+       FROM PAY
+       WHERE PAY_STATUS = 'PAID'
+         AND REGEXP_LIKE(PRICE, '^\d+$')
+       <if test="startDate != null and endDate != null and startDate != '' and endDate != ''">
+           AND PAY_TIME BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD') AND TO_DATE(#{endDate}, 'YYYY-MM-DD')
+       </if>
+       GROUP BY 
+           PACKAGE_NAME,
+           TO_CHAR(PAY_TIME,
+           <choose>
+               <when test="groupType == 'daily'"> 'YY/MM/DD' </when>
+               <when test="groupType == 'monthly'"> 'YY/MM' </when>
+               <otherwise> 'YY' </otherwise>
+           </choose>
+           )
+       ORDER BY TIME_GROUP
+   </select>
+   
+   <!-- 연도 목록 -->
+   <select id="selectAvailableYears" resultType="string">
+       SELECT DISTINCT TO_CHAR(PAY_TIME, 'YYYY') AS YEAR
+       FROM PAY
+       WHERE PAY_STATUS = 'PAID'
+       ORDER BY YEAR
+   </select>
+   
+   <!-- 특정 연도에 대한 월 목록 -->
+   <select id="selectAvailableMonths" parameterType="hashmap" resultType="string">
+       SELECT DISTINCT TO_CHAR(PAY_TIME, 'MM') AS MONTH
+       FROM PAY
+       WHERE PAY_STATUS = 'PAID'
+       <if test="year != null and year != ''">
+           AND TO_CHAR(PAY_TIME, 'YYYY') = #{year}
+       </if>
+       ORDER BY TO_NUMBER(MONTH)
+   </select>
+   
+   <!-- 특정 연도, 월에 대한 일 목록 -->
+   <select id="selectAvailableDays" parameterType="hashmap" resultType="string">
+       SELECT DISTINCT TO_CHAR(PAY_TIME, 'DD') AS DAY
+       FROM PAY
+       WHERE PAY_STATUS = 'PAID'
+       <if test="year != null and year != ''">
+           AND TO_CHAR(PAY_TIME, 'YYYY') = #{year}
+       </if>
+       <if test="month != null and month != ''">
+           AND TO_CHAR(PAY_TIME, 'MM') = LPAD(#{month}, 2, '0')
+       </if>
+       ORDER BY TO_NUMBER(DAY)
+   </select>
+   
+   <!-- pie 차트용 데이터 조회 -->
+   <select id="selectStatPie" parameterType="hashmap" resultType="hashmap">
+       SELECT 
+           PACKAGE_NAME,
+           SUM(TO_NUMBER(PRICE)) AS TOTAL_PRICE
+       FROM PAY
+       WHERE PAY_STATUS = 'PAID'
+         <if test="year != null and year != ''">
+           AND TO_CHAR(PAY_TIME, 'YYYY') = #{year}
+         </if>
+         <if test="month != null and month != ''">
+           AND TO_CHAR(PAY_TIME, 'MM') = LPAD(#{month}, 2, '0')
+         </if>
+         <if test="day != null and day != ''">
+           AND TO_CHAR(PAY_TIME, 'DD') = LPAD(#{day}, 2, '0')
+         </if>
+       GROUP BY PACKAGE_NAME
+       ORDER BY PACKAGE_NAME
+   </select>
+   
+   <!-- 누적 일반 이용자 데이터 조회 -->
+   <select id="selectStatUserLine" parameterType="hashmap" resultType="hashmap">
+       <choose>
+           <when test="groupType == 'daily'">
+               SELECT 
+                   TO_CHAR(CDATE, 'YYYY-MM-DD') AS TIME_GROUP,
+                   COUNT(*) AS USER_COUNT
+               FROM TBL_USER
+               WHERE USER_STATUS = 'NORMAL'
+               <if test="startDate != null and startDate != ''">
+                   AND CDATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+               </if>
+               <if test="endDate != null and endDate != ''">
+                   AND CDATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+               </if>
+               GROUP BY TO_CHAR(CDATE, 'YYYY-MM-DD')
+               ORDER BY TIME_GROUP
+           </when>
+           <when test="groupType == 'monthly'">
+               SELECT 
+                   TO_CHAR(CDATE, 'YYYY-MM') AS TIME_GROUP,
+                   COUNT(*) AS USER_COUNT
+               FROM TBL_USER
+               WHERE USER_STATUS = 'NORMAL'
+               <if test="startDate != null and startDate != ''">
+                   AND CDATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+               </if>
+               <if test="endDate != null and endDate != ''">
+                   AND CDATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+               </if>
+               GROUP BY TO_CHAR(CDATE, 'YYYY-MM')
+               ORDER BY TIME_GROUP
+           </when>
+           <when test="groupType == 'yearly'">
+               SELECT 
+                   TO_CHAR(CDATE, 'YYYY') AS TIME_GROUP,
+                   COUNT(*) AS USER_COUNT
+               FROM TBL_USER
+               WHERE USER_STATUS = 'NORMAL'
+               <if test="startDate != null and startDate != ''">
+                   AND CDATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+               </if>
+               <if test="endDate != null and endDate != ''">
+                   AND CDATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+               </if>
+               GROUP BY TO_CHAR(CDATE, 'YYYY')
+               ORDER BY TIME_GROUP
+           </when>
+       </choose>
+   </select>
+
+   <!-- 누적 변호사 등록 데이터 조회 -->
+   <select id="selectStatLawyerLine" parameterType="hashmap" resultType="hashmap">
+       <choose>
+           <when test="groupType == 'daily'">
+               SELECT 
+                   TO_CHAR(CDATE, 'YYYY-MM-DD') AS TIME_GROUP,
+                   COUNT(*) AS LAWYER_COUNT
+               FROM LAWYER
+               WHERE LAWYER_STATUS = 'I' OR LAWYER_STATUS = 'P'
+               <if test="startDate != null and startDate != ''">
+                   AND CDATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+               </if>
+               <if test="endDate != null and endDate != ''">
+                   AND CDATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+               </if>
+               GROUP BY TO_CHAR(CDATE, 'YYYY-MM-DD')
+               ORDER BY TIME_GROUP
+           </when>
+           <when test="groupType == 'monthly'">
+               SELECT 
+                   TO_CHAR(CDATE, 'YYYY-MM') AS TIME_GROUP,
+                   COUNT(*) AS LAWYER_COUNT
+               FROM LAWYER
+               WHERE LAWYER_STATUS = 'I' OR LAWYER_STATUS = 'P'
+               <if test="startDate != null and startDate != ''">
+                   AND CDATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+               </if>
+               <if test="endDate != null and endDate != ''">
+                   AND CDATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+               </if>
+               GROUP BY TO_CHAR(CDATE, 'YYYY-MM')
+               ORDER BY TIME_GROUP
+           </when>
+           <when test="groupType == 'yearly'">
+               SELECT 
+                   TO_CHAR(CDATE, 'YYYY') AS TIME_GROUP,
+                   COUNT(*) AS LAWYER_COUNT
+               FROM LAWYER
+               WHERE LAWYER_STATUS = 'I' OR LAWYER_STATUS = 'P'
+               <if test="startDate != null and startDate != ''">
+                   AND CDATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+               </if>
+               <if test="endDate != null and endDate != ''">
+                   AND CDATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+               </if>
+               GROUP BY TO_CHAR(CDATE, 'YYYY')
+               ORDER BY TIME_GROUP
+           </when>
+       </choose>
+   </select>
+
 </mapper>

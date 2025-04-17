@@ -2,12 +2,9 @@
   <img src="./img/demo_main.gif" width="800" alt="GwasilZero 시연 영상">
 </div>
 
-<div align="center">
-  <video width="800" controls>
-    <source src="./img/demo.mp4" type="video/mp4">
-    사용 중인 브라우저는 video 태그를 지원하지 않습니다.
-  </video>
-</div>
+## 🎞 시연 영상
+
+[▶ demo.mp4 영상 직접 보기](./img/demo.mp4)
 
 <br>
 

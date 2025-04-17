@@ -4,7 +4,7 @@
 
 ## 🎞 시연 영상
 
-[▶ 시연 영상 보기](https://github.com/team-zero/gwasilzero/raw/main/img/demo.mp4)
+[▶ 과실제로 시연 영상 보러가기 (YouTube)](https://youtu.be/KJoKx0VPUEE)
 
 <br>
 

@@ -4,7 +4,7 @@
 
 ## 🎞 시연 영상
 
-[▶ demo.mp4 영상 직접 보기](./img/demo.mp4)
+[▶ 시연 영상 보기](https://github.com/team-zero/gwasilzero/raw/main/img/demo.mp4)
 
 <br>
 

@@ -2,9 +2,6 @@
   <img src="./img/demo_main.gif" width="800" alt="GwasilZero 시연 영상">
 </div>
 
-## 🎞 시연 영상
-
-[▶ 과실제로 시연 영상 보러가기 (YouTube)](https://youtu.be/KJoKx0VPUEE)
 
 <br>
 
@@ -62,7 +59,7 @@
 [▶ 과실제로 발표 PPT](#)
 
 ## 🎞 시연 영상  
-[▶ 과실제로 시연 영상](./img/demo_main_clean.gif)
+[▶ 과실제로 시연 영상 보러가기 (YouTube)](https://youtu.be/KJoKx0VPUEE)
 
 ---
 

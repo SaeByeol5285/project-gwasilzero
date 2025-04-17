@@ -2,6 +2,13 @@
   <img src="./img/demo_main.gif" width="800" alt="GwasilZero 시연 영상">
 </div>
 
+<div align="center">
+  <video width="800" controls>
+    <source src="./img/demo.mp4" type="video/mp4">
+    사용 중인 브라우저는 video 태그를 지원하지 않습니다.
+  </video>
+</div>
+
 <br>
 
 # ⚖️ 과실제로 - 교통사고 전문 로펌 플랫폼

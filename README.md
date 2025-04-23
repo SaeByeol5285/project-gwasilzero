@@ -64,9 +64,13 @@
 [팀원별 페이지 시연 영상]
 
   [▶박새별](https://drive.google.com/file/d/1KYe6_MAVMIwSILGeuixbDFpA81i0jkD0/view?usp=drive_link)
+  
   [▶김정철](https://drive.google.com/file/d/1owCZxth38De0PlNbQWZyuNjqD76NlTDK/view?usp=drive_link)
+  
   [▶조연주](https://drive.google.com/file/d/1kFrRd876UF55wYAXayrs3kqn787k4w3F/view?usp=drive_link)
+  
   [▶유승호](https://drive.google.com/file/d/1nE4d4DQLzHeSaB9VKoJkx036C8usRpve/view?usp=drive_link)
+  
   [▶이주원](https://drive.google.com/file/d/1WbIq-TAMugFVCtj2JI1knkPa4TBFruqE/view?usp=drive_link)
 
 ---

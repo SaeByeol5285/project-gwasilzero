@@ -33,7 +33,7 @@
 
 | 이름 | GitHub 프로필 |
 |------|----------------|
-| 박새별 | [SaeByeol5285](https://github.com/......) |
+| 박새별 | [SaeByeol5285](https://github.com/SaeByeol5285) |
 | 김정철 | [ChunSamKim](https://github.com/ChunSamKim) |
 | 조연주 | [Yeonju02](https://github.com/Yeonju02) |
 | 유승호 | [minamRyu](https://github.com/minamRyu/Intro) |
@@ -59,7 +59,7 @@
 [▶ 과실제로 발표 PPT](#)
 
 ## 🎞 시연 영상  
-[▶ 과실제로 시연 영상 보러가기 (YouTube)](https://youtu.be/KJoKx0VPUEE)
+[▶ 과실제로 시연 영상 보러가기] (https://drive.google.com/file/d/1erdU57Da71Rt3PvvUt7lkM8fbHMvL8Fa/view?usp=sharing)
 
 ---
 

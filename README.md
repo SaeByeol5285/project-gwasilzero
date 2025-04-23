@@ -60,7 +60,9 @@
 
 ## 🎞 시연 영상  
 [▶ 과실제로 핵심기능 시연 영상] (https://drive.google.com/file/d/1erdU57Da71Rt3PvvUt7lkM8fbHMvL8Fa/view?usp=sharing)
+
 [▶ 팀원별 페이지 시연 영상]
+
 | 박새별 | ▶ https://drive.google.com/file/d/1KYe6_MAVMIwSILGeuixbDFpA81i0jkD0/view?usp=drive_link |
 
 | 김정철 | ▶ https://drive.google.com/file/d/1owCZxth38De0PlNbQWZyuNjqD76NlTDK/view?usp=drive_link |

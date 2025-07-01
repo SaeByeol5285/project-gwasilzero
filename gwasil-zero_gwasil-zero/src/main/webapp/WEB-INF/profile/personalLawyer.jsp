@@ -50,7 +50,7 @@
                                 <option value="txt">키워드</option>
                             </select>
                             <input type="text" v-model="keyword" @keyup.enter="fnGetList" placeholder="검색어를 입력하세요!">
-                            <button @click="fnGetList">검색</button>
+                            <button @click="fnSearch">검색</button>
                         </div>
                         <div class="lawyer-list">
                             <div class="lawyer-card" v-for="item in list" :key="item.lawyerId"
@@ -115,6 +115,14 @@
                     currentPage: 'personalLawyer'
                 };
             },
+            watch: {
+                keyword() {
+                    this.page = 1;
+                },
+                searchOption() {
+                    this.page = 1;
+                }
+            },
             methods: {
                 fnGetList() {
                     var self = this;
@@ -129,25 +137,21 @@
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
-                            console.log(`˚∧＿∧  　+        —̳͟͞͞💗
-(  •‿• )つ  —̳͟͞͞ 💗         —̳͟͞͞💗 +
-(つ　 <                —̳͟͞͞💗
-｜　 _つ      +  —̳͟͞͞💗         —̳͟͞͞💗 ˚
-し´
-   🐱: "나는 아무 생각이 없다.
-        왜냐하면 아무생각이 없기 때문이다."
-
-`, "color: orange; font-weight: bold; font-size: 14px; font-family: monospace;");
                             self.list = data.list;
                             self.index = Math.ceil(data.count / 4);
                         }
                     });
                 },
+                fnSearch(){
+                    this.page = 1;
+                    this.$nextTick(() => {
+                        this.fnGetList(); 
+                    });
+                }, 
                 goToPage(n) {
                     this.page = n;
                     this.fnGetList();
                 },
-
                 prevPage() {
                     if (this.page > 1) {
                     this.page--;
